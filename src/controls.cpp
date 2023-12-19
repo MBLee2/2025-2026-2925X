@@ -9,12 +9,14 @@ void taskFn_drivebase_control(void)
 
     while (true) 
     {
-        /*int inputY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-		int inputX  = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-		left_side_motors.move(inputY + inputX);
-		right_side_motors.move(inputY - inputX);//*/
+        int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
 
-        chassis.arcade(master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X),0);
+        chassis.arcade(leftY,rightX,0);
+        
+        //move the chassis with curvature drive
+        //chassis.curvature(leftY, rightX);//*/
+
         pros::delay(20);
 
     } // end of while loop
@@ -42,9 +44,9 @@ void taskFn_flywheel_control(void)
                 {
                     flywheel_status = true;
                     lift_status == false;
-                    flywheel_mtr.move_voltage(11964); 
+                    //flywheel_mtr.move_voltage(11964); 
                     lift_pistons.set_value(false);
-                    //flywheel_mtr = 110;
+                    flywheel_mtr = 98;
 
                 }
                 else if(flywheel_status == true)
@@ -65,9 +67,9 @@ void taskFn_flywheel_control(void)
             {
                 flywheel_status = true;
                 lift_status = true;
-                flywheel_mtr.move_voltage(11964); 
+                flywheel_mtr.move_voltage(12000); 
                 lift_pistons.set_value(true);
-                //flywheel_mtr = 110;
+                //flywheel_mtr = 127;
             }
             else if(flywheel_status == true && lift_status == true)
             {
@@ -147,7 +149,7 @@ void taskFn_intake_control(void)
 
     printf("%s(): Exiting \n", __func__);
 
-} // end of taskFn_drivebase_control
+} // end of taskFn_intake   _control
 
 //Wings Control
 void taskFn_wings_control(void)
@@ -164,17 +166,19 @@ void taskFn_wings_control(void)
                 wings_front_status = true;
                 right_piston.set_value(true);
                 left_piston.set_value(true);  
+                intake_mtr.move(-127);
             }
             else if(wings_front_status == true)
             {
                 wings_front_status = false;
                 right_piston.set_value(false);
-                left_piston.set_value(false);  
+                left_piston.set_value(false);
+                intake_mtr.move(0);  
 
             }           
         } 
         
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) 
         {
             if (wings_back_status == false)
             {

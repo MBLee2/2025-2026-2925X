@@ -34,8 +34,7 @@ pros::ADIDigitalOut left_piston ('E');
 Imu inertial_sensor(5); // port 5
 Gps gps(0,0,0); // offsets in meters
  
-lemlib::Drivetrain_t drivetrain 
-{
+lemlib::Drivetrain_t drivetrain {
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
     12, // track width
@@ -73,9 +72,8 @@ lemlib::ChassisController_t lateralController {
     100, // smallErrorTimeout
     3, // largeErrorRange
     500, // largeErrorTimeout
-    80 // slew rate
+    80 // slew rate; 
 };
- 
 // turning PID
 lemlib::ChassisController_t angularController {
     8, // kP

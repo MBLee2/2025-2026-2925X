@@ -34,9 +34,8 @@ void initialize() {
  * to keep execution time for this mode under a few seconds.
  */
     {
+	chassis.calibrate();
     //pros::lcd::initialize(); // initialize brain screen
-    chassis.calibrate(); // calibrate the chassis
-
 	// weird bug in system; without the following delay, was getting a white screen
 	// on the brain rather than the display as expected
 	pros::delay(10); 
@@ -190,12 +189,14 @@ void autonomous() {
 		}	
 	}
 
-	// Start the independent parallel tasks needed to support autonomous mode
-	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-	pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
-	
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();
+
+	// Start the independent parallel tasks needed to support autonomous mode
+	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
+	//pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
+	
+	
 		
 	printf("%s(): Exiting\n", __func__);
 
@@ -215,6 +216,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task intake_task(taskFn_intake_control,"intake-task");
     pros::Task flywheel_task(taskFn_flywheel_control,"flywheel-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");

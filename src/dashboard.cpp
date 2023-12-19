@@ -185,14 +185,20 @@ void taskFn_display_gps_coordinates(void)
         // Dsiplay the (x, y) coordinates
         pros::screen::set_pen(COLOR_YELLOW);
         pros::screen::print(pros::E_TEXT_MEDIUM, 250, 13, "GPS Readout");
-        pros::screen::print(pros::E_TEXT_MEDIUM, 250, 35, "  x: %+1.3f", gps.get_status().x);
-        pros::screen::print(pros::E_TEXT_MEDIUM, 250, 55, "  y: %+1.3f", gps.get_status().y);
+        //pros::screen::print(pros::E_TEXT_MEDIUM, 250, 35, "  x: %+1.3f", gps.get_status().x);
+        //pros::screen::print(pros::E_TEXT_MEDIUM, 250, 55, "  y: %+1.3f", gps.get_status().y);
         
+        //lemlib status x and y and theta
+        lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        pros::screen::print(pros::E_TEXT_MEDIUM, 250, 35, "x: %f", pose.x); // print the x position
+        pros::screen::print(pros::E_TEXT_MEDIUM, 250, 55, "y: %f", pose.y); // print the y position
+        pros::screen::print(pros::E_TEXT_MEDIUM, 250, 75, "heading: %f", pose.theta); // print the heading
+
         // Render the compass rose (dial) to show heading
         render_compass_rose();
 
         // display the RMS error rate
-        pros::screen::print(pros::E_TEXT_MEDIUM, 250, 75, "err: %+.3f", gps.get_error());
+        //pros::screen::print(pros::E_TEXT_MEDIUM, 250, 75, "err: %+.3f", gps.get_error());
 
         // once every 100 milliseconds (10 times a second) is enough for this task 
         // which just refreshes the display of the latest GPS coordinates and heading
