@@ -12,7 +12,6 @@ extern void taskFn_intake_control(void);
 // task fuctions for intake contol to be parrlelized
 extern void taskFn_wings_control(void);
 // task fuctions for intake contol to be parrlelized
-extern void taskFn_PTO_control(void);
 
 
 

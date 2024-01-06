@@ -23,6 +23,16 @@ void auton_15s_near_driver_qual()
 {
 	printf("%s(): Exiting\n", __func__);
 	chassis.setPose(47,59,315);
+	chassis.arcade(-40,0);
+	pros::delay(200);
+	chassis.arcade(0,0);
+	back_wing_piston.set_value(true);
+	pros::delay(300);
+	chassis.arcade(50,-45);
+	pros::delay(420);
+	chassis.arcade(0,0);
+	back_wing_piston.set_value(false);
+	pros::delay(300);
 	chassis.moveTo(60,26,0,1000,false,false,0.0,0.6,100);
 	pros::delay(100);
 	chassis.arcade(-127,0);
@@ -30,16 +40,21 @@ void auton_15s_near_driver_qual()
 	chassis.arcade(80,0);
 	pros::delay(100);
 	chassis.arcade(0,0);
+	intake_mtr.move(80);
+	//chassis.turnTo(48,60,1000,false,false);
+	chassis.moveTo(42,57,315,1300);
+	chassis.turnTo(0,58,1000);
+	chassis.moveTo(8,58,270,1500);
+	intake_mtr.move(-127);
+	
 
-	chassis.turnTo(72,60,1000,false,true);
-	back_wing_piston.set_value(true);
-	chassis.moveTo(24,58,80,1500,true,false);
+	/*chassis.moveTo(24,58,80,1500,true,true);
 	chassis.waitUntilDist(15);
 	
 	chassis.waitUntilDist(1000);
 	back_wing_piston.set_value(false);
 	chassis.moveTo(7.8,60,90,1400,false,false);
-	lift_pistons.set_value(true);
+	lift_pistons.set_value(true);*/
 	
 	
 
@@ -50,16 +65,40 @@ void auton_15s_near_driver_qual()
 void auton_15s_near_driver_elim()
 {
 	printf("%s(): Exiting\n", __func__);
-	chassis.setPose(36,48,180);
-	chassis.moveTo(36,6,180,1000);
+	chassis.setPose(36,54,180);
+	intake_mtr.move(80);
+	chassis.moveTo(36,11,180,1000);
 	left_piston.set_value(true);
-	chassis.turnTo(-12,5,1000);
+	chassis.turnTo(-12,11,1000);
 	chassis.arcade(127,0);
 	pros::delay(500);
 	chassis.arcade(-50,0);
 	pros::delay(100);
 	chassis.arcade(0,0);
 	pros::delay(100);
+	left_piston.set_value(false);
+	chassis.turnTo(60,11,1000);
+	chassis.moveTo(39,11,90,700);
+	intake_mtr.move(-80);	
+	pros::delay(500);
+	chassis.arcade(-80,0);
+	pros::delay(200);
+	chassis.arcade(0,0);
+
+	chassis.turnTo(-12,11,1000);
+	chassis.arcade(-80,0);
+	pros::delay(500);
+	chassis.arcade(0,0);
+	pros::delay(200);
+	chassis.moveTo(24,11,270,1000);
+	chassis.turnTo(40,58,1000);
+	chassis.moveTo(39,53,0,1300);
+	chassis.turnTo(0,53,1000);
+	intake_mtr.move(127);
+	chassis.arcade(0,0);
+	chassis.moveTo(6,53,270,1000);
+	intake_mtr.move(-127);
+
 
 
 	
@@ -179,80 +218,69 @@ void auton_15s_far_driver_elim()
 // STILL WORKING ON IT
 void auton_60s_skills_1()
 {	
-    int shooting_time = 30000;	
-	chassis.setPose(-48,60,45);
+    int shooting_time = 31000;	
+	chassis.setPose(-48,58,45);
 	chassis.moveTo(-61,26,0,1000,false,false);
 	pros::delay(100);
-	flywheel_mtr = 105;
 	chassis.arcade(-100,0);
 	pros::delay(350);
 	chassis.arcade(80,0);
 	pros::delay(280);
-	chassis.turnTo(50,10,500);
-	back_wing_piston.set_value(true);
-	lift_pistons.set_value(true);
-	pros::delay(shooting_time);
-	//pros::delay(1500);
-	back_wing_piston.set_value(false);
-	lift_pistons.set_value(false);
-	chassis.moveTo(-28,58,80,1500,false,true);
-	flywheel_mtr = 0;
-	chassis.moveTo(34,56,90,3000);
-	chassis.moveTo(58,32,180,1000);
-	chassis.turnTo(60,0,1300,false,false);
-	chassis.arcade(127,0);
+	chassis.turnTo(50,4,500);
+	cata_motors = 82.55;
+	//pros::delay(shooting_time);
+	pros::delay(1500);
+	cata_motors = 0;
+	chassis.moveTo(-28,58,90,1500);
+	chassis.turnTo(24,60,500);
+	chassis.arcade(100,0);
+	pros::delay(1000);
+	chassis.arcade(0,0);
+	chassis.moveTo(34,56,90,1000);
+	chassis.moveTo(60,32,180,1000);
+	chassis.turnTo(56,0,1300,false,false);
+	chassis.arcade(80,0);
 	pros::delay(600);
 	chassis.arcade(-50,0);
 	pros::delay(300);
 	chassis.turnTo(60,0,1300,false,true);
-	chassis.arcade(-127,0);
+	chassis.arcade(-80,0);
 	pros::delay(600);
-	chassis.arcade(50,0);
+	chassis.arcade(45,0);
 	pros::delay(300);
 	chassis.arcade(0,0);
-	chassis.turnTo(0,28,1000);
-	chassis.arcade(127,0);
-	pros::delay(200);
-    chassis.arcade(0,0);
-	chassis.moveTo(12,12,180,1800);
-	left_piston.set_value(true);
-	chassis.moveTo(60,-4,90,1400);
-	chassis.arcade(127,0);
+	chassis.moveTo(40,46,315,600);
+	chassis.turnTo(12,12,600);
+	chassis.arcade(100,0);
 	pros::delay(600);
-	chassis.arcade(-80,0);
-	pros::delay(400);
-	chassis.arcade(0,0);
-	chassis.arcade(127,0);
-	pros::delay(600);
-	chassis.arcade(-80,0);
-	pros::delay(400);
-	chassis.arcade(127,0);
-	pros::delay(600);
-	chassis.arcade(-80,0);
-	pros::delay(400);
-	chassis.arcade(-80,0);
 	chassis.arcade(0,0);
 
-
-	/*chassis.moveTo(12,5,180,1000,false);
-	chassis.waitUntilDist(60);
+	//chassis.moveTo(10,10,225,700);
+	//chassis.moveTo(12,12,180,1000,false,true,0,0.35,100);
 	left_piston.set_value(true);
-	pros::delay(200);
-	/*
-	chassis.moveTo(50,0,110,2000);
+	chassis.moveTo(60,4,100,1400);
 	chassis.arcade(127,0);
+	pros::delay(600);
+	chassis.arcade(-80,0);
 	left_piston.set_value(false);
-	pros::delay(200);
-	chassis.arcade(0,0);
-	chassis.moveTo(12,-6,180,1000,false),false;
+	/*chassis.turnTo(12,0,1000,false,false,76.2);
+	chassis.moveTo(16,0,180,1000);
+	chassis.turnTo(60,0,1000);
+	/*chassis.arcade(0,0);
 	left_piston.set_value(true);
-	pros::delay(200);
-	chassis.moveTo(50,-12,110,2000,false,false);
 	chassis.arcade(127,0);
-	pros::delay(500);
-	chassis.arcade(-50,0);
-	pros::delay(500);
-	chassis.arcade(0,0);//*/
+	pros::delay(600);
+	chassis.arcade(-80,0);
+	left_piston.set_value(false);//*/
+	/*
+	chassis.moveTo(10,-12,)
+	pros::delay(400);
+	chassis.arcade(127,0);
+	pros::delay(600);
+	chassis.arcade(-80,0);
+	pros::delay(400);
+	chassis.arcade(-80,0);
+	chassis.arcade(0,0); //*/
 
 
 	printf("%s(): Exiting\n", __func__);
@@ -261,35 +289,99 @@ void auton_60s_skills_1()
 
 // Auton skills number 2 fully done
 void auton_60s_skills_2()
-{
-	chassis.setPose(-48,60,45);
-	chassis.setPose(-48,60,90);
-	/*int shooting_time = 600000;	
-	chassis.moveTo(-61,26,0,1000,false,false);
-	pros::delay(100);
-	flywheel_mtr = 100;
-	chassis.arcade(-100,0);
-	pros::delay(350);
-	chassis.arcade(80,0);
-	pros::delay(300);
-	chassis.turnTo(50,10,500);
-	back_wing_piston.set_value(true);
-	//pros::delay(shooting_time);
-	pros::delay(1500); 
-	back_wing_piston.set_value(false);
-	chassis.arcade(127,0);
-	pros::delay(50);
-	chassis.arcade(0,0);
-	chassis.moveTo(-48,56,270,1000);
-	chassis.moveTo(26,56,270,4000,false,false,0,0.6,90);
-	chassis.arcade(0,0);
-	chassis.turnTo(60,30,100);
-	chassis.moveTo(60,30,315,1000,false,false);//*/
-	
-
-
-		
-	
+{	
 	printf("%s(): Exiting\n", __func__);
+	int shooting_time = 1000;	
+	int volts = 7800;
 
+	chassis.setPose(-48,54,0);
+	chassis.moveTo(-63,27,0,1000,false,false,0,0.6,127);
+	chassis.turnTo(-63,0,700,false,true);
+	chassis.arcade(-70,0);
+	pros::delay(500);	
+	chassis.arcade(80,0);
+	pros::delay(280);
+	chassis.arcade(0,0);
+	chassis.moveTo(58,45,90,500);
+	chassis.turnTo(50,14,500);
+	chassis.arcade(-30,0);
+	back_wing_piston.set_value(true);
+	pros::delay(250);
+	chassis.arcade(0,0);
+	cata_motors.move_voltage(volts);
+	pros::delay(shooting_time);
+	//pros::delay(400);
+	cata_motors = 0;
+	chassis.arcade(30,0);
+	pros::delay(250);
+	chassis.arcade(0,0);
+	back_wing_piston.set_value(false);
+	chassis.turnTo(-36,63,800);
+	chassis.moveTo(-36,64,90,1500);
+	chassis.moveTo(35,63,90,5000);
+	chassis.turnTo(69,27,700,false,true);
+	chassis.arcade(-90,0);
+	pros::delay(475);   
+	chassis.arcade(0,0);
+	chassis.turnTo(56,0,1200,false,true);
+	pros::delay(100);
+	chassis.arcade(-127,0);
+	pros::delay(400);
+	chassis.arcade(50,0);
+	pros::delay(330);
+	chassis.arcade(0,0);
+	pros::delay(300);
+	chassis.arcade(-127,0);
+	pros::delay(400);
+	chassis.arcade(50,0);
+	pros::delay(300);
+	chassis.arcade(0,0);
+	chassis.setPose(65.5,39.5,0);
+
+	/*chassis.turnTo(0,38,1500);
+	chassis.arcade(80,0);
+	pros::delay(900);
+	chassis.arcade(0,0);//*/
+
+	chassis.moveTo(2,14,180,1000);
+	/*chassis.turnTo(30,12,700);
+	left_piston.set_value(true);
+	pros::delay(500);
+	chassis.moveTo(28,12,90,1000);	
+	chassis.arcade(120,0);
+	pros::delay(300);
+	chassis.arcade(-60,0);
+	pros::delay(300);
+	chassis.arcade(0,0);
+	left_piston.set_value(false);
+	/*
+	chassis.moveTo(3,14,180,1400,false,true);
+	chassis.turnTo(3,-4,700);
+	chassis.moveTo(3,-5, 180,1000);
+	chassis.turnTo(30,-5,700);
+	left_piston.set_value(true);
+	pros::delay(300);
+	chassis.moveTo(28,-5,90,1200);
+	chassis.arcade(120,0);
+	pros::delay(200);
+	chassis.arcade(-60,0);
+	pros::delay(300);
+	chassis.arcade(0,0);
+	chassis.moveTo(3,-5,90,1400,false,false);
+	left_piston.set_value(false);
+	pros::delay(300);
+
+	chassis.moveTo(5,9,90,1500);
+	left_piston.set_value(true);
+	pros::delay(300);
+	chassis.arcade(120,0);
+	pros::delay(700);
+	chassis.arcade(-60,0);
+	pros::delay(300);
+	chassis.arcade(0,0);
+	left_piston.set_value(false);
+	chassis.turnTo(12,-48,800);
+	chassis.moveTo(48,-48,135,2000);
+	chassis.turnTo(60,-26,900,false,true);
+	//*/
 }

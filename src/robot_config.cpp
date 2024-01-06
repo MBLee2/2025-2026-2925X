@@ -16,7 +16,12 @@ Motor right_back_motor(19, false);  // port 17, not reversed
 
 // other motors
 pros::Motor intake_mtr(15, pros::E_MOTOR_GEARSET_06, true);
-pros::Motor flywheel_mtr(14, pros::E_MOTOR_GEARSET_06, false);
+//pros::Motor cata_mtr1(14, pros::E_MOTOR_GEARSET_36, false); //UNCOMENT THIS WHEN USING DURING MATCHES
+pros::Motor cata_mtr1(14, pros::E_MOTOR_GEARSET_18, false); //UNCOMENT THIS WHEN USING DURING SKIILS
+pros::Motor cata_mtr2(3, pros::E_MOTOR_GEARSET_18, true);  //UNCOMENT THIS WHEN USING DURING SKIILS
+
+MotorGroup cata_motors({cata_mtr1, cata_mtr2});
+
 
 // drivetrain motor groups
 MotorGroup left_side_motors({left_front_motor, left_mid_motor, left_back_motor});
@@ -25,9 +30,9 @@ MotorGroup right_side_motors({right_front_motor, right_mid_motor, right_back_mot
 //Pistons
 pros::ADIDigitalOut lift_pistons ('H');
 pros::ADIDigitalOut PTO_piston ('G');
-pros::ADIDigitalOut back_wing_piston ('f');
+pros::ADIDigitalOut back_wing_piston ('E');
 pros::ADIDigitalOut right_piston ('C');
-pros::ADIDigitalOut left_piston ('E');
+pros::ADIDigitalOut left_piston ('F');
 
 
 // inertial sensor
@@ -66,23 +71,23 @@ lemlib::OdomSensors_t sensors {
  
 // forward/backward PID
 lemlib::ChassisController_t lateralController {
-    36, // kP
-    269, // kD
+    22, // kP
+    156.5, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
     500, // largeErrorTimeout
-    80 // slew rate; 
+    8 // slew rate; 
 };
 // turning PID
 lemlib::ChassisController_t angularController {
     8, // kP
-    65, // kD
+    55.6, // kD
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
     500, // largeErrorTimeou
-    40 // slew rate
+    8 // slew rate
 };
  
  
@@ -101,7 +106,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
         dashboard_motor_display {110, 190, "DB-RF", right_front_motor},
         dashboard_motor_display {320, 135, "DB-RM", right_mid_motor},
         dashboard_motor_display {320, 190, "DB-RB", right_back_motor},
-        dashboard_motor_display {215, 135, "Fly", flywheel_mtr},
+        dashboard_motor_display {215, 135, "Fly", cata_mtr1},
         dashboard_motor_display {215, 190, "Intk",  intake_mtr}
         
     };

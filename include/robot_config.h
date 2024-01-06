@@ -39,7 +39,8 @@ extern pros::Motor right_back_motor;
 
 //motors
 extern pros::Motor intake_mtr; 
-extern pros::Motor flywheel_mtr; 
+extern pros::Motor cata_mtr1; 
+extern pros::Motor_Group cata_motors;              // Left drivetrain of drivebase
 extern pros::Motor_Group left_side_motors;              // Left drivetrain of drivebase
 extern pros::Motor_Group right_side_motors;             // Right drivetrain of drivebase
 //pistons

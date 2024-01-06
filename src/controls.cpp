@@ -11,8 +11,74 @@ void taskFn_drivebase_control(void)
     {
         int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-
         chassis.arcade(leftY,rightX,0);
+ 
+        bool PTO_status = false;
+
+        // A tier climb
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) 
+        {
+            if (PTO_status == false)
+            {
+                PTO_status = true;
+                PTO_piston.set_value(true);
+                lift_pistons.set_value(false);
+                chassis.arcade(127,0);
+                pros::delay(1000);
+                chassis.arcade(0,0);            
+            }
+            else if (PTO_status == true)
+            {
+                PTO_status = false;
+                PTO_piston.set_value(false);
+
+            }
+        }
+
+        //B tier climb
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) 
+        {
+            if (PTO_status == false)
+            {
+                PTO_status = true;
+                PTO_piston.set_value(true);
+                lift_pistons.set_value(false);
+                chassis.arcade(127,0);
+                pros::delay(1400);
+                chassis.arcade(0,0);            
+            }
+            else if (PTO_status == true)
+            {
+                PTO_status = false;
+                PTO_piston.set_value(false);
+            }          
+        }
+
+        //C tier Climb
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) 
+        {
+            if (PTO_status == false)
+            {
+                PTO_status = true;
+                PTO_piston.set_value(true);
+                lift_pistons.set_value(false);
+                chassis.arcade(127,0);
+                pros::delay(1000);
+                chassis.arcade(0,0);
+                back_wing_piston.set_value(true);
+                pros::delay(200);
+   
+                chassis.arcade(127,0);
+                pros::delay(1000);
+                chassis.arcade(0,0);//*/
+            }
+            else if (PTO_status == true)
+            {
+                PTO_status = false;
+                PTO_piston.set_value(false);
+
+            }          
+        }  
         
         //move the chassis with curvature drive
         //chassis.curvature(leftY, rightX);//*/
@@ -30,7 +96,7 @@ void taskFn_flywheel_control(void)
 {
     printf("%s(): Entered \n", __func__);
  
-    bool flywheel_status = false;
+    bool cata_status = false;
     bool lift_status = false;
 
     while (true) 
@@ -40,22 +106,22 @@ void taskFn_flywheel_control(void)
         {   
             if (master.get_digital_new_press (pros::E_CONTROLLER_DIGITAL_L1)) 
             {
-                if (flywheel_status == false)
+                if (cata_status == false)
                 {
-                    flywheel_status = true;
+                    cata_status = true;
                     lift_status == false;
-                    //flywheel_mtr.move_voltage(11964); 
                     lift_pistons.set_value(false);
-                    flywheel_mtr = 98;
-
+                    //cata_mtr1.move_voltage(12000); 
+                    //cata_motors.move_voltage(6000);
+                    cata_motors.move(82.55);
                 }
-                else if(flywheel_status == true)
+                else if(cata_status == true)
                 {
-                    flywheel_status = false;
+                    cata_status = false;
                     lift_status == false;
-                    flywheel_mtr.move_voltage(0); 
                     lift_pistons.set_value(false);
-                    //flywheel_mtr = 110;
+                    //cata_mtr1.move_voltage(0);
+                    cata_motors.move_voltage(0);
                 }
             } 
         }
@@ -63,42 +129,26 @@ void taskFn_flywheel_control(void)
         //WHEN SHIFT KEY IS NOT PRESSED
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
         {
-            if (flywheel_status == false && lift_status == false)
+            if (cata_status == false && lift_status == false)
             {
-                flywheel_status = true;
+                cata_status = true;
                 lift_status = true;
-                flywheel_mtr.move_voltage(12000); 
                 lift_pistons.set_value(true);
-                //flywheel_mtr = 127;
+                //cata_mtr1.move_voltage(12000); 
+                cata_motors.move_voltage(0);
+
             }
-            else if(flywheel_status == true && lift_status == true)
+            else if(cata_status == true && lift_status == true)
             {
-                flywheel_status = false;
+                cata_status = false;
                 lift_status = false;
-                flywheel_mtr.move_voltage(0);
                 lift_pistons.set_value(false);
-                //flywheel_mtr = 110;
+                //cata_mtr1.move_voltage(0);
+                cata_motors.move_voltage(0);
             }           
         }
         printf("%s(): Exiting \n", __func__);    
 
-        //NON SHIFT
-        /* if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
-        {
-            if (flywheel_status == false)
-            {
-                flywheel_status = true;
-                flywheel_mtr.move_voltage(11964); 
-                //flywheel_mtr = 110;
-
-            }
-            else if(flywheel_status == true)
-            {
-                flywheel_status = false;
-                flywheel_mtr.move_voltage(0);
-                //flywheel_mtr = 110;
-            }           
-        }//*/
     } // end of while loop
 
     printf("%s(): Exiting \n", __func__);
@@ -221,32 +271,3 @@ void taskFn_wings_control(void)
     }
 }
 
-//PTO Control
-void taskFn_PTO_control(void)
-{
-    printf("%s(): Entered \n", __func__);
-
-    bool PTO_status = false;
-    while (true) 
-    {
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) 
-        {
-            if (PTO_status == false)
-            {
-                PTO_status = true;
-                PTO_piston.set_value(true);
-                lift_pistons.set_value(false);  
-                flywheel_mtr.move(0);
-            }
-            else if(PTO_status == true)
-            {
-                PTO_status = false;
-                PTO_piston.set_value(false);
-
-            }           
-        } 
-    } // end of while loop
-
-    printf("%s(): Exiting \n", __func__);
-
-}

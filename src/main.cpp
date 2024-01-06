@@ -33,9 +33,10 @@ void initialize() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-    {
-	chassis.calibrate();
-    //pros::lcd::initialize(); // initialize brain screen
+	{
+    pros::lcd::initialize(); // ONLY FOR TUNING PID	
+    chassis.calibrate(); // ONLY FOR TUNING PID
+	
 	// weird bug in system; without the following delay, was getting a white screen
 	// on the brain rather than the display as expected
 	pros::delay(10); 
@@ -44,7 +45,7 @@ void initialize() {
     pros::screen::set_eraser(COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
-	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running initialize()");
+	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running initialize()");//*/
 	
 	/*// reset the rotation sensors
 	rotL.reset_position();
@@ -171,9 +172,12 @@ ASSET(rush6ball_txt);
 
 void autonomous() {
    printf("%s(): Entered\n", __func__);
+   	//chassis.moveTo(0, 24, 0, 1000); //ONLY FOR TUNING PID
+	//chassis.turnTo(90, 0, 1000); //ONLY FOR TUNING PID
+
 
 	// Clear the Brain screen
-    pros::screen::set_eraser(COLOR_BLACK);
+	pros::screen::set_eraser(COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
     pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running autonomous()");
@@ -190,7 +194,7 @@ void autonomous() {
 	}
 
 	// Call the function associated with the selected auton routine		
-	selected_auton_routine.routine_func();
+	selected_auton_routine.routine_func();//*/
 
 	// Start the independent parallel tasks needed to support autonomous mode
 	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
@@ -221,7 +225,6 @@ void opcontrol() {
     pros::Task flywheel_task(taskFn_flywheel_control,"flywheel-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");
     pros::Task wings_task(taskFn_wings_control,"wings-task");
-    pros::Task PTO_task(taskFn_PTO_control,"PTO-task");
     
     while (true) {
     }
