@@ -130,6 +130,7 @@ void competition_initialize() {
  * starts.
  */
 {
+	//HERE
 	printf("%s(): Entered\n", __func__);
 
 	// weird bug in system; without the following delay, was getting a white screen
@@ -143,7 +144,7 @@ void competition_initialize() {
     pros::screen::set_eraser(COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
-	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running competition_initialize()");
+	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running competition_initialize()");//*/
 
 
 	}
@@ -169,13 +170,15 @@ void competition_initialize() {
 
 ASSET(path1_txt);
 ASSET(rush6ball_txt);
+ASSET(test_txt);
 
 void autonomous() {
    printf("%s(): Entered\n", __func__);
-   	//chassis.moveTo(0, 24, 0, 1000); //ONLY FOR TUNING PID
+   	//chassis.moveToPoint(-10, 30, 1700); //ONLY FOR TUNING PID
+
 	//chassis.turnTo(90, 0, 1000); //ONLY FOR TUNING PID
 
-
+//HERE
 	// Clear the Brain screen
 	pros::screen::set_eraser(COLOR_BLACK);
 	pros::screen::erase();

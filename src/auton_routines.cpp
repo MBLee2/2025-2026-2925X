@@ -22,7 +22,19 @@ auton_routine skills_2 		{ -0.600, 0.600, 180, "60S Auton - Skills # 1", &auton_
 void auton_15s_near_driver_qual()
 {
 	printf("%s(): Exiting\n", __func__);
-	chassis.setPose(47,59,315);
+	chassis.setPose(50.5,55.5,315);
+	chassis.turnTo(0,60,900);
+	intake_mtr.move(-80);
+	chassis.moveToPoint(0,60,1500);
+
+
+
+
+
+
+
+
+	/*chassis.setPose(47,59,315);
 	chassis.arcade(-40,0);
 	pros::delay(200);
 	chassis.arcade(0,0);
@@ -45,27 +57,14 @@ void auton_15s_near_driver_qual()
 	chassis.moveTo(42,57,315,1300);
 	chassis.turnTo(0,58,1000);
 	chassis.moveTo(8,58,270,1500);
-	intake_mtr.move(-127);
-	
-
-	/*chassis.moveTo(24,58,80,1500,true,true);
-	chassis.waitUntilDist(15);
-	
-	chassis.waitUntilDist(1000);
-	back_wing_piston.set_value(false);
-	chassis.moveTo(7.8,60,90,1400,false,false);
-	lift_pistons.set_value(true);*/
-	
-	
-
-    
+	intake_mtr.move(-127);//*/
 }
 
 // STILL WORKING ON IT
 void auton_15s_near_driver_elim()
 {
 	printf("%s(): Exiting\n", __func__);
-	chassis.setPose(36,54,180);
+	/*chassis.setPose(36,54,180);
 	intake_mtr.move(80);
 	chassis.moveTo(36,11,180,1000);
 	left_piston.set_value(true);
@@ -97,7 +96,7 @@ void auton_15s_near_driver_elim()
 	intake_mtr.move(127);
 	chassis.arcade(0,0);
 	chassis.moveTo(6,53,270,1000);
-	intake_mtr.move(-127);
+	intake_mtr.move(-127);//*/
 
 
 
@@ -107,7 +106,7 @@ void auton_15s_near_driver_elim()
 // STILL WORKING ON IT
 void auton_15s_far_driver_qual()
 {
-	//chassis.calibrate(); // calibrate the chassis
+	/*//chassis.calibrate(); // calibrate the chassis
 	chassis.setPose(-2,60,90);
 	intake_mtr.move(127);
 	chassis.moveTo(0,60,90,500);
@@ -163,7 +162,7 @@ void auton_15s_far_driver_qual()
 // STILL WORKING ON IT
 void auton_15s_far_driver_elim()
 {	 
-	chassis.setPose(-10.5,60,90);
+	/*chassis.setPose(-10.5,60,90);
 	intake_mtr.move(127);
 	chassis.moveTo(3,60,90,500,false,true,0.0,0.6,60);
 	//chassis.follow(matchloadturn4ball_txt,5000, 5,false,false)
@@ -211,14 +210,14 @@ void auton_15s_far_driver_elim()
 	//chassis.arcade(127,0);
 	//pros::delay(500);
 	/*chassis.moveToPose(2,36,0,20000,true,false);
-	//back_wing_piston.set_value(true);*/
+	//back_wing_piston.set_value(true);//*/
 	printf("%s(): Exiting\n", __func__);
 }
 
 // STILL WORKING ON IT
 void auton_60s_skills_1()
 {	
-    int shooting_time = 31000;	
+    /*int shooting_time = 31000;	
 	chassis.setPose(-48,58,45);
 	chassis.moveTo(-61,26,0,1000,false,false);
 	pros::delay(100);
@@ -291,7 +290,7 @@ void auton_60s_skills_1()
 void auton_60s_skills_2()
 {	
 	printf("%s(): Exiting\n", __func__);
-	int shooting_time = 1000;	
+	/*int shooting_time = 1000;	
 	int volts = 7800;
 
 	chassis.setPose(-48,54,0);
@@ -343,7 +342,7 @@ void auton_60s_skills_2()
 	pros::delay(900);
 	chassis.arcade(0,0);//*/
 
-	chassis.moveTo(2,14,180,1000);
+	//chassis.moveTo(2,14,180,1000);
 	/*chassis.turnTo(30,12,700);
 	left_piston.set_value(true);
 	pros::delay(500);

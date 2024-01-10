@@ -7,12 +7,12 @@ pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 
 //  need to add all motors
-Motor left_front_motor(12,true);  // port 11, reversed
-Motor left_mid_motor(11,true);   // port 12, reversed
-Motor left_back_motor(13, true); // port 13, reversed
-Motor right_front_motor(17, false); // port 19, not reversed
-Motor right_mid_motor(18,false);    // port 18, not reversed
-Motor right_back_motor(19, false);  // port 17, not reversed
+Motor left_front_motor(13,true);  // port 13, reversed
+Motor left_mid_motor(12,true);   // port 12, reversed
+Motor left_back_motor(11, true); // port 11, reversed
+Motor right_front_motor(18, false); // port 18, not reversed
+Motor right_mid_motor(19,false);    // port 19, not reversed
+Motor right_back_motor(20, false);  // port 20, not reversed
 
 // other motors
 pros::Motor intake_mtr(15, pros::E_MOTOR_GEARSET_06, true);
@@ -28,25 +28,27 @@ MotorGroup left_side_motors({left_front_motor, left_mid_motor, left_back_motor})
 MotorGroup right_side_motors({right_front_motor, right_mid_motor, right_back_motor});
 
 //Pistons
-pros::ADIDigitalOut lift_pistons ('H');
-pros::ADIDigitalOut PTO_piston ('G');
+pros::ADIDigitalOut lift_pistons ('G');
+pros::ADIDigitalOut PTO_piston ('F');
+pros::ADIDigitalOut left_piston ('H');
+
+//Unused but left for later if we use
 pros::ADIDigitalOut back_wing_piston ('E');
 pros::ADIDigitalOut right_piston ('C');
-pros::ADIDigitalOut left_piston ('F');
 
 
 // inertial sensor
-Imu inertial_sensor(5); // port 5
+Imu inertial_sensor(2); // port 5
 Gps gps(0,0,0); // offsets in meters
  
-lemlib::Drivetrain_t drivetrain {
+lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
-    12, // track width
-    2.75, // wheel diameter
-    450, // wheel rpm
+    10.75, // track width
+    lemlib::Omniwheel::NEW_275,// wheel diameter
+    600, // wheel rpm
 	8 //chase Power
-};
+);
 // left tracking wheel encoder
 pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
 // right tracking wheel encoder
@@ -61,38 +63,42 @@ lemlib::TrackingWheel right_tracking_wheel(&right_rot, 2.75, 1.7); // 2.75" whee
 lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel diameter, 4.5" offset from tracking center
  
 // odometry struct
-lemlib::OdomSensors_t sensors {
+lemlib::OdomSensors sensors(
     nullptr, // vertical tracking wheel 1
     nullptr, // vertical tracking wheel 2
     nullptr, // horizontal tracking wheel 1
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &inertial_sensor // inertial sensor
-};
+);
  
 // forward/backward PID
-lemlib::ChassisController_t lateralController {
-    22, // kP
-    156.5, // kD
+lemlib::ControllerSettings linearController(
+    11, // kP
+    0, // integral gain (kI)
+    90.2, // kD
+    3, // anti windup
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
     500, // largeErrorTimeout
-    8 // slew rate; 
-};
+    40 // slew rate; 
+);
 // turning PID
-lemlib::ChassisController_t angularController {
-    8, // kP
-    55.6, // kD
+lemlib::ControllerSettings angularController(
+    7, // kP
+    0, // integral gain (kI)
+    63, // kD
+    3, // anti windup
     1, // smallErrorRange
     100, // smallErrorTimeout
     3, // largeErrorRange
     500, // largeErrorTimeou
-    8 // slew rate
-};
+    12 // slew rate
+);
  
  
 // create the chassis
-lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensors);
+lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
 
 
 // TODO: Figure out why it gives a segmentation fault if this declaration is moved from here to "dashboard.cpp"
@@ -106,7 +112,7 @@ lemlib::Chassis chassis(drivetrain, lateralController, angularController, sensor
         dashboard_motor_display {110, 190, "DB-RF", right_front_motor},
         dashboard_motor_display {320, 135, "DB-RM", right_mid_motor},
         dashboard_motor_display {320, 190, "DB-RB", right_back_motor},
-        dashboard_motor_display {215, 135, "Fly", cata_mtr1},
+        dashboard_motor_display {215, 135, "CataM", cata_mtr1},
         dashboard_motor_display {215, 190, "Intk",  intake_mtr}
         
     };

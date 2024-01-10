@@ -11,7 +11,10 @@ void taskFn_drivebase_control(void)
     {
         int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         chassis.arcade(leftY,rightX,0);
+        //chassis.curvature(leftY,rightX,0);
+        //chassis.tank(leftY,rightY,0);
  
         bool PTO_status = false;
 
