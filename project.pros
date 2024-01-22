@@ -349,7 +349,7 @@
     "upload_options": {
       "after": "screen",
       "description": "",
-      "icon": "alien",
+      "icon": "pizza",
       "slot": 1
     }
   }

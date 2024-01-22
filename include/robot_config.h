@@ -37,7 +37,9 @@ extern pros::Motor right_front_motor;
 extern pros::Motor right_mid_motor;
 extern pros::Motor right_back_motor;
 
+
 //motors
+extern pros::Motor intake_mtr1;
 extern pros::Motor intake_mtr; 
 extern pros::Motor cata_mtr1; 
 extern pros::Motor_Group cata_motors;              // Left drivetrain of drivebase

@@ -8,17 +8,18 @@ pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //  need to add all motors
 Motor left_front_motor(13,true);  // port 13, reversed
-Motor left_mid_motor(12,true);   // port 12, reversed
-Motor left_back_motor(11, true); // port 11, reversed
-Motor right_front_motor(18, false); // port 18, not reversed
+Motor left_mid_motor(11,true);   // port 12, reversed
+Motor left_back_motor(12, true); // port 11, reversed
+Motor right_front_motor(20, false); // port 18, not reversed
 Motor right_mid_motor(19,false);    // port 19, not reversed
-Motor right_back_motor(20, false);  // port 20, not reversed
+Motor right_back_motor(15, false);  // port 20, not reversed
 
 // other motors
-pros::Motor intake_mtr(15, pros::E_MOTOR_GEARSET_06, true);
+pros::Motor intake_mtr(3, pros::E_MOTOR_GEARSET_18, true);
+//pros::Motor intake_mtr1(3, pros::E_MOTOR_GEARSET_18, false);
 //pros::Motor cata_mtr1(14, pros::E_MOTOR_GEARSET_36, false); //UNCOMENT THIS WHEN USING DURING MATCHES
-pros::Motor cata_mtr1(14, pros::E_MOTOR_GEARSET_18, false); //UNCOMENT THIS WHEN USING DURING SKIILS
-pros::Motor cata_mtr2(3, pros::E_MOTOR_GEARSET_18, true);  //UNCOMENT THIS WHEN USING DURING SKIILS
+pros::Motor cata_mtr1(10, pros::E_MOTOR_GEARSET_18, false); //UNCOMENT THIS WHEN USING DURING SKIILS
+pros::Motor cata_mtr2(1, pros::E_MOTOR_GEARSET_18, true);  //UNCOMENT THIS WHEN USING DURING SKIILS
 
 MotorGroup cata_motors({cata_mtr1, cata_mtr2});
 
@@ -29,8 +30,8 @@ MotorGroup right_side_motors({right_front_motor, right_mid_motor, right_back_mot
 
 //Pistons
 pros::ADIDigitalOut lift_pistons ('G');
-pros::ADIDigitalOut PTO_piston ('F');
-pros::ADIDigitalOut left_piston ('H');
+pros::ADIDigitalOut PTO_piston ('H');
+pros::ADIDigitalOut left_piston ('F');
 
 //Unused but left for later if we use
 pros::ADIDigitalOut back_wing_piston ('E');
@@ -38,7 +39,7 @@ pros::ADIDigitalOut right_piston ('C');
 
 
 // inertial sensor
-Imu inertial_sensor(2); // port 5
+Imu imu(21); // port 5
 Gps gps(0,0,0); // offsets in meters
  
 lemlib::Drivetrain drivetrain(
@@ -68,7 +69,7 @@ lemlib::OdomSensors sensors(
     nullptr, // vertical tracking wheel 2
     nullptr, // horizontal tracking wheel 1
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
-    &inertial_sensor // inertial sensor
+    &imu // inertial sensor
 );
  
 // forward/backward PID

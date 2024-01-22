@@ -223,6 +223,21 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	/*int shooting_time = 25000;	
+	int volts = 8900;
+	chassis.setPose(-44.5,52.5,45);
+	chassis.moveToPoint(-46.5,49,800,true,127,false);
+	left_piston.set_value(true);
+	pros::delay(140);
+	chassis.turnTo(0,60,1000,true,127,false);
+	left_piston.set_value(false);
+	chassis.moveToPose(-56,26,0,1000,{.forwards=false});
+	chassis.moveToPoint(-56,20,750,false);
+	chassis.moveToPose(-54,40,0,1000);
+	chassis.turnTo(50,10,500);
+	chassis.moveToPoint(-60,42,1000);
+	cata_motors.move_voltage(volts);//*/
+
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task intake_task(taskFn_intake_control,"intake-task");
     pros::Task flywheel_task(taskFn_flywheel_control,"flywheel-task");

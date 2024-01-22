@@ -18,16 +18,18 @@ typedef struct s_auton_routine
 } auton_routine;
 
 extern auton_routine null_routine; 
-extern auton_routine near_driver_qual, near_driver_elim;
-extern auton_routine far_from_driver_qual, far_from_driver_elim;
+extern auton_routine near_driver_qual, near_driver_elim, near_driver_qual2;
+extern auton_routine far_from_driver_qual, far_from_driver_elim, far_from_driver_elim2;
 extern auton_routine skills_1, skills_2;
 
 // functions to render the menu and read inputs from it
 void auton_15s_near_driver_qual();
+void rushWP();
 void auton_15s_near_driver_elim();
+
 void auton_15s_far_driver_qual();
 void auton_15s_far_driver_elim();
+void safe_6_ball();
 void auton_60s_skills_1();
 void auton_60s_skills_2();
-
 #endif // _AUTON_ROUTINES_H_
