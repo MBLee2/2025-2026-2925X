@@ -4,6 +4,9 @@
 #define TURN_CONST 1.3
 
 //Drivebase control
+    bool wings_front_status = false; 
+    bool wings_back_status = false; 
+
 void taskFn_drivebase_control(void)
 {
     printf("%s(): Entered \n", __func__);
@@ -91,6 +94,7 @@ void taskFn_flywheel_control(void)
                 PTO_piston.set_value(true);
                 pros::delay(200);
                 PTO_status = true;
+                lift_status = false;
                 lift_pistons.set_value(false);
                 /*chassis.arcade(127,0);
                 pros::delay(1000);
@@ -111,9 +115,7 @@ void taskFn_flywheel_control(void)
             }          
         }  
         //WHEN SHIFT KEY IS PRESSED
-        while (master.get_digital (pros::E_CONTROLLER_DIGITAL_L2)) 
-        {   
-            if (master.get_digital_new_press (pros::E_CONTROLLER_DIGITAL_L1)) 
+            if (master.get_digital_new_press (pros::E_CONTROLLER_DIGITAL_A)) 
             {
                 if (cata_status == false)
                 {
@@ -133,7 +135,6 @@ void taskFn_flywheel_control(void)
                     cata_motors.move_voltage(0);
                 }
             } 
-        }
 
         //WHEN SHIFT KEY IS NOT PRESSED
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
@@ -171,26 +172,34 @@ void taskFn_intake_control(void)
 
     while (true) 
     {
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-        {
-            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
             {
                 intake_mtr.move(-127);  
-            } 
-		    pros::delay(20);
-
-            intake_mtr.move(0);
-        }   
-
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) 
-        {
+            }   
             while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
             {
                 intake_mtr.move(127);
             } 
             intake_mtr.move(0);
+            if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) 
+        {
+            if (wings_front_status == false)
+            {
+                wings_front_status = true;
+                right_piston.set_value(true);
+                left_piston.set_value(true);  
+                intake_mtr.move(-127);
+            }
+            else if(wings_front_status == true)
+            {
+                wings_front_status = false;
+                right_piston.set_value(false);
+                left_piston.set_value(false);
+                intake_mtr.move(0);  
 
-        }
+            }           
+        } 
+
         
         // NON SHIFT
         /*while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) 
@@ -215,11 +224,9 @@ void taskFn_intake_control(void)
 void taskFn_wings_control(void)
 {
   printf("%s(): Entered \n", __func__);
-    bool wings_front_status = false; 
-    bool wings_back_status = false; 
     while (true)
     {
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) 
+        /*if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) 
         {
             if (wings_front_status == false)
             {
@@ -236,7 +243,7 @@ void taskFn_wings_control(void)
                 intake_mtr.move(0);  
 
             }           
-        } 
+        }//*/
         
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) 
         {

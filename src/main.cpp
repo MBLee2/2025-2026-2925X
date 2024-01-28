@@ -224,19 +224,20 @@ void autonomous() {
  */
 void opcontrol() {
 	/*int shooting_time = 25000;	
-	int volts = 8900;
+	int volts = 8800;
+	int funny_volts = 120000;
 	chassis.setPose(-44.5,52.5,45);
-	chassis.moveToPoint(-46.5,49,800,true,127,false);
+	/*chassis.moveToPoint(-46.5,49,800,true,127,false);
 	left_piston.set_value(true);
-	pros::delay(140);
-	chassis.turnTo(0,60,1000,true,127,false);
-	left_piston.set_value(false);
-	chassis.moveToPose(-56,26,0,1000,{.forwards=false});
-	chassis.moveToPoint(-56,20,750,false);
+	chassis.turnTo(0,60,400,true,127,false);
+	left_piston.set_value(false);n
+	chassis.moveToPose(-58,26,0,1000,{.forwards=false});
+	chassis.moveToPoint(-58,20,750,false);
 	chassis.moveToPose(-54,40,0,1000);
 	chassis.turnTo(50,10,500);
 	chassis.moveToPoint(-60,42,1000);
-	cata_motors.move_voltage(volts);//*/
+	cata_motors.move_voltage(volts);
+	pros::delay(shooting_time);//*/
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task intake_task(taskFn_intake_control,"intake-task");
