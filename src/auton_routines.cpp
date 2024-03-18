@@ -208,6 +208,19 @@ void auton_15s_far_driver_qual()
 	intake_mtr.move(-127);
 	pros::delay(300);
 	chassis.turnTo(-16,0,800);
+	/*chassis.moveToPoint(-60,44,1000,false);
+	chassis.moveToPose(-60,15,180,1300);//*/
+
+	chassis.moveToPoint(-48,48,1000,false);
+	chassis.turnTo(0,0,700);
+	intake_mtr.move(127);	
+	chassis.moveToPose(-5,24,90,1500);
+	chassis.turnTo(-50,0,1000,true,127,false);
+	chassis.moveToPoint(-24,16,1000,true,127,false);
+	//chassis.moveToPoint(-40,0,1000,true,127,false);
+	intake_mtr.move(-127);
+	pros::delay(300);
+	chassis.turnTo(-16,0,800);
 	intake_mtr.move(127);
 
 	chassis.moveToPoint(-16,0,1000,true,127,false);
@@ -233,6 +246,14 @@ void auton_15s_far_driver_qual()
 	pros::delay(300);
 	left_piston.set_value(false);
 	intake_mtr.move(127);
+	chassis.moveToPoint(-8,22,1400);
+	chassis.moveToPoint(-36,12,1000,false);
+	chassis.turnTo(-60,12,600);
+	chassis.moveToPoint(-60,12,900);
+	chassis.moveToPoint(-24,40,1200,false);
+	chassis.turnTo(0,44,1000);
+	chassis.moveToPose(12,44,90,1500,{},false);
+	left_piston.set_value(true);//*/
 	chassis.moveToPoint(-8,22,1400);
 	chassis.moveToPoint(-36,12,1000,false);
 	chassis.turnTo(-60,12,600);
@@ -329,9 +350,12 @@ void safe_6_ball()
 	chassis.moveToPoint(-60,0,1300);
 	chassis.moveToPoint(-56,44,1500,false);
 	intake_mtr.move(-127);
-	chassis.turnTo(-36,0,600);
-	pros::delay(300);
+	chassis.turnTo(-36,0,600,true,127,false);
 	left_piston.set_value(false);
+
+	/*chassis.moveToPoint(-58,20,1000);
+	chassis.moveToPoint(-56,44,1500,false);//*/
+
 	intake_mtr.move(127);
 	chassis.moveToPoint(-8,22,1400);
 	chassis.moveToPoint(-36,12,1000,false);
