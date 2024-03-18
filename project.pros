@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Over_UnderV2.0",
+    "project_name": "Match",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -349,7 +349,7 @@
     "upload_options": {
       "after": "screen",
       "description": "",
-      "icon": "pizza",
+      "icon": "ufo",
       "slot": 1
     }
   }

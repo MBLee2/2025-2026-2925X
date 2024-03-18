@@ -223,7 +223,7 @@ void taskFn_dashboard_display(void)
     while (true) 
     {
         // Render the dashboard screen
-        render_dashboard();
+        render_dashboard();  
        
         // once every 200 milliseconds (5 times a second) is enough for this task 
         // which just refreshes the dashboard display

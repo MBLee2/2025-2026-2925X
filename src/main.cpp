@@ -38,7 +38,7 @@ void initialize() {
     chassis.calibrate(); // ONLY FOR TUNING PID
 	
 	// weird bug in system; without the following delay, was getting a white screen
-	// on the brain rather than the display as expected
+	// on the brain rather than the display as expectedF
 	pros::delay(10); 
 	
 	// Clear the Brain screen and show status
@@ -100,7 +100,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -174,9 +174,17 @@ ASSET(test_txt);
 
 void autonomous() {
    printf("%s(): Entered\n", __func__);
-   	//chassis.moveToPoint(-10, 30, 1700); //ONLY FOR TUNING PID
-
+	//chassis.setPose(0,0,0);
+   	//chassis.moveToPoint(0, 30, 1700); //ONLY FOR TUNING PID 
 	//chassis.turnTo(90, 0, 1000); //ONLY FOR TUNING PID
+
+	/*chassis.moveToPoint(0, 30, 1700); // FINAL TUNEING
+	chassis.turnTo(90, 30, 1000);
+	chassis.moveToPoint(10, 30, 1700); 
+	chassis.moveToPoint(0, 30, 1700,false);
+	chassis.turnTo(0, 0, 1000,false);
+	chassis.moveToPoint(0, 0, 1700,false);
+	//*/
 
 //HERE
 	// Clear the Brain screen
@@ -223,26 +231,27 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	/*int shooting_time = 25000;	
-	int volts = 8900;
-	chassis.setPose(-44.5,52.5,45);
-	chassis.moveToPoint(-46.5,49,800,true,127,false);
-	left_piston.set_value(true);
-	pros::delay(140);
-	chassis.turnTo(0,60,1000,true,127,false);
-	left_piston.set_value(false);
-	chassis.moveToPose(-56,26,0,1000,{.forwards=false});
-	chassis.moveToPoint(-56,20,750,false);
-	chassis.moveToPose(-54,40,0,1000);
-	chassis.turnTo(50,10,500);
-	chassis.moveToPoint(-60,42,1000);
+	/*int shooting_time = 30000;	
+	int volts = 9500;
+	int funny_volts = 120000;
+   	chassis.setPose(-48,56.8388347648,45);
+   	chassis.moveToPoint(-58,41,1000,false);
+   	chassis.turnTo(-58,0,800,false);
+   	chassis.moveToPoint(-58,20,600,false);
+   	chassis.moveToPoint(-58,48,1000);
+   	chassis.turnTo(60,15,700);
+	//chassis.moveToPoint(-62,44,600);
+	chassis.moveToPoint(-63,48,450,false,60,false);
+	chassis.waitUntilDone();
 	cata_motors.move_voltage(volts);//*/
 
+
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-    pros::Task intake_task(taskFn_intake_control,"intake-task");
     pros::Task flywheel_task(taskFn_flywheel_control,"flywheel-task");
-    pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");
+    pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task wings_task(taskFn_wings_control,"wings-task");
+	pros::Task intake_task(taskFn_intake_control,"intake-task");
+	//pros::Task intake_task(taskFn_auto_intake_control,"cata_task");
     
     while (true) {
     }

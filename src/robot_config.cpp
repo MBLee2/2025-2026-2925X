@@ -2,24 +2,24 @@
 #include "robot_config.h"
 
 using namespace pros;
-
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 
 //  need to add all motors
-Motor left_front_motor(13,true);  // port 13, reversed
-Motor left_mid_motor(11,true);   // port 12, reversed
-Motor left_back_motor(12, true); // port 11, reversed
-Motor right_front_motor(20, false); // port 18, not reversed
-Motor right_mid_motor(19,false);    // port 19, not reversed
-Motor right_back_motor(15, false);  // port 20, not reversed
+Motor left_front_motor(18,true);  // port 13, reversed
+Motor left_mid_motor(20,true);   // port 12, reversed
+Motor left_back_motor(19, true); // port 11, reversed
+Motor right_front_motor(7, false); // port 18, not reversed
+Motor right_mid_motor(8,false);    // port 19, not reversed
+Motor right_back_motor(9, false);  // port 20, not reversed
+
 
 // other motors
-pros::Motor intake_mtr(3, pros::E_MOTOR_GEARSET_18, true);
+pros::Motor intake_mtr(11, pros::E_MOTOR_GEARSET_06, true);
 //pros::Motor intake_mtr1(3, pros::E_MOTOR_GEARSET_18, false);
 //pros::Motor cata_mtr1(14, pros::E_MOTOR_GEARSET_36, false); //UNCOMENT THIS WHEN USING DURING MATCHES
 pros::Motor cata_mtr1(10, pros::E_MOTOR_GEARSET_18, false); //UNCOMENT THIS WHEN USING DURING SKIILS
-pros::Motor cata_mtr2(1, pros::E_MOTOR_GEARSET_18, true);  //UNCOMENT THIS WHEN USING DURING SKIILS
+pros::Motor cata_mtr2(15, pros::E_MOTOR_GEARSET_18, true);  //UNCOMENT THIS WHEN USING DURING SKIILS
 
 MotorGroup cata_motors({cata_mtr1, cata_mtr2});
 
@@ -29,18 +29,18 @@ MotorGroup left_side_motors({left_front_motor, left_mid_motor, left_back_motor})
 MotorGroup right_side_motors({right_front_motor, right_mid_motor, right_back_motor});
 
 //Pistons
-pros::ADIDigitalOut lift_pistons ('G');
-pros::ADIDigitalOut PTO_piston ('H');
-pros::ADIDigitalOut left_piston ('F');
-
-//Unused but left for later if we use
-pros::ADIDigitalOut back_wing_piston ('E');
-pros::ADIDigitalOut right_piston ('C');
+pros::ADIDigitalOut lift_pistons ('F');
+//wings
+pros::ADIDigitalOut left_piston ('G');
+pros::ADIDigitalOut right_piston ('E');
 
 
 // inertial sensor
-Imu imu(21); // port 5
+Imu imu(21); // port 21
 Gps gps(0,0,0); // offsets in meters
+pros::ADIDigitalIn limitSwitch('A');
+pros::Distance distance_sensor(6);
+
  
 lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
@@ -48,53 +48,52 @@ lemlib::Drivetrain drivetrain(
     10.75, // track width
     lemlib::Omniwheel::NEW_275,// wheel diameter
     600, // wheel rpm
-	8 //chase Power
+	2 //chase Power
 );
 // left tracking wheel encoder
-pros::ADIEncoder left_enc('A', 'B', true); // ports A and B, reversed
 // right tracking wheel encoder
-pros::Rotation right_rot(1, false); // port 1, not reversed
-// back tracking wheel encoder
-pros::ADIEncoder back_enc('C', 'D', false); // ports C and D, not reversed
+pros::Rotation vertical_rot(13, true); // port 1, not reversed
+pros::Rotation horizontal_rot(6, true); // port 1, not reversed
+
+// back tracking wheel encoder  
  
-// left tracking wheel
-lemlib::TrackingWheel left_tracking_wheel(&left_enc, 2.75, -4.6); // 2.75" wheel diameter, -4.6" offset from tracking center
-// right tracking wheel
-lemlib::TrackingWheel right_tracking_wheel(&right_rot, 2.75, 1.7); // 2.75" wheel diameter, 1.7" offset from tracking center
-lemlib::TrackingWheel back_tracking_wheel(&back_enc, 2.75, 4.5); // 2.75" wheel diameter, 4.5" offset from tracking center
- 
+// vertical tracking wheel
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot, 2.00, -2.75); // 2.00" wheel diameter, -4.6" offset from tracking center 
+// horizontal tracking wheel
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot, 2.00, 6.875); // 2.00" wheel diameter, 4.5" offset from tracking center
+
 // odometry struct
 lemlib::OdomSensors sensors(
-    nullptr, // vertical tracking wheel 1
+    nullptr, //SKILLSa  
     nullptr, // vertical tracking wheel 2
-    nullptr, // horizontal tracking wheel 1
+    nullptr,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &imu // inertial sensor
-);
+);  
  
 // forward/backward PID
 lemlib::ControllerSettings linearController(
-    11, // kP
+    17, // kP
     0, // integral gain (kI)
-    90.2, // kD
+    141, // kD
     3, // anti windup
     1, // smallErrorRange
-    100, // smallErrorTimeout
+    50, // smallErrorTimeout
     3, // largeErrorRange
-    500, // largeErrorTimeout
-    40 // slew rate; 
+    300, // largeErrorTimeout
+    8 // slew rate; 
 );
 // turning PID
 lemlib::ControllerSettings angularController(
     7, // kP
     0, // integral gain (kI)
-    63, // kD
+    52, // kD
     3, // anti windup
     1, // smallErrorRange
-    100, // smallErrorTimeout
+    50, // smallErrorTimeout
     3, // largeErrorRange
-    500, // largeErrorTimeou
-    12 // slew rate
+    300, // largeErrorTimeou
+    10 // slew rate
 );
  
  
