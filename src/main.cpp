@@ -175,8 +175,18 @@ ASSET(test_txt);
 void autonomous() {
    printf("%s(): Entered\n", __func__);
 	//chassis.setPose(0,0,0);
-   	//chassis.moveToPoint(0, 30, 1700); //ONLY FOR TUNING PID 
-	//chassis.turnTo(90, 0, 1000); //ONLY FOR TUNING PID
+   	//chassis.moveToPoint(0, 50, 1700); //ONLY FOR TUNING PID 
+	//chassis.turnToPoint(90, 0, 1000); //ONLY FOR TUNING PID
+
+	/*chassis.moveToPoint(0, 10, 1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.turnToHeading(90,1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.moveToPoint(10, 10, 1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.turnToHeading(180,1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.moveToPoint(10, 0, 1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.turnToHeading(270,1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.moveToPoint(0, 0, 1000,{.minSpeed=20,.earlyExitRange = 1});
+    chassis.turnToHeading(0,1000,{.minSpeed=20,.earlyExitRange = 1});
+	//*/
 
 	/*chassis.moveToPoint(0, 30, 1700); // FINAL TUNEING
 	chassis.turnTo(90, 30, 1000);
