@@ -13,6 +13,7 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+int counter = 0;
 void screen() {
     // loop forever
     while (true) {
@@ -108,7 +109,13 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	counter ++;
+	if (counter >= 3)
+	{
+		chassis.arcade(40, 0);
+	}
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -175,7 +182,7 @@ ASSET(test_txt);
 void autonomous() {
    printf("%s(): Entered\n", __func__);
 	//chassis.setPose(0,0,0);
-   	//chassis.moveToPoint(0, 50, 1700); //ONLY FOR TUNING PID 
+   	//chassis.moveToPoint(0, 24, 1700); //ONLY FOR TUNING PID 
 	//chassis.turnToPoint(90, 0, 1000); //ONLY FOR TUNING PID
 
 	/*chassis.moveToPoint(0, 10, 1000,{.minSpeed=20,.earlyExitRange = 1});

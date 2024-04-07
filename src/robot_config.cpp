@@ -6,12 +6,12 @@ pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //  need to add all motors
 pros::Motor left_front_motor(19, pros::E_MOTOR_GEARSET_06);  // port 13, reversed
-pros::Motor left_extra_motor(14, pros::E_MOTOR_GEARSET_18);   // port 12, reversed
+pros::Motor left_extra_motor(14, pros::E_MOTOR_GEARSET_06);   // port 12, reversed
 pros::Motor left_mid_motor(18, pros::E_MOTOR_GEARSET_06);   // port 12, reversed
 pros::Motor left_back_motor(-8, pros::E_MOTOR_GEARSET_06); // port 11, reversed
 
 pros::Motor right_front_motor(-12, pros::E_MOTOR_GEARSET_06); // port 18, not reversed
-pros::Motor right_extra_motor(-13, pros::E_MOTOR_GEARSET_18);   // port 12, reversed
+pros::Motor right_extra_motor(-13, pros::E_MOTOR_GEARSET_06);   // port 12, reversed
 pros::Motor right_mid_motor(-15, pros::E_MOTOR_GEARSET_06);    // port 19, not reversed
 pros::Motor right_back_motor(1, pros::E_MOTOR_GEARSET_06);  // port 20, not reversed
 
@@ -29,6 +29,7 @@ pros::MotorGroup cata_motors({cata_mtr1, cata_mtr2});
 // drivetrain motor groups
 pros::MotorGroup left_side_motors({left_front_motor, left_extra_motor, left_mid_motor, left_back_motor});
 pros::MotorGroup right_side_motors({right_front_motor, right_mid_motor, right_extra_motor, right_back_motor});
+pros::MotorGroup test({right_mid_motor});
 
 //Pistons
 pros::ADIDigitalOut lift_pistons ('F');
@@ -48,7 +49,7 @@ lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
     10.5, // track width
-    lemlib::Omniwheel::NEW_325,// wheel diameter
+    4.40,// wheel diameter
     450, // wheel rpm
 	2 //chase Power
 );
@@ -60,7 +61,7 @@ pros::Rotation horizontal_rot(6, true); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot, 2.00, -2.75); // 2.00" wheel diameter, -4.6" offset from tracking center 
+lemlib::TrackingWheel vertical_tracking_wheel(&test, 3.75, 5.25,450); // 2.00" wheel diameter, -4.6" offset from tracking center 
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot, 2.00, 6.875); // 2.00" wheel diameter, 4.5" offset from tracking center
 
@@ -75,27 +76,27 @@ lemlib::OdomSensors sensors(
  
 // forward/backward PID
 lemlib::ControllerSettings linearController
-(   9, // proportional gain (kP)
+(   8, // proportional gain (kP)
     0, // integral gain (kI)
-    16, // derivative gain (kD)
+    40, // derivative gain (kD)
     0, // anti windup
     1, // small error range, in inches
     100, // small error range timeout, in milliseconds
     5, // large error range, in inches
     1000, // large error range timeout, in milliseconds
-    12 // maximum acceleration (slew)
+    16 // maximum acceleration (slew)
 );
 // turning PID
 lemlib::ControllerSettings angularController(
     3, // kP
     0, // integral gain (kI)
-    22.5, // kD
+    25, // kD
     3, // anti windup
     1, // smallErrorRange
     50, // smallErrorTimeout
     3, // largeErrorRange
     300, // largeErrorTimeou
-    14 // slew rate
+    16 // slew rate
 );
  
 // create the chassis

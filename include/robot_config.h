@@ -3,6 +3,7 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
+#include "pros/motors.hpp"
 
 #define PI 3.14159265
 // useful conversions
@@ -46,6 +47,7 @@ extern pros::Motor cata_mtr2;
 extern pros::Motor_Group cata_motors;              // Left drivetrain of drivebase
 extern pros::Motor_Group left_side_motors;              // Left drivetrain of drivebase
 extern pros::Motor_Group right_side_motors;             // Right drivetrain of drivebase
+extern pros::Motor_Group test;
 //pistons
 extern pros::ADIDigitalOut lift_pistons;
 extern pros::ADIDigitalOut back_wing_piston;

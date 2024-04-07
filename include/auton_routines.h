@@ -25,7 +25,7 @@ extern auton_routine skills_1, skills_2;
 // functions to render the menu and read inputs from it
 void auton_15s_near_driver_qual();
 void rushWP();
-void auton_15s_near_driver_elim();
+void DescoreRushElim();
 void rushelim();
 
 void auton_15s_far_driver_qual();

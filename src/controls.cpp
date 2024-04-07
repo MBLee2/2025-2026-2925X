@@ -1,4 +1,5 @@
 #include "controls.h"
+#include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "lemlib/api.hpp"
 #define TURN_CONST 1.3
@@ -9,6 +10,7 @@ double now_time;
 
 void taskFn_drivebase_control(void)
 {
+    bool lift_status = false;
     printf("%s(): Entered \n", __func__);
     while (true) 
     {
@@ -35,7 +37,23 @@ void taskFn_drivebase_control(void)
             turnVelright = 0;
         }
 
-       
+       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) 
+        {
+            if (lift_status == false)
+            {
+                lift_status = true;
+                lift_pistons.set_value(true);
+
+            }
+            else if(lift_status == true)
+            {
+                lift_status = false;
+                lift_pistons.set_value(false);
+                chassis.arcade(100, 0);
+                pros::delay(300);
+                
+            }   
+        }
 
        //chassis.arcade(leftY,turnVelleft);
         //chassis.arcade(leftY,turnVelright);
@@ -73,7 +91,7 @@ void taskFn_flywheel_control(void)
     while (true) 
     {
 
-       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
+       /*if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
         { //WHEN SHIFT KEY IS PRESSED
         if (cata_status == false)
             {
@@ -90,9 +108,9 @@ void taskFn_flywheel_control(void)
                 cata_motors.move_voltage(0);
 
 
-            }//*/
+            }
 
-        }
+        }//*/
         //WHEN SHIFT KEY IS NOT PRESSED
         
         
@@ -116,8 +134,6 @@ void taskFn_flywheel_control(void)
 //Intake control
 void taskFn_intake_control(void)
 {
-    bool lift_status = false;
-
     printf("%s(): Entered \n", __func__);
     while (true) 
     {
@@ -135,20 +151,6 @@ void taskFn_intake_control(void)
         } 
         intake_mtr.move(0); 
 
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) 
-        {
-            if (lift_status == false)
-            {
-                lift_status = true;
-                lift_pistons.set_value(true);
-
-            }
-            else if(lift_status == true)
-            {
-                lift_status = false;
-                lift_pistons.set_value(false);
-            }   
-        }
     /*if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) 
         {
             lift_pistons.set_value(true);
@@ -181,34 +183,24 @@ void taskFn_intake_control(void)
 //Wings Control
 void taskFn_wings_control(void)
 {
+    bool status_wings = false;
     while (true) 
     {
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) left_piston.set_value(true);
+        else left_piston.set_value(status_wings);
+
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) right_piston.set_value(true);
+        else right_piston.set_value(status_wings);
+
+        
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A))
         {
-            left_piston.set_value(true);
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-            {
-                right_piston.set_value(true);
-            }
-            else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == false)
-            {
-                right_piston.set_value(false);
-            }
-        }   
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-        {
-            right_piston.set_value(true);
-            if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-            {
-                left_piston.set_value(true);
-            }
-            else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == false)
-            {
-                left_piston.set_value(false);
-            }
-        } 
-        right_piston.set_value(false);
-        left_piston.set_value(false);
+            status_wings = !status_wings;
+            left_piston.set_value(status_wings);
+            right_piston.set_value(status_wings);
+            
+        }
         pros::delay(20);
     }
 }
