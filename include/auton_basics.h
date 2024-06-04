@@ -19,6 +19,8 @@
 #define FIELD_Y_AXIS_MIN -1.800    // -1.8 meters
 
 
+
+
 // ENUM to capture which sensors is in use
 // Typically used in autonomous functions needing position and heading data
 enum e_sensors_used {
@@ -71,7 +73,11 @@ bool move_to_xy (float target_x, float target_y, bool move_backwards = false,
 bool move_with_motor_encoder (float target_dist,
     int time_out = 60000, int max_voltage = 12000, 
     float dist_margin = DRIVEBASE_ACCEPTABLE_MOVE_ERROR_M); 
-
+float get_y();
+float get_x();
+void reset();
+void reset1();
+double normalize_angle(double angle);
 /* bool move_with_motor_encoder (float target_dist,
     int time_out = 60000, int max_voltage = 12000, 
     float dist_margin = DRIVEBASE_ACCEPTABLE_MOVE_ERROR_IN);*/

@@ -146,6 +146,7 @@ auton_routine select_auton_routine()
                     pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
                     pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
                         button_list[i].button.text.data());
+                    master.print(0, 0, "Auton: %s", button_list[i].button.text.data());
                     pros::delay(1000);
                     break; // selection made, end the for() loop
                 }

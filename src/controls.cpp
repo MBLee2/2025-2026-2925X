@@ -2,14 +2,14 @@
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "lemlib/api.hpp"
-#define TURN_CONST 1.3
- 
-
+#include "lemlib/timer.hpp"
+#define TURN_CONST 1.4
 //Drivebase control
 double now_time;
 
 void taskFn_drivebase_control(void)
 {
+    
     bool lift_status = false;
     printf("%s(): Entered \n", __func__);
     while (true) 
@@ -19,24 +19,10 @@ void taskFn_drivebase_control(void)
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         
-        int turnVelright;
-        int turnVelleft;
+        int turnVelright = TURN_CONST*rightX;
+        int turnVelleft = TURN_CONST*leftX;
 
-        if(rightX > 0) //PERFECT QUADRATIC
-        {
-            turnVelright = (rightX * rightX)/(127/TURN_CONST);
-            turnVelleft = (leftX * leftX)/(127/TURN_CONST);
-        }
-        else if (rightX < -0) //PERFECT QUADRATIC
-        {
-            turnVelright = -1*(rightX * rightX)/(127/TURN_CONST);
-            turnVelleft = (leftX * leftX)/-1*(127/TURN_CONST);
-        }
-        else
-        {
-            turnVelright = 0;
-        }
-
+        
        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) 
         {
             if (lift_status == false)
@@ -49,17 +35,17 @@ void taskFn_drivebase_control(void)
             {
                 lift_status = false;
                 lift_pistons.set_value(false);
-                chassis.arcade(100, 0);
-                pros::delay(300);
-                
+                intake_mtr.move(-127);
+    
             }   
         }
 
-       //chassis.arcade(leftY,turnVelleft);
+        //chassis.arcade(leftY,turnVelleft);
         //chassis.arcade(leftY,turnVelright);
         left_side_motors.move(leftY + turnVelright);
 		right_side_motors.move(leftY - turnVelright);
         //chassis.tank(leftY,rightY,0);
+
 
             
 
@@ -86,45 +72,18 @@ void taskFn_flywheel_control(void)
     cata_mtr1.tare_position();
     bool cata_status = false;
     bool cata_angle = 0;
-
+    lemlib::Timer match (20000);
 
     while (true) 
-    {
-
-       /*if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
-        { //WHEN SHIFT KEY IS PRESSED
-        if (cata_status == false)
+    {   
+        if(match.getTimeLeft() < 10000) {
+            while(true)
             {
-                cata_status = true;
-                //cata_mtr1.move_voltage(12000); 
-                //cata_motors.move_voltage(9100);
-                cata_motors.move_voltage(8590);
-                printf("Postition \n",cata_mtr1.get_position());
-
+                master.rumble("");
+                pros::delay(1000);
             }
-            else if(cata_status == true)
-            {
-                cata_status = false;
-                cata_motors.move_voltage(0);
-
-
-            }
-
-        }//*/
-        //WHEN SHIFT KEY IS NOT PRESSED
-        
-        
-        
+        }
         pros::delay(20);
-        /* now_time = pros::millis();
-        if (now_time - opcontrol_start_time == 105000)
-        {
-            lift_status = false;
-            lift_pistonsF.set_value(false);
-            lift_pistonsB.set_value(false);
-        }//*/
-        //printf("%s(): Exiting \n", __func__);    
-
     } // end of while loop
 
     printf("%s(): Exiting \n", __func__);
@@ -186,11 +145,11 @@ void taskFn_wings_control(void)
     bool status_wings = false;
     while (true) 
     {
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) left_piston.set_value(true);
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){ left_piston.set_value(true);} 
         else left_piston.set_value(status_wings);
 
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) right_piston.set_value(true);
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){ right_piston.set_value(true);} 
         else right_piston.set_value(status_wings);
 
         

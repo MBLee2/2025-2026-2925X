@@ -5,6 +5,7 @@
 #include "dashboard.h"
 #include "lemlib/api.hpp"
 #include "controls.h"
+#include "pros/rtos.hpp"
 #include "robot_config.h"
 
 /**
@@ -101,7 +102,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -110,11 +111,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
-	counter ++;
-	if (counter >= 3)
-	{
-		chassis.arcade(40, 0);
-	}
+	
 }
 
 /**
@@ -181,29 +178,8 @@ ASSET(test_txt);
 
 void autonomous() {
    printf("%s(): Entered\n", __func__);
-	//chassis.setPose(0,0,0);
-   	//chassis.moveToPoint(0, 24, 1700); //ONLY FOR TUNING PID 
-	//chassis.turnToPoint(90, 0, 1000); //ONLY FOR TUNING PID
 
-	/*chassis.moveToPoint(0, 10, 1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.turnToHeading(90,1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.moveToPoint(10, 10, 1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.turnToHeading(180,1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.moveToPoint(10, 0, 1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.turnToHeading(270,1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.moveToPoint(0, 0, 1000,{.minSpeed=20,.earlyExitRange = 1});
-    chassis.turnToHeading(0,1000,{.minSpeed=20,.earlyExitRange = 1});
-	//*/
-
-	/*chassis.moveToPoint(0, 30, 1700); // FINAL TUNEING
-	chassis.turnTo(90, 30, 1000);
-	chassis.moveToPoint(10, 30, 1700); 
-	chassis.moveToPoint(0, 30, 1700,false);
-	chassis.turnTo(0, 0, 1000,false);
-	chassis.moveToPoint(0, 0, 1700,false);
-	//*/
-
-//HERE
+	//HERE
 	// Clear the Brain screen
 	pros::screen::set_eraser(COLOR_BLACK);
 	pros::screen::erase();

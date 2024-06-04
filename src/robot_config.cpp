@@ -17,7 +17,7 @@ pros::Motor right_back_motor(1, pros::E_MOTOR_GEARSET_06);  // port 20, not reve
 
 
 // other motors
-pros::Motor intake_mtr(4, pros::E_MOTOR_GEARSET_06);
+pros::Motor intake_mtr(5, pros::E_MOTOR_GEARSET_06);
 //pros::Motor intake_mtr1(3, pros::E_MOTOR_GEARSET_18, false);
 //pros::Motor cata_mtr1(14, pros::E_MOTOR_GEARSET_36, false); //UNCOMENT THIS WHEN USING DURING MATCHES
 pros::Motor cata_mtr1(10, pros::E_MOTOR_GEARSET_18, false); //UNCOMENT THIS WHEN USING DURING SKIILS
@@ -42,7 +42,9 @@ pros::ADIDigitalOut right_piston ('E');
 pros::Imu imu(17); // port 21
 pros::Gps gps(0,0,0); // offsets in meters
 pros::ADIDigitalIn limitSwitch('A');
-pros::Distance distance_sensor(6);
+pros::Distance distance_x(7);
+pros::Distance distance_y(6);
+pros::Distance distance_sensor(3);
 
  
 lemlib::Drivetrain drivetrain(
@@ -78,7 +80,7 @@ lemlib::OdomSensors sensors(
 lemlib::ControllerSettings linearController
 (   8, // proportional gain (kP)
     0, // integral gain (kI)
-    40, // derivative gain (kD)
+    56, // derivative gain (kD)
     0, // anti windup
     1, // small error range, in inches
     100, // small error range timeout, in milliseconds
@@ -88,15 +90,15 @@ lemlib::ControllerSettings linearController
 );
 // turning PID
 lemlib::ControllerSettings angularController(
-    3, // kP
+    4, // kP
     0, // integral gain (kI)
-    25, // kD
+    44.5, // kD
     3, // anti windup
     1, // smallErrorRange
     50, // smallErrorTimeout
     3, // largeErrorRange
     300, // largeErrorTimeou
-    16 // slew rate
+    12 // slew rate
 );
  
 // create the chassis

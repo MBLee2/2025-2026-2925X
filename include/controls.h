@@ -15,6 +15,7 @@ extern void taskFn_wings_control(void);
 // Auto cata controller
 extern void taskFn_auto_intake_control(void);
 // task fuctions for intake contol to be parrlelized
+extern double psi;
 
 
 

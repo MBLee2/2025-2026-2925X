@@ -57,6 +57,8 @@ extern pros::ADIDigitalOut left_piston;
 extern pros::Gps gps;
 extern pros::IMU imu;
 extern pros::ADIDigitalIn limitSwitch;
+extern pros::Distance distance_x;
+extern pros::Distance distance_y;
 extern pros::Distance distance_sensor;
 
 

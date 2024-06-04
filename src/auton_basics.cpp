@@ -1,6 +1,7 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "lemlib/pose.hpp"
 #include "robot_config.h"
 #include "controls.h"
 #include "lemlib/api.hpp"
@@ -1175,3 +1176,50 @@ bool move_with_motor_encoder_fast (float target_dist, int time_out, int max_volt
     return true;
 
 } // end move_motor_encoder_fast
+
+float get_x()
+{   double Y_OFFSET = -6.6;
+    return ((72-(distance_y.get()/25.4)) + Y_OFFSET);
+
+}
+float get_y()
+{   
+    double X_OFFSET = -7;
+    return ((72-(distance_x.get()/25.4)) + X_OFFSET);
+}
+
+double normalize_angle(double angle) {
+    double normalized_angle = atan2(sin(angle * M_PI / 180.0), cos(angle * M_PI / 180.0));
+    normalized_angle = normalized_angle * 180.0 / M_PI;
+    if (normalized_angle < 0) {
+        normalized_angle += 360.0;
+    }
+    master.print(0, 0, "", normalized_angle);
+    return normalized_angle;
+}
+
+void reset ()
+{
+    if(normalize_angle(chassis.getPose().theta) > -5 && normalize_angle(chassis.getPose().theta) < 5)
+    {
+        chassis.setPose(-1*(get_y()),-1*(get_x()),chassis.getPose().theta);
+    }
+    else if(normalize_angle(chassis.getPose().theta) > 85 && normalize_angle(chassis.getPose().theta) < 95)
+    {
+        chassis.setPose(-1*(get_x()),get_y(),chassis.getPose().theta);
+    }
+
+    else if(normalize_angle(chassis.getPose().theta) > 175 && normalize_angle(chassis.getPose().theta) < 185)
+    {
+        chassis.setPose(get_y(),get_x(),chassis.getPose().theta);   
+    }
+    
+    else if(normalize_angle(chassis.getPose().theta) > 265 && normalize_angle(chassis.getPose().theta) < 275)
+    {
+        chassis.setPose(get_x(),-1*(get_y()),chassis.getPose().theta);
+    }
+}
+void reset1 ()
+{
+    reset();
+}
