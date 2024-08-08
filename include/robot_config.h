@@ -32,13 +32,16 @@
 extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
-extern pros::Motor left_front_motor; 
-extern pros::Motor left_back_motor;
-extern pros::Motor right_front_motor;
-extern pros::Motor right_back_motor;
 
-extern pros::Motor_Group left_side_motors;              // Left drivetrain of drivebase
-extern pros::Motor_Group right_side_motors;             // Right drivetrain of drivebase
+// extern pros::Motor lf; 
+// extern pros::Motor lm;
+// extern pros::Motor lb;
+// extern pros::Motor rf; 
+// extern pros::Motor rm;
+// extern pros::Motor rb;
+
+extern pros::MotorGroup left_side_motors;              // Left drivetrain of drivebase
+extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
 extern pros::GPS gps;
 extern pros::IMU imu;
 

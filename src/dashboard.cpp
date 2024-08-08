@@ -47,10 +47,10 @@ void render_dashboard()
     // printf("%s(): Entered \n", __func__);
 
     // draw the outer container box
-    pros::screen::set_pen(COLOR_DARK_GRAY);
+    pros::screen::set_pen(pros::c::COLOR_DARK_GRAY);
     pros::screen::fill_rect(1, 100, 479, 239); 
     // Put the title box at the top
-    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::set_pen(pros::c::COLOR_WHITE);
     pros::screen::print(pros::E_TEXT_MEDIUM, 175, 110, "Robot Dashboard");
 
     // draw all the dashboard_motor_display_items 
@@ -60,21 +60,21 @@ void render_dashboard()
         // Mark RED if over temperature detected
         if (dashboard_motor_display_items[i].mtr.is_over_temp())
         {
-            dashboard_motor_display_items[i].motor_temp.fill_color = COLOR_RED;
+            dashboard_motor_display_items[i].motor_temp.fill_color = pros::c::COLOR_RED;
             dashboard_motor_display_items[i].motor_temp.text 
                 = std::to_string(int(dashboard_motor_display_items[i].mtr.get_temperature())) + " OT";
         }
         // Mark YELLOW if over 55 degrees celcius
         else if (dashboard_motor_display_items[i].mtr.get_temperature() > 55)
         {
-            dashboard_motor_display_items[i].motor_temp.fill_color = COLOR_YELLOW;
+            dashboard_motor_display_items[i].motor_temp.fill_color = pros::c::COLOR_YELLOW;
             dashboard_motor_display_items[i].motor_temp.text 
                 = std::to_string(int(dashboard_motor_display_items[i].mtr.get_temperature()));
         }
         // Mark GREEN in all other cases
         else 
         {
-            dashboard_motor_display_items[i].motor_temp.fill_color = COLOR_GREEN;
+            dashboard_motor_display_items[i].motor_temp.fill_color = pros::c::COLOR_GREEN;
             dashboard_motor_display_items[i].motor_temp.text 
                 = std::to_string(int(dashboard_motor_display_items[i].mtr.get_temperature()));
         }
@@ -89,13 +89,13 @@ void render_dashboard()
         // Mark RED if over current detected
         if (dashboard_motor_display_items[i].mtr.is_over_current())
         {
-            dashboard_motor_display_items[i].over_current.fill_color = COLOR_RED;
+            dashboard_motor_display_items[i].over_current.fill_color = pros::c::COLOR_RED;
             dashboard_motor_display_items[i].over_current.text = "OC";
         }
         // Mark GRAY in all other cases
         else 
         {
-            dashboard_motor_display_items[i].over_current.fill_color = COLOR_GRAY;
+            dashboard_motor_display_items[i].over_current.fill_color = pros::c::COLOR_GRAY;
             // current output is in milli Amps; convert to Amps
             dashboard_motor_display_items[i].over_current.text 
                 = std::to_string(float(dashboard_motor_display_items[i].mtr.get_current_draw())/1000);
@@ -133,17 +133,17 @@ void render_compass_rose()
     // and 10x10 pixel size for E_TEXT_MEDIUM. 
 
     // clear out the compass rose areas
-    pros::screen::set_pen(COLOR_BLACK);
+    pros::screen::set_pen(pros::c::COLOR_BLACK);
     pros::screen::fill_circle(cc_x, cc_y, rad+5);
 
     // re-draw the compass rose
-    pros::screen::set_pen(COLOR_TEAL);
+    pros::screen::set_pen(pros::c::COLOR_TEAL);
     pros::screen::draw_circle(cc_x, cc_y, rad);
     // draw the axes
     pros::screen::draw_line(cc_x-rad, cc_y,     cc_x+rad, cc_y);
     pros::screen::draw_line(cc_x,     cc_y-rad, cc_x,     cc_y+rad);
     // print the 4 cardinal directions
-    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::set_pen(pros::c::COLOR_WHITE);
     pros::screen::print(pros::E_TEXT_SMALL,  cc_x-5,      cc_y-rad-5, "0"  );
     pros::screen::print(pros::E_TEXT_SMALL,  cc_x+rad-5,  cc_y-5,     "90" );
     pros::screen::print(pros::E_TEXT_SMALL,  cc_x-10,     cc_y+rad-5, "180");
@@ -158,7 +158,7 @@ void render_compass_rose()
         // draw a "bug" on the compass rose depicting the current heading
         int bug_x = cc_x + rad * sin(deg2rad(current_heading));
         int bug_y = cc_y - rad * cos(deg2rad(current_heading));
-        pros::screen::set_pen(COLOR_YELLOW);
+        pros::screen::set_pen(pros::c::COLOR_YELLOW);
         pros::screen::fill_circle(bug_x, bug_y, 3); 
         pros::screen::draw_line(cc_x, cc_y, bug_x,bug_y);
         // Also display the current heading in numbers in the middle of the compass rose
@@ -183,7 +183,7 @@ void taskFn_display_gps_coordinates(void)
     while (true)
     {
         // Dsiplay the (x, y) coordinates
-        pros::screen::set_pen(COLOR_YELLOW);
+        pros::screen::set_pen(pros::c::COLOR_YELLOW);
         pros::screen::print(pros::E_TEXT_MEDIUM, 250, 13, "GPS Readout");
         //pros::screen::print(pros::E_TEXT_MEDIUM, 250, 35, "  x: %+1.3f", gps.get_status().x);
         //pros::screen::print(pros::E_TEXT_MEDIUM, 250, 55, "  y: %+1.3f", gps.get_status().y);

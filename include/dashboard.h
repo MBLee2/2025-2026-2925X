@@ -19,10 +19,10 @@ typedef struct s_dashboard_motor_display
     std::string mtr_name;
     pros::Motor &mtr;
     // Hard coded based on the above
-    rectangle_patch motor_name   {x1,    y1,    x1+60,  y1+20, COLOR_DARK_SLATE_GRAY, COLOR_WHITE_SMOKE, mtr_name.data(),                pros::E_TEXT_SMALL};
-    rectangle_patch port_number  {x1+60, y1,    x1+100, y1+20, COLOR_DARK_SLATE_GRAY, COLOR_WHITE_SMOKE, std::to_string(mtr.get_port()), pros::E_TEXT_SMALL};
-    rectangle_patch motor_temp   {x1,    y1+20, x1+60,  y1+45, COLOR_BLACK,           COLOR_WHITE_SMOKE, "-- --",                        pros::E_TEXT_SMALL};
-    rectangle_patch over_current {x1+60, y1+20, x1+100, y1+45, COLOR_BLACK,           COLOR_WHITE_SMOKE, "--",                           pros::E_TEXT_SMALL};
+    rectangle_patch motor_name   {x1,    y1,    x1+60,  y1+20, pros::c::COLOR_DARK_SLATE_GRAY, pros::c::COLOR_WHITE_SMOKE, mtr_name.data(),                pros::E_TEXT_SMALL};
+    rectangle_patch port_number  {x1+60, y1,    x1+100, y1+20, pros::c::COLOR_DARK_SLATE_GRAY, pros::c::COLOR_WHITE_SMOKE, std::to_string(mtr.get_port()), pros::E_TEXT_SMALL};
+    rectangle_patch motor_temp   {x1,    y1+20, x1+60,  y1+45, pros::c::COLOR_DARK_SLATE_GRAY, pros::c::COLOR_WHITE_SMOKE, "-- --",                        pros::E_TEXT_SMALL};
+    rectangle_patch over_current {x1+60, y1+20, x1+100, y1+45, pros::c::COLOR_DARK_SLATE_GRAY, pros::c::COLOR_WHITE_SMOKE, "--",                           pros::E_TEXT_SMALL};
     
 } dashboard_motor_display; 
 

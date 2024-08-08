@@ -6,19 +6,36 @@
 #include "lemlib/api.hpp"
 
 // define the auton menu buttons
-std::vector <auton_menu_button> button_list = 
-{
-    auton_menu_button {{ 15, 50, 115, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, near_driver_qual},
-    auton_menu_button {{130, 50, 230, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, near_driver_qual2},
-    auton_menu_button {{245, 50, 345, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM },near_driver_elim},
-    auton_menu_button {{360, 50, 460, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, near_driver_elim2},
-    auton_menu_button {{ 15, 115, 115, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, far_from_driver_qual },
-    auton_menu_button {{130, 115, 230, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, far_from_driver_elim  },
-    auton_menu_button {{245, 115, 345, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, far_from_driver_elim2},
-    auton_menu_button {{ 15, 180, 230, 230, COLOR_BEIGE, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM },  skills_1},
-    auton_menu_button {{245, 180, 460, 230, COLOR_BEIGE, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM },  skills_2}
-};
+using pros::c::COLOR_WHITE;
 
+std::vector<auton_menu_button> button_list = {
+    auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      near_driver_qual},
+    auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      near_driver_qual2},
+    auton_menu_button{{245, 50, 345, 100, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      near_driver_elim},
+    auton_menu_button{{360, 50, 460, 100, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      near_driver_elim2},
+    auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      far_from_driver_qual},
+    auton_menu_button{{130, 115, 230, 165, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      far_from_driver_elim},
+    auton_menu_button{{245, 115, 345, 165, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      far_from_driver_elim2},
+    auton_menu_button{{15, 180, 230, 230, pros::c::COLOR_BEIGE,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      skills_1},
+    auton_menu_button{{245, 180, 460, 230, pros::c::COLOR_BEIGE,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      skills_2}};
 
 void draw_rectangle_patch(rectangle_patch p) 
 /**
@@ -28,7 +45,7 @@ void draw_rectangle_patch(rectangle_patch p)
 */
 {
     // draw a rectanglular outline representing the button in WHITE
-    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::set_pen(pros::c::COLOR_WHITE);
     pros::screen::draw_rect(p.x1, p.y1, p.x2, p.y2);
     // draw a filled rectangle representing the button
     pros::screen::set_pen(p.fill_color);
@@ -57,7 +74,7 @@ void highlight_rectangle_patch(rectangle_patch p)
 */
 {
     // draw a rectangle representing the button
-    pros::screen::set_pen(COLOR_CRIMSON);
+    pros::screen::set_pen(pros::c::COLOR_CRIMSON);
     pros::screen::fill_rect(p.x1, p.y1, p.x2, p.y2);
     pros::delay(400);
 
@@ -74,7 +91,7 @@ void draw_auton_menu_screen()
     // printf("%s(): Entered \n", __func__);
 
     // clear the screen      
-    pros::screen::set_eraser(COLOR_BLACK);
+    pros::screen::set_eraser(pros::c::COLOR_BLACK);
     pros::screen::erase();
 
     // draw the outer container box
@@ -135,10 +152,10 @@ auton_routine select_auton_routine()
                     printf("%s(): Selected: [%s] \n", __func__, button_list[i].button.text.data());
 
                     // clear the screen      
-                    pros::screen::set_eraser(COLOR_BLACK);
+                    pros::screen::set_eraser(pros::c::COLOR_BLACK);
                     pros::screen::erase();
                     // Print the selection as a confirmation
-                    pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
+                    pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
                     pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
                         button_list[i].button.text.data());
                     master.print(0, 0, "Auton: %s", button_list[i].button.text.data());
