@@ -11,6 +11,13 @@ void taskFn_drivebase_control(void){
 
     while (true) 
     {
+
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        {
+            drive_state = !drive_state;  // Toggle direction
+            pros::delay(300);  // Add a small delay to avoid rapid toggling
+        }
+
         int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
         int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -39,7 +46,7 @@ void taskFn_lift_control(void){
     printf("%s(): Entered \n", __func__);
     while (true) 
     {
-         while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
             lift.move(127);  
         }   
