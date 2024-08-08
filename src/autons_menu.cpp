@@ -8,20 +8,15 @@
 // define the auton menu buttons
 std::vector <auton_menu_button> button_list = 
 {
-    // Near driver autons
-    auton_menu_button {{ 15, 50, 115, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NrsfWP", pros::E_TEXT_MEDIUM }, near_driver_qual},
-    auton_menu_button {{130, 50, 230, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "Rush WP", pros::E_TEXT_MEDIUM }, near_driver_qual2},
-    auton_menu_button {{245, 50, 345, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NrSfElim", pros::E_TEXT_MEDIUM },near_driver_elim},
-    auton_menu_button {{360, 50, 460, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NrRushElim", pros::E_TEXT_MEDIUM }, near_driver_elim2},
-    // Far from driver autons
-    auton_menu_button {{ 15, 115, 115, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "Fr Qual", pros::E_TEXT_MEDIUM }, far_from_driver_qual },
-    auton_menu_button {{130, 115, 230, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "test", pros::E_TEXT_MEDIUM }, far_from_driver_elim  },
-    auton_menu_button {{245, 115, 345, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "Sf6Ball", pros::E_TEXT_MEDIUM }, far_from_driver_elim2},
-  //  auton_menu_button {{360, 115, 460, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "FAR 4", pros::E_TEXT_MEDIUM },  },
-  
-    // Skills autons
-    auton_menu_button {{ 15, 180, 230, 230, COLOR_BEIGE, COLOR_WHITE_SMOKE, "SKILLS 1", pros::E_TEXT_MEDIUM },  skills_1},
-    auton_menu_button {{245, 180, 460, 230, COLOR_BEIGE, COLOR_WHITE_SMOKE, "SKILLS 2", pros::E_TEXT_MEDIUM },  skills_2}
+    auton_menu_button {{ 15, 50, 115, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, near_driver_qual},
+    auton_menu_button {{130, 50, 230, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, near_driver_qual2},
+    auton_menu_button {{245, 50, 345, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM },near_driver_elim},
+    auton_menu_button {{360, 50, 460, 100, COLOR_DIM_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, near_driver_elim2},
+    auton_menu_button {{ 15, 115, 115, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, far_from_driver_qual },
+    auton_menu_button {{130, 115, 230, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, far_from_driver_elim  },
+    auton_menu_button {{245, 115, 345, 165, COLOR_DARK_GRAY, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM }, far_from_driver_elim2},
+    auton_menu_button {{ 15, 180, 230, 230, COLOR_BEIGE, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM },  skills_1},
+    auton_menu_button {{245, 180, 460, 230, COLOR_BEIGE, COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM },  skills_2}
 };
 
 

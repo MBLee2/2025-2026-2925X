@@ -3,6 +3,7 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
+#include "pros/gps.hpp"
 #include "pros/motors.hpp"
 
 #define PI 3.14159265
@@ -32,34 +33,13 @@ extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
 extern pros::Motor left_front_motor; 
-extern pros::Motor left_mid_motor;
 extern pros::Motor left_back_motor;
 extern pros::Motor right_front_motor;
-extern pros::Motor right_mid_motor;
 extern pros::Motor right_back_motor;
 
-
-//motors
-extern pros::Motor intake_mtr1;
-extern pros::Motor intake_mtr; 
-extern pros::Motor cata_mtr1;
-extern pros::Motor cata_mtr2; 
-extern pros::Motor_Group cata_motors;              // Left drivetrain of drivebase
 extern pros::Motor_Group left_side_motors;              // Left drivetrain of drivebase
 extern pros::Motor_Group right_side_motors;             // Right drivetrain of drivebase
-extern pros::Motor_Group test;
-//pistons
-extern pros::ADIDigitalOut lift_pistons;
-extern pros::ADIDigitalOut back_wing_piston;
-extern pros::ADIDigitalOut right_piston;
-extern pros::ADIDigitalOut left_piston;
-//sensors
-extern pros::Gps gps;
+extern pros::GPS gps;
 extern pros::IMU imu;
-extern pros::ADIDigitalIn limitSwitch;
-extern pros::Distance distance_x;
-extern pros::Distance distance_y;
-extern pros::Distance distance_sensor;
-
 
 #endif //_ROBOT_CONFIG_H_   
