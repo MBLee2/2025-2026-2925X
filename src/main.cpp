@@ -1,12 +1,20 @@
 #include "main.h"
-#include "auton_basics.h"
-#include "auton_menu.h"
-#include "auton_routines.h"
-#include "dashboard.h"
-#include "lemlib/api.hpp"
-#include "controls.h"
-#include "pros/rtos.hpp"
-#include "robot_config.h"
+
+/**
+ * A callback function for LLEMU's center button.
+ *
+ * When this callback is fired, it will toggle line 2 of the LCD text between
+ * "I was pressed!" and nothing.
+ */
+void on_center_button() {
+	static bool pressed = false;
+	pressed = !pressed;
+	if (pressed) {
+		pros::lcd::set_text(2, "I was pressed!");
+	} else {
+		pros::lcd::clear_line(2);
+	}
+}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -14,95 +22,11 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-int counter = 0;
-void screen() {
-    // loop forever
-    while (true) {
-        lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
-        pros::lcd::print(0, "x: %f", pose.x); // print the x position
-        pros::lcd::print(1, "y: %f", pose.y); // print the y position
-        pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
-        pros::delay(10);
-    }
-}
-
-auton_routine selected_auton_routine = null_routine;
 void initialize() {
+	pros::lcd::initialize();
+	pros::lcd::set_text(1, "Hello PROS User!");
 
-    /**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
-	{
-    pros::lcd::initialize(); // ONLY FOR TUNING PID	
-    chassis.calibrate(); // ONLY FOR TUNING PID
-	
-	// weird bug in system; without the following delay, was getting a white screen
-	// on the brain rather than the display as expectedF
-	pros::delay(10); 
-	
-	// Clear the Brain screen and show status
-    pros::screen::set_eraser(COLOR_BLACK);
-	pros::screen::erase();
-	pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
-	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running initialize()");//*/
-	
-	/*// reset the rotation sensors
-	rotL.reset_position();
-	rotR.reset_position();//*/
-
-
-	/** Reset (calibrate) IMU and ensure correct status 
-	 *  Status values expected:
-	 *		1			= Reset Succesfully
-	 *		2147483647	= Calibration in progress or error!!
-	 * 		ENXIO		= Error - The port value is not within the range of V5 ports (1-21).
-	 * 		ENODEV		= Error - The port cannot be configured as an Inertial Sensor.
-	 * 		EAGAIN		= Error - The sensor is already calibrating
-	 * 		other value	= Error - unknown */
-	/*int imu_reset_status;
-    int imu_reset_start_time = pros::millis();
-	while ((imu_reset_status = imu.reset()) != 1)
-	{
-		printf("%s(): imu.reset() Status = [%d]\n", __func__, imu_reset_status);	
-
-		// Just wait if calibration is in progress
-		if (imu_reset_status == 2147483647)
-		{
-			// IMU calibration should take little over 2 seconds
-		    if ((pros::millis() - imu_reset_start_time) < 2100 )
-			{
-				pros::screen::set_pen(COLOR_YELLOW);
-				pros::screen::print(pros::E_TEXT_MEDIUM, 3, "Waiting 2 seconds for IMU calibration...");
-				pros::delay(100);
-				continue;
-			}
-		}
-
-		// Else ask user to fix IMU issues; may need to restart the program or plugin the IMU in 
-		// the correct  port as configured in robot_config.h
-		printf("%s(): Possible imu.reset() FAILURE - Fix IMU issues to continue!\n", __func__);
-		// Flash an error message in alternating colors on the Brain screen to get attention!
-		if (pros::screen::get_pen() != COLOR_RED)
-			pros::screen::set_pen(COLOR_RED);
-		else if (pros::screen::get_pen() == COLOR_RED)
-			pros::screen::set_pen(COLOR_ORANGE);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 3, "IMU calibration Error!! [%d]   ", imu_reset_status);
-		pros::screen::print(pros::E_TEXT_MEDIUM, 4, "FIX IMU issues to continue!!");
-		pros::delay(300);
-	
-	} // end while (1)
-
-	printf("%s(): Exiting\n", __func__);*/
-
-	// Clear the Brain screen and show status
-    pros::screen::set_eraser(COLOR_BLACK);
-	pros::screen::erase();
-
-    } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
@@ -110,9 +34,7 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-	
-}
+void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -123,42 +45,7 @@ void disabled() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-    /**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
-{
-	//HERE
-	printf("%s(): Entered\n", __func__);
-
-	// weird bug in system; without the following delay, was getting a white screen
-	// on the brain rather than the display as expected
-	pros::delay(10); 
-
-	// select the auton from the menu
-	selected_auton_routine = select_auton_routine();
-
-	// Clear the Brain screen and show status
-    pros::screen::set_eraser(COLOR_BLACK);
-	pros::screen::erase();
-	pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
-	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running competition_initialize()");//*/
-
-
-	}
-
-	printf("%s(): Exiting\n", __func__);
-	
-	// Clear the Brain screen and show status
-    pros::screen::set_eraser(COLOR_BLACK);
-	pros::screen::erase();
-}
+void competition_initialize() {}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -171,46 +58,9 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+void autonomous() {}
 
-ASSET(path1_txt);
-ASSET(rush6ball_txt);
-ASSET(test_txt);
-
-void autonomous() {
-   printf("%s(): Entered\n", __func__);
-
-	//HERE
-	// Clear the Brain screen
-	pros::screen::set_eraser(COLOR_BLACK);
-	pros::screen::erase();
-	pros::screen::set_pen(COLOR_ANTIQUE_WHITE);
-    pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running autonomous()");
-
-	// ensure that an auton routine has been slected
-	if (selected_auton_routine.routine_func == nullptr)
-	{
-		pros::screen::set_pen(COLOR_RED);
-		while (true)
-		{
-	    	pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected!!");
-			pros::delay(250);
-		}	
-	}
-
-	// Call the function associated with the selected auton routine		
-	selected_auton_routine.routine_func();//*/
-
-	// Start the independent parallel tasks needed to support autonomous mode
-	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-	//pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
-	
-	
-		
-	printf("%s(): Exiting\n", __func__);
-
-}
-
-/**xx
+/**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
  * the Field Management System or the VEX Competition Switch in the operator
@@ -224,28 +74,21 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	/*int shooting_time = 30000;	
-	int volts = 9500;
-	int funny_volts = 120000;
-   	chassis.setPose(-48,56.8388347648,45);
-   	chassis.moveToPoint(-58,41,1000,false);
-   	chassis.turnTo(-58,0,800,false);
-   	chassis.moveToPoint(-58,20,600,false);
-   	chassis.moveToPoint(-58,48,1000);
-   	chassis.turnTo(60,15,700);
-	//chassis.moveToPoint(-62,44,600);
-	chassis.moveToPoint(-63,48,450,false,60,false);
-	chassis.waitUntilDone();
-	cata_motors.move_voltage(volts);//*/
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
 
 
-	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-    pros::Task flywheel_task(taskFn_flywheel_control,"flywheel-task");
-    pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
-    pros::Task wings_task(taskFn_wings_control,"wings-task");
-	pros::Task intake_task(taskFn_intake_control,"intake-task");
-	//pros::Task intake_task(taskFn_auto_intake_control,"cata_task");
-    
-    while (true) {
-    }
+	while (true) {
+		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
+
+		// Arcade control scheme
+		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
+		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
+		left_mg.move(dir - turn);                      // Sets left motor voltage
+		right_mg.move(dir + turn);                     // Sets right motor voltage
+		pros::delay(20);                               // Run for 20 ms then update
+	}
 }
