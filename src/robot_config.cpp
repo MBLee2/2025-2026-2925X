@@ -25,8 +25,13 @@ pros::MotorGroup right_side_motors({2, -10, 9}, pros::v5::MotorGears::blue);
 
 
 //Other Motors
-pros::Motor Flex(16, pros::v5::MotorGears::green);  // port 13, reversed
-pros::Motor Hook(17, pros::v5::MotorGears::green);  // port 13, reversed
+pros::Motor flex(16, pros::v5::MotorGears::green);  // port 13, reversed
+pros::Motor hook(17, pros::v5::MotorGears::green);  // port 13, reversed
+
+// intake motor groups
+pros::MotorGroup intake({16, 17}, pros::v5::MotorGears::green);
+
+
 pros::Motor lift(18, pros::v5::MotorGears::red);  // port 13, reversed
 
 
@@ -105,8 +110,8 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Flex", Flex},
-        dashboard_motor_display {320, 190, "Hook", Hook}
+        dashboard_motor_display {320, 135, "Flex", flex},
+        dashboard_motor_display {320, 190, "Hook", hook}
         
         
     };

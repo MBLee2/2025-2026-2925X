@@ -4,6 +4,7 @@
 #include "api.h"
 #include "lemlib/api.hpp"
 #include "pros/gps.hpp"
+#include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
 
 #define PI 3.14159265
@@ -33,15 +34,21 @@ extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
 
-// extern pros::Motor lf; 
-// extern pros::Motor lm;
-// extern pros::Motor lb;
-// extern pros::Motor rf; 
-// extern pros::Motor rm;
-// extern pros::Motor rb;
+extern pros::Motor lf; 
+extern pros::Motor lm;
+extern pros::Motor lb;
+extern pros::Motor rf; 
+extern pros::Motor rm;
+extern pros::Motor rb;
 
 extern pros::MotorGroup left_side_motors;              // Left drivetrain of drivebase
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
+extern pros::MotorGroup intake;
+
+extern pros::Motor flex;
+extern pros::Motor hook;
+extern pros::Motor lift;
+
 extern pros::GPS gps;
 extern pros::IMU imu;
 
