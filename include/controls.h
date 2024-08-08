@@ -13,7 +13,7 @@ extern void taskFn_intake_control(void);
 // task fuctions for intake contol to be parrlelized
 extern void taskFn_mogo_control(void);
 // Auto cata controller
-extern void taskFn_auto_intake_control(void);
+extern void taskFn_auto_intake_push_control(void);
 // task fuctions for intake contol to be parrlelized
 
 

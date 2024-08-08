@@ -23,17 +23,20 @@ pros::Motor rb(9, pros::v5::MotorGears::blue); // port 18, not reversed
 pros::MotorGroup left_side_motors({-1, 12, -11}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({2, -10, 9}, pros::v5::MotorGears::blue);
 
-
-//Other Motors
+// intake motor group
 pros::Motor flex(16, pros::v5::MotorGears::green);  // port 13, reversed
 pros::Motor hook(17, pros::v5::MotorGears::green);  // port 13, reversed
-
-// intake motor groups
 pros::MotorGroup intake({16, 17}, pros::v5::MotorGears::green);
 
-
+//Other Motor
 pros::Motor lift(18, pros::v5::MotorGears::red);  // port 13, reversed
 
+//Pistons
+pros::adi::Pneumatics Clamp('a', false);
+pros::adi::Pneumatics Mogo('b', false);
+pros::adi::Pneumatics Intake_Pusher('e',false);
+pros::adi::Pneumatics Basket('c', false);
+pros::adi::Pneumatics Climb('d', false);
 
 pros::Distance distance_left(9);
 pros::Distance distance_right(7);
@@ -72,35 +75,50 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings linearController
-(   8, // proportional gain (kP)
-    0, // integral gain (kI)
-    56, // derivative gain (kD)
-    0, // anti windup
-    1, // small error range, in inches
-    100, // small error range timeout, in milliseconds
-    5, // large error range, in inches
-    1000, // large error range timeout, in milliseconds
-    16 // maximum acceleration (slew)
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 // turning PID
-lemlib::ControllerSettings angularController(
-    4, // kP
-    0, // integral gain (kI)
-    44.5, // kD
-    3, // anti windup
-    1, // smallErrorRange
-    50, // smallErrorTimeout
-    3, // largeErrorRange
-    300, // largeErrorTimeou
-    12 // slew rate
+lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              10, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
- 
+
+
+
+// input curve for throttle input during driver control
+lemlib::ExpoDriveCurve throttle_curve(0, //joystick deadband out of 127
+                                     10, //  minimum output where drivetrain will move out of 127
+                                     1.019 // expo curve gain
+);
+
+// input curve for steer input during driver control
+lemlib::ExpoDriveCurve steer_curve(0, // joystick deadband out of 127
+                                  10, // minimum output where drivetrain will move out of 127
+                                  1.019 // expo curve gain
+);
+
 // create the chassis
-lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors);
-
-
-// TODO: Figure out why it gives a segmentation fault if this declaration is moved from here to "dashboard.cpp"
+lemlib::Chassis chassis(drivetrain,
+                        lateral_controller,
+                        angular_controller,
+                        sensors,
+                        &throttle_curve, 
+                        &steer_curve
+);
     // define the auton menu buttons
     std::vector <dashboard_motor_display> dashboard_motor_display_items = 
     {

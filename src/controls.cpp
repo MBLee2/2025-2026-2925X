@@ -1,17 +1,17 @@
 #include "controls.h"
+#include "pros/misc.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "lemlib/api.hpp"
 #include "lemlib/timer.hpp"
+
 #define TURN_CONST 1.4
 //Drivebase control
 void taskFn_drivebase_control(void){
     printf("%s(): Entered \n", __func__);
     bool drive_state = true; // true for normal, false for reversed
-
     while (true) 
     {
-
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
             drive_state = !drive_state;  // Toggle direction
@@ -34,6 +34,9 @@ void taskFn_drivebase_control(void){
 
         left_side_motors.move(leftY + turnVelleft);
 		right_side_motors.move(leftY - turnVelleft);
+
+        //chassis.arcade(leftY, leftX);
+
         pros::delay(20);
     } // end of while loop
 
@@ -44,6 +47,7 @@ void taskFn_drivebase_control(void){
 //Flwheel control
 void taskFn_lift_control(void){
     printf("%s(): Entered \n", __func__);
+    bool basket_state = false;
     while (true) 
     {
         while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
@@ -58,10 +62,25 @@ void taskFn_lift_control(void){
                 lift.move(127);  
             }     
         } 
+
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
+        {
+            if (basket_state == false)
+            {
+                basket_state = true;
+                Basket.set_value(true);
+
+            }
+            else if(basket_state == true)
+            {
+                basket_state = false;  
+                Basket.set_value(false);  
+            }
+        }   
         pros::delay(20);
     }
     printf("%s(): Exiting \n", __func__);
-} // end of taskFn_flywheel_control
+} // end of taskFn_lift_control
 
 //Intake control
 void taskFn_intake_control(void){
@@ -111,17 +130,32 @@ void taskFn_intake_control(void){
 //Wings Control
 void taskFn_mogo_control(void){
     printf("%s(): Entered \n", __func__);
+    bool mogo_state = false;
     while (true) 
     {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
+        {
+            if (mogo_state == false)
+            {
+                mogo_state = true;
+                Clamp.set_value(true);
+                Mogo.set_value(true);
 
+            }
+            else if(mogo_state == true)
+            {
+                mogo_state = false;  
+                Clamp.set_value(false);  
+                Mogo.set_value(false);
+            }   
+        }
        pros::delay(20); 
     }
     
     printf("%s(): Exiting \n", __func__);
-}
+} // end of taskFn_mogo_control
 
-void taskFn_auto_intake_control(void)
-{
+void taskFn_auto_intake_push_control(void){
     printf("%s(): Entered \n", __func__);
     printf("%s(): Exiting \n", __func__);
-}
+} // end of taskFn_auto_intake_push_control

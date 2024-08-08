@@ -33,21 +33,27 @@
 extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
-
 extern pros::Motor lf; 
 extern pros::Motor lm;
 extern pros::Motor lb;
 extern pros::Motor rf; 
 extern pros::Motor rm;
 extern pros::Motor rb;
-
 extern pros::MotorGroup left_side_motors;              // Left drivetrain of drivebase
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
-extern pros::MotorGroup intake;
 
+//Motors
+extern pros::MotorGroup intake;
 extern pros::Motor flex;
 extern pros::Motor hook;
 extern pros::Motor lift;
+
+//pistons
+extern pros::adi::Pneumatics Clamp;
+extern pros::adi::Pneumatics Mogo;
+extern pros::adi::Pneumatics Intake_Pusher;
+extern pros::adi::Pneumatics Basket;
+extern pros::adi::Pneumatics Climb;
 
 extern pros::GPS gps;
 extern pros::IMU imu;
