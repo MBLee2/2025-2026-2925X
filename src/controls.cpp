@@ -5,12 +5,9 @@
 #include "lemlib/timer.hpp"
 #define TURN_CONST 1.4
 //Drivebase control
-double now_time;
-
 void taskFn_drivebase_control(void)
 {
     
-    bool lift_status = false;
     printf("%s(): Entered \n", __func__);
     while (true) 
     {
