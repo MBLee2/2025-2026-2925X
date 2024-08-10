@@ -12,24 +12,24 @@ pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 
 //Need to add all motors
-pros::Motor lf(-1, pros::v5::MotorGears::blue);  // port 13, reversed
+pros::Motor lf(-11, pros::v5::MotorGears::blue);  // port 13, reversed
 pros::Motor lm(12, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor lb(-11, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor rf(2, pros::v5::MotorGears::blue); // port 18, not reversed
-pros::Motor rm(-10, pros::v5::MotorGears::blue); // port 18, not reversed
-pros::Motor rb(9, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor lb(-17, pros::v5::MotorGears::blue);  // port 13, reversed
+pros::Motor rf(16, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor rm(-14, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor rb(15, pros::v5::MotorGears::blue); // port 18, not reversed
 
 // drivetrain motor groups
-pros::MotorGroup left_side_motors({-1, 12, -11}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({2, -10, 9}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor flex(16, pros::v5::MotorGears::green);  // port 13, reversed
-pros::Motor hook(17, pros::v5::MotorGears::green);  // port 13, reversed
-pros::MotorGroup intake({16, 17}, pros::v5::MotorGears::green);
+pros::Motor flex(4, pros::v5::MotorGears::green);  // port 13, reversed
+pros::Motor hook(3, pros::v5::MotorGears::green);  // port 13, reversed
+pros::MotorGroup intake({4, 3}, pros::v5::MotorGears::green);
 
 //Other Motor
-pros::Motor lift(18, pros::v5::MotorGears::red);  // port 13, reversed
+pros::Motor lift(2, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
 pros::adi::Pneumatics Clamp('a', false);

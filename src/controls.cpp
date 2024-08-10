@@ -62,6 +62,7 @@ void taskFn_lift_control(void){
                 lift.move(127);  
             }     
         } 
+        lift.move(0);  
 
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
         {
@@ -77,6 +78,7 @@ void taskFn_lift_control(void){
                 Basket.set_value(false);  
             }
         }   
+
         pros::delay(20);
     }
     printf("%s(): Exiting \n", __func__);
