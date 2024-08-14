@@ -12,7 +12,7 @@ void taskFn_drivebase_control(void){
     bool drive_state = true; // true for normal, false for reversed
     while (true) 
     {
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X))
         {
             drive_state = !drive_state;  // Toggle direction
             pros::delay(300);  // Add a small delay to avoid rapid toggling
@@ -50,14 +50,14 @@ void taskFn_lift_control(void){
     bool basket_state = false;
     while (true) 
     {
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
             lift.move(127);  
         }   
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
             lift.move(-127);  
-            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
             {
                 lift.move(127);  
             }     
