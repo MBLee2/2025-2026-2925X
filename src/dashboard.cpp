@@ -170,6 +170,17 @@ void render_compass_rose()
 } // end render_compass_rose())
 
 
+void screen() {
+    // loop forever
+    while (true) {
+        lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        pros::lcd::print(0, "x: %f", pose.x); // print the x position
+        pros::lcd::print(1, "y: %f", pose.y); // print the y position
+        pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
+        pros::delay(10);
+    }
+}
+
 void taskFn_display_gps_coordinates(void)
 /**
  * @brief A task function to independently display the basic GPS coordinates on the V5 Brain 
@@ -182,6 +193,7 @@ void taskFn_display_gps_coordinates(void)
 
     while (true)
     {
+        
         // Dsiplay the (x, y) coordinates
         pros::screen::set_pen(pros::c::COLOR_YELLOW);
         pros::screen::print(pros::E_TEXT_MEDIUM, 250, 13, "GPS Readout");
@@ -225,9 +237,9 @@ void taskFn_dashboard_display(void)
         // Render the dashboard screen
         render_dashboard();  
        
-        // once every 200 milliseconds (5 times a second) is enough for this task 
+        // once every 200 milliseconds (1 time every 5 seconds) is enough for this task 
         // which just refreshes the dashboard display
-        pros::delay(200);
+        pros::delay(5000);
 
     } // end of while loop
 

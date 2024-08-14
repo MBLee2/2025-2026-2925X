@@ -32,11 +32,14 @@ pros::MotorGroup intake({4, 3}, pros::v5::MotorGears::green);
 pros::Motor lift(2, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
-pros::adi::Pneumatics Clamp('a', false);
-pros::adi::Pneumatics Mogo('b', false);
-pros::adi::Pneumatics Intake_Pusher('e',false);
-pros::adi::Pneumatics Basket('c', false);
-pros::adi::Pneumatics Climb('d', false);
+pros::adi::Pneumatics hood1('a', false);
+pros::adi::Pneumatics mogo_clamp('b', false);
+pros::adi::Pneumatics intake_puncher('c',false);
+pros::adi::Pneumatics hood2('d', false);
+
+pros::adi::Pneumatics intake_lift('e', false);
+pros::adi::Pneumatics mogo_rush('f', false);
+pros::adi::Pneumatics climb('g', false);
 
 pros::Distance distance_left(9);
 pros::Distance distance_right(7);

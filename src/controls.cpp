@@ -63,22 +63,6 @@ void taskFn_lift_control(void){
             }     
         } 
         lift.move(0);  
-
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
-        {
-            if (basket_state == false)
-            {
-                basket_state = true;
-                Basket.set_value(true);
-
-            }
-            else if(basket_state == true)
-            {
-                basket_state = false;  
-                Basket.set_value(false);  
-            }
-        }   
-
         pros::delay(20);
     }
     printf("%s(): Exiting \n", __func__);
@@ -140,15 +124,13 @@ void taskFn_mogo_control(void){
             if (mogo_state == false)
             {
                 mogo_state = true;
-                Clamp.set_value(true);
-                Mogo.set_value(true);
+                mogo_clamp.set_value(true);
 
             }
             else if(mogo_state == true)
             {
                 mogo_state = false;  
-                Clamp.set_value(false);  
-                Mogo.set_value(false);
+                mogo_clamp.set_value(false);  
             }   
         }
        pros::delay(20); 

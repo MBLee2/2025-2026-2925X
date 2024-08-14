@@ -49,11 +49,13 @@ extern pros::Motor hook;
 extern pros::Motor lift;
 
 //pistons
-extern pros::adi::Pneumatics Clamp;
-extern pros::adi::Pneumatics Mogo;
-extern pros::adi::Pneumatics Intake_Pusher;
-extern pros::adi::Pneumatics Basket;
-extern pros::adi::Pneumatics Climb;
+extern pros::adi::Pneumatics hood1;
+extern pros::adi::Pneumatics mogo_clamp;
+extern pros::adi::Pneumatics hood2;
+extern pros::adi::Pneumatics intake_puncher;
+extern pros::adi::Pneumatics intake_lift;
+extern pros::adi::Pneumatics mogo_rush;
+extern pros::adi::Pneumatics climb;
 
 extern pros::GPS gps;
 extern pros::IMU imu;
