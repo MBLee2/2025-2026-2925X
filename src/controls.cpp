@@ -141,8 +141,6 @@ void taskFn_intake_control(void){
                 hood2.set_value(false); 
             }   
         }
-        
-
         pros::delay(20);
     }
     printf("%s(): Exiting \n", __func__);
