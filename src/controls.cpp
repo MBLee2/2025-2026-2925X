@@ -44,20 +44,20 @@ void taskFn_drivebase_control(void){
     
 } // end of taskFn_drivebase_control
 
-//Flwheel control
-void taskFn_basket_control(void){
+//Lift control
+void taskFn_lift_control(void){
     printf("%s(): Entered \n", __func__);
     bool basket_state = false;
     while (true) 
     {
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
             lift.move(127);  
         }   
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
             lift.move(-127);  
-            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
             {
                 lift.move(127);  
             }     
@@ -119,7 +119,7 @@ void taskFn_intake_control(void){
     printf("%s(): Exiting \n", __func__);
 } // end of taskFn_intake_control
 
-//Wings Control
+//Mogo Control
 void taskFn_mogo_control(void){
     printf("%s(): Entered \n", __func__);
     bool mogo_state = false;
@@ -180,3 +180,31 @@ void taskFn_auto_intake_push_control(void){
     
     printf("%s(): Exiting \n", __func__);
 } // end of taskFn_auto_intake_push_control
+
+//Hood Control
+void taskFn_hood_control(void){
+    printf("%s(): Entered \n", __func__);
+    bool hood_state = false;
+    while (true) 
+    {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) 
+        {
+            if (hood_state == false)
+            {
+                hood_state = true;
+                hood1.set_value(true);
+                hood2.set_value(true);
+
+            }
+            else if(hood_state == true)
+            {
+                hood_state = false;  
+                hood1.set_value(false);
+                hood2.set_value(false); 
+            }   
+        }
+       pros::delay(20); 
+    }
+    
+    printf("%s(): Exiting \n", __func__);
+} // end of hood_control
