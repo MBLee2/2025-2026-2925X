@@ -77,8 +77,6 @@ void taskFn_intake_control(void){
     };
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     bool intake_lifted = false;
-    bool hood_state = false;
-
     while (true) 
     {
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -123,23 +121,6 @@ void taskFn_intake_control(void){
         if(intake_lifted == false)
         {
             intake_lift.set_value(false); //retracted
-        }
-
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) 
-        {
-            if (hood_state == false)
-            {
-                hood_state = true;
-                hood1.set_value(true);
-                hood2.set_value(true);
-
-            }
-            else if(hood_state == true)
-            {
-                hood_state = false;  
-                hood1.set_value(false);
-                hood2.set_value(false); 
-            }   
         }
         pros::delay(20);
     }
@@ -192,10 +173,8 @@ void taskFn_mogo_control(void){
 void taskFn_auto_intake_push_control(void){
     /*sudo code   
     if color sensor sees wrong color 
-
-
-
     //*/
+    bool hood_state = false;
     printf("%s(): Entered \n", __func__);
     while (true) 
     {
@@ -205,6 +184,22 @@ void taskFn_auto_intake_push_control(void){
             intake_puncher.set_value(true);
             pros::delay(100);
             intake_puncher.set_value(false);
+        }
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) 
+        {
+            if (hood_state == false)
+            {
+                hood_state = true;
+                hood1.set_value(true);
+                hood2.set_value(true);
+
+            }
+            else if(hood_state == true)
+            {
+                hood_state = false;
+                hood1.set_value(false);
+                hood2.set_value(false);
+            }   
         }
         pros::delay(20);
     }

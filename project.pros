@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Goofy Ah code",
+    "project_name": "Maine-Sig-Code",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -300,7 +300,7 @@
     "upload_options": {
       "after": "screen",
       "description": "",
-      "icon": "clawbot",
+      "icon": "X",
       "slot": 2
     },
     "use_early_access": false
