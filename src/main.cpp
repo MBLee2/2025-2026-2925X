@@ -240,11 +240,12 @@ void opcontrol() {
 
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-    pros::Task flywheel_task(taskFn_lift_control,"lift-task");
+    pros::Task lift_task(taskFn_lift_control,"lift-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
-    pros::Task wings_task(taskFn_mogo_control,"mogo-task");
+    pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
 	pros::Task intake_push_task(taskFn_auto_intake_push_control,"intake_push_task");
+	pros::Task hood_task(taskFn_hood_control,"hood-task");
     
     while (true) {
     }
