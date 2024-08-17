@@ -45,7 +45,7 @@ void taskFn_drivebase_control(void){
 } // end of taskFn_drivebase_control
 
 //Flwheel control
-void taskFn_lift_control(void){
+void taskFn_basket_control(void){
     printf("%s(): Entered \n", __func__);
     bool basket_state = false;
     while (true) 
@@ -71,13 +71,14 @@ void taskFn_lift_control(void){
 //Intake control
 void taskFn_intake_control(void){
     printf("%s(): Entered \n", __func__);
-
     enum intake_state {
     INTAKE,
     OUTAKE,
     STOP
     };
     intake_state current_state = STOP;  // Initialize with a default state, STOP
+    bool intake_puncher_status = false;
+
     while (true) 
     {
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
@@ -108,6 +109,11 @@ void taskFn_intake_control(void){
                 current_state = STOP;
             }   
         }
+
+        /*TEMPORARY WE NEED TO SWITCH TO AUTOMATED LATER*/
+        
+
+
         pros::delay(20);
     }
     printf("%s(): Exiting \n", __func__);
@@ -133,6 +139,22 @@ void taskFn_mogo_control(void){
                 mogo_clamp.set_value(false);  
             }   
         }
+        
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
+        {
+            if (mogo_state == false)
+            {
+                mogo_state = true;
+                mogo_clamp.set_value(true);
+
+            }
+            else if(mogo_state == true)
+            {
+                mogo_state = false;  
+                mogo_clamp.set_value(false);  
+            }   
+        }
+
        pros::delay(20); 
     }
     
@@ -140,6 +162,21 @@ void taskFn_mogo_control(void){
 } // end of taskFn_mogo_control
 
 void taskFn_auto_intake_push_control(void){
+    /*sudo code   
+    if color sensor sees wrong color 
+
+
+
+    //*/
     printf("%s(): Entered \n", __func__);
+    while (true) 
+    {
+        if(true)
+        {
+
+        }
+        pros::delay(20);
+    }
+    
     printf("%s(): Exiting \n", __func__);
 } // end of taskFn_auto_intake_push_control

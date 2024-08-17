@@ -5,6 +5,8 @@
 #include "controls.h"
 #include "lemlib/api.hpp"
 
+AutonColor selectedColor = AutonColor::RED; //Set default color of auton    
+
 // define the auton menu buttons
 using pros::c::COLOR_WHITE;
 

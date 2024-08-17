@@ -5,6 +5,13 @@
 #include "auton_basics.h"
 #include "auton_routines.h"
 
+enum class AutonColor {
+    RED,
+    BLUE
+};
+// Create a global variable for the selected color
+extern AutonColor selectedColor;
+
 /**
  * A structure to capture all the attributes of a rectangular "patch" on the V5 Brain 
  * Screen. This patch may be used to create interactuve "buttons" that can be "touched"

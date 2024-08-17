@@ -7,9 +7,8 @@
 #include "robot_config.h"
 #include "dashboard.h"
 
-
+    
 pros::Controller master (pros::E_CONTROLLER_MASTER);
-
 
 //Need to add all motors
 pros::Motor lf(-11, pros::v5::MotorGears::blue);  // port 13, reversed
@@ -19,7 +18,7 @@ pros::Motor rf(16, pros::v5::MotorGears::blue); // port 18, not reversed
 pros::Motor rm(-14, pros::v5::MotorGears::blue); // port 18, not reversed
 pros::Motor rb(15, pros::v5::MotorGears::blue); // port 18, not reversed
 
-// drivetrain motor groups
+// drivetrain motor groups  
 pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
@@ -33,7 +32,7 @@ pros::Motor lift(2, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
 pros::adi::Pneumatics hood1('a', false);
-pros::adi::Pneumatics mogo_clamp('b', false);
+pros::adi::Pneumatics mogo_clamp('b', false); //DONE
 pros::adi::Pneumatics intake_puncher('c',false);
 pros::adi::Pneumatics hood2('d', false);
 
