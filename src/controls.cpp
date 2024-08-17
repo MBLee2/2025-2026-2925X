@@ -46,8 +46,6 @@ void taskFn_drivebase_control(void){
 void taskFn_lift_control(void){
     printf("%s(): Entered \n", __func__);
     bool basket_state = false;
-    bool hood_state = false;
-
     while (true) 
     {
         while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
@@ -64,23 +62,6 @@ void taskFn_lift_control(void){
         } 
         lift.move(0);
 
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) 
-        {
-            if (hood_state == false)
-            {
-                hood_state = true;
-                hood1.set_value(true);
-                hood2.set_value(true);
-
-            }
-            else if(hood_state == true)
-            {
-                hood_state = false;  
-                hood1.set_value(false);
-                hood2.set_value(false); 
-            }   
-        }
-
         pros::delay(20);
     }
     printf("%s(): Exiting \n", __func__);
@@ -96,6 +77,8 @@ void taskFn_intake_control(void){
     };
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     bool intake_lifted = false;
+    bool hood_state = false;
+
     while (true) 
     {
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -140,6 +123,23 @@ void taskFn_intake_control(void){
         if(intake_lifted == false)
         {
             intake_lift.set_value(false); //retracted
+        }
+
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) 
+        {
+            if (hood_state == false)
+            {
+                hood_state = true;
+                hood1.set_value(true);
+                hood2.set_value(true);
+
+            }
+            else if(hood_state == true)
+            {
+                hood_state = false;  
+                hood1.set_value(false);
+                hood2.set_value(false); 
+            }   
         }
         
 
