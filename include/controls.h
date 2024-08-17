@@ -7,7 +7,7 @@
 // task fuctions for drivebase contol to be parrlelized
 extern void taskFn_drivebase_control(void);
 // task fuctions for flywheel contol to be parrlelized
-extern void taskFn_basket_control(void);
+extern void taskFn_lift_control(void);
 // task fuctions for intake contol to be parrlelized
 extern void taskFn_intake_control(void);
 // task fuctions for intake contol to be parrlelized
