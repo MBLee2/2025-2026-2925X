@@ -160,7 +160,7 @@ void taskFn_mogo_control(void){
         if (rightY > 0.85){sweeper_out = true;}
         if (rightY < -0.85){sweeper_out = false;}
 
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) 
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
         {
             if (mogo_state == false)
             {
