@@ -1,9 +1,11 @@
 #include "main.h"
 #include "pros/abstract_motor.hpp"
+#include "pros/colors.hpp"
 #include "pros/distance.hpp"
 #include "pros/gps.hpp"
 #include "pros/imu.hpp"
 #include "pros/motors.hpp"
+#include "pros/optical.hpp"
 #include "robot_config.h"
 #include "dashboard.h"
 
@@ -28,7 +30,7 @@ pros::Motor hook(3, pros::v5::MotorGears::green);  // port 13, reversed
 pros::MotorGroup intake({4, 3}, pros::v5::MotorGears::green);
 
 //Other Motor
-pros::Motor lift(2, pros::v5::MotorGears::red);  // port 13, reversed
+pros::Motor lift(6, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
 pros::adi::Pneumatics hood1('a', false);
@@ -40,6 +42,9 @@ pros::adi::Pneumatics intake_lift('e', false);
 pros::adi::Pneumatics mogo_rush('f', false);
 pros::adi::Pneumatics climb('g', false);
 
+
+/* SENSORS */
+pros::Optical intake_color(2);
 pros::Distance distance_left(9);
 pros::Distance distance_right(7);
 pros::Distance distance_back(19);

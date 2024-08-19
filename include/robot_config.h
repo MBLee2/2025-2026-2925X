@@ -52,11 +52,12 @@ extern pros::Motor lift;
 extern pros::adi::Pneumatics hood1;
 extern pros::adi::Pneumatics mogo_clamp;
 extern pros::adi::Pneumatics hood2;
-extern pros::adi::Pneumatics intake_puncher;
 extern pros::adi::Pneumatics intake_lift;
 extern pros::adi::Pneumatics mogo_rush;
 extern pros::adi::Pneumatics climb;
 
+//Sensors
+extern pros::Optical intake_color;
 extern pros::GPS gps;
 extern pros::IMU imu;
 
