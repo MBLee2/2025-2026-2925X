@@ -224,7 +224,7 @@ void taskFn_dashboard_display(void)
     {
         // Render the dashboard screen
         render_dashboard();  
-       
+        master.print(0, 0,"Auton color: %s" , selectedColor);
         // once every 200 milliseconds (1 time every 5 seconds) is enough for this task 
         // which just refreshes the dashboard display
         pros::delay(5000);

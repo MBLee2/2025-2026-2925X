@@ -9,7 +9,7 @@
 #include "robot_config.h"
 #include "dashboard.h"
 
-    
+AutonColor selectedColor = AutonColor::RED; //Set default color of auton    
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
