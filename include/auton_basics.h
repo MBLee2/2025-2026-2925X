@@ -36,6 +36,12 @@ typedef enum e_rotation_direction {
     E_ROTATE_EITHER
 } rotation_direction;
 
+//simple function to convert from radians to degrees for heading
+double radToDeg (double rad);
+
+//function to adjust robot's heading using distance sensors
+void readjustHeading (int side, double roundedHeading);
+
 // functions to move between the Cartesian Coordinate System (used in trignometry) 
 // and the Compass Coordinates used in navigation by the GPS sensor system
 double cartesian2compass (double cartesian_angle); // cartesian to compass coordinates, both in dergees

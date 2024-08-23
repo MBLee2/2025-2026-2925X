@@ -239,6 +239,7 @@ void opcontrol() {
 	cata_motors.move_voltage(volts);//*/
 
 	master.clear();
+	readjustHeading(2, 270);
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task lift_task(taskFn_lift_control,"lift-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
