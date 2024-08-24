@@ -11,7 +11,7 @@ double radToDeg(double rad){
 }
 
 //distance sensor constants
-const double LEFT_SPACING = 266.7;
+const double LEFT_SPACING = 260.35;
 const double RIGHT_SPACING = 139.7;
 const double BACK_SPACING = 330.2;
 const double LEFT_DIFFERENCE = 11.1125;
