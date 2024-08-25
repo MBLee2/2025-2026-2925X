@@ -5,7 +5,7 @@
 #include "auton_basics.h"
 #include "auton_routines.h"
 
-enum AutonColor {
+enum class AutonColor {
     RED,
     BLUE
 };

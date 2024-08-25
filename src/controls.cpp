@@ -117,11 +117,11 @@ void taskFn_intake_control(void){
     INTAKE,
     OUTAKE,
     STOP
+
     };
     bool basket_state = false;
-    bool intake_lifted = false;
     intake_state current_state = STOP;  // Initialize with a default state, STOP
-    
+    bool intake_lifted = false;
     lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
     intake_color.set_led_pwm(100);
     while (true) 
@@ -240,7 +240,7 @@ void taskFn_hood_control(void){
         }
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
             hook.move(127);
-            pros::delay(400);
+            pros::delay(500);
         }
         
         pros::delay(20);
