@@ -52,7 +52,6 @@ void render_dashboard()
     // Put the title box at the top
     pros::screen::set_pen(pros::c::COLOR_WHITE);
     pros::screen::print(pros::E_TEXT_MEDIUM, 175, 110, "Robot Dashboard");
-    pros::screen::print(pros::E_TEXT_MEDIUM, 300, 20, "Y: %f", chassis.getPose().y);
 
     // draw all the dashboard_motor_display_items 
     for (int i=0; i<dashboard_motor_display_items.size(); i++) 
