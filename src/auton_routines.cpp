@@ -1,8 +1,6 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
-#include "lemlib/chassis/chassis.hpp"
-#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "controls.h"
@@ -15,18 +13,16 @@ ASSET(touchbar_txt);
 
 // Auton routine start positions
 auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine",      nullptr                 };
-
-auton_routine blue_positive_qual {1.234, -1.234, 90, "15S Auton - Blue Positive # 1", &auton_15s_blue_positive_rush};
-
-// auton_routine near_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_near_driver_qual};
-// auton_routine near_driver_qual2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushWP}; 
-// auton_routine near_driver_elim { 1.000, -1.300, 190, "15S Auton - Near Driver # 2",&DescoreRushElim};  // to be updated
-// auton_routine near_driver_elim2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushelim};  // to be updated
+auton_routine near_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_near_driver_qual};
+auton_routine near_driver_qual2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushWP}; 
+auton_routine near_driver_elim { 1.000, -1.300, 190, "15S Auton - Near Driver # 2",&DescoreRushElim};  // to be updated
+auton_routine near_driver_elim2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushelim};  // to be updated
 
 
-// auton_routine far_from_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_far_driver_qual};
-// auton_routine far_from_driver_elim { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_far_driver_elim};
-// auton_routine far_from_driver_elim2  { -0.600, 0.600, 180, "extra_1", &safe_6_ball};
+
+auton_routine far_from_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_far_driver_qual};
+auton_routine far_from_driver_elim { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_far_driver_elim};
+auton_routine far_from_driver_elim2  { -0.600, 0.600, 180, "extra_1", &safe_6_ball};
 
 
 auton_routine skills_1 		{ -0.600, 0.600, 180, "60S Auton - Skills # 1", &auton_60s_skills_1};
@@ -35,74 +31,38 @@ auton_routine skills_2 		{ -0.600, 0.600, 180, "60S Auton - Skills # 2", &auton_
 
 
 //FULLY DONE
-// void auton_15s_near_driver_qual() //DONE
-// {
+void auton_15s_near_driver_qual() //DONE
+{
 
-// }
-// void rushWP(){ // 
-    
-// }
-// void rushelim(){
-//     printf("%s(): Exiting\n", __func__);
-    
-// }
-
-// void auton_15s_far_driver_qual() // FAR DRIVER QUAL
-// {
-
-// }
-
-
-// void safe_6_ball() //FAR ELIM
-// {
-   
-// }	
-
-// void auton_15s_far_driver_elim(){
-// 	printf("%s(): Exiting\n", __func__);
-
-// }
-// void DescoreRushElim(){
-//     printf("%s(): Exiting\n", __func__);
-
-// }
-// STILL WORKING ON IT
-
-void auton_15s_blue_positive_rush(){
-    chassis.setPose(50.25, -48, 90);
-    intake.move(0);
-    chassis.moveToPoint(7, -48, 3000, {.forwards = false, .maxSpeed = 60});
-    while(chassis.isInMotion()){
-        pros::delay(10);
-    }
-    mogo_clamp.set_value(true);
-    pros::delay(200);
-
-    intake.move(127);
-    chassis.moveToPoint(24, -48, 3000, {.maxSpeed = 50});
-    intake.move(0);
-    pros::delay(300);
-
-    intake.move(-127);
-    chassis.moveToPoint(53, -58, 3000, {.maxSpeed = 50});
-    intake.move(0);
-    pros::delay(200);
-    mogo_clamp.set_value(false);
-    /*pros::delay(500);
-
-    chassis.moveToPose(50, -60, 90, 1000, {.maxSpeed = 30});
-    mogo_rush.set_value(true);
-    chassis.turnToHeading(0, 500, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    pros::delay(300);
-    mogo_rush.set_value(false);
-    chassis.turnToHeading(90, 500, {.direction = AngularDirection::CW_CLOCKWISE, .maxSpeed = 50});
-    pros::delay(300);
-
-    chassis.moveToPoint(60, -60, 500, {.maxSpeed = 50});
-    intake.move(127);
-    pros::delay(500);
-    intake.move(0);*/
 }
+void rushWP(){ // 
+    
+}
+void rushelim(){
+    printf("%s(): Exiting\n", __func__);
+    
+}
+
+void auton_15s_far_driver_qual() // FAR DRIVER QUAL
+{
+
+}
+
+
+void safe_6_ball() //FAR ELIM
+{
+   
+}	
+
+void auton_15s_far_driver_elim(){
+	printf("%s(): Exiting\n", __func__);
+
+}
+void DescoreRushElim(){
+    printf("%s(): Exiting\n", __func__);
+
+}
+// STILL WORKING ON IT
 
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1()
