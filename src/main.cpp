@@ -103,6 +103,8 @@ void initialize() {
 
     } // end initialize()
     //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+	
+	competition_initialize();
 }
 
 /**
@@ -158,6 +160,7 @@ void competition_initialize() {
 	// Clear the Brain screen and show status
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
+	autonomous();
 }
 
 /**
@@ -209,6 +212,7 @@ void autonomous() {
 	printf("%s(): Exiting\n", __func__);
 
 }
+
 
 /**xx
  * Runs the operator control code. This function will be started in its own task

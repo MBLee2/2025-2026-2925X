@@ -12,6 +12,9 @@ using pros::c::COLOR_WHITE;
 std::vector<auton_menu_button> button_list = {
     auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                      blue_positive_qual}
+    /*auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
                       near_driver_qual},
     auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
@@ -36,7 +39,7 @@ std::vector<auton_menu_button> button_list = {
                       skills_1},
     auton_menu_button{{245, 180, 460, 230, pros::c::COLOR_BEIGE,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      skills_2}};
+                      skills_2}*/};
 
 void draw_rectangle_patch(rectangle_patch p) 
 /**
