@@ -25,22 +25,19 @@ pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor flex(4, pros::v5::MotorGears::green);  // port 13, reversed
-pros::Motor hook(3, pros::v5::MotorGears::green);  // port 13, reversed
-pros::MotorGroup intake({4, 3}, pros::v5::MotorGears::green);
+pros::Motor intake(-4, pros::v5::MotorGears::green);  // port 13, reversed
 
 //Other Motor
 pros::Motor lift(6, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
-pros::adi::Pneumatics hood1('a', false);
+pros::adi::Pneumatics hood1('h', false);
 pros::adi::Pneumatics mogo_clamp('b', false); //DONE
-pros::adi::Pneumatics intake_puncher('c',false);
-pros::adi::Pneumatics hood2('d', false);
+pros::adi::Pneumatics hood2('g', false);
 
-pros::adi::Pneumatics intake_lift('e', false);
+pros::adi::Pneumatics intake_lift('c', false);
 pros::adi::Pneumatics mogo_rush('f', false);
-pros::adi::Pneumatics climb('g', false);
+pros::adi::Pneumatics climb('a', false);
 
 
 /* SENSORS */
@@ -50,14 +47,14 @@ pros::Distance distance_right(7);
 pros::Distance distance_back(19);
 
 pros::GPS gps(12);
-pros::IMU imu(2);
+pros::IMU imu(3);
  
 lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
-    10.5, // track width
-    4.0,// wheel diameter
-    200, // wheel rpm
+    12, // track width
+    lemlib::Omniwheel::NEW_4,// wheel diameter
+    300, // wheel rpm
 	8 //chase Power
 );
 // left tracking wheel encoder
@@ -84,19 +81,19 @@ lemlib::OdomSensors sensors(
 // forward/backward PID
 lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              3, // derivative gain (kD)
+                                              59, // derivative gain (kD)
                                               0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              2, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              15  // maximum acceleration (slew)
 );
 // turning PID
-lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(6, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              10, // derivative gain (kD)
-                                              3, // anti windup
+                                              57, // derivative gain (kD)
+                                              0, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
@@ -135,8 +132,8 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Flex", flex},
-        dashboard_motor_display {320, 190, "Hook", hook}
+        dashboard_motor_display {320, 135, "Intake", intake},
+        dashboard_motor_display {320, 190, "Lift", lift}
         
         
     };

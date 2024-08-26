@@ -178,10 +178,10 @@ void taskFn_intake_control(void){
         {
             if(hue >= 7 && hue <= 17 || hue >= 210 && hue<= 220)
             {
-                pros::delay(225);
-                hook.move(-100);
-                pros::delay(500);
-                hook.move(127);
+                pros::delay(170);
+                intake.move(-127);
+                pros::delay(300);
+                intake.move(127);
             }
         }
 
@@ -239,7 +239,7 @@ void taskFn_hood_control(void){
             }   
         }
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
-            hook.move(127);
+            intake.move(127);
             pros::delay(400);
         }
         

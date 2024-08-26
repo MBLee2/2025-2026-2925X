@@ -15,16 +15,16 @@
  * to keep execution time for this mode under a few seconds.
  */
 int counter = 0;
-// void screen() {
-//     // loop forever
-//     while (true) {
-//         lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
-//         pros::lcd::print(0, "x: %f", pose.x); // print the x position
-//         pros::lcd::print(1, "y: %f", pose.y); // print the y position
-//         pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
-//         pros::delay(10);
-//     }
-// }
+void screen() {
+    // loop forever
+    while (true) {
+        lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        pros::lcd::print(0, "x: %f", pose.x); // print the x position
+        pros::lcd::print(1, "y: %f", pose.y); // print the y position
+        pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
+        pros::delay(10);
+    }
+}
 
 auton_routine selected_auton_routine = null_routine;
 void initialize() {
@@ -102,7 +102,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -178,7 +178,6 @@ ASSET(test_txt);
 
 void autonomous() {
    printf("%s(): Entered\n", __func__);
-
 	//HERE
 	// Clear the Brain screen
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
@@ -224,20 +223,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	/*int shooting_time = 30000;	
-	int volts = 9500;
-	int funny_volts = 120000;
-   	chassis.setPose(-48,56.8388347648,45);
-   	chassis.moveToPoint(-58,41,1000,false);
-   	chassis.turnTo(-58,0,800,false);
-   	chassis.moveToPoint(-58,20,600,false);
-   	chassis.moveToPoint(-58,48,1000);
-   	chassis.turnTo(60,15,700);
-	//chassis.moveToPoint(-62,44,600);
-	chassis.moveToPoint(-63,48,450,false,60,false);
-	chassis.waitUntilDone();
-	cata_motors.move_voltage(volts);//*/
-
 	master.clear();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task lift_task(taskFn_lift_control,"lift-task");
