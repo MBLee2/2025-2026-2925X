@@ -129,17 +129,17 @@ void taskFn_intake_control(void){
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     
     lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);  // Set the encoder units for the lift motor to degrees
-    intake_color.set_led_pwm(100);  // Set the LED the intake color sensor to 100
+    intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color sensor to 100
 
     while (true)  // Infinite loop to keep checking controller input for intake control
     {
-        double pos = lift.get_position();
-        int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))/127;
-        int hue = intake_color.get_hue();
+        double pos = lift.get_position();  // Get the current position of the lift
+        int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127;  // Normalize the right joystick input to -1 to 1
+        int hue = intake_color.get_hue();  // Get the current hue value from the intake color sensor
         
         // Toggle intake on or off with the A button
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
-            if (current_state == OUTAKE || current_state == STOP)  // If intake is stopped or ejecting, start intake
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            if (current_state == OUTAKE || current_state == STOP)  // If the intake is stopped or ejecting, start intake
             {
                 intake.move(127);  // Start the intake
                 current_state = INTAKE;
@@ -153,7 +153,7 @@ void taskFn_intake_control(void){
         }
         
         // Toggle the basket state with the Y button
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
             if (basket_state == true)  // If the basket is extended, retract it
             {
                 basket_state = false;
@@ -168,8 +168,9 @@ void taskFn_intake_control(void){
             }   
         }
 
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
-            if (current_state == INTAKE || current_state == STOP)
+        // Eject objects with the B button
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+            if (current_state == INTAKE || current_state == STOP)  // If intake is running or stopped, start ejecting
             {
                 intake.move(-127);  // Reverse the intake to eject
                 current_state = OUTAKE;
@@ -182,34 +183,40 @@ void taskFn_intake_control(void){
             }   
         }
 
-        if(basket_state == true)
+        // Control intake based on color sensor readings when basket is extended
+        if (basket_state == true)
         {
-            if(hue >= 7 && hue <= 17 || hue >= 210 && hue<= 220)
+            if (hue >= 7 && hue <= 17 || hue >= 210 && hue <= 220)  // If hue matches specific values
             {
-                pros::delay(170);
-                intake.move(-127);
+                pros::delay(170);  // Small delay before reversing the intake
+                intake.move(-127);  // Reverse the intake for a short duration
                 pros::delay(300);
-                intake.move(127);
+                intake.move(127);  // Resume intake after the reversal
             }
         }
 
-        if(pos < -100){
-            hood1.set_value(false);
+        // Control the hood based on lift position
+        if (pos < -100) {
+            hood1.set_value(false);  // Retract the hood if lift position is below -100 degrees
             hood2.set_value(false);
         }
-        else if (basket_state == true){
-            hood1.set_value(true);
+        else if (basket_state == true) {
+            hood1.set_value(true);  // Extend the hood if the basket is extended
             hood2.set_value(true);
         }
         
-        if (rightX > 0.85){intake_lifted = true;}
-        if (rightX < -0.85){intake_lifted = false;}
-        if(intake_lifted == true){
-            intake_lift.set_value(true); //extended
+        // Control the intake lift based on joystick position
+        if (rightX > 0.85) {
+            intake_lifted = true;  // Lift the intake if joystick is pushed to the right
         }
-
-        if(intake_lifted == false){
-            intake_lift.set_value(false); //retracted
+        if (rightX < -0.85) {
+            intake_lifted = false;  // Lower the intake if joystick is pushed to the left
+        }
+        if (intake_lifted == true) {
+            intake_lift.set_value(true);  // Extend the intake lift
+        }
+        if (intake_lifted == false) {
+            intake_lift.set_value(false);  // Retract the intake lift
         }
     }
     printf("%s(): Exiting \n", __func__);  // Log the function exit for debugging
