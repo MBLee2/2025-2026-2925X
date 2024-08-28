@@ -7,111 +7,114 @@
 #include "lemlib/api.hpp"
 #include "lemlib/timer.hpp"
 
-#define TURN_CONST 1.4
+#define TURN_CONST 1.4 // Constat multipled by X input to allow for instant turns during driver control
 //Drivebase control
 void taskFn_drivebase_control(void){
-    printf("%s(): Entered \n", __func__);
-    bool drive_state = true; // true for normal, false for reversed
-    while (true) 
+    printf("%s(): Entered \n", __func__);  // Log the function entry for debugging
+    bool drive_state = true; // true for normal, false for reversed drive direction
+    while (true)  // Infinite loop to keep checking controller input and drive base state
     {
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X))
         {
-            drive_state = !drive_state;  // Toggle direction
-            pros::delay(300);  // Add a small delay to avoid rapid toggling
+            drive_state = !drive_state;  // Toggle drive direction when the X button is pressed
+            pros::delay(300);  // Add a small delay to avoid rapid toggling of direction
         }
 
-        int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-        int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        // Get  horizontal and vertical joystick input for movement and turning
+        int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);  
+        int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y); 
         
-        
-        // If the drive direction is reversed, negate the joystick inputs
+        // If the drive direction is reversed, negate the joystick input for forward/backward movement
         if (!drive_state) {
             leftY = -leftY;
         }
+        // Multiply the turning input to prioritize turning over forward movement, enabling agile motion
+        int turnVelleft = TURN_CONST * leftX;
 
-        int turnVelleft = TURN_CONST*leftX;
-
+        // Control the left and right motors based on the calculated values
         left_side_motors.move(leftY + turnVelleft);
-		right_side_motors.move(leftY - turnVelleft);
-
-        //chassis.arcade(leftY, leftX);
-
-        pros::delay(20);
+        right_side_motors.move(leftY - turnVelleft);
+        pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
     } // end of while loop
-
-    printf("%s(): Exiting \n", __func__);
-    
+    printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_drivebase_control
 
-//Lift control
+// Lift control
 void taskFn_lift_control(void){
-    printf("%s(): Entered \n", __func__);
-    while (true) 
+    printf("%s(): Entered \n", __func__);  // Log the function entry for debugging
+    while (true)  // Infinite loop to keep checking controller input for lift control
     {
+        // While the R2 button is pressed, move the lift up at full speed
         while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
         {
-            lift.move(127);  
+            lift.move(127);  // Move the lift up
         }   
+        // While the R1 button is pressed, move the lift down at full speed
         while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
         {
-            lift.move(-127); 
+            lift.move(-127);  // Move the lift down
+            // If R2 is pressed while R1 is still held, move the lift up instead
             while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
             {
-                lift.move(127);  
+                lift.move(127);  // Move the lift up
             }     
         } 
-        lift.move(0);
-
-        pros::delay(20);
+        lift.move(0);// If neither R1 nor R2 is pressed, stop the lift
+        pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
     }
-    printf("%s(): Exiting \n", __func__);
+    printf("%s(): Exiting \n", __func__);  // Log the function exit for debugging
 } // end of taskFn_lift_control
 
-//Mogo Control
+// Mogo Control
 void taskFn_mogo_control(void){
-    printf("%s(): Entered \n", __func__);
-    bool mogo_state = false;
-    bool sweeper_out = false;
-    while (true) 
+    printf("%s(): Entered \n", __func__);  // Log the function entry for debugging
+    bool mogo_state = false;  // Track the state of the mogo clamp (false = open, true = closed)
+    bool sweeper_out = false;  // Track the state of the sweeper (false = retracted, true = extended)
+    while (true)  // Infinite loop to keep checking controller input for mogo control
     {
-        int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        rightY = rightY/127;
-        if (rightY > 0.85){sweeper_out = true;}
-        if (rightY < -0.85){sweeper_out = false;}
-
+        // When the L1 button is pressed, toggle the mogo clamp state
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
         {
-            if (mogo_state == false)
+            if (mogo_state == false)  // If the clamp is open, close it
             {
                 mogo_state = true;
-                mogo_clamp.set_value(true);
+                mogo_clamp.set_value(true);  // Close the mogo clamp
 
             }
-            else if(mogo_state == true)
+            else if (mogo_state == true)  // If the clamp is closed, open it
             {
                 mogo_state = false;  
-                mogo_clamp.set_value(false);  
+                mogo_clamp.set_value(false);  // Open the mogo clamp
             }   
         }
 
-        if(sweeper_out == true)
+
+        // Get the input from the right joystick and normalize the input to a range of -1 to 1
+        int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y))/127;  
+        // If the joystick is pushed upward past 85%, set sweeper_out to true (extended)
+        if (rightY > 0.85){sweeper_out = true; }
+        // If the joystick is pushed downward past 85%, set sweeper_out to false (retracted)
+        if (rightY < -0.85){sweeper_out = false; }
+        
+        // If the sweeper is extended, extend the mogo rush
+        if (sweeper_out == true)
         {
-            mogo_rush.set_value(true); //extended
+            mogo_rush.set_value(true);  // Extend the mogo rush
         }
 
-        if(sweeper_out == false)
+        // If the sweeper is retracted, retract the mogo rush
+        if (sweeper_out == false)
         {
-            mogo_rush.set_value(false); //retracted
+            mogo_rush.set_value(false);  // Retract the mogo rush
         }
 
-       pros::delay(20); 
+        pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
     }
-    
-    printf("%s(): Exiting \n", __func__);
+    printf("%s(): Exiting \n", __func__);  // Log the function exit for debugging
 } // end of taskFn_mogo_control
 
 //Intake control
-void taskFn_intake_control(void){
+void taskFn_intake_control(void){   
     printf("%s(): Entered \n", __func__);
     enum intake_state {
     INTAKE,
@@ -127,13 +130,10 @@ void taskFn_intake_control(void){
     while (true) 
     {
         double pos = lift.get_position();
-        int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        rightX = rightX/127;
-        if (rightX > 0.85){intake_lifted = true;}
-        if (rightX < -0.85){intake_lifted = false;}
+        int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))/127;
+        int hue = intake_color.get_hue();
         
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
-        {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
             if (current_state == OUTAKE || current_state == STOP)
             {
                 intake.move(127);
@@ -147,8 +147,7 @@ void taskFn_intake_control(void){
             }   
         }
         
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) 
-        {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
             if (basket_state == true)
             {
                 basket_state = false;
@@ -162,31 +161,8 @@ void taskFn_intake_control(void){
                 hood2.set_value(true);
             }   
         }
-        if(pos < -100)
-        {
-            hood1.set_value(false);
-            hood2.set_value(false);
-        }
-        else if (basket_state == true) {
-            hood1.set_value(true);
-            hood2.set_value(true);
-        }
 
-        master.print(0, 0, "hue: %f", intake_color.get_hue());
-        int hue = intake_color.get_hue();
-        if(basket_state == true)
-        {
-            if(hue >= 7 && hue <= 17 || hue >= 210 && hue<= 220)
-            {
-                pros::delay(170);
-                intake.move(-127);
-                pros::delay(300);
-                intake.move(127);
-            }
-        }
-
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) 
-        {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
             if (current_state == INTAKE || current_state == STOP)
             {
                 intake.move(-127);
@@ -200,13 +176,33 @@ void taskFn_intake_control(void){
             }   
         }
 
-        if(intake_lifted == true)
+        if(basket_state == true)
         {
+            if(hue >= 7 && hue <= 17 || hue >= 210 && hue<= 220)
+            {
+                pros::delay(170);
+                intake.move(-127);
+                pros::delay(300);
+                intake.move(127);
+            }
+        }
+
+        if(pos < -100){
+            hood1.set_value(false);
+            hood2.set_value(false);
+        }
+        else if (basket_state == true){
+            hood1.set_value(true);
+            hood2.set_value(true);
+        }
+        
+        if (rightX > 0.85){intake_lifted = true;}
+        if (rightX < -0.85){intake_lifted = false;}
+        if(intake_lifted == true){
             intake_lift.set_value(true); //extended
         }
 
-        if(intake_lifted == false)
-        {
+        if(intake_lifted == false){
             intake_lift.set_value(false); //retracted
         }
     }
