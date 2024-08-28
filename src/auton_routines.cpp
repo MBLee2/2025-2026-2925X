@@ -29,7 +29,8 @@ auton_routine far_from_driver_elim2  { -0.600, 0.600, 180, "extra_1", &safe_6_ba
 auton_routine skills_1 		{ -0.600, 0.600, 180, "60S Auton - Skills # 1", &auton_60s_skills_1};
 auton_routine skills_2 		{ -0.600, 0.600, 180, "60S Auton - Skills # 2", &auton_60s_skills_2};
 
-
+float max_speed = 60; // forward back max speed
+int max_speed1 = (int)max_speed; //turn max speed
 
 //FULLY DONE
 void auton_15s_near_driver_qual() //DONE
@@ -46,8 +47,7 @@ void rushelim(){
 
 void ring_rush() //BLUE
 {
-    float max_speed = 60;
-    int max_speed1 = (int)max_speed;
+    
     chassis.setPose(48,-52.25,0);
     chassis.moveToPose(50, -10,15,3000,{.maxSpeed=max_speed});
     intake.move(-127);
