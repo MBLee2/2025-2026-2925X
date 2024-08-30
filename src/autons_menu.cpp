@@ -11,11 +11,11 @@ using pros::c::COLOR_WHITE;
 
 std::vector<auton_menu_button> button_list = {
     auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "GoalRush", pros::E_TEXT_MEDIUM},
+                      blue_goal_rush},
+    /*auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      near_driver_qual},
-    auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      near_driver_qual},
+                      near_driver_qual},*/
     auton_menu_button{{245, 50, 345, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "RingRush", pros::E_TEXT_MEDIUM},
                       blue_ring_rush},
