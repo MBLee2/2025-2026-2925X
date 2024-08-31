@@ -1,6 +1,7 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "controls.h"
@@ -110,8 +111,27 @@ void DescoreRushElim(){
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1()
 {
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    chassis.setPose(-24, -60.75, 180);
+    chassis.moveToPoint(-24, -48, 1000, {.forwards = false, .maxSpeed = max_speed});
+    intake.move(-127);
+    chassis.waitUntil(3.5);
+    intake.move(127);
+    mogo_clamp.set_value(true);
+    pros::Task lift_up([=] {
+        moveLift(210);
+    });
 
-
+    chassis.moveToPoint(-24, -24, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(-48, -24, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(-48, -62, 2000, {.maxSpeed = max_speed});
+    chassis.swingToPoint(-62.5, -52.5, DriveSide::RIGHT, 2000, {.maxSpeed = max_speed});
+    pros::Task lift_down([=] {
+        moveLift(60);
+        setBasket(true);
+    });
+    
+    pros::delay(5);
 } // end auton_60s_skills_1()
 // Auton skills number 2 fully done
 void auton_60s_skills_2()	

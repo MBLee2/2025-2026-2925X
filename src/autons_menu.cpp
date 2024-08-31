@@ -32,7 +32,7 @@ std::vector<auton_menu_button> button_list = {
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
                       far_from_driver_elim2},
     auton_menu_button{{15, 180, 230, 230, pros::c::COLOR_BEIGE,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                       pros::c::COLOR_WHITE_SMOKE, "Skills", pros::E_TEXT_MEDIUM},
                       skills_1},
     auton_menu_button{{245, 180, 460, 230, pros::c::COLOR_BEIGE,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},

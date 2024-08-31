@@ -1,15 +1,67 @@
-// #include "auton_basics.h"
-// #include "auton_menu.h"
-// #include "auton_routines.h"
-// #include "lemlib/pose.hpp"
-// #include "robot_config.h"
-// #include "controls.h"
-// #include "lemlib/api.hpp"
+#include "auton_basics.h"
+#include "auton_menu.h"
+#include "auton_routines.h"
+#include "lemlib/pose.hpp"
+#include "robot_config.h"
+#include "controls.h"
+#include "lemlib/api.hpp"
 
 // /*
 //     Diffrent auton functions that Rudra made for start of OU season and are not the best but work for very short movments 
 //     There are also a lot of conversion functions so I am not deleteing it 
 // */
+bool basket_state = false;
+
+void setBasket(bool set){
+    if (basket_state == true && !set)  // If the basket is extended, retract it
+    {
+        basket_state = false;
+        hood1.set_value(false);
+        hood2.set_value(false);
+    }
+    else if (basket_state == false && set)  // If the basket is retracted, extend it
+    {
+        basket_state = true;
+        hood1.set_value(true);
+        hood2.set_value(true);
+    }
+}
+
+bool basketRings(){
+    int hue = intake_color.get_hue();  // Get the current hue value from the intake color sensor
+
+    if (basket_state == true)
+    {
+        while(!(hue >= 7 && hue <= 17 || hue >= 210 && hue <= 220) && chassis.isInMotion())  // If hue matches specific values
+        {
+            hue = intake_color.get_hue();
+            pros::delay(10);
+        }
+        pros::delay(170);  // Small delay before reversing the intake
+        intake.move(-127);  // Reverse the intake for a short duration
+        pros::delay(300);
+        intake.move(127);  // Resume intake after the reversal
+        return true;
+    }
+    return false;
+}
+
+void moveLift(int position){
+    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+    if(position > lift.get_position()){
+        lift.move(127);
+        while(lift.get_position() < position){
+            pros::delay(50);
+        }
+        lift.brake();
+    } else if(position < lift.get_position()){
+        lift.move(-127);
+        while(lift.get_position() > position){
+            pros::delay(50);
+        }
+        lift.move(0);
+    }
+}
 
 
 // // Conversion fuctions

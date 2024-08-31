@@ -28,7 +28,7 @@ pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 pros::Motor intake(-4, pros::v5::MotorGears::green);  // port 13, reversed
 
 //Other Motor
-pros::Motor lift(6, pros::v5::MotorGears::red);  // port 13, reversed
+pros::Motor lift(-6, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
 pros::adi::Pneumatics hood1('h', false);
