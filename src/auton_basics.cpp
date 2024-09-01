@@ -17,7 +17,7 @@ const double BACK_SPACING = 330.2;
 const double LEFT_DIFFERENCE = 11.1125;
 const double RIGHT_DIFFERENCE = 11.1125;
 
-void readjustHeading(bool isRight, double roundedHeading)
+void readjustHeading(int side, double roundedHeading)
 /**
  * @brief Calculate and adjust the robot's heading using trigonometry and distance sensors
  *  mounted on the sides of the robot measuring against the wall
@@ -27,13 +27,13 @@ void readjustHeading(bool isRight, double roundedHeading)
 {
     double newHeading;
     
-    if(isRight){
+    if(side == 0){
         newHeading = radToDeg(atan((distance_rb.get() - distance_rf.get() - RIGHT_DIFFERENCE) / RIGHT_SPACING));
-    } else {
+    } else if(side == 1){
         newHeading = radToDeg(atan((distance_lf.get() - distance_lb.get() - LEFT_DIFFERENCE) / LEFT_SPACING));
-    }/* else {
+    } else {
         newHeading = radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
-    }*/
+    }
 
     newHeading += roundedHeading;
 
