@@ -21,7 +21,7 @@ void readjustHeading(int side, double roundedHeading)
 /**
  * @brief Calculate and adjust the robot's heading using trigonometry and distance sensors
  *  mounted on the sides of the robot measuring against the wall
- * @param isRight determine if the right or left side sensors will be used
+ * @param side which side is being used: 0 - Right, 1 - Left, 2 - Back
  * @param roundedHeading robot's approxiamated direction in multiples of 90, which wall the front is facing
  */
 {
