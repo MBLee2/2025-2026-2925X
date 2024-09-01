@@ -5,6 +5,7 @@
 #include "robot_config.h"
 #include "controls.h"
 #include "lemlib/api.hpp"
+#include "math.h"
 
 // /*
 //     Diffrent auton functions that Rudra made for start of OU season and are not the best but work for very short movments 
@@ -27,27 +28,27 @@ void setBasket(bool set){
     }
 }
 
-bool basketRings(){
-    int hue = intake_color.get_hue();  // Get the current hue value from the intake color sensor
+void basketRings(){
+    intake.move(80);
+    bool haveSeen = false;
 
     if (basket_state == true)
     {
-        while(!(hue >= 7 && hue <= 17 || hue >= 210 && hue <= 220) && chassis.isInMotion())  // If hue matches specific values
+        while(!haveSeen || (haveSeen && intake_dist.get() < 20))  // If hue matches specific values
         {
-            hue = intake_color.get_hue();
             pros::delay(10);
+            if(intake_dist.get() < 20){
+                haveSeen = true;
+            }
         }
-        pros::delay(170);  // Small delay before reversing the intake
-        intake.move(-127);  // Reverse the intake for a short duration
-        pros::delay(300);
-        intake.move(127);  // Resume intake after the reversal
-        return true;
+        pros::delay(50);  // Small delay before reversing the intake
+        intake.move(-115);  // Reverse the intake for a short duration
+        pros::delay(310);
     }
-    return false;
+    intake.move(80);
 }
 
 void moveLift(int position){
-    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
     if(position > lift.get_position()){
         lift.move(127);
         while(lift.get_position() < position){
@@ -62,6 +63,17 @@ void moveLift(int position){
         lift.move(0);
     }
 }
+
+double radToDeg(double rad){
+    return rad * (180 / PI);
+}
+
+//distance sensor constants
+const double LEFT_SPACING = 260.35;
+const double RIGHT_SPACING = 139.7;
+const double BACK_SPACING = 330.2;
+const double LEFT_DIFFERENCE = 11.1125;
+const double RIGHT_DIFFERENCE = 11.1125;
 
 void readjustHeading(int side, double roundedHeading)
 /**

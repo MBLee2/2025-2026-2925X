@@ -41,7 +41,7 @@ pros::adi::Pneumatics climb('a', false);
 
 
 /* SENSORS */
-pros::Optical intake_color(2);
+pros::Distance intake_dist(2);
 pros::Distance distance_rb(9);
 pros::Distance distance_rf(9);
 pros::Distance distance_lb(9);
