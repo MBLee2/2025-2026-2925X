@@ -89,7 +89,7 @@ void readjustHeading(int side, double roundedHeading)
         newHeading = radToDeg(atan((distance_rb.get() - distance_rf.get() - RIGHT_DIFFERENCE) / RIGHT_SPACING));
     } else if(side == 1){
         newHeading = radToDeg(atan((distance_lf.get() - distance_lb.get() - LEFT_DIFFERENCE) / LEFT_SPACING));
-    } else {
+    } else if(side == 2){
         newHeading = radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
     }
 
@@ -98,6 +98,17 @@ void readjustHeading(int side, double roundedHeading)
     chassis.setPose(chassis.getPose().x, chassis.getPose().y, newHeading);
 }
 
+double findDistToWall(int side){
+    if(side == 0){
+        return (distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) * 25.4 / 2.0 + 6.75;
+    } 
+    else if(side == 1){
+        return (distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) * 25.4 / 2.0 + 6.75;
+    }
+    else {
+        return (distance_br.get() + distance_bl.get()) * 25.4 / 2.0 + 7.25;
+    }
+}
 
 // // Conversion fuctions
 // double cartesian2compass(double cartesian_angle) 

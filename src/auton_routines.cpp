@@ -111,25 +111,54 @@ void DescoreRushElim(){
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1()
 {
-    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     chassis.setPose(-24, -60.75, 180);
-    chassis.moveToPoint(-24, -48, 1000, {.forwards = false, .maxSpeed = max_speed});
-    intake.move(-127);
-    chassis.waitUntil(3.5);
-    intake.move(127);
-    mogo_clamp.set_value(true);
-    pros::Task lift_up([=] {
-        moveLift(210);
+    chassis.moveToPoint(-24, -48, 1000, {.forwards = false, .maxSpeed = max_speed}); //Move towards first ring
+    intake.move(-127); //outake to release basket
+    chassis.waitUntil(4);
+    mogo_clamp.set_value(true); //clamp on mobile goal
+    chassis.waitUntil(5);
+    intake.move(0); //stop intake to avoid outaking preload
+    pros::Task lift_up1([=] { //raise lift (later lift may get in way near the wall)
+        moveLift(300);
     });
 
+    //intake other rings in bottom left corner
     chassis.moveToPoint(-24, -24, 2000, {.maxSpeed = max_speed});
+    intake.move(127); 
     chassis.moveToPoint(-48, -24, 2000, {.maxSpeed = max_speed});
-    chassis.moveToPoint(-48, -62, 2000, {.maxSpeed = max_speed});
-    chassis.swingToPoint(-62.5, -52.5, DriveSide::RIGHT, 2000, {.maxSpeed = max_speed});
-    pros::Task lift_down([=] {
+    chassis.moveToPoint(-48, -64, 3000, {.maxSpeed = max_speed - 10});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(-40, -48, 1000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.moveToPoint(-60, -52, 2000, {.maxSpeed = max_speed});
+
+    //move to place goal in corner
+    chassis.turnToHeading(0, 1000, {.maxSpeed = max_speed1});
+    chassis.waitUntil(30);
+    intake.move(0); //save last intaked ring for basket
+    chassis.moveToPoint(-62, -62, 1000, {.forwards = false, .maxSpeed = max_speed});
+    pros::Task lift_down1([=] {
         moveLift(60);
         setBasket(true);
     });
+    chassis.waitUntilDone();
+    mogo_clamp.set_value(false);
+    setBasket(true);
+    pros::Task basket1(basketRings);
+
+    chassis.moveToPose(-45, -24, 0, 1000, {.maxSpeed = max_speed});
+    chassis.waitUntil(30);
+    readjustHeading(2, 0);
+    chassis.waitUntilDone();
+    setBasket(false);
+    intake.move(0);
+    chassis.setPose(-72 + findDistToWall(1), -72 + findDistToWall(2), chassis.getPose().theta);
+    chassis.moveToPoint(-48, 0, 2000, {.maxSpeed = max_speed});
+    pros::Task lift_up2([=] {
+        moveLift(480);
+    });
+    chassis.moveToPoint(-58.75, 0, 2000, {.maxSpeed = max_speed});
+    moveLift(240);
+    chassis.moveToPoint(-48, 0, 1000, {.forwards = false, .maxSpeed = max_speed});
     
     pros::delay(5);
 } // end auton_60s_skills_1()

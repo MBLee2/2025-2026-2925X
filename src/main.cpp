@@ -153,6 +153,10 @@ void competition_initialize() {
 
 	}
 
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	lift.set_zero_position(lift.get_position());
+
 	printf("%s(): Exiting\n", __func__);
 	
 	// Clear the Brain screen and show status
@@ -231,6 +235,4 @@ void opcontrol() {
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
 	pros::Task hood(taskFn_hood_control,"intake_push_task");
     
-    while (true) {
-    }
 }
