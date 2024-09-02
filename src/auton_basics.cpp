@@ -6,6 +6,7 @@
 #include "controls.h"
 #include "lemlib/api.hpp"
 #include "math.h"
+#include <cmath>
 
 // /*
 //     Diffrent auton functions that Rudra made for start of OU season and are not the best but work for very short movments 
@@ -75,9 +76,9 @@ const double BACK_SPACING = 330.2;
 const double LEFT_DIFFERENCE = 11.1125;
 const double RIGHT_DIFFERENCE = 11.1125;
 
-void readjustHeading(int side, double roundedHeading)
+double findHeading(int side, double roundedHeading)
 /**
- * @brief Calculate and adjust the robot's heading using trigonometry and distance sensors
+ * @brief Calculate the robot's heading using trigonometry and distance sensors
  *  mounted on the sides of the robot measuring against the wall
  * @param side which side is being used: 0 - Right, 1 - Left, 2 - Back
  * @param roundedHeading robot's approxiamated direction in multiples of 90, which wall the front is facing
@@ -93,21 +94,43 @@ void readjustHeading(int side, double roundedHeading)
         newHeading = radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
     }
 
-    newHeading += roundedHeading;
-
-    chassis.setPose(chassis.getPose().x, chassis.getPose().y, newHeading);
+    return newHeading + roundedHeading;
 }
 
-double findDistToWall(int side){
+double findDistToWall(int side)
+/**
+     * @brief Calculate the distance to a wall using distance sensors
+     * @param side which side of the robot is being used: 0 - Right, 1 - Left, 2 - Back
+     */
+{
     if(side == 0){
-        return (distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) * 25.4 / 2.0 + 6.75;
+        return ((distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
     } 
     else if(side == 1){
-        return (distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) * 25.4 / 2.0 + 6.75;
+        return ((distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
     }
     else {
-        return (distance_br.get() + distance_bl.get()) * 25.4 / 2.0 + 7.25;
+        return ((distance_br.get() + distance_bl.get()) / 2.0) / 25.4 + 7.25;
     }
+}
+
+//works fine but does not account for drift
+void moveUntilDist(double targetDist, float speed){
+    bool reachedTarget = false;
+    while(!reachedTarget){
+        if(abs(targetDist - findDistToWall(2)) < 0.5){
+            reachedTarget = true;
+        } else if(targetDist > findDistToWall(2)) {
+            left_side_motors.move(speed);
+            right_side_motors.move(speed);
+        } else {
+            left_side_motors.move(-speed);
+            right_side_motors.move(-speed);
+        }
+        pros::delay(10);
+    }
+    left_side_motors.move(0);
+    right_side_motors.move(0);
 }
 
 // // Conversion fuctions

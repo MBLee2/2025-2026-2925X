@@ -111,6 +111,7 @@ void DescoreRushElim(){
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1()
 {
+
     chassis.setPose(-24, -60.75, 180);
     chassis.moveToPoint(-24, -48, 1000, {.forwards = false, .maxSpeed = max_speed}); //Move towards first ring
     intake.move(-127); //outake to release basket
@@ -145,20 +146,35 @@ void auton_60s_skills_1()
     setBasket(true);
     pros::Task basket1(basketRings);
 
-    chassis.moveToPose(-45, -24, 0, 1000, {.maxSpeed = max_speed});
-    chassis.waitUntil(30);
-    readjustHeading(2, 0);
+    setBasket(true);
+    chassis.setPose(-62, -62, 45);
+    chassis.moveToPoint(-48, -48, 2000, {.maxSpeed = max_speed});
     chassis.waitUntilDone();
-    setBasket(false);
     intake.move(0);
-    chassis.setPose(-72 + findDistToWall(1), -72 + findDistToWall(2), chassis.getPose().theta);
+    chassis.turnToHeading(0, 1000, {.maxSpeed = max_speed1});
+    chassis.waitUntilDone();
+    chassis.setPose(-72 + findDistToWall(1), -72 + findDistToWall(2), findHeading(1, 0));
+
     chassis.moveToPoint(-48, 0, 2000, {.maxSpeed = max_speed});
-    pros::Task lift_up2([=] {
-        moveLift(480);
+    moveLift(540);
+    chassis.waitUntilDone();
+    intake.move(127);
+    setBasket(false);
+    chassis.turnToHeading(270, 1000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = max_speed1});
+
+    chassis.moveToPoint(-64, 0, 2000, {.maxSpeed = max_speed});
+    pros::Task([=] {
+        while(intake_dist.get() > 20){
+            pros::delay(10);
+        }
+        intake.move(0);
     });
-    chassis.moveToPoint(-58.75, 0, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(-58, 0, 1000, {.forwards = false, .maxSpeed = 20});
     moveLift(240);
     chassis.moveToPoint(-48, 0, 1000, {.forwards = false, .maxSpeed = max_speed});
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+
+
     
     pros::delay(5);
 } // end auton_60s_skills_1()
