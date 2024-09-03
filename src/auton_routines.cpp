@@ -1,7 +1,6 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
-#include "lemlib/chassis/chassis.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
@@ -17,7 +16,7 @@ ASSET(touchbar_txt);
 
 // Auton routine start positions
 auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine",      nullptr                 };
-auton_routine near_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_near_driver_qual};
+auton_routine blue_goal_rush { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &goal_rush};
 auton_routine blue_ring_rush { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &ring_rush}; 
 auton_routine near_driver_elim { 1.000, -1.300, 190, "15S Auton - Near Driver # 2",&DescoreRushElim};  // to be updated
 auton_routine near_driver_elim2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushelim};  // to be updated
@@ -39,6 +38,52 @@ int max_speed1 = (int)max_speed; //turn max speed
 void auton_15s_near_driver_qual() //DONE
 {
 
+}
+void goal_rush() //BLUE
+{
+    /*chassis.setPose(-48, -51.5, 180);
+    chassis.moveToPoint(-48, -7.5, 3000, {.forwards = false, .maxSpeed = max_speed * 1.5f});
+    chassis.waitUntil(38.5);
+    mogo_clamp.set_value(true);
+    pros::delay(200);*/
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    chassis.setPose(-48, -7.5, 180);
+
+    chassis.moveToPoint(-38.5, -18, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(-38.5, -12, 2000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    intake.move(-127);
+    pros::delay(750);
+
+    intake.move(127);
+    lift.move(127);
+    chassis.moveToPose(-60, -59, 195, 3000, {.maxSpeed = max_speed});
+    chassis.waitUntil(10);
+    lift.brake();
+    mogo_rush.set_value(true);
+    chassis.turnToHeading(140, 3000);
+    chassis.turnToHeading(180, 1000, {.maxSpeed = max_speed1});
+    mogo_rush.set_value(false);
+
+    chassis.moveToPoint(-62, -60, 1000, {.maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    pros::delay(750);
+    chassis.moveToPoint(-60, -40, 1000, {.forwards = false, .maxSpeed = max_speed});
+    intake.move(0);
+    chassis.waitUntilDone();
+    mogo_clamp.set_value(false);
+    // return;
+
+    chassis.moveToPoint(-60, -55, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(-29, -25, 2000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    mogo_clamp.set_value(true);
+
+    intake.move(127);
+    chassis.moveToPoint(-24, -12, 1000, {.maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    intake.move(0);
 }
 void rushWP(){ // 
     

@@ -20,12 +20,13 @@ typedef struct s_auton_routine
 
 //change all of these
 extern auton_routine null_routine; 
-extern auton_routine near_driver_qual, blue_ring_rush, near_driver_elim2;
+extern auton_routine blue_goal_rush, blue_ring_rush, near_driver_elim2;
 extern auton_routine far_from_driver_qual, far_from_driver_elim, far_from_driver_elim2;
 extern auton_routine skills_1, skills_2;
 
 // functions to render the menu and read inputs from it
 void auton_15s_near_driver_qual();
+void goal_rush();
 void rushWP();
 void ring_rush();
 void DescoreRushElim();
