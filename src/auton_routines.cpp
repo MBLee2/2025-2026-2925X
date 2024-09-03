@@ -89,7 +89,7 @@ void ring_rush() //BLUE
 
 
 }
-void auton_15s_far_driver_qual() // FAR DRIVER QUAL
+void auton_15s_far_driver_qual() //Blue
 {
 
 }
