@@ -41,10 +41,13 @@ pros::adi::Pneumatics climb('a', false);
 
 
 /* SENSORS */
-pros::Optical intake_color(2);
-pros::Distance distance_left(9);
-pros::Distance distance_right(7);
-pros::Distance distance_back(19);
+pros::Distance intake_dist(2);
+pros::Distance distance_lf(19);
+pros::Distance distance_lb(20);
+pros::Distance distance_rf(8);
+pros::Distance distance_rb(1);
+pros::Distance distance_bl(7);
+pros::Distance distance_br(10);
 
 pros::GPS gps(12);
 pros::IMU imu(3);
