@@ -1,16 +1,139 @@
-// #include "auton_basics.h"
-// #include "auton_menu.h"
-// #include "auton_routines.h"
-// #include "lemlib/pose.hpp"
-// #include "robot_config.h"
-// #include "controls.h"
-// #include "lemlib/api.hpp"
+#include "auton_basics.h"
+#include "auton_menu.h"
+#include "auton_routines.h"
+#include "lemlib/pose.hpp"
+#include "pros/motors.h"
+#include "robot_config.h"
+#include "controls.h"
+#include "lemlib/api.hpp"
+#include "math.h"
+#include <cmath>
 
 // /*
 //     Diffrent auton functions that Rudra made for start of OU season and are not the best but work for very short movments 
 //     There are also a lot of conversion functions so I am not deleteing it 
 // */
+bool basket_state = false;
 
+void setBasket(bool set){
+    if (basket_state == true && !set)  // If the basket is extended, retract it
+    {
+        basket_state = false;
+        hood1.set_value(false);
+        hood2.set_value(false);
+    }
+    else if (basket_state == false && set)  // If the basket is retracted, extend it
+    {
+        basket_state = true;
+        hood1.set_value(true);
+        hood2.set_value(true);
+    }
+}
+
+void basketRings(){
+    intake.move(100);
+    bool haveSeen = false;
+
+    if (basket_state == true)
+    {
+        while(!haveSeen || (haveSeen && intake_dist.get() < 20))  // If hue matches specific values
+        {
+            pros::delay(10);
+            if(intake_dist.get() < 20){
+                haveSeen = true;
+            }
+        }
+        pros::delay(40);  // Small delay before reversing the intake
+        intake.move(-115);  // Reverse the intake for a short duration
+        pros::delay(370);
+    }
+    intake.move(100);
+}
+
+void moveLift(int position){
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    if(position > lift.get_position()){
+        lift.move(127);
+        while(lift.get_position() < position){
+            pros::delay(50);
+        }
+        lift.brake();
+    } else if(position < lift.get_position()){
+        lift.move(-127);
+        while(lift.get_position() > position){
+            pros::delay(50);
+        }
+        lift.move(0);
+    }
+}
+
+double radToDeg(double rad){
+    return rad * (180 / PI);
+}
+
+//distance sensor constants
+const double LEFT_SPACING = 260.35;
+const double RIGHT_SPACING = 139.7;
+const double BACK_SPACING = 330.2;
+const double LEFT_DIFFERENCE = 11.1125;
+const double RIGHT_DIFFERENCE = 11.1125;
+
+double findHeading(int side, double roundedHeading)
+/**
+ * @brief Calculate the robot's heading using trigonometry and distance sensors
+ *  mounted on the sides of the robot measuring against the wall
+ * @param side which side is being used: 0 - Right, 1 - Left, 2 - Back
+ * @param roundedHeading robot's approxiamated direction in multiples of 90, which wall the front is facing
+ */
+{
+    double newHeading;
+    
+    if(side == 0){
+        newHeading = radToDeg(atan((distance_rb.get() - distance_rf.get() - RIGHT_DIFFERENCE) / RIGHT_SPACING));
+    } else if(side == 1){
+        newHeading = radToDeg(atan((distance_lf.get() - distance_lb.get() - LEFT_DIFFERENCE) / LEFT_SPACING));
+    } else if(side == 2){
+        newHeading = radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
+    }
+
+    return newHeading + roundedHeading;
+}
+
+double findDistToWall(int side)
+/**
+     * @brief Calculate the distance to a wall using distance sensors
+     * @param side which side of the robot is being used: 0 - Right, 1 - Left, 2 - Back
+     */
+{
+    if(side == 0){
+        return ((distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+    } 
+    else if(side == 1){
+        return ((distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+    }
+    else {
+        return ((distance_br.get() + distance_bl.get()) / 2.0) / 25.4 + 7.25;
+    }
+}
+
+//works fine but does not account for drift
+void moveUntilDist(double targetDist, float speed){
+    bool reachedTarget = false;
+    while(!reachedTarget){
+        if(abs(targetDist - findDistToWall(2)) < 0.5){
+            reachedTarget = true;
+        } else if(targetDist > findDistToWall(2)) {
+            left_side_motors.move(speed);
+            right_side_motors.move(speed);
+        } else {
+            left_side_motors.move(-speed);
+            right_side_motors.move(-speed);
+        }
+        pros::delay(10);
+    }
+    left_side_motors.move(0);
+    right_side_motors.move(0);
+}
 
 // // Conversion fuctions
 // double cartesian2compass(double cartesian_angle) 

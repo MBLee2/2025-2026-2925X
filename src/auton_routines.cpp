@@ -1,6 +1,8 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "lemlib/chassis/chassis.hpp"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "controls.h"
@@ -8,6 +10,7 @@
 #include <sys/_intsup.h>
 #include <sys/_stdint.h>
 #include <type_traits>
+
 
 ASSET(matchloadturn4ball_txt);
 ASSET(touchbar_txt);
@@ -111,7 +114,108 @@ ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1()
 {
 
+    /*chassis.setPose(-24, -60.75, 180);
+    chassis.moveToPoint(-24, -48, 1000, {.forwards = false, .maxSpeed = max_speed}); //Move towards first ring
+    intake.move(-127); //outake to release basket
+    chassis.waitUntil(4);
+    mogo_clamp.set_value(true); //clamp on mobile goal
+    chassis.waitUntil(5);
+    intake.move(0); //stop intake to avoid outaking preload
+    pros::Task lift_up1([=] { //raise lift (later lift may get in way near the wall)
+        moveLift(300);
+    });
 
+    //intake other rings in bottom left corner
+    chassis.moveToPoint(-24, -24, 2000, {.maxSpeed = max_speed});
+    intake.move(127); 
+    chassis.moveToPoint(-48, -24, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(-48, -64, 3000, {.maxSpeed = max_speed - 10});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(-40, -48, 1000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.moveToPoint(-60, -52, 2000, {.maxSpeed = max_speed});
+
+    //move to place goal in corner
+    chassis.turnToHeading(0, 1000, {.maxSpeed = max_speed1});
+    chassis.waitUntil(30);
+    intake.move(0); //save last intaked ring for basket
+    chassis.moveToPoint(-62, -62, 1000, {.forwards = false, .maxSpeed = max_speed});
+    pros::Task lift_down1([=] {
+        moveLift(60);
+        setBasket(true);
+    });
+    chassis.waitUntilDone();
+    mogo_clamp.set_value(false);
+    setBasket(true);
+    pros::Task basket1(basketRings);
+
+    chassis.setPose(-62, -62, 45);
+    chassis.moveToPoint(-48, -48, 2000, {.maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    intake.move(0);
+    chassis.turnToHeading(0, 1000, {.maxSpeed = max_speed1});
+    setBasket(false);
+    chassis.waitUntilDone();
+
+    chassis.setPose(-72 + findDistToWall(1), -72 + findDistToWall(2), findHeading(1, 0));
+
+    chassis.moveToPoint(-48, 0, 2000, {.maxSpeed = max_speed});
+    moveLift(540);
+    chassis.waitUntilDone();
+    intake.move(127);
+    chassis.turnToHeading(270, 1000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = max_speed1});
+
+    chassis.moveToPoint(-64, 0, 2000, {.maxSpeed = max_speed});
+    pros::Task([=] {
+        while(intake_dist.get() > 20){
+            pros::delay(10);
+        }
+        intake.move(0);
+    });
+    chassis.moveToPoint(-58, 0, 1000, {.forwards = false, .maxSpeed = 20});
+    moveLift(240);
+    chassis.moveToPoint(-48, 0, 1000, {.forwards = false, .maxSpeed = max_speed});
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);*/
+
+    //setBasket(true);
+    //basketRings();
+    /*chassis.turnToPoint(-48, 24, 2000, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = max_speed1});
+    intake.move(127);
+    chassis.moveToPoint(-48, 24, 3000, {.maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    //basketRings();
+    chassis.moveTPoint(-24, -36, 2000, {.maxSpeed = max_speed});
+    intake.move(0);
+    chassis.turnToHeading(180, 2000, {.maxSpeed = max_speed1});
+    chassis.moveToPoint(-25, 56, 3000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.waitUntil(26);
+    mogo_clamp.set_value(true);*/
+
+    /*chassis.moveToPoint(-36, 58, 2000, {.maxSpeed = max_speed});
+    mogo_rush.extend();
+    chassis.turnToHeading(90, 1000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE});
+    chassis.moveToPoint(-57, 56, 2000, {.forwards = false, .maxSpeed = max_speed});
+    mogo_rush.retract();
+    mogo_clamp.set_value(false);
+    */
+
+    chassis.setPose(-57, 56, 90);
+
+    moveLift(300);
+    chassis.moveToPoint(-48, 56, 2000, {.maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    printf("Left Distance: %f", findDistToWall(1));
+    printf("Back Distance: %f", findDistToWall(2));
+    chassis.setPose(-72 + findDistToWall(2), 72 - findDistToWall(1), findHeading(1, 90));
+    pros::delay(1000);
+    chassis.moveToPoint(-12, 56, 2000, {.maxSpeed = max_speed});
+    chassis.turnToHeading(315, 2000, {.direction = AngularDirection::CW_CLOCKWISE, .maxSpeed = max_speed1});
+    chassis.moveToPoint(0, 48, 2000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    mogo_clamp.set_value(true);
+    chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
+    chassis.moveToPoint(0, 54, 2000, {.maxSpeed = max_speed});
+    
+    pros::delay(5);
 } // end auton_60s_skills_1()
 // Auton skills number 2 fully done
 void auton_60s_skills_2()	
