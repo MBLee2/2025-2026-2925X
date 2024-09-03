@@ -126,6 +126,7 @@ void taskFn_intake_control(void){
 
     bool basket_state = false;  // Track the state of the basket (false = retracted, true = extended)
     bool intake_lifted = false;  // Track whether the intake is lifted (false = down, true = up)
+    bool have_seen = false; //Track whether intake sensor has seen ring
     int counter = 200;
     int intake_speed = 127;
     intake_state current_state = STOP;  // Initialize with a default state, STOP
@@ -168,8 +169,11 @@ void taskFn_intake_control(void){
                 basket_state = true;
                 hood1.set_value(true);
                 hood2.set_value(true);
-                intake_speed = 115;
-            }   
+                intake_speed = 100;
+            }
+            if(current_state == INTAKE){
+                intake.move(intake_speed);
+            }
         }
 
         // Eject objects with the B button
@@ -191,14 +195,18 @@ void taskFn_intake_control(void){
         // Control intake based on color sensor readings when basket is extended
         if (basket_state == true)
         {
-            if (counter > 200 && current_state == INTAKE && intake_dist.get() < 20)  // If hue matches specific values
+            if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 20))  // If hue matches specific values
             {
-                pros::delay(210);  // Small delay before reversing the intake
-                intake.move(-127);  // Reverse the intake for a short duration
-                pros::delay(310);
-                intake.move(115);  // Resume intake after the reversal
+                pros::delay(40);  // Small delay before reversing the intake
+                intake.move(-115);  // Reverse the intake for a short duration
+                pros::delay(370);
+                intake.move(100);  // Resume intake after the reversal
                 counter = 0;
+                have_seen = false;
             } else {
+                if(!have_seen && intake_dist.get() < 20){
+                    have_seen = true;
+                }
                 counter++;
             }
         }

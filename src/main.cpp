@@ -141,6 +141,10 @@ void competition_initialize() {
 	// on the brain rather than the display as expected
 	pros::delay(10); 
 
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	lift.set_zero_position(lift.get_position());
+
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();
 
@@ -152,10 +156,6 @@ void competition_initialize() {
 
 
 	}
-
-    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-	lift.set_zero_position(lift.get_position());
 
 	printf("%s(): Exiting\n", __func__);
 	
@@ -181,7 +181,8 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
-   printf("%s(): Entered\n", __func__);
+	auton_routine default_routine = skills_1;
+   	printf("%s(): Entered\n", __func__);
 	//HERE
 	// Clear the Brain screen
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
@@ -192,12 +193,13 @@ void autonomous() {
 	// ensure that an auton routine has been slected
 	if (selected_auton_routine.routine_func == nullptr)
 	{
-		pros::screen::set_pen(pros::c::COLOR_RED);
+		selected_auton_routine = default_routine;
+		/*pros::screen::set_pen(pros::c::COLOR_RED);
 		while (true)
 		{
 	    	pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected!!");
 			pros::delay(250);
-		}	
+		}	*/
 	}
 
 	// Call the function associated with the selected auton routine		

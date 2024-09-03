@@ -2,6 +2,7 @@
 #include "auton_menu.h"
 #include "auton_routines.h"
 #include "lemlib/pose.hpp"
+#include "pros/motors.h"
 #include "robot_config.h"
 #include "controls.h"
 #include "lemlib/api.hpp"
@@ -30,7 +31,7 @@ void setBasket(bool set){
 }
 
 void basketRings(){
-    intake.move(80);
+    intake.move(100);
     bool haveSeen = false;
 
     if (basket_state == true)
@@ -42,14 +43,15 @@ void basketRings(){
                 haveSeen = true;
             }
         }
-        pros::delay(50);  // Small delay before reversing the intake
+        pros::delay(40);  // Small delay before reversing the intake
         intake.move(-115);  // Reverse the intake for a short duration
-        pros::delay(310);
+        pros::delay(370);
     }
-    intake.move(80);
+    intake.move(100);
 }
 
 void moveLift(int position){
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     if(position > lift.get_position()){
         lift.move(127);
         while(lift.get_position() < position){
