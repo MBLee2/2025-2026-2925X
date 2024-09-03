@@ -7,33 +7,34 @@
 #include "lemlib/api.hpp"
 #include "lemlib/timer.hpp"
 
-#define TURN_CONST 1.4 // Constat multipled by X input to allow for instant turns during driver control
+#define TURN_CONST 1.4 // Constant multipled by X input to allow for instant turns during driver control
 //Drivebase control
 void taskFn_drivebase_control(void){
     printf("%s(): Entered \n", __func__);  // Log the function entry for debugging
     bool drive_state = true; // true for normal, false for reversed drive direction
     while (true)  // Infinite loop to keep checking controller input and drive base state
     {
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X))
-        {
-            drive_state = !drive_state;  // Toggle drive direction when the X button is pressed
-            pros::delay(300);  // Add a small delay to avoid rapid toggling of direction
-        }
-
         // Get  horizontal and vertical joystick input for movement and turning
         int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);  
         int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y); 
         
-        // If the drive direction is reversed, negate the joystick input for forward/backward movement
-        if (!drive_state) {
-            leftY = -leftY;
-        }
         // Multiply the turning input to prioritize turning over forward movement, enabling agile motion
         int turnVelleft = TURN_CONST * leftX;
 
         // Control the left and right motors based on the calculated values
         left_side_motors.move(leftY + turnVelleft);
         right_side_motors.move(leftY - turnVelleft);
+        
+        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X))
+        {
+            drive_state = !drive_state;  // Toggle drive direction when the X button is pressed
+            pros::delay(300);  // Add a small delay to avoid rapid toggling of direction
+        }
+        // If the drive direction is reversed, negate the joystick input for forward/backward movement
+        if (!drive_state) {
+            leftY = -leftY;
+        }
+
         pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
     } // end of while loop
     printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
@@ -116,7 +117,6 @@ void taskFn_mogo_control(void){
 // Intake control
 void taskFn_intake_control(void){
     printf("%s(): Entered \n", __func__);  // Log the function entry for debugging
-
     // Define an enum to represent the intake's possible states
     enum intake_state {
         INTAKE,   // Intake objects
@@ -151,23 +151,6 @@ void taskFn_intake_control(void){
                 current_state = STOP;
             }   
         }
-        
-        // Toggle the basket state with the Y button
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-            if (basket_state == true)  // If the basket is extended, retract it
-            {
-                basket_state = false;
-                hood1.set_value(false);
-                hood2.set_value(false);
-            }
-            else if (basket_state == false)  // If the basket is retracted, extend it
-            {
-                basket_state = true;
-                hood1.set_value(true);
-                hood2.set_value(true);
-            }   
-        }
-
         // Eject objects with the B button
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
             if (current_state == INTAKE || current_state == STOP)  // If intake is running or stopped, start ejecting
@@ -182,7 +165,7 @@ void taskFn_intake_control(void){
                 current_state = STOP;
             }   
         }
-
+        
         // Control intake based on color sensor readings when basket is extended
         if (basket_state == true)
         {
@@ -218,6 +201,23 @@ void taskFn_intake_control(void){
         if (intake_lifted == false) {
             intake_lift.set_value(false);  // Retract the intake lift
         }
+
+        // Toggle the basket state with the Y button
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+            if (basket_state == true)  // If the basket is extended, retract it
+            {
+                basket_state = false;
+                hood1.set_value(false);
+                hood2.set_value(false);
+            }
+            else if (basket_state == false)  // If the basket is retracted, extend it
+            {
+                basket_state = true;
+                hood1.set_value(true);
+                hood2.set_value(true);
+            }   
+        }
+
     }
     printf("%s(): Exiting \n", __func__);  // Log the function exit for debugging
 } // end of taskFn_intake_control
