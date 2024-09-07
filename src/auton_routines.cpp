@@ -162,6 +162,14 @@ void printPosition(char *msg, bool withDistanceSensors = false) {
   }
 }
 
+
+
+
+
+
+
+
+
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1() {
 
@@ -307,87 +315,87 @@ void auton_60s_skills_1() {
 
 
 
-  chassis.setPose(74.0 - findDistToWall(1), 34,
-                  0); // y offset wrong DO NOT REMOBE
+    chassis.setPose(74.0 - findDistToWall(1), 34,
+                    0); // y offset wrong DO NOT REMOBE
 
 
 
-  printf("\nBattery: %3.2f\n", pros::c::battery_get_capacity());
+    printf("\nBattery: %3.2f\n", pros::c::battery_get_capacity());
 
 
-  printPosition((char*)"Before pickup", true);
+    printPosition((char*)"Before pickup", true);
 
 
-  mogo_clamp.set_value(true);
+    mogo_clamp.set_value(true);
 
-  lemlib::Pose currentPose = chassis.getPose();
-  chassis.setPose(74.0-findDistToWall(1), 74.0-findDistToWall(3), currentPose.theta);
+    lemlib::Pose currentPose = chassis.getPose();
+    chassis.setPose(74.0-findDistToWall(1), 74.0-findDistToWall(3), currentPose.theta);
 
-  currentPose = chassis.getPose();
+    currentPose = chassis.getPose();
 
-  printPosition((char*)"after pickup");
-
-
-  pros::delay(250);
-  chassis.turnToHeading(135, 2000);
-  chassis.waitUntilDone();
-
-  printPosition((char*)"after turn");
-
-   pros::Task lift_down356([=] { moveLift(300); });
-
-   intake.move(127);
-  printPosition((char*)"intake started");
-  // chassis.moveToPose(24, 24, 135, 2000);
-  // chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
-
-  pros::c::delay(250);
-  chassis.setPose(0.0, 0.0, 0.0);
-  printPosition((char*)"magic");
-  pros::c::delay(250);
-
-  // chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
-  chassis.moveToPoint(0, 34, 2000, {.maxSpeed = max_speed});
+    printPosition((char*)"after pickup");
 
 
-  chassis.waitUntilDone();
-  printPosition((char*)"first ring");
-
-  pros::delay(50);
-  // chassis.turnToHeading(90, 2000);
-  chassis.turnToHeading(-45, 2000);
-  chassis.waitUntilDone();
-  printPosition((char*)"after turn");
-
-pros::c::delay(250);
-currentPose = chassis.getPose();
-chassis.setPose(74.0 - findDistToWall(3), 74.0-findDistToWall(1), currentPose.theta+135.0);
-pros::c::delay(250);
-
-printPosition((char*)"after reset", true);
-
-
-
-  chassis.moveToPoint(48, 24, 2000, {.maxSpeed = max_speed});
-  chassis.waitUntilDone();
-  printPosition((char*)"second ring");
-  chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
-  chassis.waitUntilDone();
-  pros::delay(50);
-printPosition((char*)"after turn");  
-
-  pros::delay(50);
-  chassis.moveToPoint(48, 50, 2000);
-  chassis.waitUntilDone();
-  pros::c::delay(250);
-  chassis.moveToPoint(48, 60, 2000);
+    pros::delay(250);
+    chassis.turnToHeading(135, 2000);
     chassis.waitUntilDone();
-  chassis.moveToPoint(48, 24, 2000, {.forwards = false, .maxSpeed = max_speed});
+
+    printPosition((char*)"after turn");
+
+    pros::Task lift_down356([=] { moveLift(300); });
+
+    intake.move(127);
+    printPosition((char*)"intake started");
+    // chassis.moveToPose(24, 24, 135, 2000);
+    // chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
+
+    pros::c::delay(250);
+    chassis.setPose(0.0, 0.0, 0.0);
+    printPosition((char*)"magic");
+    pros::c::delay(250);
+
+    // chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
+    chassis.moveToPoint(0, 34, 2000, {.maxSpeed = max_speed});
+
+
     chassis.waitUntilDone();
-  chassis.turnToHeading(15, 2000, {.maxSpeed = max_speed1});
+    printPosition((char*)"first ring");
+
+    pros::delay(50);
+    // chassis.turnToHeading(90, 2000);
+    chassis.turnToHeading(-45, 2000);
     chassis.waitUntilDone();
-  mogo_rush.extend();
-  pros::delay(50);
+    printPosition((char*)"after turn");
+
+    pros::c::delay(250);
+    currentPose = chassis.getPose();
+    chassis.setPose(74.0 - findDistToWall(3), 74.0-findDistToWall(1), currentPose.theta+135.0);
+    pros::c::delay(250);
+
+    printPosition((char*)"after reset", true);
+
+
+
+    chassis.moveToPoint(48, 24, 2000, {.maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    printPosition((char*)"second ring");
+    chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
+    chassis.waitUntilDone();
+    pros::delay(50);
+    printPosition((char*)"after turn");  
+
+    pros::delay(50);
+    chassis.moveToPoint(48, 50, 2000);
+    chassis.waitUntilDone();
+    pros::c::delay(250);
+    chassis.moveToPoint(48, 60, 2000);
+    chassis.waitUntilDone();
+    chassis.moveToPoint(48, 24, 2000, {.forwards = false, .maxSpeed = max_speed});
+    chassis.waitUntilDone();
+    chassis.turnToHeading(15, 2000, {.maxSpeed = max_speed1});
+    chassis.waitUntilDone();
+    mogo_rush.extend();
+    pros::delay(50);
   chassis.moveToPoint(90, 85, 2000, {.maxSpeed = max_speed});
     chassis.waitUntilDone();
     currentPose = chassis.getPose();

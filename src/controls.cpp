@@ -122,7 +122,7 @@ void taskFn_intake_control(void){
         STOP      // Stop the intake
     };
 
-    bool basket_state = false;  // Track the state of the basket (false = retracted, true = extended)
+    bool basket_state = true;  // Track the state of the basket (false = retracted, true = extended)
     bool intake_lifted = false;  // Track whether the intake is lifted (false = down, true = up)
     bool have_seen = false; //Track whether intake sensor has seen ring
     int counter = 200;
