@@ -181,7 +181,7 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
-	auton_routine default_routine = skills_1;
+	auton_routine default_routine = blue_ring_rush;
    	printf("%s(): Entered\n", __func__);
 	//HERE
 	// Clear the Brain screen

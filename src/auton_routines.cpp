@@ -1,6 +1,7 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "pros/distance.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
@@ -111,20 +112,34 @@ void ring_rush() //BLUE
     intake.move(0);
     chassis.turnToPoint(46, 0,1000,{.maxSpeed=max_speed1});
     chassis.moveToPoint(46, -8, 2000,{.maxSpeed=max_speed});
+    chassis.waitUntil(6);
     intake.move(127);
     chassis.turnToHeading(270, 1000,{.maxSpeed=max_speed1});
-    chassis.waitUntil(3);
-    intake.move(0);
-    chassis.waitUntil(6);
-    mogo_rush.extend();
-    chassis.waitUntilDone();
-    intake.move(0);
+    pros::Task([=] {
+        while(intake_dist.get() > 20){
+            pros::delay(10);
+        }
+        pros::delay(300);
+        intake.move(0);
+    });
     chassis.turnToHeading(0, 1000,{.maxSpeed=max_speed1}); 
-    chassis.turnToPoint(24, -24, 1000,{.forwards=false,.maxSpeed=max_speed1});
-    chassis.moveToPoint(20, -2, 1000,{.forwards=false,.maxSpeed=max_speed});
+    mogo_rush.extend();
+
+    chassis.turnToPoint(24, -25, 1000,{.forwards=false,.maxSpeed=max_speed1});
+    chassis.moveToPoint(20, -25, 1000,{.forwards=false,.maxSpeed=max_speed});
     mogo_rush.retract();
-    chassis.waitUntil(18);
+    chassis.waitUntil(20);
     mogo_clamp.set_value(true);
+    chassis.turnToPoint(72, -72, 1000,{.maxSpeed = max_speed1});
+    chassis.moveToPoint(59, -59, 4000,{.maxSpeed=max_speed});
+    intake.move(127);
+    intake_lift.extend();
+    lift.move(127);
+    pros::delay(500);
+    lift.move(0);
+    /*mogo_rush.extend();
+    chassis.turnToHeading(45, 2000,{.maxSpeed=max_speed1});
+    chassis.moveToPose(48, -24, 0, 2000,{.maxSpeed = max_speed});
     /*chassis.moveToPoint(36, -24, 1000,{.maxSpeed=max_speed});
     mogo_clamp.extend();
     chassis.turnToHeading(270, 1000,{.maxSpeed=max_speed1});
