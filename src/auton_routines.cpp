@@ -222,7 +222,7 @@ void auton_60s_skills_1() {
   lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = max_speed1});
 
   chassis.moveToPoint(-64, 0, 2000, {.maxSpeed = max_speed});
-  pros::Task([=] {
+  pros::Task save_basket1([=] {
       while(intake_dist.get() > 20){
           pros::delay(10);
       }
@@ -340,14 +340,12 @@ void auton_60s_skills_1() {
     chassis.turnToHeading(135, 2000);
     chassis.waitUntilDone();
 
-    printPosition((char*)"after turn");
+  printPosition((char*)"after turn");
 
-    pros::Task lift_down356([=] { moveLift(300); });
-
-    intake.move(127);
-    printPosition((char*)"intake started");
-    // chassis.moveToPose(24, 24, 135, 2000);
-    // chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
+  intake.move(127);
+  printPosition((char*)"intake started");
+  // chassis.moveToPose(24, 24, 135, 2000);
+  // chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
 
     pros::c::delay(250);
     chassis.setPose(0.0, 0.0, 0.0);
@@ -376,13 +374,13 @@ void auton_60s_skills_1() {
 
 
 
-    chassis.moveToPoint(48, 24, 2000, {.maxSpeed = max_speed});
-    chassis.waitUntilDone();
-    printPosition((char*)"second ring");
-    chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
-    chassis.waitUntilDone();
-    pros::delay(50);
-    printPosition((char*)"after turn");  
+  chassis.moveToPoint(48, 27, 2000, {.maxSpeed = max_speed});
+  chassis.waitUntilDone();
+  printPosition((char*)"second ring");
+  chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
+  chassis.waitUntilDone();
+  pros::delay(50);
+  printPosition((char*)"after turn");  
 
     pros::delay(50);
     chassis.moveToPoint(48, 50, 2000);
@@ -394,19 +392,26 @@ void auton_60s_skills_1() {
     chassis.waitUntilDone();
     chassis.turnToHeading(15, 2000, {.maxSpeed = max_speed1});
     chassis.waitUntilDone();
-    mogo_rush.extend();
-    pros::delay(50);
-  chassis.moveToPoint(90, 85, 2000, {.maxSpeed = max_speed});
+  pros::delay(50);
+  chassis.moveToPoint(59, 61, 2000, {.maxSpeed = max_speed});
+  pros::Task save_basket2([=] {
+      while(intake_dist.get() > 20){
+          pros::delay(10);
+      }
+      intake.move(0);
+  });
+  moveLift(300);
+  chassis.waitUntil(33);
+  mogo_rush.extend();
     chassis.waitUntilDone();
     currentPose = chassis.getPose();
-  chassis.turnToHeading(currentPose.theta-160, 2000);
+  chassis.turnToHeading(currentPose.theta-160, 2000, {.maxSpeed = max_speed1});
   chassis.waitUntilDone();
   pros::delay(200);
   mogo_clamp.set_value(false);
   pros::delay(300);
-  chassis.moveToPoint(95, 95, 500, {.forwards = false, .maxSpeed = max_speed});
+  chassis.moveToPoint(70, 70, 500, {.forwards = false, .maxSpeed = max_speed});
   intake.move(-50);
-  mogo_clamp.set_value(false);
   pros::delay(250);
   intake.move(0);
   /*
