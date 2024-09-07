@@ -167,7 +167,7 @@ void taskFn_intake_control(void){
                 basket_state = true;
                 hood1.set_value(true);
                 hood2.set_value(true);
-                intake_speed = 100;
+                intake_speed = 122;
             }
             if(current_state == INTAKE){
                 intake.move(intake_speed);
@@ -195,10 +195,10 @@ void taskFn_intake_control(void){
         {
             if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 20))  // If hue matches specific values
             {
-                pros::delay(40);  // Small delay before reversing the intake
-                intake.move(-115);  // Reverse the intake for a short duration
-                pros::delay(370);
-                intake.move(100);  // Resume intake after the reversal
+                pros::delay(0);  // Small delay before reversing the intake
+                intake.move(-127);  // Reverse the intake for a short duration
+                pros::delay(600);
+                intake.move(122);  // Resume intake after the reversal
                 counter = 0;
                 have_seen = false;
             } else {

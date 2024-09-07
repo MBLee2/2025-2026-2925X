@@ -48,6 +48,7 @@ pros::Distance distance_rf(8);
 pros::Distance distance_rb(1);
 pros::Distance distance_bl(7);
 pros::Distance distance_br(10);
+pros::Distance distance_front(5);
 
 pros::GPS gps(12);
 pros::IMU imu(3);
@@ -63,7 +64,7 @@ lemlib::Drivetrain drivetrain(
 // left tracking wheel encoder
 // right tracking wheel encoder
 pros::Rotation vertical_rot(13); // port 1, not reversed
-pros::Rotation horizontal_rot(6); // port 1, not reversed
+pros::Rotation horizontal_rot(18); // port 1, not reversed
 
 // back tracking wheel encoder  
  

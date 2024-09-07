@@ -63,6 +63,7 @@ extern pros::Distance distance_lb;
 extern pros::Distance distance_lf;
 extern pros::Distance distance_bl;
 extern pros::Distance distance_br;
+extern pros::Distance distance_front;
 extern pros::GPS gps;
 extern pros::IMU imu;
 

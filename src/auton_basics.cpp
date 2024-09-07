@@ -110,6 +110,8 @@ double findDistToWall(int side)
     } 
     else if(side == 1){
         return ((distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+    }else if(side == 3){
+        return (distance_front.get()/ 25.4 +9.0);
     }
     else {
         return ((distance_br.get() + distance_bl.get()) / 2.0) / 25.4 + 7.25;
