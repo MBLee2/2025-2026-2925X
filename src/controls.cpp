@@ -14,16 +14,11 @@ void taskFn_drivebase_control(void){
     bool drive_state = true; // true for normal, false for reversed drive direction
     while (true)  // Infinite loop to keep checking controller input and drive base state
     {
-        // Get  horizontal and vertical joystick input for movement and turning
+                // Get  horizontal and vertical joystick input for movement and turning
         int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);  
-        int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y); 
-        
+        int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);         
         // Multiply the turning input to prioritize turning over forward movement, enabling agile motion
         int turnVelleft = TURN_CONST * leftX;
-
-        // Control the left and right motors based on the calculated values
-        left_side_motors.move(leftY + turnVelleft);
-        right_side_motors.move(leftY - turnVelleft);
         
         if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X))
         {
@@ -35,6 +30,9 @@ void taskFn_drivebase_control(void){
             leftY = -leftY;
         }
 
+         // Control the left and right motors based on the calculated values
+        left_side_motors.move(leftY + turnVelleft);
+        right_side_motors.move(leftY - turnVelleft);
         pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
     } // end of while loop
     printf("%s(): Exiting \n", __func__); // Log the function exit for debugging

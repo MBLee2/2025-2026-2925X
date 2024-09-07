@@ -31,13 +31,13 @@ pros::Motor intake(-4, pros::v5::MotorGears::green);  // port 13, reversed
 pros::Motor lift(-6, pros::v5::MotorGears::red);  // port 13, reversed
 
 //Pistons
-pros::adi::Pneumatics hood1('h', false);
-pros::adi::Pneumatics mogo_clamp('b', false); //DONE
-pros::adi::Pneumatics hood2('g', false);
+pros::adi::Pneumatics hood1('g', true);
+pros::adi::Pneumatics mogo_clamp('c', false); //DONE
+pros::adi::Pneumatics hood2('h', true);
 
-pros::adi::Pneumatics intake_lift('c', false);
-pros::adi::Pneumatics mogo_rush('f', false);
-pros::adi::Pneumatics climb('a', false);
+pros::adi::Pneumatics intake_lift('f', false);
+pros::adi::Pneumatics mogo_rush('b', false);
+pros::adi::Pneumatics lastring('a', false);
 
 
 /* SENSORS */
