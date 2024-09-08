@@ -126,7 +126,6 @@ void taskFn_intake_control(void){
     bool intake_lifted = false;  // Track whether the intake is lifted (false = down, true = up)
     bool have_seen = false; //Track whether intake sensor has seen ring
     int counter = 200;
-    int intake_speed = 127;
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     
     lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);  // Set the encoder units for the lift motor to degrees
@@ -143,7 +142,11 @@ void taskFn_intake_control(void){
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             if (current_state == OUTAKE || current_state == STOP)  // If the intake is stopped or ejecting, start intake
             {
-                intake.move(intake_speed);
+                if(have_seen){
+                    intake.move(110);
+                } else {
+                    intake.move(127);
+                }
                 current_state = INTAKE;
             }
             else if (current_state == INTAKE)  // If intake is running, stop it
@@ -160,17 +163,12 @@ void taskFn_intake_control(void){
                 basket_state = false;
                 hood1.set_value(false);
                 hood2.set_value(false);
-                intake_speed = 127;
             }
             else if (basket_state == false)  // If the basket is retracted, extend it
             {
                 basket_state = true;
                 hood1.set_value(true);
                 hood2.set_value(true);
-                intake_speed = 122;
-            }
-            if(current_state == INTAKE){
-                intake.move(intake_speed);
             }
         }
 
@@ -191,19 +189,20 @@ void taskFn_intake_control(void){
 
         //Previous color sensor logic: ((hue >= 7 && hue <= 17) || (hue >= 210 && hue <= 240))
         // Control intake based on color sensor readings when basket is extended
-        if (basket_state == true)
+        if (basket_state == false)
         {
-            if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 20))  // If hue matches specific values
+            if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 50))  // If hue matches specific values
             {
-                pros::delay(0);  // Small delay before reversing the intake
-                intake.move(-127);  // Reverse the intake for a short duration
-                pros::delay(600);
-                intake.move(122);  // Resume intake after the reversal
+                pros::delay(60);  // Small delay before reversing the intake
+                intake.move(-105);  // Reverse the intake for a short duration
+                pros::delay(370);
+                intake.move(127);  // Resume intake after the reversal
                 counter = 0;
                 have_seen = false;
             } else {
                 if(!have_seen && intake_dist.get() < 20){
                     have_seen = true;
+                    intake.move(90);
                 }
                 counter++;
             }

@@ -13,7 +13,7 @@
 //     Diffrent auton functions that Rudra made for start of OU season and are not the best but work for very short movments 
 //     There are also a lot of conversion functions so I am not deleteing it 
 // */
-bool basket_state = false;
+bool basket_state = true;
 
 void setBasket(bool set){
     if (basket_state == true && !set)  // If the basket is extended, retract it
@@ -31,23 +31,30 @@ void setBasket(bool set){
 }
 
 void basketRings(){
-    intake.move(100);
-    bool haveSeen = false;
+    saveRings();
 
-    if (basket_state == true)
+    if (basket_state == false)
     {
-        while(!haveSeen || (haveSeen && intake_dist.get() < 20))  // If hue matches specific values
+        intake.move(90);
+        while(intake_dist.get() < 20)  // If hue matches specific values
         {
             pros::delay(10);
-            if(intake_dist.get() < 20){
-                haveSeen = true;
-            }
         }
-        pros::delay(40);  // Small delay before reversing the intake
-        intake.move(-115);  // Reverse the intake for a short duration
+        pros::delay(60);  // Small delay before reversing the intake
+        intake.move(-105);  // Reverse the intake for a short duration
         pros::delay(370);
     }
-    intake.move(100);
+    intake.move(127);
+}
+
+void saveRings(){
+    intake.move(127);
+    if(intake_dist.get() > 20){
+        while(intake_dist.get() > 20){
+            pros::delay(10);
+        }
+        intake.move(0);
+    }
 }
 
 void moveLift(int position){

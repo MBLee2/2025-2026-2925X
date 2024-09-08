@@ -200,7 +200,7 @@ void auton_60s_skills_1() {
   });
   chassis.waitUntilDone();
   mogo_clamp.set_value(false);
-  setBasket(true);
+  setBasket(false);
   pros::Task basket1(basketRings);
 
   chassis.setPose(-62, -62, 45);
@@ -208,7 +208,7 @@ void auton_60s_skills_1() {
   chassis.waitUntilDone();
   intake.move(0);
   chassis.turnToHeading(0, 1000, {.maxSpeed = max_speed1});
-  setBasket(false);
+  setBasket(true);
   chassis.waitUntilDone();
 
   chassis.setPose(-72 + findDistToWall(1), -72 + findDistToWall(2),
@@ -222,18 +222,13 @@ void auton_60s_skills_1() {
   lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = max_speed1});
 
   chassis.moveToPoint(-64, 0, 2000, {.maxSpeed = max_speed});
-  pros::Task save_basket1([=] {
-      while(intake_dist.get() > 20){
-          pros::delay(10);
-      }
-      intake.move(0);
-  });
+  saveRings();
   chassis.moveToPoint(-58, 0, 1000, {.forwards = false, .maxSpeed = 20});
   moveLift(240);
   chassis.moveToPoint(-48, 0, 1000, {.forwards = false, .maxSpeed = max_speed});
   lift.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);*/
 
-  // setBasket(true);
+  // setBasket(false);
   // basketRings();
   /*chassis.turnToPoint(-48, 24, 2000, {.direction =
   lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = max_speed1});
@@ -311,16 +306,11 @@ void auton_60s_skills_1() {
 
     // return;
 
+  
+  /*chassis.setPose(74.0 - findDistToWall(1), 34,
+                  0); // y offset wrong DO NOT REMOBE
 
-
-
-
-    chassis.setPose(74.0 - findDistToWall(1), 34,
-                    0); // y offset wrong DO NOT REMOBE
-
-
-
-    printf("\nBattery: %3.2f\n", pros::c::battery_get_capacity());
+  printf("\nBattery: %3.2f\n", pros::c::battery_get_capacity());
 
 
     printPosition((char*)"Before pickup", true);
@@ -365,16 +355,16 @@ void auton_60s_skills_1() {
     chassis.waitUntilDone();
     printPosition((char*)"after turn");
 
-    pros::c::delay(250);
-    currentPose = chassis.getPose();
-    chassis.setPose(74.0 - findDistToWall(3), 74.0-findDistToWall(1), currentPose.theta+135.0);
-    pros::c::delay(250);
+pros::c::delay(250);
+currentPose = chassis.getPose();*/
 
-    printPosition((char*)"after reset", true);
+  /*chassis.setPose(74.0 - findDistToWall(3), 74.0-findDistToWall(1), findHeading(1, 90));
+  pros::c::delay(250);
 
+      printPosition((char*)"after reset", true);
 
-
-  chassis.moveToPoint(48, 27, 2000, {.maxSpeed = max_speed});
+  chassis.moveToPoint(60, 27, 2000, {.maxSpeed = max_speed});
+  moveLift(300);
   chassis.waitUntilDone();
   printPosition((char*)"second ring");
   chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
@@ -382,38 +372,74 @@ void auton_60s_skills_1() {
   pros::delay(50);
   printPosition((char*)"after turn");  
 
-    pros::delay(50);
-    chassis.moveToPoint(48, 50, 2000);
-    chassis.waitUntilDone();
-    pros::c::delay(250);
-    chassis.moveToPoint(48, 60, 2000);
+  pros::delay(50);
+  chassis.moveToPoint(48, 50, 2000);
+  chassis.waitUntilDone();
+  pros::c::delay(250);
+  chassis.moveToPoint(48, 64, 2000);
     chassis.waitUntilDone();
     chassis.moveToPoint(48, 24, 2000, {.forwards = false, .maxSpeed = max_speed});
     chassis.waitUntilDone();
     chassis.turnToHeading(15, 2000, {.maxSpeed = max_speed1});
     chassis.waitUntilDone();
   pros::delay(50);
-  chassis.moveToPoint(59, 61, 2000, {.maxSpeed = max_speed});
-  pros::Task save_basket2([=] {
-      while(intake_dist.get() > 20){
-          pros::delay(10);
-      }
-      intake.move(0);
-  });
-  moveLift(300);
+  chassis.moveToPoint(57, 59, 2000, {.maxSpeed = max_speed});
+  pros::Task save_basket(saveRings);
   chassis.waitUntil(33);
   mogo_rush.extend();
     chassis.waitUntilDone();
     currentPose = chassis.getPose();
   chassis.turnToHeading(currentPose.theta-160, 2000, {.maxSpeed = max_speed1});
   chassis.waitUntilDone();
+  mogo_rush.retract();
   pros::delay(200);
   mogo_clamp.set_value(false);
   pros::delay(300);
-  chassis.moveToPoint(70, 70, 500, {.forwards = false, .maxSpeed = max_speed});
+  chassis.moveToPoint(70, 72, 500, {.forwards = false, .maxSpeed = max_speed});
   intake.move(-50);
   pros::delay(250);
   intake.move(0);
+  chassis.moveToPoint(48, 48, 2000, {.maxSpeed = max_speed});
+  moveLift(10);
+  setBasket(false);
+  chassis.turnToHeading(180, 1000, {.maxSpeed = max_speed1});
+  chassis.waitUntilDone();*/
+
+  chassis.setPose(72.0 - findDistToWall(1), 70.5 - findDistToWall(2), findHeading(1, 180.0));
+  pros::delay(250);
+  printPosition((char*)"after reset", true);
+  setBasket(false); //remove later
+  pros::delay(750); //remove later
+  chassis.moveToPoint(46, 0, 2000, {.maxSpeed = max_speed});
+  basketRings();
+  chassis.turnToHeading(88, 1000, {.maxSpeed = max_speed1});
+  pros::delay(500);
+  setBasket(true);
+  moveLift(510);
+  chassis.moveToPose(67.25, 0.5, 86, 2000, {.maxSpeed = max_speed});
+  pros::Task save_basket2(saveRings);
+  chassis.waitUntilDone();
+  pros::Task lower_lift([=] {
+    moveLift(240);
+    // lift.move(-127);
+    // pros::delay(500);
+    // lift.move(0);
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);});
+  pros::delay(1000);
+  // chassis.moveToPoint(56, 0, 1000, {.forwards = false, .maxSpeed = max_speed});
+  chassis.moveToPoint(48, 0, 1000, {.forwards = false, .maxSpeed = max_speed});
+  chassis.turnToHeading(90, 1000, {.maxSpeed = max_speed1});
+  chassis.waitUntilDone();
+  chassis.setPose(74.0 - findDistToWall(3), -72.0 + findDistToWall(0), findHeading(0, 90.0));
+  pros::delay(500);
+
+  //chassis.swingToPoint(24, -48, DriveSide::RIGHT, 1000, {.forwards = false, .maxSpeed = max_speed});
+  chassis.moveToPoint(38, -24, 2000, {.forwards = false, .maxSpeed = max_speed});
+  chassis.turnToPoint(24, -48, 1000, {.forwards = false, .maxSpeed = max_speed1});
+  chassis.moveToPoint(24, -48, 2000, {.forwards = false, .maxSpeed = max_speed});
+  chassis.waitUntil(24);
+  mogo_clamp.set_value(true);
+  intake.move(127);
   /*
       pros::delay(250);
 

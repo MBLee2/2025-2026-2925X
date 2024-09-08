@@ -38,7 +38,9 @@ typedef enum e_rotation_direction {
 
 void setBasket(bool set);
 void basketRings();
+void saveRings();
 void moveLift(int position);
+
 double radToDeg(double rad);
 double findHeading(int side, double roundedHeading);
 double findDistToWall(int side);
