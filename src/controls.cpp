@@ -191,12 +191,12 @@ void taskFn_intake_control(void){
 
         //Previous color sensor logic: ((hue >= 7 && hue <= 17) || (hue >= 210 && hue <= 240))
         // Control intake based on color sensor readings when basket is extended
-        if (basket_state == true)
+        if (basket_state == false)
         {
             if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 20))  // If hue matches specific values
             {
-                pros::delay(0);  // Small delay before reversing the intake
-                intake.move(-127);  // Reverse the intake for a short duration
+                pros::delay(50);  // Small delay before reversing the intake
+                intake.move(-100);  // Reverse the intake for a short duration
                 pros::delay(600);
                 intake.move(122);  // Resume intake after the reversal
                 counter = 0;
@@ -204,6 +204,8 @@ void taskFn_intake_control(void){
             } else {
                 if(!have_seen && intake_dist.get() < 20){
                     have_seen = true;
+                    intake.move(110);
+
                 }
                 counter++;
             }
