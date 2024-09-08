@@ -37,7 +37,7 @@ typedef enum e_rotation_direction {
 } rotation_direction;
 
 void setBasket(bool set);
-void basketRings();
+void basketRings(bool withSAve = true);
 void saveRings();
 void moveLift(int position);
 

@@ -30,8 +30,10 @@ void setBasket(bool set){
     }
 }
 
-void basketRings(){
-    saveRings();
+void basketRings(bool withSave){
+    if(withSave){
+     saveRings();
+    }
 
     if (basket_state == false)
     {
@@ -53,6 +55,8 @@ void saveRings(){
         while(intake_dist.get() > 20){
             pros::delay(10);
         }
+        intake.move(0);
+        intake.move(0);
         intake.move(0);
     }
 }

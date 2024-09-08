@@ -25,7 +25,7 @@ pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor intake(-4, pros::v5::MotorGears::green);  // port 13, reversed
+pros::Motor intake(-4, pros::v5::MotorGears::green);  // port 4, reversed
 
 //Other Motor
 pros::Motor lift(-6, pros::v5::MotorGears::red);  // port 13, reversed
@@ -45,7 +45,7 @@ pros::Distance intake_dist(2);
 pros::Distance distance_lf(19);
 pros::Distance distance_lb(20);
 pros::Distance distance_rf(8);
-pros::Distance distance_rb(1);
+pros::Distance distance_rb(18);
 pros::Distance distance_bl(7);
 pros::Distance distance_br(10);
 pros::Distance distance_front(5);
