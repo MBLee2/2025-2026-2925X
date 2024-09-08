@@ -190,6 +190,7 @@ void taskFn_intake_control(void){
         //Previous color sensor logic: ((hue >= 7 && hue <= 17) || (hue >= 210 && hue <= 240))
         // Control intake based on color sensor readings when basket is extended
         if (basket_state == false)
+        if (basket_state == false)
         {
             if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 50))  // If hue matches specific values
             {
