@@ -20,7 +20,7 @@ typedef struct s_auton_routine
 
 //change all of these
 extern auton_routine null_routine; 
-extern auton_routine blue_goal_rush, blue_ring_rush, near_driver_elim2;
+extern auton_routine blue_goal_rush, blue_ring_rush, blue_neg_awp, near_driver_elim2;
 extern auton_routine far_from_driver_qual, far_from_driver_elim, far_from_driver_elim2;
 extern auton_routine skills_1, skills_2;
 
@@ -29,6 +29,7 @@ void auton_15s_near_driver_qual();
 void goal_rush();
 void rushWP();
 void ring_rush();
+void blue_negative_awp();
 void DescoreRushElim();
 void rushelim();
 void auton_15s_far_driver_qual();
