@@ -6,6 +6,7 @@
 #include "robot_config.h"
 #include "lemlib/api.hpp"
 #include "lemlib/timer.hpp"
+#include "auton_basics.h"
 
 #define TURN_CONST 1.4 // Constant multipled by X input to allow for instant turns during driver control
 //Drivebase control
@@ -124,7 +125,6 @@ void taskFn_intake_control(void){
 
     bool basket_state = true;  // Track the state of the basket (false = retracted, true = extended)
     bool intake_lifted = false;  // Track whether the intake is lifted (false = down, true = up)
-    bool have_seen = false; //Track whether intake sensor has seen ring
     int counter = 200;
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     
@@ -142,11 +142,7 @@ void taskFn_intake_control(void){
         if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             if (current_state == OUTAKE || current_state == STOP)  // If the intake is stopped or ejecting, start intake
             {
-                if(have_seen){
-                    intake.move(110);
-                } else {
-                    intake.move(127);
-                }
+                intake.move(127);
                 current_state = INTAKE;
             }
             else if (current_state == INTAKE)  // If intake is running, stop it
@@ -189,12 +185,13 @@ void taskFn_intake_control(void){
 
         //Previous color sensor logic: ((hue >= 7 && hue <= 17) || (hue >= 210 && hue <= 240))
         // Control intake based on color sensor readings when basket is extended
-        if (basket_state == false)
-        if (basket_state == false)
+        if (basket_state == false && current_state == INTAKE )
         {
-            if (counter > 200 && current_state == INTAKE && (have_seen && intake_dist.get() > 50))  // If hue matches specific values
+            basketRings(true);
+            /*if (counter > 200 &&  (have_seen && intake_dist.get() > 50))  // If hue matches specific values
             {
-                pros::delay(60);  // Small delay before reversing the intake
+                intake.move_relative(-30, 100);
+                //pros::delay(60);  // Small delay before reversing the intake
                 intake.move(-105);  // Reverse the intake for a short duration
                 pros::delay(370);
                 intake.move(127);  // Resume intake after the reversal
@@ -203,10 +200,10 @@ void taskFn_intake_control(void){
             } else {
                 if(!have_seen && intake_dist.get() < 20){
                     have_seen = true;
-                    intake.move(90);
+                    intake.move(110);
                 }
                 counter++;
-            }
+            }*/
         }
 
         // Control the hood based on lift position

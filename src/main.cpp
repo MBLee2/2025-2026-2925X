@@ -141,6 +141,8 @@ void competition_initialize() {
 	// on the brain rather than the display as expected
 	pros::delay(10); 
 
+
+    intake.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
     lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
 	lift.set_zero_position(lift.get_position());

@@ -37,10 +37,15 @@ typedef enum e_rotation_direction {
 } rotation_direction;
 
 void setBasket(bool set);
-void basketRings(bool withSAve = true);
-void saveRings();
+void basketRings(bool withSave = true);
+int basketRingsAsTask();
+void saveRings(int timeout = 15000);
+void saveSecondRing(int timeout = 15000);
 void moveLift(int position);
 
+
+const double LEFT_DIFFERENCE = 11.1125;
+const double RIGHT_DIFFERENCE = 11.1125;
 double radToDeg(double rad);
 double findHeading(int side, double roundedHeading);
 double findDistToWall(int side);

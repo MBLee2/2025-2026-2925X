@@ -37,27 +37,58 @@ void basketRings(bool withSave){
 
     if (basket_state == false)
     {
-        intake.move(90);
-        while(intake_dist.get() < 20)  // If hue matches specific values
+        intake.move(110);
+        while(intake_dist.get() < 50)  // If hue matches specific values
         {
             pros::delay(10);
         }
-        pros::delay(60);  // Small delay before reversing the intake
+        intake.move_relative(-30, 100);
         intake.move(-105);  // Reverse the intake for a short duration
         pros::delay(370);
     }
     intake.move(127);
 }
 
-void saveRings(){
+int basketRingsAsTask(){
+    basketRings(true);
+    return 0;
+}
+
+void saveRings(int timeout){
     intake.move(127);
     if(intake_dist.get() > 20){
-        while(intake_dist.get() > 20){
+        while(intake_dist.get() > 20 && timeout > 0){
             pros::delay(10);
+            timeout -= 10;
         }
         intake.move(0);
-        intake.move(0);
-        intake.move(0);
+    }
+}
+
+void saveSecondRing(int timeout){
+    int counter = 0;
+    bool seeingRing = false;
+    intake.move(127);
+    while(timeout > 0){
+
+        if(intake_dist.get() < 20 && !seeingRing) {
+            counter++;
+            printf("Counter %i", counter);
+            if(counter > 1){
+                intake.move(0);
+                return;
+            }
+        }
+
+        if(intake_dist.get() > 20){
+            seeingRing = false;
+        } else {
+            seeingRing = true;
+        }
+
+
+        pros::delay(10);
+        timeout -= 10;
     }
 }
 
@@ -84,10 +115,8 @@ double radToDeg(double rad){
 
 //distance sensor constants
 const double LEFT_SPACING = 260.35;
-const double RIGHT_SPACING = 139.7;
-const double BACK_SPACING = 330.2;
-const double LEFT_DIFFERENCE = 11.1125;
-const double RIGHT_DIFFERENCE = 11.1125;
+const double RIGHT_SPACING = 279.4;
+const double BACK_SPACING = 304.8;
 
 double findHeading(int side, double roundedHeading)
 /**
@@ -113,7 +142,7 @@ double findHeading(int side, double roundedHeading)
 double findDistToWall(int side)
 /**
      * @brief Calculate the distance to a wall using distance sensors
-     * @param side which side of the robot is being used: 0 - Right, 1 - Left, 2 - Back
+     * @param side which side of the robot is being used: 0 - Right, 1 - Left, 2 - Back, 3 - Front
      */
 {
     if(side == 0){
