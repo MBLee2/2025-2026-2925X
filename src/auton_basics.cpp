@@ -37,7 +37,7 @@ void basketRings(bool withSave){
 
     if (basket_state == false)
     {
-        intake.move(110);
+        intake.move(105);
         while(intake_dist.get() < 50)  // If hue matches specific values
         {
             pros::delay(10);
@@ -54,6 +54,18 @@ int basketRingsAsTask(){
     return 0;
 }
 
+int basketRingsAsTaskNS(){
+    basketRings(false);
+    return 0;
+}
+
+
+int saveRingsAsTask(){
+    saveRings();
+    return 0;
+}
+
+
 void saveRings(int timeout){
     intake.move(127);
     if(intake_dist.get() > 20){
@@ -64,6 +76,8 @@ void saveRings(int timeout){
         intake.move(0);
     }
 }
+
+
 
 void saveSecondRing(int timeout){
     int counter = 0;

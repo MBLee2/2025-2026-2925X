@@ -39,6 +39,8 @@ typedef enum e_rotation_direction {
 void setBasket(bool set);
 void basketRings(bool withSave = true);
 int basketRingsAsTask();
+int basketRingsAsTaskNS();
+int saveRingsAsTask();
 void saveRings(int timeout = 15000);
 void saveSecondRing(int timeout = 15000);
 void moveLift(int position);

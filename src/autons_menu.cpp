@@ -23,8 +23,8 @@ std::vector<auton_menu_button> button_list = {
                        pros::c::COLOR_WHITE_SMOKE, "NegativeAWP", pros::E_TEXT_MEDIUM},
                        blue_neg_awp},
     auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      far_from_driver_qual},
+                       pros::c::COLOR_WHITE_SMOKE, "RUSH WP", pros::E_TEXT_MEDIUM},
+                      rush_wp_a},
     auton_menu_button{{130, 115, 230, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
                       far_from_driver_elim},
@@ -129,6 +129,7 @@ auton_routine select_auton_routine()
     auton_routine selected_routine;
 
     bool selection_made = false;
+
     while(selection_made == false) 
     {
         // Render the auton menu screen
