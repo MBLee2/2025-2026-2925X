@@ -37,12 +37,12 @@ void basketRings(bool withSave){
 
     if (basket_state == false)
     {
-        intake.move(105);
+        intake.move(90);
         while(intake_dist.get() < 50)  // If hue matches specific values
         {
             pros::delay(10);
         }
-        intake.move_relative(-30, 100);
+        intake.move_relative(-23, 90);
         intake.move(-105);  // Reverse the intake for a short duration
         pros::delay(370);
     }
@@ -62,6 +62,12 @@ int basketRingsAsTaskNS(){
 
 int saveRingsAsTask(){
     saveRings();
+    return 0;
+}
+
+int basketRingsAsTask15(){
+    pros::delay(500);
+    basketRings(false);
     return 0;
 }
 
@@ -123,10 +129,6 @@ void moveLift(int position){
     }
 }
 
-double radToDeg(double rad){
-    return rad * (180 / PI);
-}
-
 //distance sensor constants
 const double LEFT_SPACING = 260.35;
 const double RIGHT_SPACING = 279.4;
@@ -143,11 +145,11 @@ double findHeading(int side, double roundedHeading)
     double newHeading;
     
     if(side == 0){
-        newHeading = radToDeg(atan((distance_rb.get() - distance_rf.get() - RIGHT_DIFFERENCE) / RIGHT_SPACING));
+        newHeading = lemlib::radToDeg(atan((distance_rb.get() - (distance_rf.get() - RIGHT_DIFFERENCE)) / RIGHT_SPACING));
     } else if(side == 1){
-        newHeading = radToDeg(atan((distance_lf.get() - distance_lb.get() - LEFT_DIFFERENCE) / LEFT_SPACING));
+        newHeading = lemlib::radToDeg(atan(((distance_lf.get() - LEFT_DIFFERENCE) - distance_lb.get()) / LEFT_SPACING));
     } else if(side == 2){
-        newHeading = radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
+        newHeading = lemlib::radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
     }
 
     return newHeading + roundedHeading;

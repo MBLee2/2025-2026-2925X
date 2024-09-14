@@ -41,6 +41,7 @@ void basketRings(bool withSave = true);
 int basketRingsAsTask();
 int basketRingsAsTaskNS();
 int saveRingsAsTask();
+int basketRingsAsTask15();
 void saveRings(int timeout = 15000);
 void saveSecondRing(int timeout = 15000);
 void moveLift(int position);
@@ -48,7 +49,6 @@ void moveLift(int position);
 
 const double LEFT_DIFFERENCE = 11.1125;
 const double RIGHT_DIFFERENCE = 11.1125;
-double radToDeg(double rad);
 double findHeading(int side, double roundedHeading);
 double findDistToWall(int side);
 void moveUntilDist(double targetDist, float speed);

@@ -183,7 +183,7 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
-	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
+	auton_routine default_routine = rush_wp_a; //DEFAULT ROUTINE
    	printf("%s(): Entered\n", __func__);
 	//HERE
 	// Clear the Brain screen
