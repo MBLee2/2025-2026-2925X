@@ -112,7 +112,7 @@ void saveSecondRing(int timeout){
     }
 }
 
-void moveLift(int position){
+void moveLiftToPos(int position){
     lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
     if(position > lift.get_position()){
         lift.move(127);

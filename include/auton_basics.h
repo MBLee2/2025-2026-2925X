@@ -44,7 +44,7 @@ int saveRingsAsTask();
 int basketRingsAsTask15();
 void saveRings(int timeout = 15000);
 void saveSecondRing(int timeout = 15000);
-void moveLift(int position);
+void moveLiftToPos(int position);
 
 
 const double LEFT_DIFFERENCE = 11.1125;
