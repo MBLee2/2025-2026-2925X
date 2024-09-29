@@ -2,7 +2,20 @@
 #define _HAL_H_
 
 #include "api.h"
+#include "auton_basics.h"
 #include "pros/motors.h"
+
+#define LAT_KP  0
+#define LAT_KI  0
+#define LAT_KD  0
+#define LAT_SMALL_RANGE 1
+#define LAT_SMALL_RANGE_TIMEOUT 100
+
+#define TURN_KP 0
+#define TURN_KI 0
+#define TURN_KD 0
+
+extern bool basket_state;
 
 void stopAllMotors();
 
@@ -25,6 +38,7 @@ void spinRightMotors(int speed);
 void stopRightMotors();
 
 void drive(int leftSpeed, int rightSpeed);
+void driveStraight(int speed);
 void stopDrive();
 void setDriveBrake(pros::motor_brake_mode_e mode);
 
@@ -46,5 +60,57 @@ void dropIntake();
 
 void extendSweep();
 void retractSweep();
+
+void extendSixRing();
+void retractSixRing();
+
+int getIntakeDist();
+
+float getLFPosition();
+float getLMPosition();
+float getLBPosition();
+float getRFPosition();
+float getRMPosition();
+float getRBPosition();
+
+void resetLeftMotorPosition();
+void resetRightMotorPosition();
+void resetDriveMotorPosition();
+
+float getLeftMotorPosition();
+float getRightMotorPosition();
+float getLeftMotorPositionInInches();
+float getRightMotorPositionInInches();
+
+float wheelDegToInches(float degrees);
+
+void resetIMUHeading();
+float getHeading();
+
+void driveDistance(float distance, int timeout = 15000);
+void turn(float degrees, int timeout = 15000);
+
+void resetLiftPosition();
+float getLiftPosition();
+
+void moveLiftToPos(float position);
+void liftUp(float degrees);
+void liftDown(float degrees);
+
+void resetIntakePosition();
+float getIntakePosition();
+
+void intakeFor(int ms);
+void intakeFor(float degrees);
+void intakeFor(float speed, int ms);
+void intakeFor(float speed, float degrees);
+
+void outakeFor(float degrees);
+void outakeFor(int ms);
+void outakeFor(float speed, int ms);
+void outakeFor(float speed, float degrees);
+
+void saveRings(int timeout = 15000);
+void basketRings(bool withSave = true);
 
 #endif

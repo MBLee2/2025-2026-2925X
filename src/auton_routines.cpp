@@ -17,6 +17,7 @@
 #include <sys/_stdint.h>
 #include <type_traits>
 #include <variant>
+#include "hal.h"
 
 ASSET(matchloadturn4ball_txt);
 ASSET(touchbar_txt);

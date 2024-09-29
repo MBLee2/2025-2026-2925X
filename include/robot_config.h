@@ -17,9 +17,11 @@
 #define rad2deg(radians)  (radians * 180/PI)   // radians to degress
 
 // drivebase attributes
-#define DRIVEBASE_WHEEL_DIAMETER     3.25 // inches
+#define DRIVEBASE_WHEEL_DIAMETER     lemlib::Omniwheel::NEW_4 // inches
 #define DRIVEBASE_GEAR_SIZE_ON_MOTOR 36.0   // 36 tooth gear
 #define DRIVEBASE_GEAR_SIZE_ON_WHEEL 60.0   // 60 tooth gear
+#define DRIVEBASE_GEAR_RATIO         0.5
+#define LIFT_GEAR_RATIO              1/6.
 #define DRIVEBASE_X_AXIS_ACCEPTED_ERROR 20 //deadzone for x axis
 // drivebase dimensions
 #define DRIVEBASE_LEFT_OFFSET_IN   6.25    // inches (distance between left   drivetrain and center of rotation)

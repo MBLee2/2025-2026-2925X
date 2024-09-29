@@ -7,6 +7,7 @@
 #include "controls.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
+#include "hal.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -15,6 +16,9 @@
  * to keep execution time for this mode under a few seconds.
  */
 int counter = 0;
+bool auton = false, autoSkill = false;
+bool autoDrive = false, autoLift = false, autoIntake = false;
+
 void screen() {
     // loop forever
     while (true) {
@@ -143,9 +147,10 @@ void competition_initialize() {
 
 
     intake.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
     lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-	lift.set_zero_position(lift.get_position());
+	resetLiftPosition();
 
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();
@@ -183,6 +188,7 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
+	bool auton = true;
 	auton_routine default_routine = rush_wp_a; //DEFAULT ROUTINE
    	printf("%s(): Entered\n", __func__);
 	//HERE
@@ -212,7 +218,7 @@ void autonomous() {
 	//pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
 	
 	
-		
+	auton = false;
 	printf("%s(): Exiting\n", __func__);
 
 }

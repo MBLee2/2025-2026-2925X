@@ -1,10 +1,12 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "hal.h"
 #include "lemlib/pose.hpp"
 #include "pros/motors.h"
 #include "robot_config.h"
 #include "controls.h"
+#include "main.h"
 #include "lemlib/api.hpp"
 #include "math.h"
 #include <cmath>
@@ -13,7 +15,6 @@
 //     Diffrent auton functions that Rudra made for start of OU season and are not the best but work for very short movments 
 //     There are also a lot of conversion functions so I am not deleteing it 
 // */
-bool basket_state = true;
 
 void setBasket(bool set){
     if (basket_state == true && !set)  // If the basket is extended, retract it
@@ -30,7 +31,7 @@ void setBasket(bool set){
     }
 }
 
-void basketRings(bool withSave){
+/*void basketRings(bool withSave){
     if(withSave){
      saveRings();
     }
@@ -47,7 +48,7 @@ void basketRings(bool withSave){
         pros::delay(370);
     }
     intake.move(127);
-}
+}*/
 
 int basketRingsAsTask(){
     basketRings(true);
@@ -71,36 +72,22 @@ int basketRingsAsTask15(){
     return 0;
 }
 
-
-void saveRings(int timeout){
-    intake.move(127);
-    if(intake_dist.get() > 20){
-        while(intake_dist.get() > 20 && timeout > 0){
-            pros::delay(10);
-            timeout -= 10;
-        }
-        intake.move(0);
-    }
-}
-
-
-
 void saveSecondRing(int timeout){
     int counter = 0;
     bool seeingRing = false;
-    intake.move(127);
+    spinIntake(127);
     while(timeout > 0){
 
-        if(intake_dist.get() < 20 && !seeingRing) {
+        if(getIntakeDist() < 20 && !seeingRing) {
             counter++;
             printf("Counter %i", counter);
             if(counter > 1){
-                intake.move(0);
+                stopIntake();
                 return;
             }
         }
 
-        if(intake_dist.get() > 20){
+        if(getIntakeDist() > 20){
             seeingRing = false;
         } else {
             seeingRing = true;
@@ -109,23 +96,6 @@ void saveSecondRing(int timeout){
 
         pros::delay(10);
         timeout -= 10;
-    }
-}
-
-void moveLiftToPos(int position){
-    lift.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    if(position > lift.get_position()){
-        lift.move(127);
-        while(lift.get_position() < position){
-            pros::delay(50);
-        }
-        lift.brake();
-    } else if(position < lift.get_position()){
-        lift.move(-127);
-        while(lift.get_position() > position){
-            pros::delay(50);
-        }
-        lift.move(0);
     }
 }
 

@@ -37,14 +37,12 @@ typedef enum e_rotation_direction {
 } rotation_direction;
 
 void setBasket(bool set);
-void basketRings(bool withSave = true);
+//void basketRings(bool withSave = true);
 int basketRingsAsTask();
 int basketRingsAsTaskNS();
 int saveRingsAsTask();
 int basketRingsAsTask15();
-void saveRings(int timeout = 15000);
 void saveSecondRing(int timeout = 15000);
-void moveLiftToPos(int position);
 
 
 const double LEFT_DIFFERENCE = 11.1125;
