@@ -115,24 +115,47 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 // Intake Movement
 void spinIntake(int speed) {
     intake.move(speed);
+    intake2.move(speed);
 }
 
 void stopIntake() {
     intake.brake();
+    intake2.brake();
+}
+
+void setIntakeBrake(pros::motor_brake_mode_e mode) {
+    intake.set_brake_mode(mode);
+    intake2.set_brake_mode(mode);
 }
 
 
 // Lift Movement
 void moveLift(int speed) {
-    lift.move(speed);
+    if(getLimitSwitch()){
+        helpLift();
+    }
+    intake.move(speed);
+    intake2.move(speed);
+    //lift.move(speed);
+}
+
+void taskFn_limit_switch() {
+    while(true) {
+        if(!getLimitSwitch() && getLiftHelper()) {
+            liftNeutral();
+        }
+        pros::delay(20);
+    }
 }
 
 void stopLift() {
-    lift.brake();
+    stopIntake();
+    //lift.brake();
 }
 
 void setLiftBrake(pros::motor_brake_mode_e mode) {
-    lift.set_brake_mode(mode);
+    setIntakeBrake(mode);
+    //lift.set_brake_mode(mode);
 }
 
 
@@ -141,11 +164,19 @@ void setLiftBrake(pros::motor_brake_mode_e mode) {
 // Clamp
 void openClamp() {
     mogo_clamp.extend();
+    mogo_clamp2.extend();
 }
 
 void closeClamp() {
     mogo_clamp.retract();
+    mogo_clamp2.retract();
 }
+
+void toggleClamp() {
+    mogo_clamp.toggle();
+    mogo_clamp2.toggle();
+}
+
 
 // Hood
 
@@ -172,20 +203,55 @@ void dropIntake() {
 
 // Sweeper
 void extendSweep() {
-    mogo_rush.extend();
+    //mogo_rush.extend();
 }
 
 void retractSweep() {
-    mogo_rush.retract();
+    //mogo_rush.retract();
 }
 
 // Sixth-ring
 void extendSixRing() {
-    lastring.set_value(true);
+    //lastring.set_value(true);
 }
 
 void retractSixRing() {
-    lastring.set_value(false);
+    //lastring.set_value(false);
+}
+
+void toggleSixRing() {
+    //lastring.toggle();
+}
+
+//Redirect
+void redirectRings() {
+    redirect1.extend();
+    redirect2.extend();
+}
+
+void closeRedirect() {
+    redirect1.retract();
+    redirect2.retract();
+}
+
+void toggleRedirect() {
+    redirect1.toggle();
+    redirect2.toggle();
+}
+
+//Lift Helper
+void helpLift() {
+    lift_helper1.extend();
+    lift_helper2.extend();
+}
+
+void liftNeutral() {
+    lift_helper1.retract();
+    lift_helper2.retract();
+}
+
+bool getLiftHelper() {
+    return lift_helper1.is_extended();
 }
 
 // Sensors
@@ -202,6 +268,11 @@ float getHeading() {
 //Distance
 int getIntakeDist() {
     return intake_dist.get();
+}
+
+//Limit Switch
+bool getLimitSwitch() {
+    return limitSwitch.get_value();
 }
 
 // Motor Encoder
@@ -245,12 +316,22 @@ float getRightMotorPositionInInches() {
     return wheelDegToInches(getLeftMotorPosition());
 }
 
+void setLiftEncoder(pros::motor_encoder_units_e mode) {
+    //lift.set_encoder_units(mode);
+}
+
 float getLiftPosition() {
-    return lift.get_position() * LIFT_GEAR_RATIO;
+    //return lift.get_position() * LIFT_GEAR_RATIO;
+    return getIntakePosition() * LIFT_GEAR_RATIO;
+}
+
+void setIntakeEncoder(pros::motor_encoder_units_e mode) {
+    intake.set_encoder_units(mode);
+    intake2.set_encoder_units(mode);
 }
 
 float getIntakePosition() {
-    return intake.get_position();
+    return (intake.get_position() + intake2.get_position()) / 2.0;
 }
 
 // Reset Motor Positions
@@ -272,11 +353,13 @@ void resetDriveMotorPosition() {
 }
 
 void resetLiftPosition() {
-    lift.tare_position();
+    //lift.tare_position();
+    resetIntakePosition();
 }
 
 void resetIntakePosition() {
     intake.tare_position();
+    intake2.tare_position();
 }
 
 float wheelDegToInches(float degrees) {
@@ -367,6 +450,10 @@ void turn(float degrees, int timeout) {
 // Lift
 void moveLiftToPos(float position){
     setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+
+    if(getLimitSwitch()) {
+        resetLiftPosition();
+    }
 
     if(position > getLiftPosition()){
         moveLift(127);

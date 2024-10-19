@@ -46,15 +46,23 @@ extern pros::MotorGroup right_side_motors;             // Right drivetrain of dr
 
 //Motors
 extern pros::Motor intake;
-extern pros::Motor lift;
+extern pros::Motor intake2;
+//extern pros::Motor lift;
 
 //pistons
 extern pros::adi::Pneumatics hood1;
-extern pros::adi::Pneumatics mogo_clamp;
 extern pros::adi::Pneumatics hood2;
+extern pros::adi::Pneumatics mogo_clamp;
+extern pros::adi::Pneumatics mogo_clamp2;
 extern pros::adi::Pneumatics intake_lift;
-extern pros::adi::Pneumatics mogo_rush;
-extern pros::adi::Pneumatics lastring;
+//extern pros::adi::Pneumatics mogo_rush;
+//extern pros::adi::Pneumatics lastring;
+
+extern pros::adi::Pneumatics redirect1;
+extern pros::adi::Pneumatics redirect2;
+
+extern pros::adi::Pneumatics lift_helper1;
+extern pros::adi::Pneumatics lift_helper2;
 
 //Sensors
 //extern pros::Optical intake_color;
@@ -68,5 +76,6 @@ extern pros::Distance distance_br;
 extern pros::Distance distance_front;
 extern pros::GPS gps;
 extern pros::IMU imu;
+extern pros::adi::Button limitSwitch;
 
 #endif //_ROBOT_CONFIG_H_   

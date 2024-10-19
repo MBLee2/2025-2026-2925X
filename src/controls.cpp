@@ -88,17 +88,7 @@ void taskFn_mogo_control(void) {
   {
     // When the L1 button is pressed, toggle the mogo clamp state
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-      if (mogo_state == false) // If the clamp is open, close it
-      {
-        mogo_state = true;
-        closeClamp(); // Close the mogo clamp
-
-      } else if (mogo_state == true) // If the clamp is closed, open it
-      {
-        mogo_state = false;
-        openClamp(); // Open the mogo clamp
-
-      }
+      toggleClamp();
     }
 
     // Get the input from the right joystick and normalize the input to a range
@@ -149,7 +139,7 @@ void taskFn_intake_control(void) {
   int counter = 200;
   intake_state current_state = STOP; // Initialize with a default state, STOP
 
-  lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES); // Set the encoder units for the lift
+  setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES); // Set the encoder units for the lift
                                       // motor to degrees
   // intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   // sensor to 100
@@ -225,11 +215,11 @@ void taskFn_intake_control(void) {
     }
 
     // Control the hood based on lift position
-    if (pos < -100) {
+    /*if (pos < -100) {
       hoodBwd();
     } else if (basket_state == true) {
       hoodFwd();
-    }
+    }*/
 
     // Control the intake lift based on joystick position
     if (rightX > 0.85) {
@@ -299,13 +289,7 @@ void taskFn_hood_control(void) {
   while (true) {
     // Toggle the basket state with the Y button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      if (basket_state == true) // If the basket is extended, retract it
-      {
-        hoodBwd();
-      } else if (basket_state == false) // If the basket is retracted, extend it
-      {
-        hoodFwd();
-      }
+      toggleRedirect();
     }
 
     pros::delay(20);

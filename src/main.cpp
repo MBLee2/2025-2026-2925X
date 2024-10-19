@@ -146,10 +146,10 @@ void competition_initialize() {
 	pros::delay(10); 
 
 
-    intake.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-	intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
     setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+	setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	resetLiftPosition();
 
 	// select the auton from the menu

@@ -1,5 +1,6 @@
 #include "main.h"
 #include "pros/abstract_motor.hpp"
+#include "pros/adi.hpp"
 #include "pros/colors.hpp"
 #include "pros/distance.hpp"
 #include "pros/gps.hpp"
@@ -25,19 +26,27 @@ pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor intake(-4, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor intake(-4, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake2(1, pros::v5::MotorGears::red);
 
 //Other Motor
-pros::Motor lift(-6, pros::v5::MotorGears::red);  // port 13, reversed
+//pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
 
 //Pistons
 pros::adi::Pneumatics hood1('g', true);
-pros::adi::Pneumatics mogo_clamp('c', false); //DONE
 pros::adi::Pneumatics hood2('h', true);
+pros::adi::Pneumatics mogo_clamp('c', false); //DONE
+pros::adi::Pneumatics mogo_clamp2('d', false);
 
 pros::adi::Pneumatics intake_lift('f', false);
-pros::adi::Pneumatics mogo_rush('b', false);
-pros::adi::Pneumatics lastring('a', false);
+//pros::adi::Pneumatics mogo_rush('b', false);
+//pros::adi::Pneumatics lastring('a', false);
+
+pros::adi::Pneumatics redirect1('a', true);
+pros::adi::Pneumatics redirect2('b', true);
+
+pros::adi::Pneumatics lift_helper1('e', false);
+pros::adi::Pneumatics lift_helper2('i', false);
 
 
 /* SENSORS */
@@ -52,6 +61,8 @@ pros::Distance distance_front(5);
 
 pros::GPS gps(12);
 pros::IMU imu(3);
+
+pros::adi::Button limitSwitch('B');
  
 lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
@@ -137,7 +148,7 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
         dashboard_motor_display {320, 135, "Intake", intake},
-        dashboard_motor_display {320, 190, "Lift", lift}
+        //dashboard_motor_display {320, 190, "Lift", lift}
         
         
     };
