@@ -14,39 +14,40 @@ AutonColor selectedColor = AutonColor::RED; //Set default color of auton
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-11, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor lm(12, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor lb(-17, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor rf(16, pros::v5::MotorGears::blue); // port 18, not reversed
-pros::Motor rm(-14, pros::v5::MotorGears::blue); // port 18, not reversed
-pros::Motor rb(15, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor lf(18, pros::v5::MotorGears::blue);  // port 13, reversed
+pros::Motor lm(10, pros::v5::MotorGears::blue);  // port 13, reversed
+pros::Motor lb(9, pros::v5::MotorGears::blue);  // port 13, reversed
+pros::Motor rf(13, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor rm(1, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor rb(2, pros::v5::MotorGears::blue); // port 18, not reversed
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor intake(4, pros::v5::MotorGears::red);  // port 4, reversed
-pros::Motor intake2(-6, pros::v5::MotorGears::red);
+pros::Motor intakeL(20, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intakeR(11, pros::v5::MotorGears::red);
 
 //Other Motor
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
 
 //Pistons
-pros::adi::Pneumatics hood1('g', true);
+pros::adi::Pneumatics hood1('d', true);
 pros::adi::Pneumatics hood2('h', true);
-pros::adi::Pneumatics mogo_clamp('c', false); //DONE
-pros::adi::Pneumatics mogo_clamp2('d', false);
 
-pros::adi::Pneumatics intake_lift('f', false);
+pros::adi::Pneumatics mogo_clamp('a', false);
+//pros::adi::Pneumatics mogo_clamp2('d', false);
+
+pros::adi::Pneumatics intake_lift('f', false); // need to add on robot
 //pros::adi::Pneumatics mogo_rush('b', false);
 //pros::adi::Pneumatics lastring('a', false);
 
-pros::adi::Pneumatics redirect1('a', true);
-pros::adi::Pneumatics redirect2('b', true);
+pros::adi::Pneumatics redirect1('e', true);
+//pros::adi::Pneumatics redirect2('h', true);
 
-pros::adi::Pneumatics lift_helper1('e', false);
-pros::adi::Pneumatics lift_helper2('i', false);
+pros::adi::Pneumatics lift_helper1('b', false);
+pros::adi::Pneumatics lift_helper2('c', false);
 
 
 /* SENSORS */
@@ -147,8 +148,8 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake", intake},
-        //dashboard_motor_display {320, 190, "Lift", lift}
+        dashboard_motor_display {320, 135, "Intake L", intakeL},
+        dashboard_motor_display {320, 190, "Intake R", intakeR}
         
         
     };

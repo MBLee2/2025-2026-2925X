@@ -114,18 +114,18 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 
 // Intake Movement
 void spinIntake(int speed) {
-    intake.move(speed);
-    intake2.move(speed);
+    intakeL.move(speed);
+    intakeR.move(speed);
 }
 
 void stopIntake() {
-    intake.brake();
-    intake2.brake();
+    intakeL.brake();
+    intakeR.brake();
 }
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
-    intake.set_brake_mode(mode);
-    intake2.set_brake_mode(mode);
+    intakeL.set_brake_mode(mode);
+    intakeR.set_brake_mode(mode);
 }
 
 
@@ -134,8 +134,8 @@ void moveLift(int speed) {
     if(getLimitSwitch()){
         helpLift();
     }
-    intake.move(speed);
-    intake2.move(speed);
+    intakeL.move(speed);
+    intakeR.move(speed);
     //lift.move(speed);
 }
 
@@ -164,17 +164,17 @@ void setLiftBrake(pros::motor_brake_mode_e mode) {
 // Clamp
 void openClamp() {
     mogo_clamp.extend();
-    mogo_clamp2.extend();
+    //mogo_clamp2.extend();
 }
 
 void closeClamp() {
     mogo_clamp.retract();
-    mogo_clamp2.retract();
+    //mogo_clamp2.retract();
 }
 
 void toggleClamp() {
     mogo_clamp.toggle();
-    mogo_clamp2.toggle();
+    //mogo_clamp2.toggle();
 }
 
 
@@ -226,17 +226,17 @@ void toggleSixRing() {
 //Redirect
 void redirectRings() {
     redirect1.extend();
-    redirect2.extend();
+    //redirect2.extend();
 }
 
 void closeRedirect() {
     redirect1.retract();
-    redirect2.retract();
+    //redirect2.retract();
 }
 
 void toggleRedirect() {
     redirect1.toggle();
-    redirect2.toggle();
+    //redirect2.toggle();
 }
 
 //Lift Helper
@@ -326,12 +326,12 @@ float getLiftPosition() {
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
-    intake.set_encoder_units(mode);
-    intake2.set_encoder_units(mode);
+    intakeL.set_encoder_units(mode);
+    intakeR.set_encoder_units(mode);
 }
 
 float getIntakePosition() {
-    return (intake.get_position() + intake2.get_position()) / 2.0;
+    return (intakeL.get_position() + intakeR.get_position()) / 2.0;
 }
 
 // Reset Motor Positions
@@ -358,8 +358,8 @@ void resetLiftPosition() {
 }
 
 void resetIntakePosition() {
-    intake.tare_position();
-    intake2.tare_position();
+    intakeL.tare_position();
+    intakeR.tare_position();
 }
 
 float wheelDegToInches(float degrees) {

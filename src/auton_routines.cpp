@@ -858,8 +858,7 @@ void auton_60s_skills_1() {
   //chassis.moveToPoint(-24, 65, 1000, {.forwards = false, .maxSpeed = max_speed});
   //chassis.turnToHeading(90, 2000, {.maxSpeed = max_speed1});
   chassis.moveToPoint(-70, 60, 2000, {.forwards = false});
-  intake.move(0);
-
+  stopIntake();
 
 
 

@@ -45,8 +45,8 @@ extern pros::MotorGroup left_side_motors;              // Left drivetrain of dri
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
 
 //Motors
-extern pros::Motor intake;
-extern pros::Motor intake2;
+extern pros::Motor intakeL;
+extern pros::Motor intakeR;
 //extern pros::Motor lift;
 
 //pistons
