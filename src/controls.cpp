@@ -53,7 +53,7 @@ void taskFn_drivebase_control(void) {
 // Lift control
 void taskFn_lift_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+  //setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
   while (true) // Infinite loop to keep checking controller input for lift control
   {
     // While the R1 button is pressed, move the lift up at full speed
@@ -70,7 +70,7 @@ void taskFn_lift_control(void) {
         moveLift(127); // Move the lift up
       }
     }
-    stopLift();    // If neither R1 nor R2 is pressed, stop the lift
+    //stopLift();    // If neither R1 nor R2 is pressed, stop the lift
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
@@ -186,7 +186,7 @@ void taskFn_intake_control(void) {
     // Previous color sensor logic: ((hue >= 7 && hue <= 17) || (hue >= 210 &&
     // hue <= 240))
     //  Control intake based on color sensor readings when basket is extended
-    if (basket_state == false && current_state == INTAKE) {
+    /*if (basket_state == false && current_state == INTAKE) {
 
       if (counter > 200 && (have_seen && getIntakeDist() > 20)) // If hue matches specific values
       {
@@ -212,7 +212,7 @@ void taskFn_intake_control(void) {
       } else {
         spinIntake(127);
       }
-    }
+    }*/
 
     // Control the hood based on lift position
     /*if (pos < -100) {

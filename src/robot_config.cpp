@@ -26,8 +26,8 @@ pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor intake(-4, pros::v5::MotorGears::red);  // port 4, reversed
-pros::Motor intake2(1, pros::v5::MotorGears::red);
+pros::Motor intake(4, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake2(-6, pros::v5::MotorGears::red);
 
 //Other Motor
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
