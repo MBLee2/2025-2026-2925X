@@ -14,16 +14,16 @@ AutonColor selectedColor = AutonColor::RED; //Set default color of auton
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(18, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor lm(10, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor lb(9, pros::v5::MotorGears::blue);  // port 13, reversed
-pros::Motor rf(13, pros::v5::MotorGears::blue); // port 18, not reversed
-pros::Motor rm(1, pros::v5::MotorGears::blue); // port 18, not reversed
-pros::Motor rb(2, pros::v5::MotorGears::blue); // port 18, not reversed
+pros::Motor lf(-18, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(10, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(-9, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor rf(13, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(-1, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({-11, 12, -17}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({16, -14, 15}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({-18, 10, -9}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({16, -1, 2}, pros::v5::MotorGears::blue);
 
 // intake motor group
 pros::Motor intakeL(20, pros::v5::MotorGears::red);  // port 4, reversed
