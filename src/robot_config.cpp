@@ -26,7 +26,7 @@ pros::MotorGroup left_side_motors({-18, 10, -9}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({16, -1, 2}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor intakeL(20, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
 pros::Motor intakeR(11, pros::v5::MotorGears::red);
 
 //Other Motor
@@ -36,22 +36,22 @@ pros::Motor intakeR(11, pros::v5::MotorGears::red);
 pros::adi::Pneumatics hood1('d', true);
 pros::adi::Pneumatics hood2('h', true);
 
-pros::adi::Pneumatics mogo_clamp('a', false);
+pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
-pros::adi::Pneumatics intake_lift('f', false); // need to add on robot
+pros::adi::Pneumatics intake_lift('g', false); // need to add on robot
 //pros::adi::Pneumatics mogo_rush('b', false);
 //pros::adi::Pneumatics lastring('a', false);
 
-pros::adi::Pneumatics redirect1('e', true);
+pros::adi::Pneumatics redirect1('a', false);
 //pros::adi::Pneumatics redirect2('h', true);
 
-pros::adi::Pneumatics lift_helper1('b', false);
-pros::adi::Pneumatics lift_helper2('c', false);
+pros::adi::Pneumatics lift_helper1('f', false);
+pros::adi::Pneumatics lift_helper2('c',false );
 
 
 /* SENSORS */
-pros::Distance intake_dist(2);
+pros::Optical intake_color(6);
 pros::Distance distance_lf(19);
 pros::Distance distance_lb(20);
 pros::Distance distance_rf(8);
@@ -64,7 +64,9 @@ pros::GPS gps(12);
 pros::IMU imu(3);
 
 pros::adi::Button limitSwitch('B');
- 
+pros::Rotation lift_rotation(7); 
+
+
 lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors

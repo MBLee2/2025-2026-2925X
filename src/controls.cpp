@@ -124,6 +124,7 @@ void taskFn_mogo_control(void) {
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_mogo_control
 
+
 // Intake control
 void taskFn_intake_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
@@ -131,7 +132,8 @@ void taskFn_intake_control(void) {
   enum intake_state {
     INTAKE, // Intake objects
     OUTAKE, // Eject objects
-    STOP    // Stop the intake
+    STOP,    // Stop the intake
+    SORTING, // Stop the intake
   };
 
   bool have_seen = false;
@@ -153,6 +155,24 @@ void taskFn_intake_control(void) {
     // intake color sensor master.print(1, 0, "C: %i", hue);
 
     // Toggle intake on or off with the A button
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+      
+      if (current_state == INTAKE) // If the intake is stopped or ejecting, start intake
+      {
+        spinIntake(127);
+        autoIntake = false;
+        current_state = SORTING;
+      } else if (current_state == INTAKE) // If intake is running, stop it
+      {
+        stopIntake();
+        autoIntake = false;
+        current_state = STOP;
+      }
+
+
+
+    }
+
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       if (current_state == OUTAKE || current_state == STOP) // If the intake is stopped or ejecting, start intake
       {
@@ -183,44 +203,6 @@ void taskFn_intake_control(void) {
       }
     }
 
-    // Previous color sensor logic: ((hue >= 7 && hue <= 17) || (hue >= 210 &&
-    // hue <= 240))
-    //  Control intake based on color sensor readings when basket is extended
-    /*if (basket_state == false && current_state == INTAKE) {
-
-      if (counter > 200 && (have_seen && getIntakeDist() > 20)) // If hue matches specific values
-      {
-        spinIntake(90);
-        while (getIntakeDist() < 30) // If hue matches specific values
-        {
-          pros::delay(10);
-        }
-        intakeFor(90, 19.f);
-        outakeFor(105, 370);
-        spinIntake(127);
-        have_seen = false;
-        counter = 0;
-      } else {
-        if (!have_seen && intake_dist.get() < 30) {
-          have_seen = true;
-        }
-        counter++;
-      }
-
-      if(have_seen){
-        spinIntake(90);
-      } else {
-        spinIntake(127);
-      }
-    }*/
-
-    // Control the hood based on lift position
-    /*if (pos < -100) {
-      hoodBwd();
-    } else if (basket_state == true) {
-      hoodFwd();
-    }*/
-
     // Control the intake lift based on joystick position
     if (rightX > 0.85) {
       liftIntake();
@@ -233,51 +215,6 @@ void taskFn_intake_control(void) {
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_intake_control
-
-/*void taskFn_auton_intake_control(void){
-    printf("%s(): Entered \n", __func__);  // Log the function entry for
-debugging
-
-    bool basket_state = false;  // Track the state of the basket (false =
-retracted, true = extended) bool intake_lifted = false;  // Track whether the
-intake is lifted (false = down, true = up)
-
-    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);  // Set the encoder
-units for the lift motor to degrees intake_color.set_led_pwm(100);  // Set the
-LED PWM for the intake color sensor to 100
-
-    while (true)  // Infinite loop to keep checking controller input for intake
-control
-    {
-        double pos = lift.get_position();  // Get the current position of the
-lift int hue = intake_color.get_hue();  // Get the current hue value from the
-intake color sensor
-
-        // Control intake based on color sensor readings when basket is extended
-        if (basket_state == true)
-        {
-            if (hue >= 7 && hue <= 17 || hue >= 210 && hue <= 220)  // If hue
-matches specific values
-            {
-                pros::delay(170);  // Small delay before reversing the intake
-                intake.move(-127);  // Reverse the intake for a short duration
-                pros::delay(300);
-                intake.move(127);  // Resume intake after the reversal
-            }
-        }
-
-        // Control the hood based on lift position
-        if (pos < -100) {
-            hood1.set_value(false);  // Retract the hood if lift position is
-below -100 degrees hood2.set_value(false);
-        }
-        else if (basket_state == true) {
-            hood1.set_value(true);  // Extend the hood if the basket is extended
-            hood2.set_value(true);
-        }
-    }
-    printf("%s(): Exiting \n", __func__);  // Log the function exit for
-debugging } // end of taskFn_intake_control*/
 
 // Intake control
 void taskFn_hood_control(void) {

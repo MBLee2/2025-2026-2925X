@@ -6,6 +6,7 @@
 #include "pros/gps.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
+#include "pros/rotation.hpp"
 
 #define PI 3.14159265
 // useful conversions
@@ -66,7 +67,7 @@ extern pros::adi::Pneumatics lift_helper2;
 
 //Sensors
 //extern pros::Optical intake_color;
-extern pros::Distance intake_dist;
+extern pros::Optical intake_color;
 extern pros::Distance distance_rb;
 extern pros::Distance distance_rf;
 extern pros::Distance distance_lb;
@@ -77,5 +78,6 @@ extern pros::Distance distance_front;
 extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;
+extern pros::Rotation lift_rotation;
 
 #endif //_ROBOT_CONFIG_H_   

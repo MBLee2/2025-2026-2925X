@@ -266,8 +266,8 @@ float getHeading() {
 }
 
 //Distance
-int getIntakeDist() {
-    return intake_dist.get();
+int getIntakeColor() {
+    return intake_color.get_hue();
 }
 
 //Limit Switch
@@ -556,7 +556,7 @@ void outakeFor(float speed, float degrees) {
         stopIntake();
 }
 
-void saveRings(int timeout){
+/*void saveRings(int timeout){
     spinIntake(127);
     if(getIntakeDist() > 20){
         while(getIntakeDist() > 20 && timeout > 0 && (auton || autoSkill || autoIntake)){
@@ -585,4 +585,4 @@ void basketRings(bool withSave){
         outakeFor(105, 370);
     }
     spinIntake(127);
-}
+}*/

@@ -75,7 +75,7 @@ void helpLift();
 void liftNeutral();
 bool getLiftHelper();
 
-int getIntakeDist();
+int getIntakeColor();
 
 float getLFPosition();
 float getLMPosition();
