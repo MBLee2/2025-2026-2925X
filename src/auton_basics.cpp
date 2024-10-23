@@ -51,52 +51,52 @@ void setBasket(bool set){
 }*/
 
 int basketRingsAsTask(){
-    basketRings(true);
+    // basketRings(true);
     return 0;
 }
 
 int basketRingsAsTaskNS(){
-    basketRings(false);
+    // basketRings(false);
     return 0;
 }
 
 
 int saveRingsAsTask(){
-    saveRings();
+    // saveRings();
     return 0;
 }
 
 int basketRingsAsTask15(){
     pros::delay(500);
-    basketRings(false);
+    // basketRings(false);
     return 0;
 }
 
 void saveSecondRing(int timeout){
-    int counter = 0;
-    bool seeingRing = false;
-    spinIntake(127);
-    while(timeout > 0){
+    // int counter = 0;
+    // bool seeingRing = false;
+    // spinIntake(127);
+    // while(timeout > 0){
 
-        if(getIntakeDist() < 20 && !seeingRing) {
-            counter++;
-            printf("Counter %i", counter);
-            if(counter > 1){
-                stopIntake();
-                return;
-            }
-        }
+    //     if(getIntakeDist() < 20 && !seeingRing) {
+    //         counter++;
+    //         printf("Counter %i", counter);
+    //         if(counter > 1){
+    //             stopIntake();
+    //             return;
+    //         }
+    //     }
 
-        if(getIntakeDist() > 20){
-            seeingRing = false;
-        } else {
-            seeingRing = true;
-        }
+    //     if(getIntakeDist() > 20){
+    //         seeingRing = false;
+    //     } else {
+    //         seeingRing = true;
+    //     }
 
 
-        pros::delay(10);
-        timeout -= 10;
-    }
+    //     pros::delay(10);
+    //     timeout -= 10;
+    // }
 }
 
 //distance sensor constants

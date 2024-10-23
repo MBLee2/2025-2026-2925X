@@ -44,16 +44,14 @@ void setDriveBrake(pros::motor_brake_mode_e mode);
 
 void spinIntake(int speed);
 void stopIntake();
+void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
-
-void moveLift(int speed);
-void stopLift();
-void setLiftBrake(pros::motor_brake_mode_e mode);
 
 void openClamp();
 void closeClamp();
 void toggleClamp();
 
+void toggleHood();
 void hoodFwd();
 void hoodBwd();
 
@@ -71,8 +69,8 @@ void redirectRings();
 void closeRedirect();
 void toggleRedirect();
 
-void helpLift();
-void liftNeutral();
+void liftPneumaticUp();
+void liftPneumaticDown();
 bool getLiftHelper();
 
 int getIntakeColor();
@@ -103,7 +101,6 @@ void driveDistance(float distance, int timeout = 15000);
 void turn(float degrees, int timeout = 15000);
 
 void resetLiftPosition();
-void setLiftEncoder(pros::motor_encoder_units_e mode);
 float getLiftPosition();
 
 void moveLiftToPos(float position);

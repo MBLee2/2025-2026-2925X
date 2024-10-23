@@ -12,7 +12,6 @@ bool basket_state = false;
 void stopAllMotors() {
     stopDrive();
     stopIntake();
-    stopLift();
 }
 
 // Drive Base Movement
@@ -119,44 +118,25 @@ void spinIntake(int speed) {
 }
 
 void stopIntake() {
+    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
     intakeL.brake();
     intakeR.brake();
 }
+
+void stopIntakeHold() {
+    intakeL.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    intakeL.brake();
+    intakeR.brake();
+}
+
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
     intakeL.set_brake_mode(mode);
     intakeR.set_brake_mode(mode);
 }
 
-
-// Lift Movement
-void moveLift(int speed) {
-    if(getLimitSwitch()){
-        helpLift();
-    }
-    intakeL.move(speed);
-    intakeR.move(speed);
-    //lift.move(speed);
-}
-
-void taskFn_limit_switch() {
-    while(true) {
-        if(!getLimitSwitch() && getLiftHelper()) {
-            liftNeutral();
-        }
-        pros::delay(20);
-    }
-}
-
-void stopLift() {
-    stopIntake();
-    //lift.brake();
-}
-
-void setLiftBrake(pros::motor_brake_mode_e mode) {
-    setIntakeBrake(mode);
-    //lift.set_brake_mode(mode);
-}
 
 
 //Pneumatics
@@ -179,6 +159,14 @@ void toggleClamp() {
 
 
 // Hood
+
+void toggleHood(){
+    if(redirect1.is_extended()){
+        hoodBwd();
+    }else{
+        hoodFwd();
+    }
+}
 
 void hoodFwd() {
     basket_state = true;
@@ -240,12 +228,12 @@ void toggleRedirect() {
 }
 
 //Lift Helper
-void helpLift() {
+void liftPneumaticUp() {
     lift_helper1.extend();
     lift_helper2.extend();
 }
 
-void liftNeutral() {
+void liftPneumaticDown() {
     lift_helper1.retract();
     lift_helper2.retract();
 }
@@ -316,13 +304,14 @@ float getRightMotorPositionInInches() {
     return wheelDegToInches(getLeftMotorPosition());
 }
 
-void setLiftEncoder(pros::motor_encoder_units_e mode) {
-    //lift.set_encoder_units(mode);
+void resetLiftPosition(){
+    lift_rotation.reset();
+    lift_rotation.reset_position();
+    lift_rotation.set_position(0);
 }
 
 float getLiftPosition() {
-    //return lift.get_position() * LIFT_GEAR_RATIO;
-    return getIntakePosition() * LIFT_GEAR_RATIO;
+    return lift_rotation.get_angle() / 100.0;
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
@@ -352,10 +341,6 @@ void resetDriveMotorPosition() {
     resetRightMotorPosition();
 }
 
-void resetLiftPosition() {
-    //lift.tare_position();
-    resetIntakePosition();
-}
 
 void resetIntakePosition() {
     intakeL.tare_position();
@@ -447,29 +432,7 @@ void turn(float degrees, int timeout) {
     }
 }
 
-// Lift
-void moveLiftToPos(float position){
-    setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
 
-    if(getLimitSwitch()) {
-        resetLiftPosition();
-    }
-
-    if(position > getLiftPosition()){
-        moveLift(127);
-        while(getLiftPosition() < position && (auton || autoSkill || autoLift)) {
-            pros::delay(20);
-        }
-    } else if(position < getLiftPosition()){
-        moveLift(-127);
-        while(getLiftPosition() > position && (auton || autoSkill || autoLift)) {
-            pros::delay(20);
-        }
-    }
-
-    if(auton || autoSkill || autoLift)
-        stopLift();
-}
 
 void liftUp(float degrees) {
     moveLiftToPos(getLiftPosition() + degrees);

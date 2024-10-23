@@ -10,6 +10,9 @@
 #include "hal.h"
 #include "main.h"
 
+bool intakeMode = true; //Mason Rudra place where should be
+
+
 #define TURN_CONST                                                             \
   1.4 // Constant multipled by X input to allow for instant turns during driver
       // control
@@ -50,31 +53,6 @@ void taskFn_drivebase_control(void) {
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_drivebase_control
 
-// Lift control
-void taskFn_lift_control(void) {
-  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  //setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-  while (true) // Infinite loop to keep checking controller input for lift control
-  {
-    // While the R1 button is pressed, move the lift up at full speed
-    while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      autoLift = false;
-      moveLift(127); // Move the lift up
-    }
-    // While the R1 button is pressed, move the lift down at full speed
-    while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-      autoLift = false;
-      moveLift(-127); // Move the lift down
-      // If R1 is pressed while R2 is still held, move the lift up instead
-      while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-        moveLift(127); // Move the lift up
-      }
-    }
-    //stopLift();    // If neither R1 nor R2 is pressed, stop the lift
-    pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
-  }
-  printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
-} // end of taskFn_lift_control
 
 // Mogo Control
 void taskFn_mogo_control(void) {
@@ -141,8 +119,6 @@ void taskFn_intake_control(void) {
   int counter = 200;
   intake_state current_state = STOP; // Initialize with a default state, STOP
 
-  setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES); // Set the encoder units for the lift
-                                      // motor to degrees
   // intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   // sensor to 100
 
@@ -155,26 +131,9 @@ void taskFn_intake_control(void) {
     // intake color sensor master.print(1, 0, "C: %i", hue);
 
     // Toggle intake on or off with the A button
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-      
-      if (current_state == INTAKE) // If the intake is stopped or ejecting, start intake
-      {
-        spinIntake(127);
-        autoIntake = false;
-        current_state = SORTING;
-      } else if (current_state == INTAKE) // If intake is running, stop it
-      {
-        stopIntake();
-        autoIntake = false;
-        current_state = STOP;
-      }
-
-
-
-    }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      if (current_state == OUTAKE || current_state == STOP) // If the intake is stopped or ejecting, start intake
+      if ((current_state == OUTAKE || current_state == STOP) && intakeMode) // If the intake is stopped or ejecting, start intake
       {
         spinIntake(127);
         autoIntake = false;
@@ -189,7 +148,7 @@ void taskFn_intake_control(void) {
 
     // Eject objects with the B button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      if (current_state == INTAKE || current_state == STOP) // If intake is running or stopped, start ejecting
+      if ((current_state == INTAKE || current_state == STOP) && intakeMode) // If intake is running or stopped, start ejecting
       {
         spinIntake(-127); // Reverse the intake to eject
         autoIntake = false;
@@ -202,6 +161,29 @@ void taskFn_intake_control(void) {
         current_state = STOP;
       }
     }
+
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      intakeMode = false;
+      if(getLiftPosition() < 15){
+        liftPneumaticUp();
+      }
+      spinIntake(127);
+
+    }else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      intakeMode = false;
+      spinIntake(-127);
+    }else if(intakeMode == false){
+      if(getLiftPosition() > 15 && getLiftPosition() < 300){
+        liftPneumaticDown();
+        stopIntakeHold();
+      }
+      else{
+        stopIntake();
+        intakeMode = true;
+      }
+    }
+
 
     // Control the intake lift based on joystick position
     if (rightX > 0.85) {
@@ -226,6 +208,10 @@ void taskFn_hood_control(void) {
   while (true) {
     // Toggle the basket state with the Y button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      toggleRedirect();
+      toggleHood();
+    }
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
       toggleRedirect();
     }
 

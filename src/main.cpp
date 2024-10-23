@@ -46,8 +46,8 @@ void initialize() {
 	// weird bug in system; without the following delay, was getting a white screen
 	// on the brain rather than the display as expectedF
 	pros::delay(10); 
-	
 	// Clear the Brain screen and show status
+	resetLiftPosition();
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
@@ -148,9 +148,6 @@ void competition_initialize() {
 
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
-    setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-	setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
-	resetLiftPosition();
 
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();
@@ -239,7 +236,6 @@ void autonomous() {
 void opcontrol() {
 	master.clear();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-    //pros::Task lift_task(taskFn_lift_control,"lift-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
