@@ -5,6 +5,7 @@
 #include "dashboard.h"
 #include "lemlib/api.hpp"
 #include "controls.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "hal.h"
@@ -48,6 +49,7 @@ void initialize() {
 	pros::delay(10); 
 	// Clear the Brain screen and show status
 	resetLiftPosition();
+	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
