@@ -6,6 +6,7 @@
 #include "main.h"
 
 bool basket_state = false;
+bool COLOR = false; // false = red, true = blue
 
 //Basic Motor Movement
 
@@ -191,11 +192,11 @@ void dropIntake() {
 
 // Sweeper
 void extendSweep() {
-    //mogo_rush.extend();
+    mogo_rush.extend();
 }
 
 void retractSweep() {
-    //mogo_rush.retract();
+    mogo_rush.retract();
 }
 
 // Sixth-ring
@@ -214,17 +215,14 @@ void toggleSixRing() {
 //Redirect
 void redirectRings() {
     redirect1.extend();
-    //redirect2.extend();
 }
 
 void closeRedirect() {
     redirect1.retract();
-    //redirect2.retract();
 }
 
 void toggleRedirect() {
     redirect1.toggle();
-    //redirect2.toggle();
 }
 
 //Lift Helper
@@ -518,6 +516,37 @@ void outakeFor(float speed, float degrees) {
     if(auton || autoSkill || autoIntake)
         stopIntake();
 }
+void sort_color(bool sort) {
+    //false = red, true = blue 
+    int hue = getIntakeColor();
+    if (sort == true){
+
+        if(COLOR == false) // Sorting out Red
+        {
+            printf("Sorting out red \n"); // Log the function exit for debugging
+            if(hue >= 0 && hue <= 25)
+            {
+                master.rumble("-");
+                printf("Detected Red \n"); // Log the function exit for debugging
+                redirectRings();
+                pros::delay(500);
+
+            }
+            closeRedirect();
+        }
+        if(COLOR == true)// Sorting out Blue
+        {
+            if(hue >= 200 && hue <= 215)
+            {
+                printf("Detected Blue \n"); // Log the function exit for debugging
+                redirectRings();
+                pros::delay(500);
+            }
+            closeRedirect();
+        }
+    }
+}
+
 
 /*void saveRings(int timeout){
     spinIntake(127);

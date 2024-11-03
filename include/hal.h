@@ -16,6 +16,7 @@
 #define TURN_KD 0
 
 extern bool basket_state;
+extern bool COLOR;
 
 void stopAllMotors();
 
@@ -120,6 +121,8 @@ void outakeFor(float degrees);
 void outakeFor(int ms);
 void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
+
+void sort_color(bool sort);
 
 void saveRings(int timeout = 15000);
 void basketRings(bool withSave = true);

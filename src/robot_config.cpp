@@ -10,7 +10,6 @@
 #include "robot_config.h"
 #include "dashboard.h"
 
-AutonColor selectedColor = AutonColor::RED; //Set default color of auton    
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
@@ -39,8 +38,8 @@ pros::adi::Pneumatics hood2('h', true);
 pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
-pros::adi::Pneumatics intake_lift('g', false); // need to add on robot
-//pros::adi::Pneumatics mogo_rush('b', false);
+pros::adi::Pneumatics intake_lift('b', false); // need to add on robot
+pros::adi::Pneumatics mogo_rush('g', false);
 //pros::adi::Pneumatics lastring('a', false);
 
 pros::adi::Pneumatics redirect1('a', false);

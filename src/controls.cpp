@@ -20,8 +20,7 @@ bool intakeMode = true; //Mason Rudra place where should be
 // Drivebase control
 void taskFn_drivebase_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  bool drive_state =
-      true;    // true for normal, false for reversed drive direction
+  bool drive_state = true;    // true for normal, false for reversed drive direction
   while (true) // Infinite loop to keep checking controller input and drive base
                // state
   {
@@ -58,8 +57,7 @@ void taskFn_drivebase_control(void) {
 void taskFn_mogo_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
   bool mogo_state = false; // Track the state of the mogo clamp (false = open, true = closed)
-  bool sweeper_out = false; // Track the state of the sweeper (false =
-                            // retracted, true = extended)
+  bool sweeper_out = false; // Track the state of the sweeper (false = retracted, true = extended)
   bool sixth_ring_state = false;
 
   while (true) // Infinite loop to keep checking controller input for mogo control
@@ -110,58 +108,55 @@ void taskFn_intake_control(void) {
   enum intake_state {
     INTAKE, // Intake objects
     OUTAKE, // Eject objects
-    STOP,    // Stop the intake
-    SORTING, // Stop the intake
+    STOP  // Stop the intake
   };
 
-  bool have_seen = false;
-
-  int counter = 200;
+  intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   intake_state current_state = STOP; // Initialize with a default state, STOP
-
-  // intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
-  // sensor to 100
-
   while (true) // Infinite loop to keep checking controller input for intake
-               // control
   {
     double pos = getLiftPosition();; // Get the current position of the lift
-    int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
-    // int hue = intake_color.get_hue();  // Get the current hue value from the
-    // intake color sensor master.print(1, 0, "C: %i", hue);
-
-    // Toggle intake on or off with the A button
-
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       if ((current_state == OUTAKE || current_state == STOP) && intakeMode) // If the intake is stopped or ejecting, start intake
       {
-        spinIntake(127);
-        autoIntake = false;
+        //autoIntake = false;
         current_state = INTAKE;
-      } else if (current_state == INTAKE) // If intake is running, stop it
+        spinIntake(127);
+
+      } 
+      else if (current_state == INTAKE) // If intake is running, stop it
       {
-        stopIntake();
-        autoIntake = false;
+        //autoIntake = false;
         current_state = STOP;
       }
     }
-
     // Eject objects with the B button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       if ((current_state == INTAKE || current_state == STOP) && intakeMode) // If intake is running or stopped, start ejecting
       {
-        spinIntake(-127); // Reverse the intake to eject
-        autoIntake = false;
+        //autoIntake = false;
         current_state = OUTAKE;
 
-      } else if (current_state == OUTAKE) // If intake is ejecting, stop it
+      } 
+      else if (current_state == OUTAKE) // If intake is ejecting, stop it
       {
-        stopIntake(); // Stop the intake
-        autoIntake = false;
+        //autoIntake = false;
         current_state = STOP;
       }
     }
-
+    
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      if (autoIntake == false)
+      {
+        master.print(1,0,"Sorting");
+        autoIntake = true;
+      }
+      else if (autoIntake == true) // If intake is ejecting, stop it
+      {
+        master.clear_line(1);
+        autoIntake = false;
+      }
+    }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       intakeMode = false;
@@ -183,14 +178,21 @@ void taskFn_intake_control(void) {
         intakeMode = true;
       }
     }
-
-
-    // Control the intake lift based on joystick position
-    if (rightX > 0.85) {
-      liftIntake();
+    if(current_state == OUTAKE)
+    {
+      spinIntake(-127);
     }
-    if (rightX < -0.85) {
-      dropIntake();
+    if(current_state == STOP)
+    {
+      stopIntake();
+    }
+    if(autoIntake == true)
+    {
+      sort_color(true);
+    }
+    if(autoIntake == false)
+    {
+      sort_color(false);
     }
 
     pros::delay(10);
@@ -200,12 +202,10 @@ void taskFn_intake_control(void) {
 
 // Intake control
 void taskFn_hood_control(void) {
-  /*sudo code
-  if color sensor sees wrong color
-  //*/
   bool hood_state = false;
   printf("%s(): Entered \n", __func__);
   while (true) {
+    int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
     // Toggle the basket state with the Y button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       toggleRedirect();
@@ -215,8 +215,16 @@ void taskFn_hood_control(void) {
       toggleRedirect();
     }
 
+    // Control the intake lift based on joystick position
+    if (rightX > 0.85) {
+      liftIntake();
+    }
+    if (rightX < -0.85) {
+      dropIntake();
+    }
     pros::delay(20);
   }
+
 
   printf("%s(): Exiting \n", __func__);
 } // end of taskFn_auto_intake_push_control
