@@ -224,12 +224,12 @@ void taskFn_dashboard_display(void)
         render_dashboard(); 
         if(COLOR == false)
         {
-            master.print(0, 0, "Our Color: RED");
+            master.print(0, 0, "Our Color: BLUE");
 
         }
         else if(COLOR == true)
         {
-            master.print(0, 0, "Our Color: BLUE");
+            master.print(0, 0, "Our Color: RED");
         }
         // once every 200 milliseconds (1 time every 5 seconds) is enough for this task 
         // which just refreshes the dashboard display
