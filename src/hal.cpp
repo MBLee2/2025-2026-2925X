@@ -4,6 +4,7 @@
 #include "robot_config.h"
 #include "controls.h"
 #include "main.h"
+#include <cstdio>
 
 bool basket_state = false;
 bool COLOR = false; // false = red, true = blue
@@ -432,8 +433,16 @@ void turn(float degrees, int timeout) {
 
 
 
-void liftUp(float degrees) {
-    moveLiftToPos(getLiftPosition() + degrees);
+void liftUpWallStake() {
+    if(getLiftPosition() < 15){
+        liftPneumaticUp();
+      }
+    while(getLiftPosition() <= 81)
+    {
+        spinIntake(127);
+        printf("Lift %f\n",getLiftPosition());
+    }
+    stopIntake();
 }
 
 void liftDown(float degrees) {
@@ -523,7 +532,7 @@ void sort_color(bool sort) {
 
         if(COLOR == false) // Sorting out Red
         {
-            printf("Sorting out red \n"); // Log the function exit for debugging
+            printf("Sorting out red \n"); // Log the function exit for debugging 
             if(hue >= 0 && hue <= 25)
             {
                 master.rumble("-");
@@ -536,7 +545,7 @@ void sort_color(bool sort) {
         }
         if(COLOR == true)// Sorting out Blue
         {
-            if(hue >= 200 && hue <= 215)
+            if(hue >= 155 && hue <= 185)
             {
                 printf("Detected Blue \n"); // Log the function exit for debugging
                 redirectRings();
@@ -546,6 +555,7 @@ void sort_color(bool sort) {
         }
     }
 }
+
 
 
 /*void saveRings(int timeout){

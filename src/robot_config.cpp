@@ -59,8 +59,8 @@ pros::Distance distance_bl(21);
 pros::Distance distance_br(10);
 pros::Distance distance_front(5);
 
-pros::GPS gps(12);
-pros::IMU imu(3);
+pros::GPS gps(3);
+pros::IMU imu(19);
 
 pros::adi::Button limitSwitch('B');
 pros::Rotation lift_rotation(7); 
@@ -76,48 +76,48 @@ lemlib::Drivetrain drivetrain(
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
-pros::Rotation vertical_rot(13); // port 1, not reversed
-pros::Rotation horizontal_rot(18); // port 1, not reversed
+pros::Rotation vertical_rot(14); // port 1, not reversed
+pros::Rotation horizontal_rot(17); // port 1, not reversed
 
 // back tracking wheel encoder  
  
 // vertical tracking wheel
-//lemlib::TrackingWheel vertical_tracking_wheel(&test, 3.75, 5.25,450); // 2.00" wheel diameter, -4.6" offset from tracking center 
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 1.25); // 2.00" wheel diameter, -4.6" offset from tracking center 
 // horizontal tracking wheel
-//lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot, 2.00, 6.875); // 2.00" wheel diameter, 4.5" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, 1.00); // 2.00" wheel diameter, 4.5" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    nullptr, //SKILLSa  
+    &vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
-    nullptr,//SKILLS
+    &horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &imu // inertial sensor
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(8, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              59, // derivative gain (kD)
+                                              36.5, // derivative gain (kD)
                                               0, // anti windup
-                                              2, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
-                                              15  // maximum acceleration (slew)
+                                              0, // small error range, in inches
+                                              00, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              000, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
+
 // turning PID
-lemlib::ControllerSettings angular_controller(6, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(5 , // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              57, // derivative gain (kD)
-                                              0, // anti windup
+                                              37, // derivative gain (kD)
+                                              3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              127 // maximum acceleration (slew)
 );
-
 
 
 // input curve for throttle input during driver control

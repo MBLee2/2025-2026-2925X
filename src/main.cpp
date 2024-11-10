@@ -5,6 +5,7 @@
 #include "dashboard.h"
 #include "lemlib/api.hpp"
 #include "controls.h"
+#include "pros/device.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
@@ -130,6 +131,7 @@ void disabled() {
  * starts.
  */
 void competition_initialize() {
+	chassis.setPose(0,0,0);
     /**
  * Runs after initialize(), and before autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
@@ -188,8 +190,9 @@ ASSET(test_txt);
 
 void autonomous() {
 	bool auton = true;
-	auton_routine default_routine = rush_wp_a; //DEFAULT ROUTINE
+	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
    	printf("%s(): Entered\n", __func__);
+	master.print(0, 0,"Time %d", time);
 	//HERE
 	// Clear the Brain screen
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
@@ -201,12 +204,12 @@ void autonomous() {
 	if (selected_auton_routine.routine_func == nullptr)
 	{
 		selected_auton_routine = default_routine;
-		/*pros::screen::set_pen(pros::c::COLOR_RED);
+		pros::screen::set_pen(pros::c::COLOR_RED);
 		while (true)
 		{
 	    	pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected!!");
 			pros::delay(250);
-		}	*/
+		}	
 	}
 
 	// Call the function associated with the selected auton routine		

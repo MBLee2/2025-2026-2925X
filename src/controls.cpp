@@ -158,7 +158,7 @@ void taskFn_intake_control(void) {
       }
     }
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+    if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       intakeMode = false;
       if(getLiftPosition() < 15){
         liftPneumaticUp();

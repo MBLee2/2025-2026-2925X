@@ -105,7 +105,7 @@ void resetLiftPosition();
 float getLiftPosition();
 
 void moveLiftToPos(float position);
-void liftUp(float degrees);
+void liftUpWallStake();
 void liftDown(float degrees);
 
 void resetIntakePosition();
