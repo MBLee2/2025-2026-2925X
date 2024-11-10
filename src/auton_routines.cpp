@@ -476,23 +476,66 @@ void auton_60s_skills_1() {
   spinIntake(127);
   chassis.turnToHeading(-90, 1000);
   chassis.moveToPoint(-48, -24, 2000,{.maxSpeed=speed});
-  chassis.turnToHeading(0, 1000);
-  chassis.moveToPoint(-48, 28, 1000,{},false);
-  pros::delay(400);
-  chassis.turnToHeading(180, 1000);
+  chassis.turnToPoint(-56, 0, 1000);
   chassis.moveToPoint(-56, 0, 2000,{.maxSpeed=speed});
-
-  chassis.moveToPoint(-44, -48, 2000,{.maxSpeed=speed});
-  chassis.turnToHeading(180, 1000);
+  chassis.turnToPoint(-48, 28, 1000); 
+  chassis.moveToPoint(-48, 28, 1000,{.maxSpeed=speed},false);
+  hoodBwd();
+  toggleRedirect();
+  pros::delay(400);
+  chassis.moveToPoint(-48, 0, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.turnToHeading(270,1000);
+  liftUpWallStake();
+  toggleRedirect();
+  chassis.moveToPoint(-56,0,1000,{.maxSpeed=speed},false);
+  liftDown();
+  chassis.moveToPoint(-44,0,1000,{.forwards=false,.maxSpeed=speed});
+  chassis.turnToHeading(180,1000);
+  hoodFwd();
   chassis.moveToPoint(-44, -56, 2000,{.maxSpeed=speed});
   chassis.moveToPoint(-40, -48, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(270, 1000);
-  hoodBwd();
-  toggleRedirect();
   chassis.moveToPoint(-50, -48, 2000,{.maxSpeed=speed});
   chassis.turnToPoint(-72, -72, 1000,{.forwards=false});
   chassis.moveToPoint(-68, -68, 1000,{.forwards=false, .maxSpeed=speed});
   toggleClamp();
+  chassis.moveToPoint(0, -48, 4000,{.maxSpeed=speed});
+  chassis.turnToHeading(270,1000);
+  chassis.turnToPoint(24, -48, 1000,{.forwards=false});
+  chassis.moveToPoint(24, -48, 2000,{.maxSpeed=speed});
+  toggleClamp();
+  chassis.turnToHeading(0,1000);
+  chassis.moveToPoint(24, -24, 2000,{.maxSpeed=speed});
+  chassis.turnToHeading(90,1000);
+  chassis.moveToPoint(48, -24, 2000,{.maxSpeed=speed});
+  chassis.turnToPoint(56, 0,1000);
+  chassis.moveToPoint(56, 0, 2000,{.maxSpeed=speed});
+  chassis.turnToPoint(48,24,2000);
+  chassis.moveToPoint(48, 24, 2000,{.maxSpeed=speed});
+  hoodBwd();
+  toggleRedirect();
+  pros::delay(400);
+  chassis.moveToPoint(48, 0, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.turnToHeading(90,1000);
+  liftUpWallStake(); 
+  chassis.moveToPoint(55, 0, 2000,{.maxSpeed=speed},false);
+  liftDown();
+  chassis.moveToPoint(44,0,1000,{.forwards=false,.maxSpeed=speed});
+  chassis.turnToHeading(180,1000);
+  hoodFwd();
+  chassis.moveToPoint(44, -56, 2000,{.maxSpeed=speed});
+  chassis.moveToPoint(40, -48, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.turnToHeading(90, 1000);
+  chassis.moveToPoint(54, -48, 2000,{.maxSpeed=speed});
+  chassis.turnToPoint(72, -72, 1000,{.forwards=false});
+  chassis.moveToPoint(68, -68, 1000,{.forwards=false, .maxSpeed=speed});
+
+
+
+
+
+
+
   /*chassis.turnToPoint(-48, 0,2000);
   chassis.moveToPoint(-48, 0, 2000,{.maxSpeed=speed});
 

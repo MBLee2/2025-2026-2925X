@@ -106,7 +106,7 @@ float getLiftPosition();
 
 void moveLiftToPos(float position);
 void liftUpWallStake();
-void liftDown(float degrees);
+void liftDown();
 
 void resetIntakePosition();
 void setIntakeEncoder(pros::motor_encoder_units_e mode);

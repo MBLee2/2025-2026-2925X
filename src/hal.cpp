@@ -445,8 +445,13 @@ void liftUpWallStake() {
     stopIntake();
 }
 
-void liftDown(float degrees) {
-    moveLiftToPos(getLiftPosition() - degrees);
+void liftDown() {
+    while(getLiftPosition() >= 4)
+    {
+        spinIntake(-127);
+        printf("Lift %f\n",getLiftPosition());
+    }
+    stopIntake();
 }
 
 // Intake
