@@ -51,7 +51,7 @@ pros::adi::Pneumatics lift_helper2('c',false );
 
 /* SENSORS */
 pros::Optical intake_color(6);
-pros::Distance distance_lf(19);
+pros::Distance distance_lf(16);
 pros::Distance distance_lb(20);
 pros::Distance distance_rf(8);
 pros::Distance distance_rb(18);

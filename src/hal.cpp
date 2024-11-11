@@ -443,11 +443,13 @@ void liftUpWallStake() {
         printf("Lift %f\n",getLiftPosition());
     }
     stopIntake();
+    liftPneumaticDown();
 }
 
 void liftDown() {
-    while(getLiftPosition() >= 4)
+    while(getLiftPosition() >= 8)
     {
+        liftPneumaticDown();
         spinIntake(-127);
         printf("Lift %f\n",getLiftPosition());
     }

@@ -478,31 +478,43 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(-48, -24, 2000,{.maxSpeed=speed});
   chassis.turnToPoint(-56, 0, 1000);
   chassis.moveToPoint(-56, 0, 2000,{.maxSpeed=speed});
-  chassis.turnToPoint(-48, 28, 1000); 
-  chassis.moveToPoint(-48, 28, 1000,{.maxSpeed=speed},false);
+  chassis.turnToPoint(-48, 24, 1000); 
   hoodBwd();
   toggleRedirect();
-  pros::delay(400);
-  chassis.moveToPoint(-48, 0, 2000,{.forwards=false,.maxSpeed=speed});
-  chassis.turnToHeading(270,1000);
+
+  chassis.moveToPoint(-48, 24, 1000,{.maxSpeed=speed});
+  pros::delay(3000);
+  chassis.moveToPoint(-48, 2, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.turnToHeading(270,2000);
+  chassis.waitUntilDone();
+  temp = chassis.getPose().y;
   liftUpWallStake();
   toggleRedirect();
-  chassis.moveToPoint(-56,0,1000,{.maxSpeed=speed},false);
-  moveLiftToPos(35.00, 400);
-  chassis.moveToPoint(-44,0,1000,{.forwards=false,.maxSpeed=speed});
+  chassis.moveToPoint(-56,temp,2000,{.maxSpeed=speed},false);
+    while((distance_lf.get() > 130 && distance_lf.get() <! 40) && chassis.isInMotion()) 
+    {
+      pros::delay(10);
+    }
+    chassis.cancelMotion();
+  moveLiftToPos(50.00, 1000);
+  pros::delay(600);
+  chassis.moveToPoint(-40,0,1000,{.forwards=false,.maxSpeed=80},false);
   chassis.turnToHeading(180,1000);
   hoodFwd();
+  liftDown();
+  spinIntake(127);
   chassis.moveToPoint(-44, -56, 2000,{.maxSpeed=speed});
   chassis.moveToPoint(-40, -48, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(270, 1000);
   chassis.moveToPoint(-50, -48, 2000,{.maxSpeed=speed});
   chassis.turnToPoint(-72, -72, 1000,{.forwards=false});
-  chassis.moveToPoint(-68, -68, 1000,{.forwards=false, .maxSpeed=speed});
+  chassis.moveToPoint(-68, -68, 1000,{.forwards=false, .maxSpeed=speed},false);
   toggleClamp();
+  pros::delay(300);  
   chassis.moveToPoint(0, -48, 4000,{.maxSpeed=speed});
   chassis.turnToHeading(270,1000);
   chassis.turnToPoint(24, -48, 1000,{.forwards=false});
-  chassis.moveToPoint(24, -48, 2000,{.maxSpeed=speed});
+  chassis.moveToPoint(24, -48, 2000,{.forwards=false,.maxSpeed=speed});
   toggleClamp();
   chassis.turnToHeading(0,1000);
   chassis.moveToPoint(24, -24, 2000,{.maxSpeed=speed});
@@ -511,18 +523,20 @@ void auton_60s_skills_1() {
   chassis.turnToPoint(56, 0,1000);
   chassis.moveToPoint(56, 0, 2000,{.maxSpeed=speed});
   chassis.turnToPoint(48,24,2000);
-  chassis.moveToPoint(48, 24, 2000,{.maxSpeed=speed});
   hoodBwd();
+  chassis.moveToPoint(48, 24, 2000,{.maxSpeed=speed});
   toggleRedirect();
   pros::delay(400);
-  chassis.moveToPoint(48, 0, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.moveToPoint(48, -2, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(90,1000);
   liftUpWallStake(); 
-  chassis.moveToPoint(55, 0, 2000,{.maxSpeed=speed},false);
-  moveLiftToPos(35.00, 400);
+  chassis.moveToPoint(55, -2, 2000,{.maxSpeed=speed},false);
+  /*moveLiftToPos(30.00, 1000);
   chassis.moveToPoint(44,0,1000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(180,1000);
   hoodFwd();
+  liftDown();
+  spinIntake(127);  
   chassis.moveToPoint(44, -56, 2000,{.maxSpeed=speed});
   chassis.moveToPoint(40, -48, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(90, 1000);
@@ -545,7 +559,8 @@ void auton_60s_skills_1() {
   
 
   //*/pros::delay(5);
-  master.print(0, 0, "Time: ", (pros::millis()-time)/1000);
+  temp = (pros::millis()-time);
+  master.print(0, 0, "Time: %f", temp);
 
 } // end auton_60s_skills_1()
 // Auton skills number 2 fully done
