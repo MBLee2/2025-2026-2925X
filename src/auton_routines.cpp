@@ -488,7 +488,7 @@ void auton_60s_skills_1() {
   liftUpWallStake();
   toggleRedirect();
   chassis.moveToPoint(-56,0,1000,{.maxSpeed=speed},false);
-  liftDown();
+  moveLiftToPos(35.00, 400);
   chassis.moveToPoint(-44,0,1000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(180,1000);
   hoodFwd();
@@ -519,7 +519,7 @@ void auton_60s_skills_1() {
   chassis.turnToHeading(90,1000);
   liftUpWallStake(); 
   chassis.moveToPoint(55, 0, 2000,{.maxSpeed=speed},false);
-  liftDown();
+  moveLiftToPos(35.00, 400);
   chassis.moveToPoint(44,0,1000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(180,1000);
   hoodFwd();

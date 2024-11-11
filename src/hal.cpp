@@ -454,6 +454,32 @@ void liftDown() {
     stopIntake();
 }
 
+void moveLiftToPos(float pos,int timeout){
+    int time = pros::millis();
+    if(pos <= 2){
+        pos = 3;
+    }
+    else if(pos >= 84){
+        pos = 83;
+    }
+    if(getLiftPosition() > pos){
+        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout)
+        {
+            spinIntake(-127);
+            printf("Lift %f\n",getLiftPosition());
+        }
+        stopIntake();
+    }
+    else if(getLiftPosition() < pos){
+        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout)
+        {
+            spinIntake(127);
+            printf("Lift %f\n",getLiftPosition());
+        }
+        stopIntake();
+    }
+}
+
 // Intake
 void intakeFor(int ms){
     spinIntake(127);

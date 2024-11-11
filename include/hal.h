@@ -104,7 +104,7 @@ void turn(float degrees, int timeout = 15000);
 void resetLiftPosition();
 float getLiftPosition();
 
-void moveLiftToPos(float position);
+void moveLiftToPos(float position, int timeout = 600);
 void liftUpWallStake();
 void liftDown();
 
