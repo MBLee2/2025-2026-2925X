@@ -82,9 +82,9 @@ pros::Rotation horizontal_rot(17); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 1.25); // 2.00" wheel diameter, -4.6" offset from tracking center 
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 1.25); // 2.00" wheel diameter, 1.25" offset from tracking center 
 // horizontal tracking wheel
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, 1.00); // 2.00" wheel diameter, 4.5" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, 1.00); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(

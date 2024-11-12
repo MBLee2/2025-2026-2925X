@@ -164,22 +164,22 @@ void toggleClamp() {
 
 void toggleHood(){
     if(redirect1.is_extended()){
-        hoodBwd();
-    }else{
         hoodFwd();
+    }else{
+        hoodBwd();
     }
 }
 
 void hoodFwd() {
     basket_state = true;
-    hood1.extend();
-    hood2.extend();
+    hood1.retract();
+    hood2.retract();
 }
 
 void hoodBwd() {
     basket_state = false;
-    hood1.retract();
-    hood2.retract();
+    hood1.extend();
+    hood2.extend();
 }
 
 // Intake Lift
@@ -440,7 +440,8 @@ void liftUpWallStake() {
     while(getLiftPosition() <= 81)
     {
         spinIntake(127);
-        printf("Lift %f\n",getLiftPosition());
+        //printf("Lift %f\n",getLiftPosition());
+        pros::delay(20);
     }
     stopIntake();
     liftPneumaticDown();
@@ -451,7 +452,8 @@ void liftDown() {
     {
         liftPneumaticDown();
         spinIntake(-127);
-        printf("Lift %f\n",getLiftPosition());
+       //printf("Lift %f\n",getLiftPosition());
+        pros::delay(20);
     }
     stopIntake();
 }
@@ -468,7 +470,7 @@ void moveLiftToPos(float pos,int timeout){
         while(getLiftPosition() >= pos && (pros::millis() - time) < timeout)
         {
             spinIntake(-127);
-            printf("Lift %f\n",getLiftPosition());
+            //printf("Lift %f\n",getLiftPosition());
         }
         stopIntake();
     }
@@ -476,7 +478,7 @@ void moveLiftToPos(float pos,int timeout){
         while(getLiftPosition() <= pos && (pros::millis() - time) < timeout)
         {
             spinIntake(127);
-            printf("Lift %f\n",getLiftPosition());
+            //printf("Lift %f\n",getLiftPosition());
         }
         stopIntake();
     }

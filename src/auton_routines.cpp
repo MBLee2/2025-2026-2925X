@@ -471,6 +471,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(-24, -48, 2000,{.forwards=false,.maxSpeed=speed},false);
   toggleClamp();
   pros::delay(300);
+  printPosition((char *)"Goal pickup", false);
   chassis.turnToHeading(0, 1000);
   chassis.moveToPoint(-24, -24, 2000,{.maxSpeed=speed});
   spinIntake(127);
@@ -479,29 +480,34 @@ void auton_60s_skills_1() {
   chassis.turnToPoint(-56, 0, 1000);
   chassis.moveToPoint(-56, 0, 2000,{.maxSpeed=speed});
   chassis.turnToPoint(-48, 24, 1000); 
-  hoodBwd();
+  hoodFwd();
   toggleRedirect();
 
   chassis.moveToPoint(-48, 24, 1000,{.maxSpeed=speed});
   pros::delay(3000);
+  printPosition((char *)"Basket ring", false);
   chassis.moveToPoint(-48, 2, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(270,2000);
   chassis.waitUntilDone();
+  printPosition((char *)"Facing wall stake", false);
   temp = chassis.getPose().y;
   liftUpWallStake();
   toggleRedirect();
-  chassis.moveToPoint(-56,temp,2000,{.maxSpeed=speed},false);
-    while((distance_lf.get() > 130 && distance_lf.get() <! 40) && chassis.isInMotion()) 
+  chassis.moveToPoint(-58,temp,2000,{.maxSpeed=speed}, false);
+    while((distance_lf.get() > 140 && distance_lf.get() <! 50) && chassis.isInMotion()) 
     {
       pros::delay(10);
+      printf("DistToWall %i\n", distance_lf.get());
     }
     chassis.cancelMotion();
+  printPosition((char *)"At stake", false);
   moveLiftToPos(50.00, 1000);
   pros::delay(600);
   chassis.moveToPoint(-40,0,1000,{.forwards=false,.maxSpeed=80},false);
   chassis.turnToHeading(180,1000);
-  hoodFwd();
+  hoodBwd();
   liftDown();
+  printPosition((char *)"After stake", false);
   spinIntake(127);
   chassis.moveToPoint(-44, -56, 2000,{.maxSpeed=speed});
   chassis.moveToPoint(-40, -48, 2000,{.forwards=false,.maxSpeed=speed});
@@ -511,11 +517,16 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(-68, -68, 1000,{.forwards=false, .maxSpeed=speed},false);
   toggleClamp();
   pros::delay(300);  
-  chassis.moveToPoint(0, -48, 4000,{.maxSpeed=speed});
+  printPosition((char *)"Goal drop", false);
+  chassis.moveToPoint(-48, -48, 1000, {.maxSpeed = max_speed});
   chassis.turnToHeading(270,1000);
+  chassis.moveToPoint(0, -48, 4000,{.forwards = false, .maxSpeed=speed});
   chassis.turnToPoint(24, -48, 1000,{.forwards=false});
   chassis.moveToPoint(24, -48, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.waitUntil(18);
   toggleClamp();
+  pros::delay(600);
+  printPosition((char *)"Second goal", false);
   chassis.turnToHeading(0,1000);
   chassis.moveToPoint(24, -24, 2000,{.maxSpeed=speed});
   chassis.turnToHeading(90,1000);
@@ -523,14 +534,29 @@ void auton_60s_skills_1() {
   chassis.turnToPoint(56, 0,1000);
   chassis.moveToPoint(56, 0, 2000,{.maxSpeed=speed});
   chassis.turnToPoint(48,24,2000);
-  hoodBwd();
+  hoodFwd();
   chassis.moveToPoint(48, 24, 2000,{.maxSpeed=speed});
   toggleRedirect();
   pros::delay(400);
+  chassis.waitUntilDone();
+  printPosition((char *)"2nd Basket", false);
   chassis.moveToPoint(48, -2, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(90,1000);
-  liftUpWallStake(); 
-  chassis.moveToPoint(55, -2, 2000,{.maxSpeed=speed},false);
+  chassis.waitUntilDone();
+  printPosition((char *)"Facing 2nd Wall Stake", false);
+  liftUpWallStake();
+  closeRedirect();
+  chassis.moveToPoint(60, -2, 2000,{.maxSpeed=speed}, false);
+    while((distance_lf.get() > 135 && distance_lf.get() <! 50) && chassis.isInMotion()) 
+    {
+      pros::delay(10);
+      printf("DistToWall %i\n", distance_lf.get());
+    }
+    chassis.cancelMotion();
+  printPosition((char *)"At 2nd Wall Stake", false);
+  moveLiftToPos(50.00, 1000);
+  pros::delay(600);
+  chassis.moveToPoint(40,0,1000,{.forwards=false,.maxSpeed=80},false);
   /*moveLiftToPos(30.00, 1000);
   chassis.moveToPoint(44,0,1000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(180,1000);
