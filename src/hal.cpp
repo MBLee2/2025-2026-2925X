@@ -120,15 +120,13 @@ void spinIntake(int speed) {
 }
 
 void stopIntake() {
-    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
     intakeL.brake();
     intakeR.brake();
 }
 
 void stopIntakeHold() {
-    intakeL.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
     intakeL.brake();
     intakeR.brake();
 }
@@ -145,18 +143,15 @@ void setIntakeBrake(pros::motor_brake_mode_e mode) {
 
 // Clamp
 void openClamp() {
-    mogo_clamp.extend();
-    //mogo_clamp2.extend();
+    mogo_clamp.retract();
 }
 
 void closeClamp() {
-    mogo_clamp.retract();
-    //mogo_clamp2.retract();
+    mogo_clamp.extend();
 }
 
 void toggleClamp() {
     mogo_clamp.toggle();
-    //mogo_clamp2.toggle();
 }
 
 
@@ -237,7 +232,7 @@ void liftPneumaticDown() {
     lift_helper2.retract();
 }
 
-bool getLiftHelper() {
+bool getLiftPneumatic() {
     return lift_helper1.is_extended();
 }
 
@@ -253,6 +248,15 @@ float getHeading() {
 }
 
 //Distance
+int getFrontDistance() {
+    return distance_front.get();
+}
+
+float distToWallF() {
+    return getFrontDistance() / 25.4 + F_DISTANCE_OFFSET;
+}
+
+//Color
 int getIntakeColor() {
     return intake_color.get_hue();
 }
@@ -434,53 +438,49 @@ void turn(float degrees, int timeout) {
 
 
 void liftUpWallStake() {
-    if(getLiftPosition() < 15){
-        liftPneumaticUp();
-      }
-    while(getLiftPosition() <= 81)
-    {
-        spinIntake(127);
-        //printf("Lift %f\n",getLiftPosition());
-        pros::delay(20);
-    }
-    stopIntake();
-    liftPneumaticDown();
+    moveLiftToPos(82);
 }
 
 void liftDown() {
-    while(getLiftPosition() >= 8)
-    {
-        liftPneumaticDown();
-        spinIntake(-127);
-       //printf("Lift %f\n",getLiftPosition());
-        pros::delay(20);
-    }
-    stopIntake();
+    moveLiftToPos(8);
 }
 
 void moveLiftToPos(float pos,int timeout){
     int time = pros::millis();
+
     if(pos <= 2){
         pos = 3;
     }
     else if(pos >= 84){
         pos = 83;
     }
+
     if(getLiftPosition() > pos){
+        spinIntake(-127);
+
         while(getLiftPosition() >= pos && (pros::millis() - time) < timeout)
         {
-            spinIntake(-127);
+            pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
-        stopIntake();
+
+        stopIntake();  
     }
     else if(getLiftPosition() < pos){
+        spinIntake(127);
+
+        if(getLiftPosition() < 15){
+            liftPneumaticUp();
+        }
+
         while(getLiftPosition() <= pos && (pros::millis() - time) < timeout)
         {
-            spinIntake(127);
+            pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
-        stopIntake();
+
+        liftPneumaticDown();
+        stopIntakeHold();
     }
 }
 

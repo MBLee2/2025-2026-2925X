@@ -15,6 +15,8 @@
 #define TURN_KI 0
 #define TURN_KD 0
 
+#define F_DISTANCE_OFFSET 6.25
+
 extern bool basket_state;
 extern bool COLOR;
 
@@ -72,7 +74,10 @@ void toggleRedirect();
 
 void liftPneumaticUp();
 void liftPneumaticDown();
-bool getLiftHelper();
+bool getLifPneumatic();
+
+int getFrontDistance();
+float distToWallF();
 
 int getIntakeColor();
 
@@ -104,7 +109,7 @@ void turn(float degrees, int timeout = 15000);
 void resetLiftPosition();
 float getLiftPosition();
 
-void moveLiftToPos(float position, int timeout = 600);
+void moveLiftToPos(float position, int timeout = 5000);
 void liftUpWallStake();
 void liftDown();
 

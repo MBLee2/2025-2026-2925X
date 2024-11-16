@@ -43,7 +43,6 @@ pros::adi::Pneumatics mogo_rush('g', false);
 //pros::adi::Pneumatics lastring('a', false);
 
 pros::adi::Pneumatics redirect1('a', false);
-//pros::adi::Pneumatics redirect2('h', true);
 
 pros::adi::Pneumatics lift_helper1('f', false);
 pros::adi::Pneumatics lift_helper2('c',false );
@@ -51,13 +50,13 @@ pros::adi::Pneumatics lift_helper2('c',false );
 
 /* SENSORS */
 pros::Optical intake_color(6);
-pros::Distance distance_lf(16);
+pros::Distance distance_lf(5);
 pros::Distance distance_lb(20);
 pros::Distance distance_rf(8);
 pros::Distance distance_rb(18);
 pros::Distance distance_bl(21);
 pros::Distance distance_br(10);
-pros::Distance distance_front(5);
+pros::Distance distance_front(16);
 
 pros::GPS gps(3);
 pros::IMU imu(19);
