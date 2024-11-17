@@ -1,10 +1,13 @@
 #include "hal.h"
 #include "fmt/format.h"
+#include "pros/distance.hpp"
 #include "pros/motors.h"
 #include "robot_config.h"
 #include "controls.h"
 #include "main.h"
+#include <cstddef>
 #include <cstdio>
+#include <string>
 
 bool basket_state = false;
 bool COLOR = false; // false = red, true = blue
@@ -591,6 +594,29 @@ void sort_color(bool sort) {
     }
 }
 
+class wall_sensor{       // The class
+  public:             
+    double X_offset;
+    double Y_offset;
+    std::uint8_t dist_port;
+
+    wall_sensor(double X_offset, double Y_offset, int dist_port) { // Constructor with parameters
+      this->X_offset = X_offset;
+      this->Y_offset = Y_offset;
+      this->dist_port = dist_port;
+    }
+    pros::Distance mydist(
+        
+    );
+    void get_distance() {  // Method/function defined inside the 
+
+    }
+
+  private:
+    int max_sensing_distance = 2000;  
+
+    // Attribute (string variable)
+};
 
 
 /*void saveRings(int timeout){

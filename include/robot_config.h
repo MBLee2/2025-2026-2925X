@@ -69,12 +69,15 @@ extern pros::adi::Pneumatics lift_helper2;
 //extern pros::Optical intake_color;
 extern pros::Optical intake_color;
 extern pros::Distance distance_rb;
-extern pros::Distance distance_rf;
+extern pros::Distance distance_right;
 extern pros::Distance distance_lb;
-extern pros::Distance distance_lf;
-extern pros::Distance distance_bl;
 extern pros::Distance distance_br;
+
+
 extern pros::Distance distance_front;
+extern pros::Distance distance_left;
+extern pros::Distance distance_back;
+
 extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;

@@ -65,8 +65,8 @@ void printPosition(char *msg, bool withDistanceSensors = false,
     if (detailedDist) {
       printf("\nRF: %d\tRB: %d\tLF: %d\tLB: %d\tBL: %d\tBR: "
              "%d\tFront: %d\n",
-             distance_rf.get(), distance_rb.get(), distance_lf.get(),
-             distance_lb.get(), distance_bl.get(), distance_br.get(),
+             distance_right.get(), distance_rb.get(), distance_front.get(),
+             distance_lb.get(), distance_back.get(), distance_br.get(),
              distance_front.get());
     }
     printf("\nRight: %3.2f\tLeft: %3.2f\tBack:%3.2f\tFront:%3.2f\n",
@@ -196,11 +196,11 @@ void rushRed() { // RED
   pros::delay(100);
   spinIntake(127);
 
-  float myDist1 = fabs(distance_rb.get() - distance_rf.get()) > 400.0
+  float myDist1 = fabs(distance_rb.get() - distance_right.get()) > 400.0
                       ? fabs(distance_rb.get() - 1300.0) < 250.0
                             ? distance_rb.get()
-                            : distance_rf.get()
-                      : (distance_rb.get() + distance_rf.get()) / 2.0;
+                            : distance_right.get()
+                      : (distance_rb.get() + distance_right.get()) / 2.0;
   myDist1 = myDist1 / 25.4 + 6.75;
 
   float myX = 72 - myDist1;
@@ -210,8 +210,8 @@ void rushRed() { // RED
   float failsafe_x =
       (fabs(24.0 - (71 - (distance_rb.get() / 25.4 + 6.75))) >
        fabs(24.0 -
-            (71 - ((distance_rf.get() - RIGHT_DIFFERENCE) / 25.4 + 6.75))))
-          ? (71 - ((distance_rf.get() - RIGHT_DIFFERENCE) / 25.4 + 6.75))
+            (71 - ((distance_right.get() - RIGHT_DIFFERENCE) / 25.4 + 6.75))))
+          ? (71 - ((distance_right.get() - RIGHT_DIFFERENCE) / 25.4 + 6.75))
           : (71 - (distance_rb.get() / 25.4 + 6.75));
   chassis.setPose(failsafe_x, findDistToWall(2) - 72, findHeading(2, 0));
 
@@ -298,8 +298,8 @@ void safeBlue() {
 
   float failsafe_x =
       (fabs(24.0 - (distance_lb.get() / 25.4 + 6.75))) >
-              fabs(24.0 - ((distance_lf.get() - LEFT_DIFFERENCE) / 25.4 + 6.75))
-          ? (71 - ((distance_lf.get() - LEFT_DIFFERENCE) / 25.4 + 6.75))
+              fabs(24.0 - ((distance_front.get() - LEFT_DIFFERENCE) / 25.4 + 6.75))
+          ? (71 - ((distance_front.get() - LEFT_DIFFERENCE) / 25.4 + 6.75))
           : (71 - (distance_lb.get() / 25.4 + 6.75));
   chassis.setPose(failsafe_x, 72 - findDistToWall(2), findHeading(2, 180));
 
@@ -494,10 +494,10 @@ void auton_60s_skills_1() {
   liftUpWallStake();
   toggleRedirect();
   chassis.moveToPoint(-58,temp,2000,{.maxSpeed=speed}, false);
-    while((distance_lf.get() > 140 && distance_lf.get() <! 50) && chassis.isInMotion()) 
+    while((distance_front.get() > 140 && distance_front.get() <! 50) && chassis.isInMotion()) 
     {
       pros::delay(10);
-      printf("DistToWall %i\n", distance_lf.get());
+      printf("DistToWall %i\n", distance_front.get());
     }
     chassis.cancelMotion();
   printPosition((char *)"At stake", false);
@@ -547,10 +547,10 @@ void auton_60s_skills_1() {
   liftUpWallStake();
   closeRedirect();
   chassis.moveToPoint(60, -2, 2000,{.maxSpeed=speed}, false);
-    while((distance_lf.get() > 135 && distance_lf.get() <! 50) && chassis.isInMotion()) 
+    while((distance_front.get() > 135 && distance_front.get() <! 50) && chassis.isInMotion()) 
     {
       pros::delay(10);
-      printf("DistToWall %i\n", distance_lf.get());
+      printf("DistToWall %i\n", distance_front.get());
     }
     chassis.cancelMotion();
   printPosition((char *)"At 2nd Wall Stake", false);
