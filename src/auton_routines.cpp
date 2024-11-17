@@ -463,9 +463,8 @@ void DescoreRushElim() { printf("%s(): Exiting\n", __func__); }
 
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1() {
-
   int time = pros::millis();
-  float speed = 115;
+  float speed = 127;
 
   chassis.setPose(4,-58.75,90);
   lemlib::Pose currentPose = chassis.getPose();
@@ -486,45 +485,48 @@ void auton_60s_skills_1() {
   hoodFwd();
   redirectRings();
 
-  chassis.moveToPoint(-48, 24, 1000,{.maxSpeed=speed});
-  pros::delay(3000);
+  chassis.moveToPoint(-45, 28, 1000,{.maxSpeed=speed});
+  chassis.waitUntilDone();
   printPosition((char *)"Basket ring", false);
-  chassis.moveToPoint(-48, 3, 2000,{.forwards=false,.maxSpeed=speed});
-  chassis.waitUntilDone();
-  pros::delay(500);
-  chassis.turnToHeading(270,2000);
-  chassis.waitUntilDone();
-  chassis.setPose(-48, 0, 270);
+  pros::delay(400);
+  chassis.moveToPoint(-48, 3.25, 2000,{.forwards=false,.maxSpeed=speed});
   closeRedirect();
+  chassis.turnToHeading(270,2000);
   liftUpWallStake();
-  pros::delay(2000);
-  currentPose = chassis.getPose();
-  chassis.setPose(-72 + distToWallF(), currentPose.y, currentPose.theta);
-  printPosition((char *)"Facing wall stake", false);
-  pros::delay(50);
-  chassis.moveToPoint(-65, currentPose.y, 2000, {.maxSpeed = speed});
-  printPosition((char *)"At stake", false);
   chassis.waitUntilDone();
-  pros::delay(1000);
+  currentPose = chassis.getPose();
+  chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
+  printPosition((char *)"Facing wall stake", false);
+  chassis.moveToPoint(-62, currentPose.y, 2000, {.maxSpeed = speed});
+  chassis.waitUntilDone();
+  printPosition((char *)"At stake", false);
   moveLiftToPos(50.00, 1000);
-  pros::delay(1600);
-  chassis.moveToPoint(-40,0,1000,{.forwards=false,.maxSpeed=80},false);
+  printPosition((char *)"After stake", false);
+  chassis.moveToPoint(-52,0,1000,{.forwards=false,.maxSpeed=speed},false);
+  chassis.waitUntilDone();
+  currentPose = chassis.getPose();
+  chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
+  printPosition((char *)"After reset", false);
+  pros::delay(50);
   chassis.turnToHeading(180,1000);
   hoodBwd();
   liftDown();
-  printPosition((char *)"After stake", false);
 
   spinIntake(127);
-  chassis.moveToPoint(-44, -56, 2000,{.maxSpeed=speed});
-  chassis.moveToPoint(-40, -48, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.moveToPoint(-48, -46, 2000,{.maxSpeed=speed});
+  chassis.moveToPoint(-48, -56, 2000,{.maxSpeed=speed});
+  chassis.moveToPoint(-44, -48, 2000,{.forwards=false,.maxSpeed=speed});
+  printPosition((char *)"4th and 5th rings", false);
   chassis.turnToHeading(270, 1000);
-  chassis.moveToPoint(-50, -48, 2000,{.maxSpeed=speed});
+  chassis.moveToPoint(-60, -48, 2000,{.maxSpeed=speed});
+  printPosition((char *)"6th ring", false);
   chassis.turnToPoint(-72, -72, 1000,{.forwards=false});
-  chassis.moveToPoint(-68, -68, 1000,{.forwards=false, .maxSpeed=speed},false);
-  toggleClamp();
-  pros::delay(300);  
+  chassis.moveToPoint(-67, -67, 1000,{.forwards=false, .maxSpeed=speed},false);
+  openClamp();
+  chassis.waitUntilDone();
+  pros::delay(300);
   printPosition((char *)"Goal drop", false);
-  chassis.moveToPoint(-48, -48, 1000, {.maxSpeed = max_speed});
+  chassis.moveToPoint(-58, -45, 1000, {.maxSpeed = max_speed});
   chassis.turnToHeading(270,1000);
   return;
   chassis.moveToPoint(0, -48, 4000,{.forwards = false, .maxSpeed=speed});

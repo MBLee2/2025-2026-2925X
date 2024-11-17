@@ -438,7 +438,7 @@ void turn(float degrees, int timeout) {
 
 
 void liftUpWallStake() {
-    moveLiftToPos(82);
+    moveLiftToPos(80);
 }
 
 void liftDown() {
