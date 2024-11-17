@@ -1,13 +1,27 @@
 #include "hal.h"
 #include "fmt/format.h"
+#include "lemlib/util.hpp"
 #include "pros/distance.hpp"
 #include "pros/motors.h"
 #include "robot_config.h"
 #include "controls.h"
 #include "main.h"
+#include <cmath>
 #include <cstddef>
 #include <cstdio>
-#include <string>
+#include <cstdlib>
+#include "controls.h"
+#include "auton_basics.h"
+#include "lemlib/api.hpp"
+#include "lemlib/timer.hpp"
+#include "pros/device.hpp"
+#include "pros/misc.h"
+#include "pros/motors.h"
+#include "pros/rtos.hpp"
+#include "robot_config.h"
+#include "hal.h"
+#include "main.h"
+#include "wall_sensor.h"
 
 bool basket_state = false;
 bool COLOR = false; // false = red, true = blue
@@ -593,30 +607,38 @@ void sort_color(bool sort) {
         }
     }
 }
+void move_along_wall_ceter(int speed,float wall_dist, float target_angle)
+{
+        float current_dist = get_distance();
+        float current_angle;
+        float kP = 1.0;
+        float kD = 1.0;
+        float error;
+        float current_speed;
+        float derev;
+        float change_speed;
+        float previous_dist = 0;
+        float previous_time = 0;
+        float current_time = 0;
 
-class wall_sensor{       // The class
-  public:             
-    double X_offset;
-    double Y_offset;
-    std::uint8_t dist_port;
+    while (true) {
+        current_dist = get_distance();
+        current_angle = chassis.getPose().theta;
+        current_time = pros::millis();
 
-    wall_sensor(double X_offset, double Y_offset, int dist_port) { // Constructor with parameters
-      this->X_offset = X_offset;
-      this->Y_offset = Y_offset;
-      this->dist_port = dist_port;
-    }
-    pros::Distance mydist(
+        error = current_dist - wall_dist;
+        current_speed = (current_dist - previous_dist)/(current_time - previous_time);
+        derev = current_speed*cos(lemlib::degToRad(90-chassis.getPose().y));
+        change_speed = (kP*error) + (kD*derev);
+
+        drive(speed-change_speed,speed+change_speed);
+
+        previous_dist = get_distance();
+        previous_time = pros::millis();
+        pros::delay(20);
         
-    );
-    void get_distance() {  // Method/function defined inside the 
-
     }
-
-  private:
-    int max_sensing_distance = 2000;  
-
-    // Attribute (string variable)
-};
+}
 
 
 /*void saveRings(int timeout){

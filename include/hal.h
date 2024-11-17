@@ -127,4 +127,7 @@ void sort_color(bool sort);
 void saveRings(int timeout = 15000);
 void basketRings(bool withSave = true);
 
+void move_along_wall_ceter(int speed,float dist,float target_angle);
+
+
 #endif

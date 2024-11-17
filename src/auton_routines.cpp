@@ -13,11 +13,7 @@
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
-#include <cstdio>
-#include <sys/_intsup.h>
-#include <sys/_stdint.h>
-#include <type_traits>
-#include <variant>
+#include "wall_sensor.h"
 
 ASSET(matchloadturn4ball_txt);
 ASSET(touchbar_txt);
@@ -77,26 +73,15 @@ void printPosition(char *msg, bool withDistanceSensors = false,
 
 // FULLY DONE
 void auton_15s_near_driver_qual() // DONE
-{}
-void goal_rush() // BLUE
 {
 
-  chassis.setPose(-48, -51.5, 180);
-  liftIntake();
-  chassis.moveToPoint(-48, -24, 3000, {.forwards = false});
-  chassis.waitUntil(22);
-  closeClamp();
-  dropIntake();
-  pros::delay(250);
-  openClamp();
-  chassis.waitUntilDone();
-  chassis.moveToPoint(-48, -7.5, 2000,
-                      {
-                          .forwards = false,
-                      });
-  chassis.waitUntil(14);
-  closeClamp();
-  pros::delay(200);
+}
+void goal_rush() // BLUE
+{
+  chassis.setPose(-100,-100,0);
+  move_along_wall_ceter(20,24,0);  
+  reset();
+
 }
 
 void rushBlue() {

@@ -115,11 +115,11 @@ double findHeading(int side, double roundedHeading)
     double newHeading;
     
     if(side == 0){
-        newHeading = lemlib::radToDeg(atan((distance_rb.get() - (distance_rf.get() - RIGHT_DIFFERENCE)) / RIGHT_SPACING));
+        newHeading = lemlib::radToDeg(atan((distance_rb.get() - (distance_right.get() - RIGHT_DIFFERENCE)) / RIGHT_SPACING));
     } else if(side == 1){
-        newHeading = lemlib::radToDeg(atan(((distance_lf.get() - LEFT_DIFFERENCE) - distance_lb.get()) / LEFT_SPACING));
+        newHeading = lemlib::radToDeg(atan(((distance_left.get() - LEFT_DIFFERENCE) - distance_lb.get()) / LEFT_SPACING));
     } else if(side == 2){
-        newHeading = lemlib::radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
+        newHeading = lemlib::radToDeg(atan((distance_back.get() - distance_br.get()) / BACK_SPACING));
     }
 
     return newHeading + roundedHeading;
@@ -132,15 +132,15 @@ double findDistToWall(int side)
      */
 {
     if(side == 0){
-        return ((distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+        return ((distance_rb.get() + (distance_right.get() - RIGHT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
     } 
     else if(side == 1){
-        return ((distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+        return ((distance_lb.get() + (distance_left.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
     }else if(side == 3){
         return (distance_front.get()/ 25.4 +9.0);
     }
     else {
-        return ((distance_br.get() + distance_bl.get()) / 2.0) / 25.4 + 7.25;
+        return ((distance_br.get() + distance_back.get()) / 2.0) / 25.4 + 7.25;
     }
 }
 

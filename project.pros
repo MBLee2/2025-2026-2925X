@@ -301,7 +301,7 @@
       "after": "screen",
       "description": "",
       "icon": "X",
-      "slot": 1
+      "slot": 3
     },
     "use_early_access": false
   }

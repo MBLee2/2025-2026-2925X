@@ -88,10 +88,10 @@ bool move_to_xy (float target_x, float target_y, bool move_backwards = false,
 bool move_with_motor_encoder (float target_dist,
     int time_out = 60000, int max_voltage = 12000, 
     float dist_margin = DRIVEBASE_ACCEPTABLE_MOVE_ERROR_M); 
-float get_y();
+/*float get_y();
 float get_x();
 void reset();
-void reset1();
+void reset1();*/
 double normalize_angle(double angle);
 /* bool move_with_motor_encoder (float target_dist,
     int time_out = 60000, int max_voltage = 12000, 
