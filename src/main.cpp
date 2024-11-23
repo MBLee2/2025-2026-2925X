@@ -193,6 +193,9 @@ void autonomous() {
 	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
    	printf("%s(): Entered\n", __func__);
 	master.print(0, 0,"Time %d", time);
+	/*chassis.setPose(0,0,0);
+	pros::delay(1000);
+	chassis.moveToPoint(0, 30, 3000);*/
 	//HERE
 	// Clear the Brain screen
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
