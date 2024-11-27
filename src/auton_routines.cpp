@@ -466,10 +466,12 @@ void auton_60s_skills_1() {
   COLOR = true;
   bool sort = false;
   int time = pros::millis();
-  float speed = 127;
+  float speed = 100;
   pros::Task sort_task([=] {
-    sort_color(sort);
-    pros::delay(20);
+    while(true){
+      sort_color(sort);
+      pros::delay(20);
+    }
   });
 
   chassis.setPose(4,-58.75,90);
@@ -598,27 +600,27 @@ void auton_60s_skills_1() {
   chassis.waitUntil(125);
   pros::delay(800);
   openClamp();
-  chassis.moveToPoint(57, -45, 1000, {.maxSpeed = max_speed});
+  chassis.moveToPoint(57, -45, 1000, {.maxSpeed = speed});
   chassis.moveToPoint(60, -60, 1000,{.forwards=false, .maxSpeed=speed}, false);
   pros::delay(1000);
   printPosition((char *)"Goal drop", false);
-  chassis.moveToPoint(48, -48, 1000, {.maxSpeed = max_speed});
-  chassis.moveToPoint(48, 0, 3000, {.maxSpeed = max_speed});*/
+  chassis.moveToPoint(48, -48, 1000, {.maxSpeed = speed});
+  chassis.moveToPoint(48, 0, 3000, {.maxSpeed = speed});*/
 
   chassis.setPose(48, 0, 0);
   spinIntake(127); 
 
-  chassis.moveToPoint(24, 24, 2000, {.maxSpeed = max_speed});
+  chassis.moveToPoint(24, 24, 2000, {.maxSpeed = speed});
   hoodFwd();
   redirectRings();
-  chassis.turnToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = (int)max_speed - 7});
+  chassis.turnToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = (int)max_speed - 4});
   printPosition((char *)"3rd Basket", false);
-  chassis.moveToPoint(3.5, 48, 2000, {.forwards = false, .maxSpeed = max_speed});
-  chassis.waitUntil(31);
+  chassis.moveToPoint(3, 48, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.waitUntil(33);
   closeClamp();
   printPosition((char *)"3rd Goal", false);
 
-  chassis.turnToHeading(0, 1000, {.maxSpeed = (int)max_speed - 7});
+  chassis.turnToHeading(0, 1000, {.maxSpeed = (int)max_speed - 4});
   moveLiftToPos(50.0, 1000);
   closeRedirect();
   chassis.waitUntilDone();
@@ -626,22 +628,26 @@ void auton_60s_skills_1() {
   chassis.setPose(currentPose.x, 72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta))) , currentPose.theta);
   printPosition((char *)"Facing Blue Wall Stake", false);
   pros::delay(50);
-  chassis.moveToPoint(currentPose.x, 60, 1000, {.maxSpeed = max_speed}, false);
+  chassis.moveToPoint(currentPose.x, 60, 1000, {.maxSpeed = speed}, false);
   printPosition((char *)"At Blue Wall Stake", false);
   moveLiftToPos(27, 1000);
   pros::delay(300);
-  chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false, .maxSpeed = max_speed});
+  chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false, .maxSpeed = speed});
+  liftDown();
 
-  chassis.turnToPoint(-24, 24, 1000);
-  spinIntake(127);
-  chassis.moveToPoint(-24, 24, 2000, {.maxSpeed = max_speed});
+  //chassis.turnToPoint(-24, 24, 1000);
+  //chassis.moveToPoint(-24, 24, 2000, {.maxSpeed = max_speed});
   chassis.turnToPoint(-48, 48, 1000);
+  spinIntake(127);
   sort = true;
-  chassis.moveToPoint(-48, 48, 1000, {.maxSpeed = max_speed});
-  chassis.moveToPoint(-60, 52, 1000, {.maxSpeed = max_speed});
+  chassis.moveToPoint(-45, 48, 3000, {.maxSpeed = speed});
+  chassis.turnToPoint(-48, 60, 1000);
+  chassis.moveToPoint(-48, 60, 1000, {.maxSpeed = speed});
+  chassis.moveToPoint(-48, 48, 1000, {.forwards = false, .maxSpeed = speed});
 
   chassis.turnToPoint(0, 0, 1000);
   sort = false;
+  chassis.moveToPoint(0, 0, 4000, {.maxSpeed = speed});
 
   //chassis.turnToHeading(270,1000);
 
