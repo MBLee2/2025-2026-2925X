@@ -447,6 +447,7 @@ void liftDown() {
 
 void moveLiftToPos(float pos,int timeout){
     int time = pros::millis();
+    autoLift = true;
 
     if(pos <= 2){
         pos = 3;
@@ -458,7 +459,7 @@ void moveLiftToPos(float pos,int timeout){
     if(getLiftPosition() > pos){
         spinIntake(-127);
 
-        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout)
+        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
@@ -473,7 +474,7 @@ void moveLiftToPos(float pos,int timeout){
             liftPneumaticUp();
         }
 
-        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout)
+        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
@@ -482,6 +483,8 @@ void moveLiftToPos(float pos,int timeout){
         liftPneumaticDown();
         stopIntakeHold();
     }
+
+    autoLift = false;
 }
 
 // Intake

@@ -113,6 +113,7 @@ void taskFn_intake_control(void) {
 
   intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   intake_state current_state = STOP; // Initialize with a default state, STOP
+  int lift_counter = 0;
   while (true) // Infinite loop to keep checking controller input for intake
   {
     double pos = getLiftPosition();; // Get the current position of the lift
@@ -128,6 +129,7 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         current_state = STOP;
+        stopIntake();
       }
     }
     // Eject objects with the B button
@@ -142,6 +144,7 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         current_state = STOP;
+        stopIntake();
       }
     }
     
@@ -159,16 +162,27 @@ void taskFn_intake_control(void) {
     }
 
     if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      intakeMode = false;
-      if(getLiftPosition() < 15){
-        liftPneumaticUp();
+      if(!autoLift && lift_counter == 0){
+        pros::Task lift_wall_stake([=] {moveLiftToPos(77);});
+      } else if(lift_counter > 10) {
+        autoLift = false;
+        spinIntake(127);
+        if(getLiftPosition() < 15){
+          liftPneumaticUp();
+        } else {
+          liftPneumaticDown();
+        }
       }
-      spinIntake(127);
+      lift_counter++;
+      printf("Lift count: %d", lift_counter);
 
-    }else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+    } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      lift_counter = 0;
+      autoLift = false;
       intakeMode = false;
       spinIntake(-127);
-    }else if(intakeMode == false){
+    } else if(!intakeMode && !autoLift){
+      lift_counter = 0;
       if(getLiftPosition() > 15 && getLiftPosition() < 300){
         liftPneumaticDown();
         stopIntakeHold();
@@ -184,7 +198,6 @@ void taskFn_intake_control(void) {
     }
     if(current_state == STOP)
     {
-      stopIntake();
     }
     if(autoIntake == true)
     {
