@@ -18,8 +18,7 @@
  * to keep execution time for this mode under a few seconds.
  */
 int counter = 0;
-bool auton = false, autoSkill = false;
-bool autoDrive = false, autoLift = false, autoIntake = false;
+
 
 void screen() {
     // loop forever

@@ -6,8 +6,12 @@
 #include "main.h"
 #include <cstdio>
 
+
 bool basket_state = false;
 bool COLOR = false; // false = red, true = blue
+
+bool auton = false, autoSkill = false;
+bool autoDrive = false, autoLift = false, autoIntake = false;
 
 //Basic Motor Movement
 
@@ -261,6 +265,10 @@ int getIntakeColor() {
     return intake_color.get_hue();
 }
 
+int get2ndIntakeColor() {
+    return intake_color2.get_hue();
+}
+
 //Limit Switch
 bool getLimitSwitch() {
     return limitSwitch.get_value();
@@ -454,17 +462,24 @@ void moveLiftToPos(float pos,int timeout){
     else if(pos >= 84){
         pos = 83;
     }
+    autoLift = true;
 
     if(getLiftPosition() > pos){
         spinIntake(-127);
 
-        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout)
+        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
 
-        stopIntake();  
+        if(getLiftPosition() > 15 && getLiftPosition() < 300){
+            liftPneumaticDown();
+            stopIntakeHold();
+        }
+        else{
+            stopIntake();
+        }
     }
     else if(getLiftPosition() < pos){
         spinIntake(127);
@@ -473,7 +488,7 @@ void moveLiftToPos(float pos,int timeout){
             liftPneumaticUp();
         }
 
-        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout)
+        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
@@ -482,6 +497,8 @@ void moveLiftToPos(float pos,int timeout){
         liftPneumaticDown();
         stopIntakeHold();
     }
+
+    autoLift = false;
 }
 
 // Intake
@@ -563,6 +580,7 @@ void outakeFor(float speed, float degrees) {
 void sort_color(bool sort) {
     //false = red, true = blue 
     int hue = getIntakeColor();
+    int hue2 = get2ndIntakeColor();
     if (sort == true){
 
         if(COLOR == false) // Sorting out Red
@@ -572,21 +590,36 @@ void sort_color(bool sort) {
             {
                 master.rumble("-");
                 printf("Detected Red \n"); // Log the function exit for debugging
+                while(hue2 >= 155 && hue2 <= 185){
+                    printf("Blue in second \n");
+                    pros::delay(20);
+                }
                 redirectRings();
-                pros::delay(500);
-
+                while(hue2 >= 0 && hue2 <= 25){
+                    printf("Finishing redirect \n");
+                    pros::delay(20);
+                }
+                pros::delay(50);
+                closeRedirect();
             }
-            closeRedirect();
         }
         if(COLOR == true)// Sorting out Blue
         {
             if(hue >= 155 && hue <= 185)
             {
                 printf("Detected Blue \n"); // Log the function exit for debugging
+                while(hue2 >= 0 && hue2 <= 25){
+                    printf("Red in second \n");
+                    pros::delay(50);
+                }
                 redirectRings();
-                pros::delay(500);
+                while(hue2 >= 155 && hue2 <= 185){
+                    printf("Finishing redirect \n");
+                    pros::delay(20);
+                }
+                pros::delay(50);
+                closeRedirect();
             }
-            closeRedirect();
         }
     }
 }

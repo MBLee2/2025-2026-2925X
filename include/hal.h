@@ -20,6 +20,9 @@
 extern bool basket_state;
 extern bool COLOR;
 
+extern bool auton, autoSkill;
+extern bool autoDrive, autoLift, autoIntake;
+
 void stopAllMotors();
 
 void spinLFMotor(int speed);
@@ -74,12 +77,13 @@ void toggleRedirect();
 
 void liftPneumaticUp();
 void liftPneumaticDown();
-bool getLifPneumatic();
+bool getLiftPneumatic();
 
 int getFrontDistance();
 float distToWallF();
 
 int getIntakeColor();
+int get2ndIntakeColor();
 
 float getLFPosition();
 float getLMPosition();
