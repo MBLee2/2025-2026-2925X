@@ -115,28 +115,22 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 
 // Intake Movement
 void spinIntake(int speed) {
-    intakeL.move(speed);
-    intakeR.move(speed);
+    intake.move(speed);
 }
 
 void stopIntake() {
-    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-    intakeL.brake();
-    intakeR.brake();
+    intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    intake.brake();
 }
 
 void stopIntakeHold() {
-    intakeL.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    intakeR.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-    intakeL.brake();
-    intakeR.brake();
+    intake.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    intake.brake();
 }
 
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
-    intakeL.set_brake_mode(mode);
-    intakeR.set_brake_mode(mode);
+    intake.set_brake_mode(mode);
 }
 
 
@@ -183,14 +177,14 @@ void hoodBwd() {
 }
 
 // Intake Lift
-void liftIntake() {
+/*void liftIntake() {
     intake_lift.retract();
 }
 
 void dropIntake() {
     intake_lift.extend();
 }
-
+//*/
 // Sweeper
 void extendSweep() {
     mogo_rush.extend();
@@ -227,11 +221,15 @@ void toggleRedirect() {
 }
 
 //Lift Helper
-void liftPneumaticUp() {
-    lift_helper1.extend();
-    lift_helper2.extend();
+void spinLift(int velo) {
+    lift.move(velo);
 }
-
+void stopLift()
+{
+    lift.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+    lift.brake();
+}
+/*
 void liftPneumaticDown() {
     lift_helper1.retract();
     lift_helper2.retract();
@@ -240,6 +238,7 @@ void liftPneumaticDown() {
 bool getLiftHelper() {
     return lift_helper1.is_extended();
 }
+//*/
 
 // Sensors
 
@@ -310,16 +309,15 @@ void resetLiftPosition(){
 }
 
 float getLiftPosition() {
-    return lift_rotation.get_angle() / 100.0;
+    return (liftL.get_position() + liftR.get_position()) / 2.0;
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
-    intakeL.set_encoder_units(mode);
-    intakeR.set_encoder_units(mode);
+    intake.set_encoder_units(mode);
 }
 
 float getIntakePosition() {
-    return (intakeL.get_position() + intakeR.get_position()) / 2.0;
+    return (intake.get_position() + intake.get_position()) / 2.0;
 }
 
 // Reset Motor Positions
@@ -342,8 +340,7 @@ void resetDriveMotorPosition() {
 
 
 void resetIntakePosition() {
-    intakeL.tare_position();
-    intakeR.tare_position();
+    intake.tare_position();
 }
 
 float wheelDegToInches(float degrees) {
@@ -434,21 +431,29 @@ void turn(float degrees, int timeout) {
 
 
 void liftUpWallStake() {
-    if(getLiftPosition() < 15){
-        liftPneumaticUp();
-      }
-    while(getLiftPosition() <= 81)
+    lift.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
+    int target_angle = 85;
+    if(getLiftPosition() > target_angle)
     {
-        spinIntake(127);
-        printf("Lift %f\n",getLiftPosition());
+        while(getLiftPosition() != target_angle){
+            spinLift(-127);
+        }
+        stopLift();
     }
-    stopIntake();
+    else if(getLiftPosition() < target_angle)
+    {
+        while(getLiftPosition() != target_angle){
+            spinLift(127);
+        }
+        stopLift();
+    }
 }
 
+/*
 void liftDown(float degrees) {
     moveLiftToPos(getLiftPosition() - degrees);
 }
-
+//*/
 // Intake
 void intakeFor(int ms){
     spinIntake(127);

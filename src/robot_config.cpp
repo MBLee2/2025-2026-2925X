@@ -13,20 +13,24 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-18, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(10, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(-9, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(13, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(-1, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(-14, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(-13, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(-11, pros::v5::MotorGears::blue);  // port 9, reversed
+
+pros::Motor rf(2, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(3, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(1, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({-18, 10, -9}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({16, -1, 2}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({-11, -13, -14}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({1, 2, 3}, pros::v5::MotorGears::blue);
 
 // intake motor group
-pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
-pros::Motor intakeR(11, pros::v5::MotorGears::red);
+pros::Motor intake(7, pros::v5::MotorGears::blue);  // DONE
+
+pros::Motor liftR(10, pros::v5::MotorGears::green);
+pros::Motor liftL(-8, pros::v5::MotorGears::green);
+pros::MotorGroup lift({-8, 10}, pros::v5::MotorGears::green);
 
 //Other Motor
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
@@ -35,7 +39,7 @@ pros::Motor intakeR(11, pros::v5::MotorGears::red);
 pros::adi::Pneumatics hood1('d', true);
 pros::adi::Pneumatics hood2('h', true);
 
-pros::adi::Pneumatics mogo_clamp('e', false);
+pros::adi::Pneumatics mogo_clamp('a', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
 pros::adi::Pneumatics intake_lift('b', false); // need to add on robot
@@ -149,8 +153,8 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake L", intakeL},
-        dashboard_motor_display {320, 190, "Intake R", intakeR}
+        dashboard_motor_display {320, 135, "Intake L", intake},
+        dashboard_motor_display {320, 190, "Intake R", liftL}
         
         
     };

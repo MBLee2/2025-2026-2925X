@@ -27,6 +27,8 @@ void taskFn_drivebase_control(void) {
     // Get  horizontal and vertical joystick input for movement and turning
     int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    leftX = rightX;
     // Multiply the turning input to prioritize turning over forward movement,
     // enabling agile motion
     int turnVelleft = TURN_CONST * leftX;
@@ -160,24 +162,20 @@ void taskFn_intake_control(void) {
 
     if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
       intakeMode = false;
-      if(getLiftPosition() < 15){
-        liftPneumaticUp();
-      }
-      spinIntake(127);
-
-    }else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      intakeMode = false;
-      spinIntake(-127);
-    }else if(intakeMode == false){
-      if(getLiftPosition() > 15 && getLiftPosition() < 300){
-        liftPneumaticDown();
-        stopIntakeHold();
-      }
-      else{
-        stopIntake();
-        intakeMode = true;
-      }
+      spinLift(127);
     }
+    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      intakeMode = false;
+      spinLift(-127);
+    }
+    else
+    {
+      stopLift();
+    }
+    if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      liftUpWallStake();
+    }
+
     if(current_state == OUTAKE)
     {
       spinIntake(-127);
@@ -211,17 +209,17 @@ void taskFn_hood_control(void) {
       toggleRedirect();
       toggleHood();
     }
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+    /*if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
       toggleRedirect();
-    }
+    }*/
 
     // Control the intake lift based on joystick position
-    if (rightX > 0.85) {
+    /*if (rightX > 0.85) {
       liftIntake();
     }
     if (rightX < -0.85) {
       dropIntake();
-    }
+    }*/
     pros::delay(20);
   }
 

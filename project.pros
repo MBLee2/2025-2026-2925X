@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Wisco-Sig-Code",
+    "project_name": "lb_two_stick",
     "target": "v5",
     "templates": {
       "LemLib": {

@@ -70,7 +70,8 @@ void redirectRings();
 void closeRedirect();
 void toggleRedirect();
 
-void liftPneumaticUp();
+void spinLift(int velo);
+void stopLift();
 void liftPneumaticDown();
 bool getLiftHelper();
 

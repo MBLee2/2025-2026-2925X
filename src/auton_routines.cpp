@@ -82,11 +82,11 @@ void goal_rush() // BLUE
 {
 
   chassis.setPose(-48, -51.5, 180);
-  liftIntake();
+  //liftIntake();
   chassis.moveToPoint(-48, -24, 3000, {.forwards = false});
   chassis.waitUntil(22);
   closeClamp();
-  dropIntake();
+  //dropIntake();
   pros::delay(250);
   openClamp();
   chassis.waitUntilDone();
@@ -148,7 +148,7 @@ void rushBlue() {
   chassis.turnToHeading(0, 2000, {.maxSpeed = max_speed1});
   chassis.waitUntilDone();
   printPosition((char *)"TEST2", true, true);
-  dropIntake();
+  //dropIntake();
   // chassis.waitUntilDone();
   pros::delay(250);
   chassis.moveToPoint(0, 56.5, 2000, {.maxSpeed = max_speed});
@@ -161,7 +161,7 @@ void rushBlue() {
   chassis.moveToPoint(0, 48, 2000, {.forwards = false, .maxSpeed = max_speed});
   // chassis.movetoPoint(0, -48, 2000, {.maxSpeed = max_speed});
   chassis.waitUntilDone();
-  liftIntake();
+  //liftIntake();
   chassis.turnToHeading(-45, 2000, {.maxSpeed = max_speed1});
   chassis.waitUntilDone();
   chassis.moveToPoint(30, 21, 2000,
@@ -243,7 +243,7 @@ void rushRed() { // RED
   spinIntake(0);
   chassis.waitUntilDone();
   printPosition((char *)"Towards stake", true, true);
-  dropIntake();
+  //dropIntake();
   pros::delay(250);
   chassis.moveToPoint(2.5, -59, 2000, {.maxSpeed = max_speed});
   chassis.waitUntilDone();
@@ -256,7 +256,7 @@ void rushRed() { // RED
                       {.forwards = false, .maxSpeed = max_speed});
   // chassis.movetoPoint(0, -48, 2000, {.maxSpeed = max_speed});
   chassis.waitUntilDone();
-  liftIntake();
+  //liftIntake();
   chassis.turnToHeading(225, 2000, {.maxSpeed = max_speed1});
   chassis.waitUntilDone();
   chassis.moveToPoint(24, -24, 2000,
