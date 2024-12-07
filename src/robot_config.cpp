@@ -67,7 +67,7 @@ pros::GPS gps(3);
 pros::IMU imu(19);
 
 pros::adi::Button limitSwitch('B');
-pros::Rotation lift_rotation(7); 
+pros::Rotation lift_rotation(5); 
 
 
 lemlib::Drivetrain drivetrain(
