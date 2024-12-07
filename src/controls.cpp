@@ -166,9 +166,15 @@ void taskFn_intake_control(void) {
 
       if(!autoLift && lift_counter == 0){
         pros::Task lift_wall_stake([=] {moveLiftToPos(77);});
-      } else if(lift_counter > 10) {
+      } else if(lift_counter > 15) {
         autoLift = false;
-        spinIntake(127);
+
+        if(getLiftPosition() > 77){
+          stopIntakeHold();
+        } else {
+          spinIntake(127);
+        }
+
         if(getLiftPosition() < 15){
           liftPneumaticUp();
         } else {

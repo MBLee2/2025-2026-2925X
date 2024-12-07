@@ -84,6 +84,8 @@ float distToWallF();
 
 int getIntakeColor();
 int get2ndIntakeColor();
+void setIntakeColorLED(int value);
+void setIntakeColor2LED(int value);
 
 float getLFPosition();
 float getLMPosition();
@@ -131,7 +133,7 @@ void outakeFor(int ms);
 void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
 
-void sort_color(bool sort);
+bool sort_color(bool sort);
 
 void saveRings(int timeout = 15000);
 void basketRings(bool withSave = true);

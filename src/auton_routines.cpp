@@ -463,16 +463,23 @@ void DescoreRushElim() { printf("%s(): Exiting\n", __func__); }
 
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1() {
-  COLOR = false;
+  COLOR = true;
   autoIntake = true;
   int time = pros::millis();
   float speed = 80;
   pros::Task sort_task([=] {
+    int counter = 0;
+    bool sorted = false;
     while(true){
-      if(autoIntake){
-        sort_color(true);
+      if(autoIntake && counter > 250){
+        sorted = sort_color(true);
+        if(sorted){
+          counter = 0;
+          sorted = false;
+        }
       }
       pros::delay(20);
+      counter += 20;
     }
   });
   spinIntake(127);

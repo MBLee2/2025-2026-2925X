@@ -269,6 +269,14 @@ int get2ndIntakeColor() {
     return intake_color2.get_hue();
 }
 
+void setIntakeColorLED(int value){
+    intake_color.set_led_pwm(value);
+}
+
+void setIntakeColor2LED(int value){
+    intake_color2.set_led_pwm(value);
+}
+
 //Limit Switch
 bool getLimitSwitch() {
     return limitSwitch.get_value();
@@ -577,51 +585,80 @@ void outakeFor(float speed, float degrees) {
     if(auton || autoSkill || autoIntake)
         stopIntake();
 }
-void sort_color(bool sort) {
+
+bool sort_color(bool sort) {
     //false = red, true = blue 
     int hue = getIntakeColor();
     int hue2 = get2ndIntakeColor();
+    int timeout = 0;
     if (sort == true){
+
+        setIntakeColorLED(100);
+        setIntakeColor2LED(100);
 
         if(COLOR == false) // Sorting out Red
         {
-            printf("Sorting out red \n"); // Log the function exit for debugging 
+            //printf("Sorting out red \n"); // Log the function exit for debugging 
             if(hue >= 0 && hue <= 25)
             {
-                master.rumble("-");
                 printf("Detected Red \n"); // Log the function exit for debugging
                 while(hue2 >= 155 && hue2 <= 185){
-                    printf("Blue in second \n");
                     pros::delay(20);
+                    hue2 = get2ndIntakeColor();
                 }
+
                 redirectRings();
-                while(hue2 >= 0 && hue2 <= 25){
-                    printf("Finishing redirect \n");
+
+                while((hue2 < 0 || hue2 > 25) && timeout < 500){
                     pros::delay(20);
+                    hue2 = get2ndIntakeColor();
+                    timeout += 20;
                 }
+
+                timeout = 0;
+                while((hue2 >= 0 && hue2 <= 25) && timeout < 500){
+                    pros::delay(20);
+                    hue2 = get2ndIntakeColor();
+                    timeout += 20;
+                }
+
                 pros::delay(50);
                 closeRedirect();
+                return true;
             }
         }
         if(COLOR == true)// Sorting out Blue
         {
-            if(hue >= 155 && hue <= 185)
+            if(hue >= 135 && hue <= 185)
             {
                 printf("Detected Blue \n"); // Log the function exit for debugging
                 while(hue2 >= 0 && hue2 <= 25){
-                    printf("Red in second \n");
-                    pros::delay(50);
-                }
-                redirectRings();
-                while(hue2 >= 155 && hue2 <= 185){
-                    printf("Finishing redirect \n");
                     pros::delay(20);
+                    hue2 = get2ndIntakeColor();
+                } 
+
+                redirectRings();
+
+                while((hue2 < 155 || hue2 > 185) && timeout < 500){
+                    pros::delay(20);
+                    hue2 = get2ndIntakeColor();
+                    timeout += 20;
                 }
+
+                timeout = 0;
+                while((hue2 >= 155 && hue2 <= 185) && timeout < 500){
+                    pros::delay(20);
+                    hue2 = get2ndIntakeColor();
+                    timeout += 20;
+                }
+
                 pros::delay(50);
                 closeRedirect();
+                return true;
             }
         }
     }
+    return false;
 }
 
 
