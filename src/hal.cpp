@@ -116,6 +116,7 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 // Intake Movement
 void spinIntake(int speed) {
     intake.move(speed);
+    intake.move(speed);
 }
 
 void stopIntake() {
@@ -130,6 +131,7 @@ void stopIntakeHold() {
 
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
+    intake.set_brake_mode(mode);
     intake.set_brake_mode(mode);
 }
 
@@ -317,7 +319,7 @@ void setIntakeEncoder(pros::motor_encoder_units_e mode) {
 }
 
 float getIntakePosition() {
-    return (intake.get_position() + intake.get_position()) / 2.0;
+    return (intake.get_position());
 }
 
 // Reset Motor Positions
