@@ -112,12 +112,20 @@ void taskFn_intake_control(void) {
     OUTAKE, // Eject objects
     STOP  // Stop the intake
   };
+  enum lift_state {
+    SCORE, // Intake objects
+    PICKUP, // Eject objects
+    DOWN  // Stop the intake
+  };
 
   intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   intake_state current_state = STOP; // Initialize with a default state, STOP
+  lift_state lift_state = DOWN; // Initialize with a default state, STOP
+
+  int hold_time = 200;
   while (true) // Infinite loop to keep checking controller input for intake
   {
-    double pos = getLiftPosition();; // Get the current position of the lift
+    printf("Position: %f \n",getLiftPosition());
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       if ((current_state == OUTAKE || current_state == STOP) && intakeMode) // If the intake is stopped or ejecting, start intake
       {
@@ -146,36 +154,51 @@ void taskFn_intake_control(void) {
         current_state = STOP;
       }
     }
-    
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-      if (autoIntake == false)
-      {
-        master.print(1,0,"Sorting");
-        autoIntake = true;
-      }
-      else if (autoIntake == true) // If intake is ejecting, stop it
-      {
-        master.clear_line(1);
-        autoIntake = false;
-      }
+    // if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+    //   if(lift_state == DOWN)
+    //   {
+    //     moveLiftToPos(19);
+    //     printf("Position: %f \n",getLiftPosition());
+    //     lift_state = PICKUP;
+    //   }
+    //   else if(lift_state == PICKUP)
+    //   {
+    //     moveLiftToPos(111);
+    //     printf("Position: %f \n",getLiftPosition());
+    //     lift_state = SCORE;
+    //   }
+    // }
+    // else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+    //   if(lift_state == SCORE)
+    //   {
+    //     moveLiftToPos(19);
+    //     lift_state = PICKUP;
+    //   }
+    //   if(lift_state == PICKUP)
+    //   {
+    //     moveLiftToPos(5);
+    //     printf("Position: %f \n",getLiftPosition());
+    //     lift_state = DOWN;
+    //   }
+    //}
+    setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+    {
+      spinLift(67);
     }
-
-    if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      intakeMode = false;
-      spinLift(127);
-    }
-    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      intakeMode = false;
-      spinLift(-127);
+    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+    {
+      spinLift(-67);
     }
     else
     {
-      stopLift();
-    }
-    if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      liftUpWallStake();
+      stopLiftHold();
     }
 
+    if(current_state == INTAKE)
+    {
+      spinIntake(127);
+    }
     if(current_state == OUTAKE)
     {
       spinIntake(-127);
@@ -183,14 +206,6 @@ void taskFn_intake_control(void) {
     if(current_state == STOP)
     {
       stopIntake();
-    }
-    if(autoIntake == true)
-    {
-      sort_color(true);
-    }
-    if(autoIntake == false)
-    {
-      sort_color(false);
     }
 
     pros::delay(10);

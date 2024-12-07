@@ -70,8 +70,11 @@ void redirectRings();
 void closeRedirect();
 void toggleRedirect();
 
+void setLiftBrake(pros::motor_brake_mode_e mode);
 void spinLift(int velo);
 void stopLift();
+void stopLiftHold();
+
 void liftPneumaticDown();
 bool getLiftHelper();
 
