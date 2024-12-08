@@ -467,31 +467,10 @@ void auton_60s_skills_1() {
   autoIntake = true;
   int time = pros::millis();
   float speed = 80;
-  pros::Task sort_task([=] {
-    int counter = 0;
-    bool sorted = false;
-    while(true){
-      if(autoIntake && counter > 250){
-        sorted = sort_color(true);
-        if(sorted){
-          counter = 0;
-          sorted = false;
-        }
-      }
-      pros::delay(20);
-      counter += 20;
-    }
-  });
-  spinIntake(127);
-  while(true){
-    pros::delay(20);
-  }
-  return;
-
-  spinIntake(127);
-  chassis.setPose(0, 0, 0);
-  chassis.moveToPoint(0, 15, 2000, {.maxSpeed = speed});
-  return;
+  
+  setIntakeColorLED(100);
+  setIntakeColor2LED(100);
+  sort_color_queue();
 
   chassis.setPose(4,-58.75,90);
   lemlib::Pose currentPose = chassis.getPose();
@@ -626,10 +605,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(48, -48, 1000, {.maxSpeed = speed});
   chassis.moveToPoint(48, 0, 3000, {.maxSpeed = speed});*/
 
-  chassis.setPose(48, 0, 0);
-  spinIntake(127); 
-
-  chassis.moveToPoint(24, 24, 2000, {.maxSpeed = speed});
+  /*chassis.moveToPoint(24, 24, 2000, {.maxSpeed = speed});
   hoodFwd();
   redirectRings();
   chassis.turnToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = (int)max_speed - 4});
@@ -652,20 +628,22 @@ void auton_60s_skills_1() {
   moveLiftToPos(27, 1000);
   pros::delay(300);
   chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false, .maxSpeed = speed});
-  liftDown();
+  liftDown();*/
 
-  //chassis.turnToPoint(-24, 24, 1000);
-  //chassis.moveToPoint(-24, 24, 2000, {.maxSpeed = max_speed});
+  chassis.setPose(0, 48, 0);
+  closeClamp();
+
   chassis.turnToPoint(-48, 48, 1000);
   spinIntake(127);
   hoodBwd();
   autoIntake = true;
-  chassis.moveToPoint(-40, 48, 3000, {.maxSpeed = speed});
-  printPosition((char *)"1st Ring", false);
-  chassis.turnToPoint(-48, 60, 2000);
+  chassis.moveToPoint(-60, 48, 3000, {.maxSpeed = speed});
+  printPosition((char *)"1st & 2nd Rings", false);
+  /*chassis.turnToPoint(-48, 60, 2000);
   chassis.moveToPoint(-48, 60, 1000, {.maxSpeed = speed});
   printPosition((char *)"2nd Ring", false);
-  chassis.moveToPoint(-48, 48, 1000, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(-48, 48, 1000, {.forwards = false, .maxSpeed = speed});*/
+  return;
 
   chassis.turnToPoint(0, 0, 1000);
   chassis.moveToPoint(-24, 24, 3000, {.maxSpeed = speed});

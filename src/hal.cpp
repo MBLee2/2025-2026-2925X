@@ -5,13 +5,16 @@
 #include "controls.h"
 #include "main.h"
 #include <cstdio>
+#include <queue>
 
 
 bool basket_state = false;
-bool COLOR = false; // false = red, true = blue
+bool COLOR = false; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
+
+std::queue<bool> ringQueue;
 
 //Basic Motor Movement
 
@@ -159,10 +162,27 @@ void toggleClamp() {
 }
 
 
+//Redirect
+void redirectRings() {
+    redirect1.extend();
+}
+
+void closeRedirect() {
+    redirect1.retract();
+}
+
+void toggleRedirect() {
+    redirect1.toggle();
+}
+
+bool getRedirect() {
+    return redirect1.is_extended();
+}
+
 // Hood
 
 void toggleHood(){
-    if(redirect1.is_extended()){
+    if(getRedirect()){
         hoodFwd();
     }else{
         hoodBwd();
@@ -210,19 +230,6 @@ void retractSixRing() {
 
 void toggleSixRing() {
     //lastring.toggle();
-}
-
-//Redirect
-void redirectRings() {
-    redirect1.extend();
-}
-
-void closeRedirect() {
-    redirect1.retract();
-}
-
-void toggleRedirect() {
-    redirect1.toggle();
 }
 
 //Lift Helper
@@ -661,7 +668,128 @@ bool sort_color(bool sort) {
     return false;
 }
 
+void printRingQueue(){
+    if(!ringQueue.empty()){
+        bool first;
+        for(int i = 0; i < ringQueue.size(); i++){
+            first = ringQueue.front();
+            if(first){
+                printf("Red  ");
+            } else {
+                printf("Blue ");
+            }
+            ringQueue.pop();
+            ringQueue.push(first);
+        }
+        printf("\n");
+    }
+}
 
+void addCurrentRing(){
+    while(true){
+        if(autoIntake){
+            int hue = getIntakeColor();
+
+            if(hue >= 0 && hue <= 30)
+            {
+                printf("Detected red %i\n", hue);
+                ringQueue.push(true);
+                
+                while(hue >= 0 && hue <= 30){
+                    pros::delay(20);
+                    hue = getIntakeColor();
+                }
+                pros::delay(75);
+            }
+            else if(hue >= 180 && hue <= 250)
+            {
+                printf("Detected blue %i\n", hue);
+                ringQueue.push(false);
+
+                while(hue >= 140 && hue <= 260){
+                    pros::delay(20);
+                    hue = getIntakeColor();
+                }
+                pros::delay(75);
+            }
+        }
+        pros::delay(20);
+    }
+}
+
+void checkQueue() {
+    while(true){
+        if(autoIntake){
+            if(!ringQueue.empty()){
+                if(ringQueue.front() == COLOR && getRedirect()){
+                    closeRedirect();
+                    printf("Scoring rings\n");
+                } else if(ringQueue.front() != COLOR && !getRedirect()) {
+                    redirectRings();
+                    printf("Sorting out\n");
+                }
+            }
+        }
+        pros::delay(10);
+    }
+}
+
+void countRings() {
+    while(true){
+        if(autoIntake){
+            int hue = get2ndIntakeColor();
+
+            if(hue >= 0 && hue <= 35)
+            {
+                if(COLOR == true){
+                    while(hue >= 0 && hue <= 35){
+                        pros::delay(20);
+                        hue = get2ndIntakeColor();
+                    }
+                    ringQueue.pop();
+                    printf("Exiting red %i\n", hue);
+                } else {
+                    pros::delay(30);
+                    ringQueue.pop();
+                    printf("Exiting red %i\n", hue);
+                    while(hue >= 0 && hue <= 35){
+                        pros::delay(20);
+                        hue = get2ndIntakeColor();
+                    }
+                }
+                pros::delay(75);
+            }
+
+            if(hue >= 180 && hue <= 250)
+            {
+                if(COLOR == false){
+                    while(hue >= 140 && hue <= 260){
+                        pros::delay(20);
+                        hue = get2ndIntakeColor();
+                    }
+                    ringQueue.pop();
+                    printf("Exiting blue %i\n", hue);
+                } else {
+                    pros::delay(30);
+                    ringQueue.pop();
+                    printf("Exiting blue %i\n", hue);
+                    while(hue >= 150 && hue <= 250){
+                        pros::delay(20);
+                        hue = get2ndIntakeColor();
+                    }
+                }
+                pros::delay(75);
+            }
+        }
+        pros::delay(20);
+    }
+}
+
+void sort_color_queue(){
+    pros::Task add_ring_task(addCurrentRing);
+    pros::Task count_ring_task(countRings);
+    pros::Task check_queue_task(checkQueue);
+}
 
 /*void saveRings(int timeout){
     spinIntake(127);

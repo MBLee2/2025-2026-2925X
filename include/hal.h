@@ -23,6 +23,8 @@ extern bool COLOR;
 extern bool auton, autoSkill;
 extern bool autoDrive, autoLift, autoIntake;
 
+extern bool currentColor;
+
 void stopAllMotors();
 
 void spinLFMotor(int speed);
@@ -134,6 +136,7 @@ void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
 
 bool sort_color(bool sort);
+void sort_color_queue();
 
 void saveRings(int timeout = 15000);
 void basketRings(bool withSave = true);
