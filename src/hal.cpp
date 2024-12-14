@@ -699,7 +699,6 @@ void addCurrentRing(){
                     pros::delay(20);
                     hue = getIntakeColor();
                 }
-                pros::delay(75);
             }
             else if(hue >= 180 && hue <= 250)
             {
@@ -710,10 +709,9 @@ void addCurrentRing(){
                     pros::delay(20);
                     hue = getIntakeColor();
                 }
-                pros::delay(75);
             }
         }
-        pros::delay(20);
+        pros::delay(10);
     }
 }
 
@@ -730,7 +728,7 @@ void checkQueue() {
                 }
             }
         }
-        pros::delay(10);
+        pros::delay(5);
     }
 }
 
@@ -739,7 +737,7 @@ void countRings() {
         if(autoIntake){
             int hue = get2ndIntakeColor();
 
-            if(hue >= 0 && hue <= 35)
+            if(hue >= 0 && hue <= 35 && ringQueue.front() == true)
             {
                 if(COLOR == true){
                     while(hue >= 0 && hue <= 35){
@@ -757,10 +755,9 @@ void countRings() {
                         hue = get2ndIntakeColor();
                     }
                 }
-                pros::delay(75);
             }
 
-            if(hue >= 180 && hue <= 250)
+            if(hue >= 180 && hue <= 250 && ringQueue.front() == false)
             {
                 if(COLOR == false){
                     while(hue >= 140 && hue <= 260){
@@ -778,10 +775,9 @@ void countRings() {
                         hue = get2ndIntakeColor();
                     }
                 }
-                pros::delay(75);
             }
         }
-        pros::delay(20);
+        pros::delay(10);
     }
 }
 

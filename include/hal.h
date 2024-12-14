@@ -5,9 +5,9 @@
 #include "auton_basics.h"
 #include "pros/motors.h"
 
-#define LAT_KP  0
+#define LAT_KP  10
 #define LAT_KI  0
-#define LAT_KD  0
+#define LAT_KD  3
 #define LAT_SMALL_RANGE 1
 #define LAT_SMALL_RANGE_TIMEOUT 100
 

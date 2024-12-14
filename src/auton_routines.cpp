@@ -463,6 +463,10 @@ void DescoreRushElim() { printf("%s(): Exiting\n", __func__); }
 
 ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1() {
+  /*chassis.setPose(0, 0, 0);
+  driveDistance(24, 2000);
+  return;*/
+
   COLOR = true;
   autoIntake = true;
   int time = pros::millis();
@@ -630,20 +634,12 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false, .maxSpeed = speed});
   liftDown();*/
 
-  chassis.setPose(0, 48, 0);
-  closeClamp();
-
-  chassis.turnToPoint(-48, 48, 1000);
+  /*chassis.turnToPoint(-48, 48, 1000);
   spinIntake(127);
   hoodBwd();
   autoIntake = true;
   chassis.moveToPoint(-60, 48, 3000, {.maxSpeed = speed});
   printPosition((char *)"1st & 2nd Rings", false);
-  /*chassis.turnToPoint(-48, 60, 2000);
-  chassis.moveToPoint(-48, 60, 1000, {.maxSpeed = speed});
-  printPosition((char *)"2nd Ring", false);
-  chassis.moveToPoint(-48, 48, 1000, {.forwards = false, .maxSpeed = speed});*/
-  return;
 
   chassis.turnToPoint(0, 0, 1000);
   chassis.moveToPoint(-24, 24, 3000, {.maxSpeed = speed});
@@ -651,40 +647,45 @@ void auton_60s_skills_1() {
   printPosition((char *)"3rd Ring", false);
   pros::delay(100);
   chassis.moveToPoint(0, 0, 2000, {.maxSpeed = speed});
-  printPosition((char *)"Middle Ring", false);
+  printPosition((char *)"Middle Ring", false);*/
+
+  chassis.setPose(24, 24, 0);
+  closeClamp();
+  spinIntake(127);
 
   chassis.turnToPoint(48, 48, 2000);
-  chassis.moveToPoint(44.5, 44.5, 4000, {.maxSpeed = speed});
-  printPosition((char *)"5th Ring", false);
+  chassis.moveToPoint(48, 48, 4000, {.maxSpeed = speed});
   chassis.turnToPoint(60, 48, 2000);
-  chassis.moveToPoint(57, 48, 4000, {.maxSpeed = speed});
-  printPosition((char *)"6th Ring", false);
+  printPosition((char *)"5th Ring", false);
+  chassis.moveToPoint(58, 48, 4000, {.maxSpeed = speed});
 
-  chassis.moveToPoint(48, 48, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(52, 48, 2000, {.forwards = false, .maxSpeed = speed});
+  printPosition((char *)"6th Ring", false);
   extendSweep();
-  chassis.turnToPoint(72, 72, 2000);
+  chassis.turnToPoint(72, 65, 2000);
   stopIntake();
-  chassis.moveToPoint(62, 62, 1000, {.maxSpeed = speed});
+  chassis.moveToPoint(54, 55, 1000, {.maxSpeed = speed});
+  chassis.turnToHeading(-135, 2000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
   printPosition((char *)"Corner Sweep", false);
-  chassis.swingToHeading(-120, lemlib::DriveSide::RIGHT, 4000, {.maxSpeed = speed + 20});
-  chassis.turnToPoint(72, 72, 2000, {.forwards = false});
+  //chassis.moveToPoint(54, 51.5, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(60, 58, 2000, {.forwards = false, .maxSpeed = speed});
   retractSweep();
-  chassis.moveToPoint(65, 65, 2000, {.forwards = false, .maxSpeed = speed});
   openClamp();
   pros::delay(500);
+  currentPose = chassis.getPose();
   printPosition((char *)"Goal Drop", false);
 
-  chassis.moveToPoint(60, 60, 1000, {.maxSpeed = speed});
-  chassis.turnToHeading(-90, 1000);
+  chassis.moveToPoint(48, 48, 1000, {.maxSpeed = speed});
+  chassis.turnToHeading(90, 1000);
   autoIntake = false;
 
-  chassis.moveToPoint(24, 48, 1000, {.maxSpeed = speed});
-  spinIntake(127);
+  chassis.moveToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = speed});
+  //spinIntake(127);
   chassis.turnToPoint(-24, 60, 1000, {.forwards = false});
-  chassis.moveToPoint(-24, 60, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(-24, 55, 2000, {.forwards = false, .maxSpeed = speed});
   closeClamp();
-  chassis.moveToPoint(-60, 60, 4000, {.forwards = false, .maxSpeed = speed + 20});
-  chassis.moveToPoint(-48, 48, 1000, {.maxSpeed = speed});
+  chassis.moveToPoint(-58, 57, 4000, {.forwards = false, .maxSpeed = speed + 20});
+  chassis.moveToPoint(-24, 48, 1000, {.maxSpeed = speed});
   printPosition((char *)"Goal Drop", false);
   
   //chassis.turnToHeading(270,1000);
