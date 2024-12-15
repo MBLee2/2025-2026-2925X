@@ -188,7 +188,7 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
-	bool auton = true;
+	auton = true;
 	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
    	printf("%s(): Entered\n", __func__);
 	master.print(0, 0,"Time %d", time);

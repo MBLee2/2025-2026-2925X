@@ -263,8 +263,16 @@ int getFrontDistance() {
     return distance_front.get();
 }
 
+int getLeftDistance() {
+    return distance_left.get();
+}
+
 float distToWallF() {
     return getFrontDistance() / 25.4 + F_DISTANCE_OFFSET;
+}
+
+float distToWallL() {
+    return getLeftDistance() / 25.4 + L_DISTANCE_OFFSET;
 }
 
 //Color
@@ -381,12 +389,14 @@ float wheelDegToInches(float degrees) {
 // Controlled Functions
 
 // Drive
-void driveDistance(float distance, int timeout) {
+void driveDistance(float distance, int timeout, int maxSpeed) {
+    resetDriveMotorPosition(); //TEST TO MAKE SURE THIS DOES NOT AFFECT LEMLIB
+    autoDrive = true;
     bool notReached = true;
     float error, prevError = 0, totalError = 0;
     float derivative;
     int counter = 0;
-    resetDriveMotorPosition(); //TEST TO MAKE SURE THIS DOES NOT AFFECT LEMLIB
+    pros::delay(50);
     while(notReached && timeout > 0 && (auton || autoSkill || autoDrive)) {
         float leftMotorsPosition = getLeftMotorPositionInInches();
         float rightMotorsPosition = getRightMotorPositionInInches();
@@ -403,7 +413,15 @@ void driveDistance(float distance, int timeout) {
 
         float motorPower = (LAT_KP * error) + (LAT_KD * derivative) + (LAT_KI * totalError);
 
+        if(motorPower > maxSpeed){
+            motorPower = maxSpeed;
+        } 
+        else if(motorPower < -maxSpeed){
+            motorPower = -maxSpeed;
+        }
+
         driveStraight(motorPower);
+        //printf("Motor Power: %f\n", motorPower);
 
         prevError = error;
 
@@ -420,9 +438,12 @@ void driveDistance(float distance, int timeout) {
         pros::delay(15);
         timeout -= 15;
     }
+
+    stopDrive();
 }
 
 void turn(float degrees, int timeout) {
+    autoDrive = true;
     bool notReached = true;
     float error, prevError = 0, totalError = 0;
     float derivative;
@@ -734,7 +755,7 @@ void checkQueue() {
 
 void countRings() {
     while(true){
-        if(autoIntake){
+        if(autoIntake && !ringQueue.empty()){
             int hue = get2ndIntakeColor();
 
             if(hue >= 0 && hue <= 35 && ringQueue.front() == true)

@@ -5,17 +5,18 @@
 #include "auton_basics.h"
 #include "pros/motors.h"
 
-#define LAT_KP  10
-#define LAT_KI  0
-#define LAT_KD  3
+#define LAT_KP  8
+#define LAT_KI  -0.04
+#define LAT_KD  4
 #define LAT_SMALL_RANGE 1
-#define LAT_SMALL_RANGE_TIMEOUT 100
+#define LAT_SMALL_RANGE_TIMEOUT 150
 
 #define TURN_KP 0
 #define TURN_KI 0
 #define TURN_KD 0
 
 #define F_DISTANCE_OFFSET 6.25
+#define L_DISTANCE_OFFSET 7.5
 
 extern bool basket_state;
 extern bool COLOR;
@@ -81,8 +82,8 @@ void liftPneumaticUp();
 void liftPneumaticDown();
 bool getLiftPneumatic();
 
-int getFrontDistance();
 float distToWallF();
+float distToWallL();
 
 int getIntakeColor();
 int get2ndIntakeColor();
@@ -111,7 +112,7 @@ void resetIMUHeading();
 float getHeading();
 bool getLimitSwitch();
 
-void driveDistance(float distance, int timeout = 15000);
+void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
 void resetLiftPosition();

@@ -634,24 +634,26 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false, .maxSpeed = speed});
   liftDown();*/
 
-  /*chassis.turnToPoint(-48, 48, 1000);
+  chassis.setPose(0, 48, 0);
+  closeClamp();
+
+  chassis.turnToPoint(-48, 48, 1000);
   spinIntake(127);
   hoodBwd();
   autoIntake = true;
-  chassis.moveToPoint(-60, 48, 3000, {.maxSpeed = speed});
+  chassis.moveToPoint(-45, 48, 3000, {.maxSpeed = speed});
+  chassis.waitUntil(46);
+  pros::delay(100);
+  chassis.moveToPoint(-55, 48, 1000, {.maxSpeed = speed});
   printPosition((char *)"1st & 2nd Rings", false);
 
   chassis.turnToPoint(0, 0, 1000);
   chassis.moveToPoint(-24, 24, 3000, {.maxSpeed = speed});
-  chassis.waitUntilDone();
+  chassis.waitUntil(34);
   printPosition((char *)"3rd Ring", false);
   pros::delay(100);
   chassis.moveToPoint(0, 0, 2000, {.maxSpeed = speed});
-  printPosition((char *)"Middle Ring", false);*/
-
-  chassis.setPose(24, 24, 0);
-  closeClamp();
-  spinIntake(127);
+  printPosition((char *)"Middle Ring", false);
 
   chassis.turnToPoint(48, 48, 2000);
   chassis.moveToPoint(48, 48, 4000, {.maxSpeed = speed});
@@ -664,24 +666,42 @@ void auton_60s_skills_1() {
   extendSweep();
   chassis.turnToPoint(72, 65, 2000);
   stopIntake();
-  chassis.moveToPoint(54, 55, 1000, {.maxSpeed = speed});
-  chassis.turnToHeading(-135, 2000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
+  chassis.moveToPoint(56, 58, 1000, {.maxSpeed = speed});
+  chassis.turnToHeading(-158, 2000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
   printPosition((char *)"Corner Sweep", false);
-  //chassis.moveToPoint(54, 51.5, 2000, {.maxSpeed = speed});
-  chassis.moveToPoint(60, 58, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.waitUntil(164);
+
+  driveDistance(-15, 2000, speed);
   retractSweep();
   openClamp();
-  pros::delay(500);
+  driveDistance(5, 2000, speed);
+  pros::delay(75);
   currentPose = chassis.getPose();
   printPosition((char *)"Goal Drop", false);
 
-  chassis.moveToPoint(48, 48, 1000, {.maxSpeed = speed});
+  driveDistance(15, 2000, speed);
   chassis.turnToHeading(90, 1000);
+  chassis.waitUntil(120);
+  currentPose = chassis.getPose();
+  chassis.setPose(72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta - 90))), 72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta - 90))), currentPose.theta);
+  printPosition((char *)"After 3rd Goal Drop", false);
+  currentPose = chassis.getPose();
+  chassis.moveToPoint(48, currentPose.y, 1000, {.forwards = false, .maxSpeed = speed,});
+  chassis.turnToHeading(90, 1000);
+  chassis.waitUntil(5);
+
+  chassis.setPose(0, 0, 0);
+  pros::delay(50);
+  chassis.moveToPoint(0, -48, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.waitUntil(48);
+  chassis.setPose(0, 48, 90);
+  
   autoIntake = false;
 
-  chassis.moveToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = speed});
+  //chassis.moveToPoint(0, 48, 4000, {.forwards = false, .maxSpeed = speed});
   //spinIntake(127);
   chassis.turnToPoint(-24, 60, 1000, {.forwards = false});
+  printPosition((char *)"Return to Center", false);
   chassis.moveToPoint(-24, 55, 2000, {.forwards = false, .maxSpeed = speed});
   closeClamp();
   chassis.moveToPoint(-58, 57, 4000, {.forwards = false, .maxSpeed = speed + 20});
