@@ -18,13 +18,10 @@
 #define F_DISTANCE_OFFSET 6.25
 #define L_DISTANCE_OFFSET 7.5
 
-extern bool basket_state;
 extern bool COLOR;
 
 extern bool auton, autoSkill;
 extern bool autoDrive, autoLift, autoIntake;
-
-extern bool currentColor;
 
 void stopAllMotors();
 
@@ -63,6 +60,7 @@ void toggleClamp();
 void toggleHood();
 void hoodFwd();
 void hoodBwd();
+bool getHood();
 
 void liftIntake();
 void dropIntake();
@@ -138,6 +136,8 @@ void outakeFor(float speed, float degrees);
 
 bool sort_color(bool sort);
 void sort_color_queue();
+void startSorting();
+void stopSorting();
 
 void saveRings(int timeout = 15000);
 void basketRings(bool withSave = true);

@@ -81,5 +81,6 @@ extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;
 extern pros::Rotation lift_rotation;
+extern pros::Vision vision_sensor;
 
 #endif //_ROBOT_CONFIG_H_   

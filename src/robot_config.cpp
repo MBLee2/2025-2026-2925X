@@ -7,6 +7,7 @@
 #include "pros/imu.hpp"
 #include "pros/motors.hpp"
 #include "pros/optical.hpp"
+#include "pros/vision.h"
 #include "robot_config.h"
 #include "dashboard.h"
 
@@ -66,6 +67,10 @@ pros::IMU imu(19);
 
 pros::adi::Button limitSwitch('B');
 pros::Rotation lift_rotation(7); 
+
+pros::Vision vision_sensor(12);
+pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
+pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
 
 
 lemlib::Drivetrain drivetrain(

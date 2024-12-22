@@ -472,9 +472,9 @@ void auton_60s_skills_1() {
   int time = pros::millis();
   float speed = 80;
   
-  setIntakeColorLED(100);
-  setIntakeColor2LED(100);
-  sort_color_queue();
+  //setIntakeColorLED(100);
+  //setIntakeColor2LED(100);
+  //sort_color_queue();
 
   chassis.setPose(4,-58.75,90);
   lemlib::Pose currentPose = chassis.getPose();

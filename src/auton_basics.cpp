@@ -17,7 +17,7 @@
 // */
 
 void setBasket(bool set){
-    if (basket_state == true && !set)  // If the basket is extended, retract it
+    /*if (basket_state == true && !set)  // If the basket is extended, retract it
     {
         basket_state = false;
         hood1.set_value(false);
@@ -28,7 +28,7 @@ void setBasket(bool set){
         basket_state = true;
         hood1.set_value(true);
         hood2.set_value(true);
-    }
+    }*/
 }
 
 /*void basketRings(bool withSave){
