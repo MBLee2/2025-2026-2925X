@@ -44,8 +44,8 @@ auton_routine safe_positive{1.234, -1.234, 90, "15S Auton - Near Driver # 1",
                             &safePos};
 auton_routine negative_four{1.234, -1.234, 90, "15S Auton - Near Driver # 1",
                             &negativeFour};
-auton_routine far_from_driver_elim2{-0.600, 0.600, 180, "extra_1",
-                                    &safe_6_ball};
+auton_routine solo_WP{-0.600, 0.600, 180, "extra_1",
+                                    &solo_wp};
 
 auton_routine skills_1{-0000, 0.000, 00, "60S Auton - Skills # 1",
                        &auton_60s_skills_1};
@@ -454,14 +454,21 @@ void negativeFour() {
   }
 }
 
-void safe_6_ball() // FAR ELIM
-{}
+void solo_wp(){  // FAR ELIM
+  chassis.setPose(-1,-60,90);
+  liftPneumaticUp();
+  
+  chassis.moveToPoint(-24,-24,2000,{.forwards=false});
+  
+}
 
-void auton_15s_far_driver_elim() { printf("%s(): Exiting\n", __func__); }
-void DescoreRushElim() { printf("%s(): Exiting\n", __func__); }
+void auton_15s_far_driver_elim(){ 
+  printf("%s(): Exiting\n", __func__); }
+
+void DescoreRushElim() { 
+  printf("%s(): Exiting\n", __func__); }
 // STILL WORKING ON IT
 
-ASSET(skillsPathPart1_txt);
 void auton_60s_skills_1() {
   int time = pros::millis();
   float speed = 127;

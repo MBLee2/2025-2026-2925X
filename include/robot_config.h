@@ -56,6 +56,7 @@ extern pros::adi::Pneumatics hood2;
 extern pros::adi::Pneumatics mogo_clamp;
 extern pros::adi::Pneumatics mogo_clamp2;
 extern pros::adi::Pneumatics intake_lift;
+extern pros::adi::Pneumatics intake_ramp_lift;
 extern pros::adi::Pneumatics mogo_rush;
 //extern pros::adi::Pneumatics lastring;
 

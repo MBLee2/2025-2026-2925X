@@ -22,7 +22,7 @@ pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({-18, 10, -9}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({16, -1, 2}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({13, -1, 2}, pros::v5::MotorGears::blue);
 
 // intake motor group
 pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
@@ -38,7 +38,9 @@ pros::adi::Pneumatics hood2('h', true);
 pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
-pros::adi::Pneumatics intake_lift('b', false); // need to add on robot
+pros::adi::Pneumatics intake_lift('s', false); // need to add on robot
+pros::adi::Pneumatics intake_ramp_lift('b', false); // need to add on robot
+
 pros::adi::Pneumatics mogo_rush('g', false);
 //pros::adi::Pneumatics lastring('a', false);
 
@@ -95,9 +97,9 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(8, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(9, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              36.5, // derivative gain (kD)
+                                              32, // derivative gain (kD)
                                               0, // anti windup
                                               0, // small error range, in inches
                                               00, // small error range timeout, in milliseconds
@@ -114,7 +116,7 @@ lemlib::ControllerSettings angular_controller(5 , // proportional gain (kP)
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
+                                              1000, // large error range timeout, in milliseconds
                                               127 // maximum acceleration (slew)
 );
 
