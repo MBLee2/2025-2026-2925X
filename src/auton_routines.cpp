@@ -468,13 +468,25 @@ void auton_60s_skills_1() {
   return;*/
 
   COLOR = true;
+  COLOR_SIG = 2;
   autoIntake = true;
   int time = pros::millis();
   float speed = 80;
-  
-  //setIntakeColorLED(100);
-  //setIntakeColor2LED(100);
-  //sort_color_queue();
+
+  spinIntake(127);
+  pros::delay(200);
+
+
+
+  /*pros::vision_object_s_t nearestRing = getMostRelevantObject();
+  if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+    printf("X_Coord: %d\n", nearestRing.x_middle_coord);
+  } else {
+    printf("No relevant Rings Detected\n");
+  }*/
+  //turnToRing(5000, speed);
+  driveToRing(5000, speed);
+  return;
 
   chassis.setPose(4,-58.75,90);
   lemlib::Pose currentPose = chassis.getPose();

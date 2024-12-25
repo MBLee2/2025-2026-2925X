@@ -15,10 +15,15 @@
 #define TURN_KI 0
 #define TURN_KD 0
 
+#define VISION_KP 0.5
+#define VISION_RANGE 15
+#define VISION_RANGE_TIMEOUT 200
+
 #define F_DISTANCE_OFFSET 6.25
 #define L_DISTANCE_OFFSET 7.5
 
 extern bool COLOR;
+extern int COLOR_SIG;
 
 extern bool auton, autoSkill;
 extern bool autoDrive, autoLift, autoIntake;
@@ -138,6 +143,11 @@ bool sort_color(bool sort);
 void sort_color_queue();
 void startSorting();
 void stopSorting();
+
+pros::vision_object_s_t getOurColorObject();
+pros::vision_object_s_t getMostRelevantObject();
+void turnToRing(int timeout = 15000, float maxSpeed = 130);
+void driveToRing(int timeout = 15000, int maxSpeed = 130);
 
 void saveRings(int timeout = 15000);
 void basketRings(bool withSave = true);

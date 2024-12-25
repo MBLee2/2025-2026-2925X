@@ -10,6 +10,7 @@
 
 
 bool COLOR = false; // true = red, false = blue
+int COLOR_SIG = (COLOR) ? 2 : 1;
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -299,11 +300,47 @@ bool getLimitSwitch() {
 
 // Vision Sensor
 pros::vision_object_s_t getOurColorObject() {
-    if(COLOR){
-        return vision_sensor.get_by_sig(0, 2);
-    } else {
-        return vision_sensor.get_by_sig(0, 1);
+    return vision_sensor.get_by_sig(0, COLOR_SIG);
+}
+
+pros::vision_object_s_t getMostRelevantObject() {
+    pros::vision_object_s_t object_arr[5];
+    int availableObjects = vision_sensor.read_by_sig(0, 2, 5, object_arr);
+
+    int highestY = 0;
+    int highestYIndex = 0;
+
+    for(int i = 0; i < 5; i++){
+        if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
+            if(abs(object_arr->x_middle_coord - 158) > 90){
+                object_arr[i].signature = VISION_OBJECT_ERR_SIG;
+                availableObjects--;
+            } else if (object_arr[i].y_middle_coord > highestY){
+                highestY = object_arr[i].y_middle_coord;
+                highestYIndex = i;
+            }
+        }
     }
+
+    if(availableObjects <= 1){
+        return object_arr[highestYIndex];
+    }
+
+    int lowestXOffset = 158;
+    int lowestXOffsetIndex = 0;
+
+    for(int i = 0; i < 5; i++){
+        if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
+            if(abs(object_arr[i].y_middle_coord - highestY) < 15) {
+                if(abs(object_arr[i].x_middle_coord - 158) < lowestXOffset){
+                    lowestXOffset = abs(object_arr[i].x_middle_coord - 158);
+                    lowestXOffsetIndex = i;
+                }
+            }
+        }
+    }
+
+    return object_arr[lowestXOffsetIndex];
 }
 
 // Motor Encoder
@@ -875,7 +912,7 @@ void stopSorting() {
 
 
 //Vision sensor
-void driveToRing(int timeout){
+/*void driveToRing(int timeout){
     int hue = getIntakeColor();
 
     while(!detectOurColor(hue) && timeout > 0){
@@ -888,6 +925,72 @@ void driveToRing(int timeout){
         if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
 
         }
+
+        pros::delay(15);
+        timeout -= 15;
+    }
+
+    stopDrive();
+}*/
+
+void turnToRing(int timeout, float maxSpeed){
+    bool reached = false;
+    int counter = 0;
+
+    while(!reached && timeout > 0){
+
+        pros::vision_object_s_t nearestRing = getMostRelevantObject();
+
+        if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+
+            int error = nearestRing.x_middle_coord - 158;
+
+            float motorPower = VISION_KP * error;
+
+            if(motorPower > maxSpeed){
+                motorPower = maxSpeed;
+            } else if (motorPower < -maxSpeed){
+                motorPower = -maxSpeed;
+            }
+
+            drive(motorPower, -motorPower);
+
+            if(abs(error) < VISION_RANGE) {
+                if(counter >= VISION_RANGE_TIMEOUT) {
+                    reached = true;
+                } else {
+                    counter += 30;
+                }
+            } else {
+                counter = 0;
+            }
+        }
+
+        pros::delay(30);
+        timeout -= 30;
+    }
+
+    stopDrive();
+}
+
+void driveToRing(int timeout, int maxSpeed) {
+    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+    autoDrive = true;
+    float turnPower;
+    pros::delay(50);
+    while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill || autoDrive)) {
+
+        pros::vision_object_s_t nearestRing = getMostRelevantObject();
+
+        if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+
+            int vision_error = nearestRing.x_middle_coord - 158;
+
+            turnPower = VISION_KP * vision_error;
+        } 
+
+        drive(maxSpeed + turnPower, maxSpeed - turnPower);
+        //printf("Motor Power: %f\n", motorPower);
 
         pros::delay(15);
         timeout -= 15;
