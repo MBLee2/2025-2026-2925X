@@ -18,8 +18,7 @@
  * to keep execution time for this mode under a few seconds.
  */
 int counter = 0;
-bool auton = false, autoSkill = false;
-bool autoDrive = false, autoLift = false, autoIntake = false;
+
 
 void screen() {
     // loop forever
@@ -51,6 +50,15 @@ void initialize() {
 	// Clear the Brain screen and show status
 	resetLiftPosition();
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
+
+    setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
+
+	setIntakeColorLED(100);
+    setIntakeColor2LED(100);
+	sort_color_queue();
+	autoIntake = false;
+	
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
@@ -150,9 +158,6 @@ void competition_initialize() {
 	pros::delay(10); 
 
 
-    setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
-	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
-
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();
 
@@ -190,7 +195,6 @@ ASSET(test_txt);
 
 void autonomous() {
 	bool auton = true;
-	//HERE
 	// Clear the Brain screen
 	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
    	printf("%s(): Entered\n", __func__);

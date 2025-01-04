@@ -69,7 +69,8 @@ extern pros::adi::Pneumatics lift_helper2;
 //Sensors
 //extern pros::Optical intake_color;
 extern pros::Optical intake_color;
-extern pros::Optical intake_dist;
+extern pros::Optical intake_color2;
+
 extern pros::Distance distance_rb;
 extern pros::Distance distance_rf;
 extern pros::Distance distance_lb;
@@ -77,9 +78,11 @@ extern pros::Distance distance_lf;
 extern pros::Distance distance_bl;
 extern pros::Distance distance_br;
 extern pros::Distance distance_front;
+extern pros::Distance distance_left;
 extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;
 extern pros::Rotation lift_rotation;
+extern pros::Vision vision_sensor;
 
 #endif //_ROBOT_CONFIG_H_   

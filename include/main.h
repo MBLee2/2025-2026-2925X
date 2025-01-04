@@ -61,8 +61,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern bool auton, autoSkill;
-extern bool autoDrive, autoLift, autoIntake;
 
 void autonomous(void);
 void initialize(void);

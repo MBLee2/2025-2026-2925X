@@ -5,20 +5,28 @@
 #include "auton_basics.h"
 #include "pros/motors.h"
 
-#define LAT_KP  0
-#define LAT_KI  0
-#define LAT_KD  0
+#define LAT_KP  8
+#define LAT_KI  -0.04
+#define LAT_KD  4
 #define LAT_SMALL_RANGE 1
-#define LAT_SMALL_RANGE_TIMEOUT 100
+#define LAT_SMALL_RANGE_TIMEOUT 150
 
 #define TURN_KP 0
 #define TURN_KI 0
 #define TURN_KD 0
 
-#define F_DISTANCE_OFFSET 6.25
+#define VISION_KP 0.5
+#define VISION_RANGE 15
+#define VISION_RANGE_TIMEOUT 200
 
-extern bool basket_state;
+#define F_DISTANCE_OFFSET 6.25
+#define L_DISTANCE_OFFSET 7.5
+
 extern bool COLOR;
+extern int COLOR_SIG;
+
+extern bool auton, autoSkill;
+extern bool autoDrive, autoLift, autoIntake;
 
 void stopAllMotors();
 
@@ -57,6 +65,7 @@ void toggleClamp();
 void toggleHood();
 void hoodFwd();
 void hoodBwd();
+bool getHood();
 
 void liftIntake();
 void dropIntake();
@@ -74,12 +83,15 @@ void toggleRedirect();
 
 void liftPneumaticUp();
 void liftPneumaticDown();
-bool getLifPneumatic();
+bool getLiftPneumatic();
 
-int getFrontDistance();
 float distToWallF();
+float distToWallL();
 
 int getIntakeColor();
+int get2ndIntakeColor();
+void setIntakeColorLED(int value);
+void setIntakeColor2LED(int value);
 
 float getLFPosition();
 float getLMPosition();
@@ -103,7 +115,7 @@ void resetIMUHeading();
 float getHeading();
 bool getLimitSwitch();
 
-void driveDistance(float distance, int timeout = 15000);
+void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
 void resetLiftPosition();
@@ -127,7 +139,15 @@ void outakeFor(int ms);
 void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
 
-void sort_color(bool sort);
+bool sort_color(bool sort);
+void sort_color_queue();
+void startSorting();
+void stopSorting();
+
+pros::vision_object_s_t getOurColorObject();
+pros::vision_object_s_t getMostRelevantObject();
+void turnToRing(int timeout = 15000, float maxSpeed = 130);
+void driveToRing(int timeout = 15000, int maxSpeed = 130);
 
 int getIntakeDist();
 void save_rings_task(int speed = 127);

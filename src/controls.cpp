@@ -151,22 +151,28 @@ void taskFn_intake_control(void) {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
       if (autoIntake == false)
       {
-        master.print(1,0,"Sorting");
-        autoIntake = true;
+        startSorting();
       }
       else if (autoIntake == true) // If intake is ejecting, stop it
       {
-        master.clear_line(1);
-        autoIntake = false;
+        stopSorting();
       }
     }
 
     if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      intakeMode = false;
+
       if(!autoLift && lift_counter == 0){
         pros::Task lift_wall_stake([=] {moveLiftToPos(77);});
-      } else if(lift_counter > 10) {
+      } else if(lift_counter > 15) {
         autoLift = false;
-        spinIntake(127);
+
+        if(getLiftPosition() > 77){
+          stopIntakeHold();
+        } else {
+          spinIntake(127);
+        }
+
         if(getLiftPosition() < 15){
           liftPneumaticUp();
         } else {
@@ -199,14 +205,6 @@ void taskFn_intake_control(void) {
     if(current_state == STOP)
     {
     }
-    if(autoIntake == true)
-    {
-      sort_color(true);
-    }
-    if(autoIntake == false)
-    {
-      sort_color(false);
-    }
 
     pros::delay(10);
   }
@@ -221,10 +219,16 @@ void taskFn_hood_control(void) {
     int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
     // Toggle the basket state with the Y button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      toggleRedirect();
+      stopSorting();
       toggleHood();
+      if(!getHood()){
+        redirectRings();
+      } else {
+        closeRedirect();
+      }
     }
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+      stopSorting();
       toggleRedirect();
     }
 
