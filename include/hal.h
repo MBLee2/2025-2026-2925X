@@ -129,7 +129,10 @@ void outakeFor(float speed, float degrees);
 
 void sort_color(bool sort);
 
-void saveRings(int timeout = 15000);
+int getIntakeDist();
+void save_rings_task(int speed = 127);
+void saveRings(int speed = 127);
 void basketRings(bool withSave = true);
+
 
 #endif

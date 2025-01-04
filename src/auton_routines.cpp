@@ -30,9 +30,9 @@ auton_routine blue_ring_rush{1.000, -1.300, 190, "15S Auton - Near Driver # 2",
                              &ring_rush};
 auton_routine blue_neg_awp{1.000, -1.300, 190, "15S Auton - Near Driver # 3",
                            &blue_negative_four};
-auton_routine near_driver_elim{1.000, -1.300, 190,
+auton_routine neg_six_ring{1.000, -1.300, 190,
                                "15S Auton - Near Driver # 2",
-                               &DescoreRushElim}; // to be updated
+                               &neg_6_ring}; // to be updated
 auton_routine near_driver_elim2{1.000, -1.300, 190,
                                 "15S Auton - Near Driver # 2",
                                 &rushelim}; // to be updated
@@ -76,8 +76,10 @@ void printPosition(char *msg, bool withDistanceSensors = false,
 }
 
 // FULLY DONE
-void auton_15s_near_driver_qual() // DONE
-{}
+void neg_6_ring() // DONE
+{
+  
+}
 void goal_rush() // BLUE
 {
 
@@ -454,12 +456,54 @@ void negativeFour() {
   }
 }
 
-void solo_wp(){  // FAR ELIM
-  chassis.setPose(-1,-60,90);
+void solo_wp(){ // DONE execpt for ring hold
+  int time = pros::millis();
+  int speed = 127;
+  float speed1 = float(speed);
+
+  chassis.setPose(-2,-60,90);
   liftPneumaticUp();
+  pros::delay(300);
+  chassis.moveToPoint(-8,-60,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.moveToPoint(-21,-27,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 2},false);
+  liftPneumaticDown();
+  pros::delay(200);
+  toggleClamp();
+  pros::delay(300);
+  chassis.turnToPoint(-38,-11,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  spinIntake(127);
+  chassis.moveToPoint(-38,-11,1000,{.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 5});
+  chassis.turnToHeading(270,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-50,-11,1000,{.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 5});
+  chassis.turnToPoint(-46,-24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-46,-24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   
-  chassis.moveToPoint(-24,-24,2000,{.forwards=false});
-  
+
+  chassis.turnToPoint(-72,-72,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+
+
+
+  /*chassis.turnToPoint(0,-50,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(0,-52,3000);
+  liftIntake();
+  saveRings(127);
+  chassis.moveToPoint(15,-39,2000);
+  pros::delay(200);
+  toggleClamp();
+  /*chassis.turnToPoint(24,-24,1000,{.forwards=false});
+  chassis.moveToPoint(24,-24,1000,{.forwards=false});
+  toggleClamp();
+  pros::delay(200);
+  spinIntake(127);
+  chassis.turnToHeading(90,1000);
+  chassis.moveToPoint(48,-24,2000);
+  chassis.waitUntilDone();
+  chassis.moveToPoint(11,-11,3000);
+  chassis.turnToHeading(135,1000);
+
+//*/
+  master.clear_line(0);
+  master.print(0, 0, "Time: %d", (pros::millis()-time)/1000);
 }
 
 void auton_15s_far_driver_elim(){ 

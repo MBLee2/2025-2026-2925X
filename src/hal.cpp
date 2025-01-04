@@ -179,11 +179,11 @@ void hoodBwd() {
 
 // Intake Lift
 void liftIntake() {
-    intake_lift.retract();
+    intake_lift.extend();
 }
 
 void dropIntake() {
-    intake_lift.extend();
+    intake_lift.retract();
 }
 
 // Sweeper
@@ -594,21 +594,33 @@ void sort_color(bool sort) {
     }
 }
 
-
-
-/*void saveRings(int timeout){
-    spinIntake(127);
-    if(getIntakeDist() > 20){
-        while(getIntakeDist() > 20 && timeout > 0 && (auton || autoSkill || autoIntake)){
-            pros::delay(10);
-            timeout -= 10;
-        }
-        if(auton || autoSkill || autoIntake)
-            stopIntake();
-    }
+int getIntakeDist()
+{
+    return intake_color.get_proximity();
 }
 
-void basketRings(bool withSave){
+// void save_rings_task(int speed)
+// {
+//     pros::Task intake_task(saveRings(speed));
+// }
+void saveRings(int speed){
+    spinIntake(speed);
+    while(true)
+    {
+        printf("Color: %f \n", intake_dist.get_hue());
+        spinIntake(100); 
+        if(intake_dist.get_hue() >= 8 && intake_dist.get_hue() <= 18 || intake_dist.get_hue() >= 130 && intake_dist.get_hue() <= 140)
+        {
+            printf("STOP \n");
+            stopIntake();
+            break;
+        }
+        pros::delay(20);
+    }
+    return;
+}
+
+/*void basketRings(bool withSave){
     autoIntake = true;
     if(withSave){
      saveRings();

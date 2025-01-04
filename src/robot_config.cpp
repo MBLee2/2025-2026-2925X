@@ -24,6 +24,7 @@ pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
 pros::MotorGroup left_side_motors({-18, 10, -9}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({13, -1, 2}, pros::v5::MotorGears::blue);
 
+
 // intake motor group
 pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
 pros::Motor intakeR(11, pros::v5::MotorGears::red);
@@ -38,8 +39,8 @@ pros::adi::Pneumatics hood2('h', true);
 pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
-pros::adi::Pneumatics intake_lift('s', false); // need to add on robot
-pros::adi::Pneumatics intake_ramp_lift('b', false); // need to add on robot
+pros::adi::Pneumatics intake_lift({5, 'e'}, false);
+pros::adi::Pneumatics intake_ramp_lift({5, 'a'}, false);
 
 pros::adi::Pneumatics mogo_rush('g', false);
 //pros::adi::Pneumatics lastring('a', false);
@@ -52,9 +53,10 @@ pros::adi::Pneumatics lift_helper2('c',false );
 
 /* SENSORS */
 pros::Optical intake_color(6);
+pros::Optical intake_dist(8);
 pros::Distance distance_lf(5);
 pros::Distance distance_lb(20);
-pros::Distance distance_rf(8);
+pros::Distance distance_rf(10);
 pros::Distance distance_rb(18);
 pros::Distance distance_bl(21);
 pros::Distance distance_br(10);

@@ -69,6 +69,7 @@ extern pros::adi::Pneumatics lift_helper2;
 //Sensors
 //extern pros::Optical intake_color;
 extern pros::Optical intake_color;
+extern pros::Optical intake_dist;
 extern pros::Distance distance_rb;
 extern pros::Distance distance_rf;
 extern pros::Distance distance_lb;
