@@ -204,11 +204,11 @@ bool getHood(){
 
 // Intake Lift
 void liftIntake() {
-    intake_lift.retract();
+    intake_lift.extend();
 }
 
 void dropIntake() {
-    intake_lift.extend();
+    intake_lift.retract();
 }
 
 // Sweeper
@@ -539,6 +539,7 @@ void liftDown() {
 
 void moveLiftToPos(float pos,int timeout){
     int time = pros::millis();
+    autoLift = true;
 
     if(pos <= 2){
         pos = 3;
@@ -1007,11 +1008,16 @@ void driveToRing(int timeout, int maxSpeed) {
             timeout -= 10;
         }
         if(auton || autoSkill || autoIntake)
+
             stopIntake();
+            break;
+        }
+        pros::delay(20);
     }
+    return;
 }
 
-void basketRings(bool withSave){
+/*void basketRings(bool withSave){
     autoIntake = true;
     if(withSave){
      saveRings();

@@ -149,7 +149,10 @@ pros::vision_object_s_t getMostRelevantObject();
 void turnToRing(int timeout = 15000, float maxSpeed = 130);
 void driveToRing(int timeout = 15000, int maxSpeed = 130);
 
-void saveRings(int timeout = 15000);
+int getIntakeDist();
+void save_rings_task(int speed = 127);
+void saveRings(int speed = 127);
 void basketRings(bool withSave = true);
+
 
 #endif

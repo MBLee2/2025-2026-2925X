@@ -56,6 +56,7 @@ extern pros::adi::Pneumatics hood2;
 extern pros::adi::Pneumatics mogo_clamp;
 extern pros::adi::Pneumatics mogo_clamp2;
 extern pros::adi::Pneumatics intake_lift;
+extern pros::adi::Pneumatics intake_ramp_lift;
 extern pros::adi::Pneumatics mogo_rush;
 //extern pros::adi::Pneumatics lastring;
 
@@ -69,6 +70,7 @@ extern pros::adi::Pneumatics lift_helper2;
 //extern pros::Optical intake_color;
 extern pros::Optical intake_color;
 extern pros::Optical intake_color2;
+
 extern pros::Distance distance_rb;
 extern pros::Distance distance_rf;
 extern pros::Distance distance_lb;
