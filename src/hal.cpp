@@ -184,13 +184,17 @@ bool getRedirect() {
 // Hood
 
 void toggleHood(){
-    hood1.toggle();
-    hood2.toggle();
+    if(getHood()){
+        hoodFwd();
+    } else {
+        hoodBwd();
+    }
 }
 
 void hoodFwd() {
     hood1.retract();
     hood2.retract();
+    autoIntake = false;
 }
 
 void hoodBwd() {
@@ -312,7 +316,7 @@ pros::vision_object_s_t getMostRelevantObject() {
 
     for(int i = 0; i < 5; i++){
         if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr->x_middle_coord - 158) > 90){
+            if(abs(object_arr->x_middle_coord - 158) > 120){
                 object_arr[i].signature = VISION_OBJECT_ERR_SIG;
                 availableObjects--;
             } else if (object_arr[i].y_middle_coord > highestY){
@@ -331,7 +335,7 @@ pros::vision_object_s_t getMostRelevantObject() {
 
     for(int i = 0; i < 5; i++){
         if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr[i].y_middle_coord - highestY) < 15) {
+            if(abs(object_arr[i].y_middle_coord - highestY) < 10) {
                 if(abs(object_arr[i].x_middle_coord - 158) < lowestXOffset){
                     lowestXOffset = abs(object_arr[i].x_middle_coord - 158);
                     lowestXOffsetIndex = i;
@@ -530,7 +534,7 @@ void turn(float degrees, int timeout) {
 
 // Lift
 void liftUpWallStake() {
-    moveLiftToPos(80);
+    moveLiftToPos(77);
 }
 
 void liftDown() {
@@ -544,8 +548,8 @@ void moveLiftToPos(float pos,int timeout){
     if(pos <= 2){
         pos = 3;
     }
-    else if(pos >= 84){
-        pos = 83;
+    else if(pos >= 81){
+        pos = 80;
     }
     autoLift = true;
 
@@ -988,6 +992,8 @@ void driveToRing(int timeout, int maxSpeed) {
             int vision_error = nearestRing.x_middle_coord - 158;
 
             turnPower = VISION_KP * vision_error;
+
+            printf("Turn: %f\n", turnPower);
         } 
 
         drive(maxSpeed + turnPower, maxSpeed - turnPower);

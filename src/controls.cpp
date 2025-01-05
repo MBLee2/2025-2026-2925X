@@ -180,8 +180,6 @@ void taskFn_intake_control(void) {
         }
       }
       lift_counter++;
-      printf("Lift count: %d", lift_counter);
-
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       lift_counter = 0;
       autoLift = false;

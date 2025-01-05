@@ -520,42 +520,32 @@ void auton_60s_skills_1() {
 
   COLOR = true;
   COLOR_SIG = 2;
-  autoIntake = true;
+  autoIntake = false;
   int time = pros::millis();
-  float speed = 80;
-
-  spinIntake(127);
-  pros::delay(200);
-
-
-
-  /*pros::vision_object_s_t nearestRing = getMostRelevantObject();
-  if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
-    printf("X_Coord: %d\n", nearestRing.x_middle_coord);
-  } else {
-    printf("No relevant Rings Detected\n");
-  }*/
-  //turnToRing(5000, speed);
-  driveToRing(5000, speed);
-  return;
+  float speed = 60;
 
   chassis.setPose(4,-58.75,90);
+  liftPneumaticUp();
+  pros::delay(300);
   lemlib::Pose currentPose = chassis.getPose();
   double temp = 0;
-  /*chassis.moveToPoint(-4, -58.75,1000,{.forwards=false, .minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-24, -48, 2000,{.forwards=false, .maxSpeed=speed, .minSpeed = 60, .earlyExitRange = 2});
+  chassis.moveToPoint(-4, -58.75,1000,{.forwards=false, .minSpeed = 30, .earlyExitRange = 2});
+  chassis.moveToPoint(-24, -48, 2000,{.forwards=false, .maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 2});
   chassis.waitUntil(18);
   closeClamp();
   printPosition((char *)"Goal pickup", false);
 
-  chassis.turnToHeading(0, 1000, {.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-24, -24, 2000,{.maxSpeed=speed, .minSpeed = 60, .earlyExitRange = 5});
+  liftPneumaticDown();
+  chassis.turnToHeading(0, 1000, {.maxSpeed = (int) speed, .minSpeed = 20, .earlyExitRange = 5});
+  chassis.moveToPoint(-24, -24, 2000,{.maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 5});
   spinIntake(127);
-  chassis.turnToHeading(-90, 1000, {.minSpeed = 40, .earlyExitRange = 8});
-  chassis.moveToPoint(-48, -24, 2000,{.maxSpeed=speed, .minSpeed = 60, .earlyExitRange = 5});
-  chassis.turnToPoint(-56, 0, 1000, {.minSpeed = 40, .earlyExitRange = 8});
-  chassis.moveToPoint(-56, 2, 2000,{.maxSpeed=speed, .minSpeed = 60, .earlyExitRange = 3});
-  chassis.turnToPoint(-48, 24, 1000, {.minSpeed = 40, .earlyExitRange = 8}); 
+  chassis.turnToHeading(-90, 1000, {.maxSpeed = (int) speed,.minSpeed = 20, .earlyExitRange = 5});
+  chassis.moveToPoint(-48, -24, 2000,{.maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 5});
+  chassis.turnToPoint(-56, 0, 1000, {.maxSpeed = (int) speed,.minSpeed = 20, .earlyExitRange = 5});
+  chassis.moveToPoint(-62, 3, 2000,{.maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 3});
+  chassis.waitUntil(26);
+  printPosition((char *)"Ring by stake", false);
+  chassis.turnToPoint(-48, 24, 1000, {.maxSpeed = (int) speed, .minSpeed = 20, .earlyExitRange = 5});
   hoodFwd();
 
   chassis.moveToPoint(-45, 28, 1000,{.maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 2});
@@ -564,38 +554,38 @@ void auton_60s_skills_1() {
   printPosition((char *)"Basket ring", false);
   pros::delay(700);
 
-  chassis.moveToPoint(-48, 3.25, 2000,{.forwards=false,.maxSpeed=speed, .minSpeed = 20, .earlyExitRange = 1});
-  closeRedirect();
+  chassis.moveToPoint(-48, 1, 2000,{.forwards=false,.maxSpeed=speed, .minSpeed = 20, .earlyExitRange = 1});
   chassis.turnToHeading(270,2000);
+  closeRedirect();
   liftUpWallStake();
-  chassis.waitUntilDone();
+  chassis.waitUntil(100);
   currentPose = chassis.getPose();
   chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
   printPosition((char *)"Facing wall stake", false);
   chassis.moveToPoint(-62, currentPose.y, 2000, {.maxSpeed = speed});
-  chassis.waitUntilDone();
+  chassis.waitUntil(20);
   printPosition((char *)"At stake", false);
   moveLiftToPos(50.00, 1000); //long time
   printPosition((char *)"After stake", false);
   chassis.moveToPoint(-52,0,1000,{.forwards=false, .maxSpeed=speed},false);
-  chassis.waitUntilDone();
+  chassis.waitUntil(15);
   currentPose = chassis.getPose();
   chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
   printPosition((char *)"After reset", false);
-  chassis.turnToHeading(180,1000, {.minSpeed = 40, .earlyExitRange = 8});
+  chassis.turnToHeading(180,1000, {.maxSpeed = (int) speed, .minSpeed = 20, .earlyExitRange = 10});
   hoodBwd();
   liftDown();
 
   spinIntake(127);
   chassis.moveToPoint(-48, -46, 2000,{.maxSpeed=speed - 5, .minSpeed = 40, .earlyExitRange = 3});
-  chassis.moveToPoint(-48, -56, 2000,{.maxSpeed=speed, .minSpeed = 60, .earlyExitRange = 2});
-  chassis.moveToPoint(-42, -48, 2000,{.forwards=false, .maxSpeed = speed, .minSpeed = 60, .earlyExitRange = 6});
+  chassis.moveToPoint(-48, -56, 2000,{.maxSpeed=speed, .minSpeed = 40, .earlyExitRange = 2});
+  chassis.moveToPoint(-42, -48, 2000,{.forwards=false, .maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 6});
   printPosition((char *)"4th and 5th rings", false);
-  chassis.turnToHeading(270, 1000, {.minSpeed = 40, .earlyExitRange = 8});
-  chassis.moveToPoint(-60, -48, 2000,{.maxSpeed=speed, .minSpeed = 60, .earlyExitRange = 5});
+  chassis.turnToHeading(270, 1000, {.maxSpeed = (int) speed, .minSpeed = 20, .earlyExitRange = 10});
+  chassis.moveToPoint(-63, -49, 2000,{.maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 2});
   printPosition((char *)"6th ring", false);
 
-  chassis.turnToPoint(-72, -72, 1000,{.forwards=false, .minSpeed = 30, .earlyExitRange = 7});
+  chassis.turnToPoint(-72, -72, 1000,{.forwards=false, .maxSpeed = (int) speed, .minSpeed = 20, .earlyExitRange = 10});
   chassis.waitUntil(125);
   pros::delay(800);
   openClamp();
@@ -603,10 +593,15 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(-67, -67, 1000,{.forwards=false, .maxSpeed=speed, .minSpeed = 20, .earlyExitRange = 3}, false);
   pros::delay(1000);
   printPosition((char *)"Goal drop", false);
-  chassis.moveToPoint(-24, -45, 2000, {.maxSpeed = max_speed, .minSpeed = 70, .earlyExitRange = 5});
-  //chassis.turnToHeading(270,1000);
+  chassis.moveToPoint(-48, -48, 2000, {.maxSpeed = speed, .minSpeed = 50, .earlyExitRange = 5});
+  chassis.turnToHeading(270,1000);
+  chassis.waitUntil(180);
+  currentPose = chassis.getPose();
+  chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), -72 + fabs(distToWallL() * sin(deg2rad(currentPose.theta))), currentPose.theta);
+  printPosition((char *)"After Reset", false);
+  pros::delay(50);
 
-  chassis.moveToPoint(0, -48, 4000,{.maxSpeed=speed});
+  chassis.moveToPoint(0, -48, 4000,{.forwards = false, .maxSpeed=speed});
   chassis.turnToPoint(24, -48, 1000,{.forwards=false});
 
 
@@ -625,12 +620,12 @@ void auton_60s_skills_1() {
   chassis.turnToPoint(48,24,2000);
   hoodFwd();
   chassis.moveToPoint(48, 24, 2000,{.maxSpeed=speed});
-  toggleRedirect();
-  pros::delay(400);
-  chassis.waitUntilDone();
+  pros::delay(200);
+  redirectRings();
   printPosition((char *)"2nd Basket", false);
+  pros::delay(700);
 
-  chassis.moveToPoint(48, -2, 2000,{.forwards=false,.maxSpeed=speed});
+  chassis.moveToPoint(48, 0, 2000,{.forwards=false,.maxSpeed=speed});
   chassis.turnToHeading(90,1000);
   liftUpWallStake();
   closeRedirect();
@@ -639,7 +634,7 @@ void auton_60s_skills_1() {
   chassis.setPose(72 - fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
   printPosition((char *)"Facing 2nd Wall Stake", false);
   pros::delay(50);
-  chassis.moveToPoint(65, 0, 2000,{.maxSpeed=speed}, false);
+  chassis.moveToPoint(65, currentPose.y, 2000,{.maxSpeed=speed}, false);
   printPosition((char *)"At 2nd Wall Stake", false);
   moveLiftToPos(50.00, 1000);
   pros::delay(600);
@@ -670,15 +665,15 @@ void auton_60s_skills_1() {
   pros::delay(1000);
   printPosition((char *)"Goal drop", false);
   chassis.moveToPoint(48, -48, 1000, {.maxSpeed = speed});
-  chassis.moveToPoint(48, 0, 3000, {.maxSpeed = speed});*/
+  chassis.moveToPoint(48, 0, 3000, {.maxSpeed = speed});
 
-  /*chassis.moveToPoint(24, 24, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(25, 24, 2000, {.maxSpeed = speed});
   hoodFwd();
   redirectRings();
   chassis.turnToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = (int)max_speed - 4});
   printPosition((char *)"3rd Basket", false);
-  chassis.moveToPoint(3, 48, 2000, {.forwards = false, .maxSpeed = speed});
-  chassis.waitUntil(33);
+  chassis.moveToPoint(4, 49, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.waitUntil(34);
   closeClamp();
   printPosition((char *)"3rd Goal", false);
 
@@ -695,16 +690,16 @@ void auton_60s_skills_1() {
   moveLiftToPos(27, 1000);
   pros::delay(300);
   chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false, .maxSpeed = speed});
-  liftDown();*/
-
-  chassis.setPose(0, 48, 0);
-  closeClamp();
+  liftDown();
+  chassis.waitUntilDone();
+  currentPose = chassis.getPose();
+  chassis.setPose(currentPose.x, 72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta))) , currentPose.theta);
 
   chassis.turnToPoint(-48, 48, 1000);
   spinIntake(127);
   hoodBwd();
   autoIntake = true;
-  chassis.moveToPoint(-45, 48, 3000, {.maxSpeed = speed});
+  chassis.moveToPoint(-45, 48, 3000);
   chassis.waitUntil(46);
   pros::delay(100);
   chassis.moveToPoint(-55, 48, 1000, {.maxSpeed = speed});
@@ -718,10 +713,14 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(0, 0, 2000, {.maxSpeed = speed});
   printPosition((char *)"Middle Ring", false);
 
-  chassis.turnToPoint(48, 48, 2000);
+  chassis.turnToPoint(48, 48, 3000);
   chassis.moveToPoint(48, 48, 4000, {.maxSpeed = speed});
   chassis.turnToPoint(60, 48, 2000);
+  chassis.waitUntil(90);
+  currentPose = chassis.getPose();
+  chassis.setPose(72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta - 90))), 72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta - 90))), currentPose.theta);
   printPosition((char *)"5th Ring", false);
+  pros::delay(50);
   chassis.moveToPoint(58, 48, 4000, {.maxSpeed = speed});
 
   chassis.moveToPoint(52, 48, 2000, {.forwards = false, .maxSpeed = speed});
@@ -744,25 +743,21 @@ void auton_60s_skills_1() {
 
   driveDistance(15, 2000, speed);
   chassis.turnToHeading(90, 1000);
-  chassis.waitUntil(120);
+  chassis.waitUntil(180);
   currentPose = chassis.getPose();
   chassis.setPose(72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta - 90))), 72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta - 90))), currentPose.theta);
   printPosition((char *)"After 3rd Goal Drop", false);
-  currentPose = chassis.getPose();
-  chassis.moveToPoint(48, currentPose.y, 1000, {.forwards = false, .maxSpeed = speed,});
-  chassis.turnToHeading(90, 1000);
-  chassis.waitUntil(5);
-
-  chassis.setPose(0, 0, 0);
   pros::delay(50);
-  chassis.moveToPoint(0, -48, 2000, {.forwards = false, .maxSpeed = speed});
-  chassis.waitUntil(48);
+  currentPose = chassis.getPose();
+  chassis.setPose(0, 0, 0);
+  chassis.moveToPoint(48 - currentPose.y, -currentPose.x, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.waitUntil(72);
+  chassis.turnToHeading(0, 1000);
+  chassis.waitUntil(45);
   chassis.setPose(0, 48, 90);
   
   autoIntake = false;
 
-  //chassis.moveToPoint(0, 48, 4000, {.forwards = false, .maxSpeed = speed});
-  //spinIntake(127);
   chassis.turnToPoint(-24, 60, 1000, {.forwards = false});
   printPosition((char *)"Return to Center", false);
   chassis.moveToPoint(-24, 55, 2000, {.forwards = false, .maxSpeed = speed});
