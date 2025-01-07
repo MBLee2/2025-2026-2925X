@@ -273,11 +273,11 @@ int getLeftDistance() {
 }
 
 float distToWallF() {
-    return getFrontDistance() / 25.4 + F_DISTANCE_OFFSET;
+    return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
 }
 
 float distToWallL() {
-    return getLeftDistance() / 25.4 + L_DISTANCE_OFFSET;
+    return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
 }
 
 //Color
@@ -348,6 +348,15 @@ pros::vision_object_s_t getMostRelevantObject() {
 }
 
 // Motor Encoder
+void setDriveEncoder(pros::motor_encoder_units_e mode){
+    lf.set_encoder_units(mode);
+    lm.set_encoder_units(mode);
+    lb.set_encoder_units(mode);
+    rf.set_encoder_units(mode);
+    rm.set_encoder_units(mode);
+    rb.set_encoder_units(mode);
+}
+
 float getLFPosition() {
     return lf.get_position() * DRIVEBASE_GEAR_RATIO;
 }
@@ -373,19 +382,19 @@ float getRBPosition() {
 }
 
 float getLeftMotorPosition() {
-    return (getLFPosition() + getLMPosition() + getLBPosition()) / 3;
+    return getLFPosition();
 }
 
 float getRightMotorPosition() {
-    return (getRFPosition() + getRMPosition() + getRBPosition()) / 3;
+    return getRFPosition();
 }
 
 float getLeftMotorPositionInInches() {
-    return wheelDegToInches(getLeftMotorPosition());
+    return wheelRotToInches(getLeftMotorPosition());
 }
 
 float getRightMotorPositionInInches() {
-    return wheelDegToInches(getLeftMotorPosition());
+    return wheelRotToInches(getLeftMotorPosition());
 }
 
 void resetLiftPosition(){
@@ -432,7 +441,11 @@ void resetIntakePosition() {
 }
 
 float wheelDegToInches(float degrees) {
-    return (PI * DRIVEBASE_WHEEL_DIAMETER) * (degrees / 360);
+    return (PI * DRIVEBASE_WHEEL_DIAMETER) * (degrees / 360.0);
+}
+
+float wheelRotToInches(float rotations){
+    return (PI * DRIVEBASE_WHEEL_DIAMETER) * rotations;
 }
 
 
@@ -447,11 +460,11 @@ void driveDistance(float distance, int timeout, int maxSpeed) {
     float derivative;
     int counter = 0;
     pros::delay(50);
-    while(notReached && timeout > 0 && (auton || autoSkill || autoDrive)) {
+    while(notReached && timeout > 0 && (auton || autoSkill) && autoDrive) {
         float leftMotorsPosition = getLeftMotorPositionInInches();
         float rightMotorsPosition = getRightMotorPositionInInches();
 
-        float averagePosition = (leftMotorsPosition + rightMotorsPosition) / 2;
+        float averagePosition = (leftMotorsPosition + rightMotorsPosition) / 2.0;
 
         error = distance - averagePosition;
 
@@ -471,8 +484,6 @@ void driveDistance(float distance, int timeout, int maxSpeed) {
         }
 
         driveStraight(motorPower);
-        //printf("Motor Power: %f\n", motorPower);
-
         prevError = error;
 
         if(fabs(error) < LAT_SMALL_RANGE) {

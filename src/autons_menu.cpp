@@ -26,7 +26,7 @@ std::vector<auton_menu_button> button_list = {
                        pros::c::COLOR_WHITE_SMOKE, "Neg 6", pros::E_TEXT_MEDIUM},
                       neg_six_ring},
     auton_menu_button{{130, 115, 230, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "SAFE POS", pros::E_TEXT_MEDIUM},
+                       pros::c::COLOR_WHITE_SMOKE, "SafePos", pros::E_TEXT_MEDIUM},
                       safe_positive},
     auton_menu_button{{245, 115, 345, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "solo_wp", pros::E_TEXT_MEDIUM},

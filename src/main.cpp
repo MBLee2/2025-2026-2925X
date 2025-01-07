@@ -49,7 +49,9 @@ void initialize() {
 	pros::delay(10); 
 	// Clear the Brain screen and show status
 	resetLiftPosition();
+
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
+	
 
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);

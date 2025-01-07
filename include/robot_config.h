@@ -20,8 +20,8 @@
 // drivebase attributes
 #define DRIVEBASE_WHEEL_DIAMETER     lemlib::Omniwheel::NEW_4 // inches
 #define DRIVEBASE_GEAR_SIZE_ON_MOTOR 36.0   // 36 tooth gear
-#define DRIVEBASE_GEAR_SIZE_ON_WHEEL 60.0   // 60 tooth gear
-#define DRIVEBASE_GEAR_RATIO         0.5
+#define DRIVEBASE_GEAR_SIZE_ON_WHEEL 72.0   // 60 tooth gear
+#define DRIVEBASE_GEAR_RATIO         DRIVEBASE_GEAR_SIZE_ON_MOTOR / DRIVEBASE_GEAR_SIZE_ON_WHEEL
 #define LIFT_GEAR_RATIO              1/6.
 #define DRIVEBASE_X_AXIS_ACCEPTED_ERROR 20 //deadzone for x axis
 // drivebase dimensions

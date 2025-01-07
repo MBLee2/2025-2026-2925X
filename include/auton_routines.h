@@ -35,6 +35,7 @@ void rushWP();
 void safePos();
 void negativeFour();
 void solo_wp();
+void positive_half_wp();
 void auton_60s_skills_1();
 void auton_60s_skills_2();
 #endif // _AUTON_ROUTINES_H_

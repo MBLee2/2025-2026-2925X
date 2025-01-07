@@ -41,7 +41,7 @@ auton_routine rush_wp_a{1.000, -1.300, 190, "15S Auton - Near Driver # 2",
                         &rushWP}; // to be updated
 
 auton_routine safe_positive{1.234, -1.234, 90, "15S Auton - Near Driver # 1",
-                            &safePos};
+                            &positive_half_wp};
 auton_routine negative_four{1.234, -1.234, 90, "15S Auton - Near Driver # 1",
                             &negativeFour};
 auton_routine solo_WP{-0.600, 0.600, 180, "extra_1",
@@ -72,6 +72,23 @@ void printPosition(char *msg, bool withDistanceSensors = false,
     printf("\nRight: %3.2f\tLeft: %3.2f\tBack:%3.2f\tFront:%3.2f\n",
            findDistToWall(0), findDistToWall(1), findDistToWall(2),
            findDistToWall(3));
+  }
+}
+
+void printPositionV2(char *msg, bool withDistanceSensors = false,
+                      bool detailedDist = false) {
+  lemlib::Pose currentPose = chassis.getPose();
+  printf("%s\tX: %3.2f\tY: %3.2f\tTheta: %3.2f\n", msg, currentPose.x,
+         currentPose.y, currentPose.theta);
+  if (withDistanceSensors) {
+    if (detailedDist) {
+      printf("\nF: %d\tL: %d\n",
+             distance_front.get(), distance_left.get());
+    }
+    printf("\nFront: %3.2f\tLeft: %3.2f\n",
+           distToWallF(), distToWallL());
+    printf("\nFront position: %3.2f\tLeft position: %3.2f\n",
+            72 - distToWallF() * cos(deg2rad(fmodf(currentPose.theta, 90))), 72 - distToWallL() * cos(deg2rad(fmodf(currentPose.theta, 90))));
   }
 }
 
@@ -456,6 +473,8 @@ void negativeFour() {
   }
 }
 
+/***********************V2 AUTONS***********************/
+
 void solo_wp(){ // DONE execpt for ring hold
   int time = pros::millis();
   int speed = 127;
@@ -506,6 +525,78 @@ void solo_wp(){ // DONE execpt for ring hold
   master.print(0, 0, "Time: %d", (pros::millis()-time)/1000);
 }
 
+
+void blue_positive_half_wp(){
+  int time = pros::millis();
+  int speed = 60;
+  float speed1 = float(speed);
+
+  chassis.setPose(-2, 58.7, 270);
+  liftPneumaticUp();
+  pros::delay(200);
+  chassis.moveToPoint(20, 60, 2000, {.forwards = false, .maxSpeed = speed1});
+  chassis.waitUntil(20);
+  liftPneumaticDown();
+  chassis.moveToPoint(0, 48, 3000, {.maxSpeed = speed1});
+  spinIntake(127);
+  while(!detectBlue(getIntakeColor()))
+    pros::delay(15);
+  pros::delay(100);
+  stopIntake();
+  printPositionV2((char *) "First ring");
+
+  chassis.turnToPoint(24, 24, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(24, 24, 3000, {.forwards = false, .maxSpeed = speed1});
+  chassis.waitUntil(33);
+  closeClamp();
+  spinIntake(127);
+  printPositionV2((char *) "Goal pickup");
+
+  chassis.turnToPoint(48, 24, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(46, 24, 2000, {});
+  autoIntake = true;
+
+  chassis.turnToPoint(55, 48, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(55, 48, 2000, {.maxSpeed = speed1});
+  chassis.waitUntil(26);
+  extendSweep();
+  driveDistance(24, 1500, speed);
+  chassis.turnToHeading(270, 2000, {.maxSpeed = speed});
+  chassis.waitUntil(90);
+  retractSweep();
+  printPositionV2((char *) "Corner sweep");
+
+  turnToRing(3000, speed);
+  pros::Task([=]{
+    while(!detectBlue(getIntakeColor()))
+      pros::delay(15);
+    autoDrive = false;
+  });
+  driveDistance(24, 3000, speed);
+
+  chassis.moveToPoint(7, 7, 3000, {});
+
+  master.clear_line(0);
+  master.print(0, 0, "Time: %d", (pros::millis()-time)/1000);
+
+}
+
+/**
+ * Starts at wall stake, facing towards negative corner
+ * Preload in alliance stake device
+ * 
+ * Alliance stake
+ * 3/4 rings on one goal
+ * Touch bar
+ */
+void positive_half_wp(){
+  if(COLOR){
+    return;
+  } else {
+    blue_positive_half_wp();
+  }
+}
+
 void auton_15s_far_driver_elim(){ 
   printf("%s(): Exiting\n", __func__); }
 
@@ -514,10 +605,6 @@ void DescoreRushElim() {
 // STILL WORKING ON IT
 
 void auton_60s_skills_1() {
-  /*chassis.setPose(0, 0, 0);
-  driveDistance(24, 2000);
-  return;*/
-
   COLOR = true;
   COLOR_SIG = 2;
   autoIntake = false;
@@ -525,10 +612,10 @@ void auton_60s_skills_1() {
   float speed = 60;
 
   chassis.setPose(4,-58.75,90);
-  liftPneumaticUp();
-  pros::delay(300);
   lemlib::Pose currentPose = chassis.getPose();
   double temp = 0;
+  /*liftPneumaticUp();
+  pros::delay(300);
   chassis.moveToPoint(-4, -58.75,1000,{.forwards=false, .minSpeed = 30, .earlyExitRange = 2});
   chassis.moveToPoint(-24, -48, 2000,{.forwards=false, .maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 2});
   chassis.waitUntil(18);
@@ -711,15 +798,22 @@ void auton_60s_skills_1() {
   printPosition((char *)"3rd Ring", false);
   pros::delay(100);
   chassis.moveToPoint(0, 0, 2000, {.maxSpeed = speed});
-  printPosition((char *)"Middle Ring", false);
+  printPosition((char *)"Middle Ring", false);*/
+
+  chassis.setPose(24, 24, 0);
+  spinIntake(127);
+  autoIntake = true;
+  closeClamp();
+  pros::delay(200);
 
   chassis.turnToPoint(48, 48, 3000);
   chassis.moveToPoint(48, 48, 4000, {.maxSpeed = speed});
   chassis.turnToPoint(60, 48, 2000);
   chassis.waitUntil(90);
   currentPose = chassis.getPose();
-  chassis.setPose(72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta - 90))), 72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta - 90))), currentPose.theta);
-  printPosition((char *)"5th Ring", false);
+  chassis.setPose(72 - (distToWallF() * cos(deg2rad(fmodf(currentPose.theta, 90)))), 72 - (distToWallL() * cos(deg2rad(fmodf(currentPose.theta, 90)))), currentPose.theta);
+  pros::delay(50);
+  printPositionV2((char *)"5th Ring", true, true);
   pros::delay(50);
   chassis.moveToPoint(58, 48, 4000, {.maxSpeed = speed});
 
@@ -738,23 +832,24 @@ void auton_60s_skills_1() {
   openClamp();
   driveDistance(5, 2000, speed);
   pros::delay(75);
-  currentPose = chassis.getPose();
   printPosition((char *)"Goal Drop", false);
 
   driveDistance(15, 2000, speed);
   chassis.turnToHeading(90, 1000);
   chassis.waitUntil(180);
   currentPose = chassis.getPose();
-  chassis.setPose(72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta - 90))), 72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta - 90))), currentPose.theta);
+  chassis.setPose(72 - fabs(distToWallF() * sin(deg2rad(currentPose.theta))), 72 - fabs(distToWallL() * sin(deg2rad(currentPose.theta))), currentPose.theta);
   printPosition((char *)"After 3rd Goal Drop", false);
   pros::delay(50);
+
   currentPose = chassis.getPose();
   chassis.setPose(0, 0, 0);
-  chassis.moveToPoint(48 - currentPose.y, -currentPose.x, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(currentPose.y - 48, -currentPose.x, 2000, {.forwards = false, .maxSpeed = speed});
   chassis.waitUntil(72);
   chassis.turnToHeading(0, 1000);
   chassis.waitUntil(45);
   chassis.setPose(0, 48, 90);
+  return;
   
   autoIntake = false;
 

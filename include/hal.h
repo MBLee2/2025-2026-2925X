@@ -5,9 +5,10 @@
 #include "auton_basics.h"
 #include "pros/motors.h"
 
-#define LAT_KP  8
-#define LAT_KI  -0.04
-#define LAT_KD  4
+#define LAT_KP  7
+#define LAT_KI  0
+#define LAT_KD  2
+
 #define LAT_SMALL_RANGE 1
 #define LAT_SMALL_RANGE_TIMEOUT 150
 
@@ -93,6 +94,7 @@ int get2ndIntakeColor();
 void setIntakeColorLED(int value);
 void setIntakeColor2LED(int value);
 
+void setDriveEncoder(pros::motor_encoder_units_e mode);
 float getLFPosition();
 float getLMPosition();
 float getLBPosition();
@@ -110,6 +112,7 @@ float getLeftMotorPositionInInches();
 float getRightMotorPositionInInches();
 
 float wheelDegToInches(float degrees);
+float wheelRotToInches(float rotations);
 
 void resetIMUHeading();
 float getHeading();
@@ -138,6 +141,9 @@ void outakeFor(float degrees);
 void outakeFor(int ms);
 void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
+
+bool detectRed(int hue);
+bool detectBlue(int hue);
 
 bool sort_color(bool sort);
 void sort_color_queue();
