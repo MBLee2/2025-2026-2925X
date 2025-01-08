@@ -1,6 +1,8 @@
 #include "hal.h"
+#include "auton_basics.h"
 #include "fmt/format.h"
 #include "pros/motors.h"
+#include "pros/rtos.hpp"
 #include "pros/vision.h"
 #include "robot_config.h"
 #include "controls.h"
@@ -1016,23 +1018,22 @@ void driveToRing(int timeout, int maxSpeed) {
 
     stopDrive();
 }
-
-/*void saveRings(int timeout){
-    spinIntake(127);
-    if(getIntakeDist() > 20){
-        while(getIntakeDist() > 20 && timeout > 0 && (auton || autoSkill || autoIntake)){
-            pros::delay(10);
-            timeout -= 10;
-        }
-        if(auton || autoSkill || autoIntake)
-
+void saveRingsAsTask(int speed)
+{
+    pros::Task intake_task(saveRings);
+}
+void saveRings(){
+    while (true) {
+        int hue = get2ndIntakeColor();
+        if(hue >= 135 && hue <= 185 || hue >= 0 && hue <= 25)
+        {
             stopIntake();
-            break;
+            return;
         }
         pros::delay(20);
     }
-    return;
 }
+  
 
 /*void basketRings(bool withSave){
     autoIntake = true;

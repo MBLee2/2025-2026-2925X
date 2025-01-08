@@ -11,8 +11,8 @@ using pros::c::COLOR_WHITE;
 
 std::vector<auton_menu_button> button_list = {
     auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "GoalRush", pros::E_TEXT_MEDIUM},
-                      blue_goal_rush},
+                       pros::c::COLOR_WHITE_SMOKE, "RedGoalRush", pros::E_TEXT_MEDIUM},
+                      red_goal_rush},
     /*auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
                       near_driver_qual},*/
@@ -23,11 +23,11 @@ std::vector<auton_menu_button> button_list = {
                        pros::c::COLOR_WHITE_SMOKE, "NegativeAWP", pros::E_TEXT_MEDIUM},
                        blue_neg_awp},
     auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "Neg 6", pros::E_TEXT_MEDIUM},
-                      neg_six_ring},
+                       pros::c::COLOR_WHITE_SMOKE, "NegSix_red", pros::E_TEXT_MEDIUM},
+                      neg_six_ring_red},
     auton_menu_button{{130, 115, 230, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "SafePos", pros::E_TEXT_MEDIUM},
-                      safe_positive},
+                       pros::c::COLOR_WHITE_SMOKE, "RedGoalRush", pros::E_TEXT_MEDIUM},
+                      red_goal_rush},
     auton_menu_button{{245, 115, 345, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "solo_wp", pros::E_TEXT_MEDIUM},
                       solo_WP},
