@@ -627,7 +627,7 @@ void goal_rush_red()
 
 }
 
-void blue_positive_half_wp(){
+void blue_positive_half_wp(){ //Almost Done
   int time = pros::millis();
   int speed = 60;
   float speed1 = float(speed);
@@ -638,15 +638,15 @@ void blue_positive_half_wp(){
   chassis.moveToPoint(20, 60, 2000, {.forwards = false, .maxSpeed = speed1});
   chassis.waitUntil(20);
   liftPneumaticDown();
+  liftIntake();
   chassis.moveToPoint(0, 48, 3000, {.maxSpeed = speed1});
   spinIntake(127);
-  while(!detectBlue(getIntakeColor()))
-    pros::delay(15);
-  pros::delay(100);
-  stopIntake();
+  saveRings();
   printPositionV2((char *) "First ring");
+  pros::delay(200);
 
   chassis.turnToPoint(24, 24, 2000, {.forwards = false, .maxSpeed = speed});
+  dropIntake();
   chassis.moveToPoint(24, 24, 3000, {.forwards = false, .maxSpeed = speed1});
   chassis.waitUntil(33);
   closeClamp();
@@ -656,26 +656,24 @@ void blue_positive_half_wp(){
   chassis.turnToPoint(48, 24, 2000, {.maxSpeed = speed});
   chassis.moveToPoint(46, 24, 2000, {});
   autoIntake = true;
+  chassis.waitUntil(22);
+  printPositionV2((char *) "2nd Ring");
 
   chassis.turnToPoint(55, 48, 2000, {.maxSpeed = speed});
   chassis.moveToPoint(55, 48, 2000, {.maxSpeed = speed1});
-  chassis.waitUntil(26);
+  chassis.waitUntil(28);
   extendSweep();
-  driveDistance(24, 1500, speed);
+  driveDistance(10, 3000, speed);
+  pros::delay(100);
   chassis.turnToHeading(270, 2000, {.maxSpeed = speed});
   chassis.waitUntil(90);
   retractSweep();
   printPositionV2((char *) "Corner sweep");
 
   turnToRing(3000, speed);
-  pros::Task([=]{
-    while(!detectBlue(getIntakeColor()))
-      pros::delay(15);
-    autoDrive = false;
-  });
-  driveDistance(24, 3000, speed);
+  driveDistance(calcDistance(), 3000, speed);
 
-  chassis.moveToPoint(7, 7, 3000, {});
+  chassis.moveToPoint(10, 10, 3000, {});
 
   master.clear_line(0);
   master.print(0, 0, "Time: %d", (pros::millis()-time)/1000);
