@@ -453,7 +453,8 @@ float wheelRotToInches(float rotations){
 
 // Drive
 void driveDistance(float distance, int timeout, int maxSpeed) {
-    resetDriveMotorPosition(); //TEST TO MAKE SURE THIS DOES NOT AFFECT LEMLIB
+    float startLeft = getLeftMotorPositionInInches();
+    float startRight = getRightMotorPositionInInches();
     autoDrive = true;
     bool notReached = true;
     float error, prevError = 0, totalError = 0;
@@ -461,8 +462,8 @@ void driveDistance(float distance, int timeout, int maxSpeed) {
     int counter = 0;
     pros::delay(50);
     while(notReached && timeout > 0 && (auton || autoSkill) && autoDrive) {
-        float leftMotorsPosition = getLeftMotorPositionInInches();
-        float rightMotorsPosition = getRightMotorPositionInInches();
+        float leftMotorsPosition = getLeftMotorPositionInInches() - startLeft;
+        float rightMotorsPosition = getRightMotorPositionInInches() - startRight;
 
         float averagePosition = (leftMotorsPosition + rightMotorsPosition) / 2.0;
 
@@ -1016,6 +1017,22 @@ void driveToRing(int timeout, int maxSpeed) {
 
     stopDrive();
 }
+
+bool basket_state;
+
+float calcDistance(){
+
+    pros::vision_object_s_t nearestRing = getMostRelevantObject();
+
+    return (7 * 158.) / (nearestRing.width * tan(deg2rad(32.3)));
+}
+
+
+
+
+
+
+
 /*void saveRingsAsTask(int speed)
 {
     pros::Task intake_task(saveRings);
@@ -1029,8 +1046,9 @@ void saveRings(int timeout){
             return;
         }
         int hue = get2ndIntakeColor();
-        if(hue >= 135 && hue <= 185 || hue >= 0 && hue <= 25)
+        if(detectOurColor(hue))
         {
+            pros::delay(200);
             stopIntake();
             return;
         }
@@ -1039,8 +1057,8 @@ void saveRings(int timeout){
     }
 }
   
-
-/*void basketRings(bool withSave){
+/*
+void basketRings(bool withSave){
     autoIntake = true;
     if(withSave){
      saveRings();

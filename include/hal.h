@@ -154,6 +154,7 @@ pros::vision_object_s_t getOurColorObject();
 pros::vision_object_s_t getMostRelevantObject();
 void turnToRing(int timeout = 15000, float maxSpeed = 130);
 void driveToRing(int timeout = 15000, int maxSpeed = 130);
+float calcDistance();
 
 int getIntakeDist();
 void saveRingsAsTask(int speed = 127);

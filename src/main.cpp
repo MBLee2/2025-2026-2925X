@@ -196,9 +196,9 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
-	bool auton = true;
 	// Clear the Brain screen
 	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
+	auton = true;
    	printf("%s(): Entered\n", __func__);
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
@@ -224,8 +224,6 @@ void autonomous() {
 	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
 	//pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
 	
-	
-	auton = false;
 	printf("%s(): Exiting\n", __func__);
 
 }
