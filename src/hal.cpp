@@ -195,13 +195,11 @@ void toggleHood(){
 
 void hoodFwd() {
     hood1.retract();
-    hood2.retract();
     autoIntake = false;
 }
 
 void hoodBwd() {
     hood1.extend();
-    hood2.extend();
 }
 
 bool getHood(){
@@ -1018,12 +1016,18 @@ void driveToRing(int timeout, int maxSpeed) {
 
     stopDrive();
 }
-void saveRingsAsTask(int speed)
+/*void saveRingsAsTask(int speed)
 {
     pros::Task intake_task(saveRings);
-}
-void saveRings(){
+}*/
+
+void saveRings(int timeout){
+    int time = 0;
     while (true) {
+        if (time >= timeout)
+        {
+            return;
+        }
         int hue = get2ndIntakeColor();
         if(hue >= 135 && hue <= 185 || hue >= 0 && hue <= 25)
         {
@@ -1031,6 +1035,7 @@ void saveRings(){
             return;
         }
         pros::delay(20);
+        time += 20;
     }
 }
   

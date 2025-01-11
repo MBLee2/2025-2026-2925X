@@ -35,12 +35,11 @@ pros::Motor intakeR(11, pros::v5::MotorGears::red);
 
 //Pistons
 pros::adi::Pneumatics hood1('d', true);
-pros::adi::Pneumatics hood2('h', true);
 
 pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
-pros::adi::Pneumatics intake_lift({5, 'e'}, false);
+pros::adi::Pneumatics intake_lift('h', false);
 pros::adi::Pneumatics intake_ramp_lift({5, 'a'}, false);
 
 pros::adi::Pneumatics mogo_rush('g', false);

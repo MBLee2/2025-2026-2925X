@@ -157,7 +157,7 @@ void driveToRing(int timeout = 15000, int maxSpeed = 130);
 
 int getIntakeDist();
 void saveRingsAsTask(int speed = 127);
-void saveRings();
+void saveRings(int timeout = 1000);
 void basketRings(bool withSave = true);
 
 
