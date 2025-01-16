@@ -34,7 +34,7 @@ pros::Motor intakeR(11, pros::v5::MotorGears::red);
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
 
 //Pistons
-pros::adi::Pneumatics hood1('d', true);
+pros::adi::Pneumatics hood1('d', false);
 
 pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
@@ -52,8 +52,8 @@ pros::adi::Pneumatics lift_helper2('c',false );
 
 
 /* SENSORS */
-pros::Optical intake_color(6);
-pros::Optical intake_color2(8);
+pros::Optical intake_color(14);
+pros::Optical intake_color2(6);
 pros::Distance distance_lf(12);
 pros::Distance distance_lb(20);
 pros::Distance distance_rf(10);
@@ -107,7 +107,7 @@ lemlib::OdomSensors sensors(
 // forward/backward PID
 lemlib::ControllerSettings lateral_controller(9, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              32, // derivative gain (kD)
+                                              21, // derivative gain (kD)
                                               0, // anti windup
                                               0, // small error range, in inches
                                               00, // small error range timeout, in milliseconds

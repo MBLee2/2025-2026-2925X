@@ -153,6 +153,7 @@ void competition_initialize() {
  */
 {
 	//HERE
+	
 	printf("%s(): Entered\n", __func__);
 
 	// weird bug in system; without the following delay, was getting a white screen
@@ -197,6 +198,9 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
+	//chassis.moveToPoint(0, 30, 10000);
+	//HERE
+	
 	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
 	auton = true;
    	printf("%s(): Entered\n", __func__);

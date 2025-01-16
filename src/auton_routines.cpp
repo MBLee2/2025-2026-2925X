@@ -493,8 +493,9 @@ void solo_wp(){ // DONE execpt for ring hold
   closeClamp();
   pros::delay(300);
   spinIntake(127);
-  chassis.turnToPoint(-46,-24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-46,-24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
+
+  chassis.turnToPoint(-42,-25,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-42,-25,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
 
   chassis.turnToPoint(-41,-11,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
   chassis.moveToPoint(-41,-8,1000,{.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 5});
@@ -503,22 +504,22 @@ void solo_wp(){ // DONE execpt for ring hold
   chassis.moveToPoint(-50,-8,1000,{.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 5});
   chassis.moveToPoint(-50,-52,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 5});
   //*/
-  chassis.turnToPoint(-66, -68, 2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.turnToPoint(-66, -70, 2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
   stopSorting();
-  chassis.moveToPoint(-66,-68,1000,{.maxSpeed = 127,.minSpeed = 60, .earlyExitRange = 5});
+  chassis.moveToPoint(-66,-70,1000,{.maxSpeed = 127,.minSpeed = 60, .earlyExitRange = 5});
 
   chassis.moveToPoint(-32, -54, 2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   chassis.turnToHeading(90, 1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8},false);
   temp_pos = chassis.getPose().y;
 
   //chassis.moveToPoint(15,-43,2000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
-  chassis.moveToPoint(-7.5,temp_pos,1500,{.maxSpeed = 60});
+  chassis.moveToPoint(-7.5,temp_pos,1000,{.maxSpeed = 80});
   liftIntake();
   saveRings(2800);
   chassis.moveToPoint(15,temp_pos,2000,{.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 5});
   toggleClamp();
   chassis.turnToPoint(24,-27,1000,{.forwards=false,.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(24,-22,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6},false);
+  chassis.moveToPoint(24,-28,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6},false);
   toggleClamp();
   pros::delay(200);
   spinIntake(127);
@@ -529,7 +530,7 @@ void solo_wp(){ // DONE execpt for ring hold
   temp_pos = chassis.getPose().y;
   chassis.moveToPoint(50,temp_pos-12,2000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   chassis.turnToHeading(180, 1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(12, temp_pos, 2000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
+  chassis.moveToPoint(12, temp_pos, 2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   chassis.turnToHeading(315, 1000);
 
   /*
