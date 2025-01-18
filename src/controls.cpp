@@ -217,7 +217,6 @@ void taskFn_hood_control(void) {
     int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
     // Toggle the basket state with the Y button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      stopSorting();
       toggleHood();
       if(!getHood()){
         redirectRings();

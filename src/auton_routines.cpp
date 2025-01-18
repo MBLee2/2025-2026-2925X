@@ -478,7 +478,6 @@ void solo_wp(){ // DONE execpt for ring hold
   int speed = 100;
   float speed1 = float(speed);
   COLOR = true;
-  COLOR_SIG = 2;
   int temp_pos = 0;
   chassis.setPose(0,-60,90);
 
@@ -553,7 +552,6 @@ void neg_6_ring_red(){ //DONE
   int speed = 127;
   float speed1 = float(speed);
   COLOR = true;
-  COLOR_SIG = 2;
 
   chassis.setPose(0,-60,90);
   startSorting();
@@ -629,11 +627,12 @@ void goal_rush_red()
 }
 
 void blue_positive_half_wp(){ //Almost Done
+
   int time = pros::millis();
-  int speed = 60;
+  int speed = 90;
   float speed1 = float(speed);
 
-  chassis.setPose(-2, 58.7, 270);
+  chassis.setPose(-2.25, 58.5, 270);
   liftPneumaticUp();
   pros::delay(200);
   chassis.moveToPoint(20, 60, 2000, {.forwards = false, .maxSpeed = speed1});
@@ -642,14 +641,15 @@ void blue_positive_half_wp(){ //Almost Done
   liftIntake();
   chassis.moveToPoint(0, 48, 3000, {.maxSpeed = speed1});
   spinIntake(127);
-  saveRings();
+  saveRings(3000);
   printPositionV2((char *) "First ring");
   pros::delay(200);
+  stopIntake();
 
   chassis.turnToPoint(24, 24, 2000, {.forwards = false, .maxSpeed = speed});
   dropIntake();
-  chassis.moveToPoint(24, 24, 3000, {.forwards = false, .maxSpeed = speed1});
-  chassis.waitUntil(33);
+  chassis.moveToPoint(26, 22, 3000, {.forwards = false, .maxSpeed = speed1});
+  chassis.waitUntil(34);
   closeClamp();
   spinIntake(127);
   printPositionV2((char *) "Goal pickup");
@@ -661,18 +661,37 @@ void blue_positive_half_wp(){ //Almost Done
   printPositionV2((char *) "2nd Ring");
 
   chassis.turnToPoint(55, 48, 2000, {.maxSpeed = speed});
-  chassis.moveToPoint(55, 48, 2000, {.maxSpeed = speed1});
-  chassis.waitUntil(28);
+  chassis.moveToPoint(62, 60, 2000, {.maxSpeed = speed1});
+  chassis.waitUntil(39);
+  pros::delay(750);
+  driveDistance(-10, 2000, speed);
+  
   extendSweep();
   driveDistance(10, 3000, speed);
-  pros::delay(100);
-  chassis.turnToHeading(270, 2000, {.maxSpeed = speed});
+  chassis.turnToHeading(270, 2000, {.maxSpeed = 50});
   chassis.waitUntil(90);
   retractSweep();
   printPositionV2((char *) "Corner sweep");
 
-  turnToRing(3000, speed);
-  driveDistance(calcDistance(), 3000, speed);
+  turnToRing();
+
+  pros::Task cancel_drive([=]{
+    pros::delay(300);
+    lemlib::Pose currentPose = chassis.getPose();
+    while(true){
+      currentPose = chassis.getPose();
+      if(!chassis.isInMotion()){
+        break;
+      } else if(currentPose.x < 24 || currentPose.y > 10){
+        autoDrive = false;
+        break;
+      }
+
+      pros::delay(15);
+    }
+  });
+  driveFullVision(2000, speed1);
+  pros::delay(400);
 
   chassis.moveToPoint(10, 10, 3000, {});
 
@@ -706,7 +725,6 @@ void DescoreRushElim() {
 
 void auton_60s_skills_1() {
   COLOR = true;
-  COLOR_SIG = 2;
   autoIntake = false;
   int time = pros::millis();
   float speed = 60;
@@ -714,7 +732,7 @@ void auton_60s_skills_1() {
   chassis.setPose(4,-58.75,90);
   lemlib::Pose currentPose = chassis.getPose();
   double temp = 0;
-  /*liftPneumaticUp();
+  liftPneumaticUp();
   pros::delay(300);
   chassis.moveToPoint(-4, -58.75,1000,{.forwards=false, .minSpeed = 30, .earlyExitRange = 2});
   chassis.moveToPoint(-24, -48, 2000,{.forwards=false, .maxSpeed=speed, .minSpeed = 30, .earlyExitRange = 2});
@@ -898,13 +916,7 @@ void auton_60s_skills_1() {
   printPosition((char *)"3rd Ring", false);
   pros::delay(100);
   chassis.moveToPoint(0, 0, 2000, {.maxSpeed = speed});
-  printPosition((char *)"Middle Ring", false);*/
-
-  chassis.setPose(24, 24, 0);
-  spinIntake(127);
-  autoIntake = true;
-  closeClamp();
-  pros::delay(200);
+  printPosition((char *)"Middle Ring", false);
 
   chassis.turnToPoint(48, 48, 3000);
   chassis.moveToPoint(48, 48, 4000, {.maxSpeed = speed});

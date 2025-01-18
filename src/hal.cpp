@@ -12,7 +12,6 @@
 
 
 bool COLOR = false; // true = red, false = blue
-int COLOR_SIG = (COLOR) ? 2 : 1;
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -195,7 +194,7 @@ void toggleHood(){
 
 void hoodFwd() {
     hood1.retract();
-    autoIntake = false;
+    stopSorting();
 }
 
 void hoodBwd() {
@@ -309,7 +308,7 @@ pros::vision_object_s_t getOurColorObject() {
 
 pros::vision_object_s_t getMostRelevantObject() {
     pros::vision_object_s_t object_arr[5];
-    int availableObjects = vision_sensor.read_by_sig(0, 2, 5, object_arr);
+    int availableObjects = vision_sensor.read_by_sig(0, (COLOR) ? 2 : 1, 5, object_arr);
 
     int highestY = 0;
     int highestYIndex = 0;
@@ -327,6 +326,7 @@ pros::vision_object_s_t getMostRelevantObject() {
     }
 
     if(availableObjects <= 1){
+        //printf("X: %d", object_arr[highestYIndex].x_middle_coord);
         return object_arr[highestYIndex];
     }
 
@@ -344,6 +344,7 @@ pros::vision_object_s_t getMostRelevantObject() {
         }
     }
 
+    //printf("X: %d", object_arr[lowestXOffsetIndex].x_middle_coord);
     return object_arr[lowestXOffsetIndex];
 }
 
@@ -808,22 +809,22 @@ void addCurrentRing(){
         if(autoIntake){
             int hue = getIntakeColor();
 
-            if(detectRed(hue))
+            if(detectRed(hue)) //If we detect red
             {
                 printf("Detected red %i\n", hue);
-                ringQueue.push(true);
+                ringQueue.push(true); //Add to queue as upcoming
                 
-                while(detectRed(hue)){
+                while(detectRed(hue)){ //Wait for ring to continue through intake
                     pros::delay(20);
                     hue = getIntakeColor();
                 }
             }
-            else if(detectBlue(hue))
+            else if(detectBlue(hue)) //If we detect blue
             {
                 printf("Detected blue %i\n", hue);
-                ringQueue.push(false);
+                ringQueue.push(false); //Add to queue as upcoming
 
-                while(detectBlue(hue)){
+                while(detectBlue(hue)){ //Wait for ring to continue through intake
                     pros::delay(20);
                     hue = getIntakeColor();
                 }
@@ -837,11 +838,11 @@ void checkQueue() {
     while(true){
         if(autoIntake){
             if(!ringQueue.empty()){
-                if(ringQueue.front() == COLOR && getRedirect()){
-                    closeRedirect();
+                if(ringQueue.front() == COLOR && getRedirect()){ //If next ring is ours and redirect is up
+                    closeRedirect(); //close redirect
                     printf("Scoring rings\n");
-                } else if(ringQueue.front() != COLOR && !getRedirect()) {
-                    redirectRings();
+                } else if(ringQueue.front() != COLOR && !getRedirect()) { //If next ring is opp.'s and redirect is closed
+                    redirectRings(); //open redirect
                     printf("Sorting out\n");
                 }
             }
@@ -873,31 +874,31 @@ void countRings() {
         if(autoIntake && !ringQueue.empty()){
             int hue = get2ndIntakeColor();
 
-            if(detectRed(hue) && ringQueue.front() == true)
+            if(detectRed(hue) && ringQueue.front() == true) //If we detect red
             {
-                if(COLOR == true){
-                    waitForExitRed();
-                    ringQueue.pop();
+                if(COLOR == true){ //If we are red 
+                    waitForExitRed(); //wait for it to score to avoid opening early
+                    ringQueue.pop(); //then remove from queue
                     printf("Exiting red %i\n", hue);
-                } else {
+                } else { //If we are not red
                     pros::delay(30);
-                    ringQueue.pop();
+                    ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
                     printf("Exiting red %i\n", hue);
-                    waitForExitRed();
+                    waitForExitRed(); //wait for it to exit
                 }
             }
 
-            if(detectBlue(hue) && ringQueue.front() == false)
+            if(detectBlue(hue) && ringQueue.front() == false) //If we detect blue
             {
-                if(COLOR == false){
-                    waitForExitBlue();
-                    ringQueue.pop();
+                if(COLOR == false){ //If we are blue
+                    waitForExitBlue(); //wait for it to score to avoid opening early
+                    ringQueue.pop(); //then remove from queue
                     printf("Exiting blue %i\n", hue);
                 } else {
                     pros::delay(30);
-                    ringQueue.pop();
+                    ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
                     printf("Exiting blue %i\n", hue);
-                    waitForExitBlue();
+                    waitForExitBlue(); //wait for it to exit
                 }
             }
         }
@@ -1027,7 +1028,46 @@ float calcDistance(){
     return (7 * 158.) / (nearestRing.width * tan(deg2rad(32.3)));
 }
 
+void driveFullVision(int timeout, int maxSpeed) {
+    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+    autoDrive = true;
+    float turnPower, motorPower = maxSpeed;
+    float distance, prevDistance = 0, derivative = 0;
+    pros::delay(50);
+    while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill) && autoDrive) {
 
+        pros::vision_object_s_t nearestRing = getMostRelevantObject();
+
+        if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+
+            int vision_error = nearestRing.x_middle_coord - 158;
+
+            turnPower = VISION_KP * vision_error;
+
+            distance = calcDistance();
+
+            derivative = distance - prevDistance;
+
+            motorPower = LAT_KP * distance + LAT_KD * derivative;
+
+            //printf("Drive: %f\t Turn: %f\n", motorPower, turnPower);
+
+            prevDistance = distance;
+
+            if(motorPower > maxSpeed){
+                motorPower = maxSpeed;
+            }
+        }
+
+        drive(motorPower + turnPower, motorPower - turnPower);
+        //printf("Motor Power: %f\n", motorPower);
+
+        pros::delay(15);
+        timeout -= 15;
+    }
+
+    stopDrive();
+}
 
 
 
@@ -1048,7 +1088,7 @@ void saveRings(int timeout){
         int hue = get2ndIntakeColor();
         if(detectOurColor(hue))
         {
-            pros::delay(200);
+            pros::delay(100);
             stopIntake();
             return;
         }
