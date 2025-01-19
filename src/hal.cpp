@@ -186,19 +186,19 @@ bool getRedirect() {
 
 void toggleHood(){
     if(getHood()){
-        hoodFwd();
-    } else {
         hoodBwd();
+    } else {
+        hoodFwd();
     }
 }
 
 void hoodFwd() {
-    hood1.retract();
+    hood1.extend();
     stopSorting();
 }
 
 void hoodBwd() {
-    hood1.extend();
+    hood1.retract();
 }
 
 bool getHood(){
@@ -547,7 +547,7 @@ void turn(float degrees, int timeout) {
 
 // Lift
 void liftUpWallStake() {
-    moveLiftToPos(77);
+    moveLiftToPos(80);
 }
 
 void liftDown() {
@@ -914,7 +914,7 @@ void sort_color_queue(){
 }
 
 void startSorting() {
-    if(!autoIntake){
+    if(!autoIntake && !getHood()){
         master.print(1,0,"Sorting");
         autoIntake = true;
     }

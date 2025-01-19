@@ -85,7 +85,7 @@ lemlib::Drivetrain drivetrain(
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
-pros::Rotation vertical_rot(14); // port 1, not reversed
+pros::Rotation vertical_rot(12); // port 1, not reversed
 pros::Rotation horizontal_rot(17); // port 1, not reversed
 
 // back tracking wheel encoder  

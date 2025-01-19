@@ -181,6 +181,7 @@ void taskFn_intake_control(void) {
       }
       lift_counter++;
     } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      liftPneumaticDown();
       lift_counter = 0;
       autoLift = false;
       intakeMode = false;
@@ -199,9 +200,11 @@ void taskFn_intake_control(void) {
     if(current_state == OUTAKE)
     {
       spinIntake(-127);
+      clearRingQueue();
     }
     if(current_state == STOP)
     {
+      clearRingQueue();
     }
 
     pros::delay(10);
@@ -219,6 +222,7 @@ void taskFn_hood_control(void) {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       toggleHood();
       if(!getHood()){
+        stopSorting();
         redirectRings();
       } else {
         closeRedirect();
