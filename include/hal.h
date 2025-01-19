@@ -159,8 +159,8 @@ float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 
 int getIntakeDist();
-void saveRingsAsTask(int speed = 127);
-void saveRings(int timeout = 1000);
+void saveOurRing(int speed = 127);
+void saveRing(int timeout = 1000);
 void basketRings(bool withSave = true);
 
 

@@ -765,7 +765,7 @@ int blueLower = 140;
 int blueUpper = 260;
 
 bool detectRed(int hue){
-    return hue >= 0 && hue <= 35;
+    return hue >= 0 && hue <= 55;
 }
 
 bool detectBlue(int hue){
@@ -777,6 +777,14 @@ bool detectOurColor(int hue){
         return detectRed(hue);
     } else {
         return detectBlue(hue);
+    }
+}
+
+bool detectTheirColor(int hue){
+    if(COLOR){
+        return detectBlue(hue);
+    } else {
+        return detectRed(hue);
     }
 }
 
@@ -1078,7 +1086,7 @@ void driveFullVision(int timeout, int maxSpeed) {
     pros::Task intake_task(saveRings);
 }*/
 
-void saveRings(int timeout){
+void saveOurRing(int timeout){
     int time = 0;
     while (true) {
         if (time >= timeout)
@@ -1086,9 +1094,36 @@ void saveRings(int timeout){
             return;
         }
         int hue = get2ndIntakeColor();
+        printf("Color %d\n",hue);
         if(detectOurColor(hue))
         {
-            pros::delay(100);
+            //pros::delay(100);
+            stopIntake();
+            return;
+        }
+        pros::delay(20);
+        time += 20;
+    }
+}
+
+void saveRing(int timeout){
+    int time = 0;
+    while (true) {
+        if (time >= timeout)
+        {
+            return;
+        }
+        int hue = get2ndIntakeColor();
+        printf("Color %d\n",hue);
+        if(detectOurColor(hue))
+        {
+            //pros::delay(100);
+            stopIntake();
+            return;
+        }
+        if(detectTheirColor(hue))
+        {
+            //pros::delay(100);
             stopIntake();
             return;
         }
