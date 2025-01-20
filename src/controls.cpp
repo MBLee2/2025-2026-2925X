@@ -31,7 +31,7 @@ void taskFn_drivebase_control(void) {
     // enabling agile motion
     int turnVelleft = TURN_CONST * leftX;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
       drive_state = !drive_state; // Toggle drive direction when the X button is pressed
       pros::delay(300); // Add a small delay to avoid rapid toggling of direction
     }
@@ -114,6 +114,7 @@ void taskFn_intake_control(void) {
   intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   intake_state current_state = STOP; // Initialize with a default state, STOP
   int lift_counter = 0;
+  bool temp_state = true;
   while (true) // Infinite loop to keep checking controller input for intake
   {
     double pos = getLiftPosition();; // Get the current position of the lift
@@ -148,7 +149,7 @@ void taskFn_intake_control(void) {
       }
     }
     
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
       if (autoIntake == false)
       {
         startSorting();
@@ -163,38 +164,39 @@ void taskFn_intake_control(void) {
       intakeMode = false;
 
       if(!autoLift && lift_counter == 0){
-        pros::Task lift_wall_stake([=] {moveLiftToPos(77);});
+        pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
       } else if(lift_counter > 15) {
         autoLift = false;
 
-        if(getLiftPosition() > 77){
+        if(getLiftPosition() > 100){
           stopIntakeHold();
         } else {
           spinIntake(127);
         }
 
-        if(getLiftPosition() < 15){
+        if(getLiftPosition() < 24){
           liftPneumaticUp();
         } else {
           liftPneumaticDown();
         }
       }
       lift_counter++;
-    } else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+    } 
+    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       liftPneumaticDown();
       lift_counter = 0;
       autoLift = false;
-      intakeMode = false;
+      temp_state = false;
       spinIntake(-127);
-    } else if(!intakeMode && !autoLift){
+    } else if(!temp_state && !autoLift){
       lift_counter = 0;
-      if(getLiftPosition() > 15 && getLiftPosition() < 300){
+      if(getLiftPosition() > 24 && getLiftPosition() < 300){
         liftPneumaticDown();
         stopIntakeHold();
       }
       else{
         stopIntake();
-        intakeMode = true;
+        temp_state = true;
       }
     }
     if(current_state == OUTAKE)

@@ -112,6 +112,11 @@ void stopDrive() {
     stopLeftMotors();
     stopRightMotors();
 }
+void stopDriveHold() {
+    setDriveBrake(pros::E_MOTOR_BRAKE_HOLD);
+    stopLeftMotors();
+    stopRightMotors();
+}
 
 void setDriveBrake(pros::motor_brake_mode_e mode) {
     lf.set_brake_mode(mode);
@@ -570,11 +575,11 @@ void moveLiftToPos(float pos,int timeout){
     int time = pros::millis();
     autoLift = true;
 
-    if(pos <= 2){
-        pos = 3;
+    if(pos <= 13){
+        pos = 13.5;
     }
-    else if(pos >= 81){
-        pos = 80;
+    else if(pos >= 101){
+        pos = 101;
     }
     autoLift = true;
 
@@ -587,7 +592,8 @@ void moveLiftToPos(float pos,int timeout){
             //printf("Lift %f\n",getLiftPosition());
         }
 
-        if(getLiftPosition() > 15 && getLiftPosition() < 300){
+        if(getLiftPosition() > 25 && getLiftPosition() < 300){
+            liftPneumaticDown();
             stopIntakeHold();
         }
         else{
@@ -597,7 +603,7 @@ void moveLiftToPos(float pos,int timeout){
     else if(getLiftPosition() < pos){
         spinIntake(127);
 
-        if(getLiftPosition() < 15){
+        if(getLiftPosition() < 25){
             liftPneumaticUp();
         }
 

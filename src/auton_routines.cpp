@@ -24,8 +24,8 @@ ASSET(touchbar_txt);
 
 // Auton routine start positions
 auton_routine null_routine{0, 0, 0, "None - Invalid Routine", nullptr};
-auton_routine red_goal_rush{1.234, -1.234, 90, "15S Auton - Near Driver # 1",
-                             &goal_rush_red};
+auton_routine goal_rush{1.234, -1.234, 90, "15S Auton - Near Driver # 1",
+                             &goal_rush_pull_back};
 auton_routine blue_ring_rush{1.000, -1.300, 190, "15S Auton - Near Driver # 2",
                              &ring_rush};
 auton_routine blue_neg_awp{1.000, -1.300, 190, "15S Auton - Near Driver # 3",
@@ -93,28 +93,6 @@ void printPositionV2(char *msg, bool withDistanceSensors = false,
 }
 
 // FULLY DONE
-
-void goal_rush() // BLUE
-{
-
-  chassis.setPose(-48, -51.5, 180);
-  liftIntake();
-  chassis.moveToPoint(-48, -24, 3000, {.forwards = false});
-  chassis.waitUntil(22);
-  closeClamp();
-  dropIntake();
-  pros::delay(250);
-  openClamp();
-  chassis.waitUntilDone();
-  chassis.moveToPoint(-48, -7.5, 2000,
-                      {
-                          .forwards = false,
-                      });
-  chassis.waitUntil(14);
-  closeClamp();
-  pros::delay(200);
-}
-
 void rushBlue() {
 
   spinIntake(-127);
@@ -603,69 +581,41 @@ void neg_6_ring_red(){ //DONE
 
 }
 
-void goal_rush_red()
+void goal_rush_pull_back()
 {
   int time = pros::millis();
-  int speed = 127;
+  int speed = 40;
   float speed1 = float(speed);
-  chassis.setPose(-63,-53,0);
-  chassis.moveToPoint(-56, -8, 2000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});  
+  chassis.setPose(-60,-53,0);
+  chassis.moveToPoint(-56, -16, 5000,{.maxSpeed = speed1});
+  pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
+  hoodFwd();
   extendSweep();
-  chassis.waitUntil(44);
+  chassis.waitUntil(36);
   extendRushClamp();
-  chassis.moveToPoint(-63, -30, 2000,{.forwards=false});
-  retractSweep();
+  chassis.turnToHeading(70, 1000,{.maxSpeed = speed},false);
   retractRushClamp();
-  chassis.moveToPoint(-63, -40, 2000,{.forwards=false});
-  chassis.turnToPoint(-48, -24, 1000);
-  spinIntake(127);
-  /*chassis.moveToPoint(-48, -24, 1000);
-  saveRing(1000);
-  chassis.turnToPoint(-24, -24, 1000,{.forwards=false});
-  chassis.moveToPoint(-28, -24, 1000,{.forwards=false},false);
-  toggleClamp();
-  spinIntake(127);
-  pros::delay(400);
-  toggleClamp();
-  chassis.moveToPoint(-63, -24, 1500);
-  chassis.turnToHeading(0, 1000);
-  liftUpWallStake();
-  hoodFwd();
-  chassis.moveToPoint(-63, -8, 1000);
-
-
-  /*liftPneumaticUp();
-  hoodFwd();
-  moveLiftToPos(80,2000);
-  chassis.waitUntil(38);
-  extendRushClamp();
-  chassis.waitUntilDone();
-  moveLiftToPos(76,2000);
-  pros::delay(200);
-  chassis.moveToPoint(60, -30, 2000,{.forwards=false});
-  liftPneumaticDown();
-  moveLiftToPos(4,2000);
-//*/
-
-
-
-
-
-  /*
-  extendSweep();
-  chassis.moveToPoint(41,-19, 2000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  chassis.waitUntilDone();
+  chassis.moveToPoint(-60, -16, 1000,{.forwards=false,.maxSpeed = speed1},false);
   retractSweep();
-  pros::delay(100);
-  chassis.moveToPoint(36, -30, 2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.turnToPoint(24, -24, 1000,{.forwards=false,.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(27, -21, 2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  pros::delay(200);
-  closeClamp();
-  pros::delay(200);
-  /*sspinIntake(127);
-  chassis.moveToPoint(48, -24, 1000);
+  chassis.turnToHeading(0, 1000);
+  chassis.moveToPoint(-61, -8, 4000,{.maxSpeed = speed1},false);
+  pros::Task lift_wall_stake1([=] {moveLiftToPos(60);});
+  chassis.turnToHeading(0, 1300);
+  chassis.moveToPoint(-60, -24, 4000,{.forwards=false,.maxSpeed = speed1},false);
+
+
+  //chassis.turnToPoint(-48, -24, 2000,{.maxSpeed = speed});
+
+
+  /*chassis.moveToPoint(-56, -16, 5000,{.maxSpeed = speed1});  
+  pros::Task lift_wall_stake([=] {moveLiftToPos(79);});
+  hoodFwd();
+  extendSweep();
+  chassis.waitUntil(36);
+  extendRushClamp();
+  chassis.moveToPoint(-63, -10, 5000,{.maxSpeed = speed1}); 
   //*/
+
 
 }
 

@@ -52,6 +52,7 @@ void stopRightMotors();
 void drive(int leftSpeed, int rightSpeed);
 void driveStraight(int speed);
 void stopDrive();
+void stopDriveHold();
 void setDriveBrake(pros::motor_brake_mode_e mode);
 
 void spinIntake(int speed);

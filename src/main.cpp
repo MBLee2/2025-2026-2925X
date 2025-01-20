@@ -119,7 +119,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -201,7 +201,7 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = red_goal_rush; //DEFAULT ROUTINE
+	auton_routine default_routine = goal_rush; //DEFAULT ROUTINE
 	auton = true;
    	printf("%s(): Entered\n", __func__);
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
