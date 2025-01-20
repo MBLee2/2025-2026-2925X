@@ -73,6 +73,8 @@ void dropIntake();
 
 void extendSweep();
 void retractSweep();
+void extendRushClamp();
+void retractRushClamp();
 
 void extendSixRing();
 void retractSixRing();
@@ -159,7 +161,7 @@ float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 
 int getIntakeDist();
-void saveOurRing(int speed = 127);
+void saveOurRing(int timeout = 1000);
 void saveRing(int timeout = 1000);
 void basketRings(bool withSave = true);
 

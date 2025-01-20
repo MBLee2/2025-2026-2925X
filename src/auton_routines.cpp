@@ -608,7 +608,50 @@ void goal_rush_red()
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
-  chassis.setPose(39,-53,0);
+  chassis.setPose(-63,-53,0);
+  chassis.moveToPoint(-56, -8, 2000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});  
+  extendSweep();
+  chassis.waitUntil(44);
+  extendRushClamp();
+  chassis.moveToPoint(-63, -30, 2000,{.forwards=false});
+  retractSweep();
+  retractRushClamp();
+  chassis.moveToPoint(-63, -40, 2000,{.forwards=false});
+  chassis.turnToPoint(-48, -24, 1000);
+  spinIntake(127);
+  /*chassis.moveToPoint(-48, -24, 1000);
+  saveRing(1000);
+  chassis.turnToPoint(-24, -24, 1000,{.forwards=false});
+  chassis.moveToPoint(-28, -24, 1000,{.forwards=false},false);
+  toggleClamp();
+  spinIntake(127);
+  pros::delay(400);
+  toggleClamp();
+  chassis.moveToPoint(-63, -24, 1500);
+  chassis.turnToHeading(0, 1000);
+  liftUpWallStake();
+  hoodFwd();
+  chassis.moveToPoint(-63, -8, 1000);
+
+
+  /*liftPneumaticUp();
+  hoodFwd();
+  moveLiftToPos(80,2000);
+  chassis.waitUntil(38);
+  extendRushClamp();
+  chassis.waitUntilDone();
+  moveLiftToPos(76,2000);
+  pros::delay(200);
+  chassis.moveToPoint(60, -30, 2000,{.forwards=false});
+  liftPneumaticDown();
+  moveLiftToPos(4,2000);
+//*/
+
+
+
+
+
+  /*
   extendSweep();
   chassis.moveToPoint(41,-19, 2000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
   chassis.waitUntilDone();

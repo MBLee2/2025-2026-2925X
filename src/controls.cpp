@@ -232,7 +232,12 @@ void taskFn_hood_control(void) {
       stopSorting();
       toggleRedirect();
     }
-
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+      extendRushClamp();
+    }
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+      retractRushClamp();
+    }
     // Control the intake lift based on joystick position
     if (rightX > 0.85) {
       liftIntake();

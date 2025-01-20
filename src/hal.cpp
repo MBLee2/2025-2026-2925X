@@ -165,6 +165,7 @@ void toggleClamp() {
 }
 
 
+
 //Redirect
 void redirectRings() {
     redirect1.extend();
@@ -221,6 +222,15 @@ void extendSweep() {
 
 void retractSweep() {
     mogo_rush.retract();
+}
+
+void extendRushClamp()
+{
+    mogo_rush_clamp.extend();
+}
+void retractRushClamp()
+{
+    mogo_rush_clamp.retract();
 }
 
 // Sixth-ring
