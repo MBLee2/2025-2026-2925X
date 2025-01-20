@@ -479,6 +479,7 @@ void driveDistance(float distance, int timeout, int maxSpeed) {
         float averagePosition = (leftMotorsPosition + rightMotorsPosition) / 2.0;
 
         error = distance - averagePosition;
+        printf("error: %f\t", error);
 
         derivative = error - prevError;
 
@@ -487,6 +488,7 @@ void driveDistance(float distance, int timeout, int maxSpeed) {
             totalError = 0;
 
         float motorPower = (LAT_KP * error) + (LAT_KD * derivative) + (LAT_KI * totalError);
+        printf("motor power: %f\n", motorPower);
 
         if(motorPower > maxSpeed){
             motorPower = maxSpeed;
@@ -561,7 +563,7 @@ void liftUpWallStake() {
 }
 
 void liftDown() {
-    moveLiftToPos(8);
+    moveLiftToPos(14);
 }
 
 void moveLiftToPos(float pos,int timeout){
@@ -586,7 +588,6 @@ void moveLiftToPos(float pos,int timeout){
         }
 
         if(getLiftPosition() > 15 && getLiftPosition() < 300){
-            liftPneumaticDown();
             stopIntakeHold();
         }
         else{
@@ -605,7 +606,6 @@ void moveLiftToPos(float pos,int timeout){
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
-
         liftPneumaticDown();
         stopIntakeHold();
     }

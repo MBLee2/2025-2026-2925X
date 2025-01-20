@@ -7,7 +7,7 @@
 
 #define LAT_KP  7
 #define LAT_KI  0
-#define LAT_KD  2
+#define LAT_KD  0 //2
 
 #define LAT_SMALL_RANGE 1
 #define LAT_SMALL_RANGE_TIMEOUT 150
