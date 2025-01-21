@@ -201,7 +201,7 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = goal_rush; //DEFAULT ROUTINE
+	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
 	auton = true;
    	printf("%s(): Entered\n", __func__);
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
@@ -209,8 +209,8 @@ void autonomous() {
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
     pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running autonomous()");
 
-	//selected_auton_routine = default_routine;
-
+	selected_auton_routine = default_routine;
+	
 	// ensure that an auton routine has been slected
 	if (selected_auton_routine.routine_func == nullptr)
 	{

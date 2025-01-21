@@ -131,6 +131,7 @@ void taskFn_intake_control(void) {
         //autoIntake = false;
         current_state = STOP;
         stopIntake();
+        clearRingQueue();
       }
     }
     // Eject objects with the B button
@@ -138,6 +139,8 @@ void taskFn_intake_control(void) {
       if ((current_state == INTAKE || current_state == STOP) && intakeMode) // If intake is running or stopped, start ejecting
       {
         //autoIntake = false;
+        spinIntake(-127);
+        clearRingQueue();
         current_state = OUTAKE;
 
       } 
@@ -145,6 +148,7 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         current_state = STOP;
+        clearRingQueue();
         stopIntake();
       }
     }
@@ -156,17 +160,21 @@ void taskFn_intake_control(void) {
       }
       else if (autoIntake == true) // If intake is ejecting, stop it
       {
+        closeRedirect();
         stopSorting();
       }
     }
 
-    if  (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      intakeMode = false;
-
-      if(!autoLift && lift_counter == 0){
-        pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
-      } else if(lift_counter > 15) {
-        autoLift = false;
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+      if(getLiftPosition() > 86 || getLiftPosition() < 76)
+      {
+        if(lift_counter == 0){
+          pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
+        } 
+      }
+      
+      else if(lift_counter > 15) {
+        temp_state = false;
 
         if(getLiftPosition() > 100){
           stopIntakeHold();
@@ -176,7 +184,8 @@ void taskFn_intake_control(void) {
 
         if(getLiftPosition() < 24){
           liftPneumaticUp();
-        } else {
+        }
+        else if(getLiftPosition()){
           liftPneumaticDown();
         }
       }
@@ -185,10 +194,10 @@ void taskFn_intake_control(void) {
     else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       liftPneumaticDown();
       lift_counter = 0;
-      autoLift = false;
       temp_state = false;
       spinIntake(-127);
-    } else if(!temp_state && !autoLift){
+    } 
+    else if(!temp_state){
       lift_counter = 0;
       if(getLiftPosition() > 24 && getLiftPosition() < 300){
         liftPneumaticDown();
@@ -199,17 +208,7 @@ void taskFn_intake_control(void) {
         temp_state = true;
       }
     }
-    if(current_state == OUTAKE)
-    {
-      spinIntake(-127);
-      clearRingQueue();
-    }
-    if(current_state == STOP)
-    {
-      clearRingQueue();
-    }
-
-    pros::delay(10);
+    pros::delay(20);
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_intake_control
@@ -225,9 +224,9 @@ void taskFn_hood_control(void) {
       toggleHood();
       if(!getHood()){
         stopSorting();
-        redirectRings();
-      } else {
         closeRedirect();
+      } else {
+        redirectRings();
       }
     }
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
