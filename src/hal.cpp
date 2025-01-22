@@ -1148,6 +1148,29 @@ void saveRing(int timeout){
     }
 }
   
+void liftIntakeWallStake()
+{
+    while (true) {
+        int hue = getIntakeColor();
+        if(detectOurColor(hue) && getLiftPosition() > 50)
+        {
+            //pros::delay(100);
+            liftIntake();
+        }
+        else if(detectTheirColor(hue) && getLiftPosition() > 50)
+        {
+            //pros::delay(100);
+            liftIntake();
+        }
+        else
+        {
+            dropIntake();
+
+        }
+    }
+     
+}
+
 /*
 void basketRings(bool withSave){
     autoIntake = true;

@@ -165,6 +165,7 @@ int getIntakeDist();
 void saveOurRing(int timeout = 1000);
 void saveRing(int timeout = 1000);
 void basketRings(bool withSave = true);
+void liftIntakeWallStake();
 
 
 #endif

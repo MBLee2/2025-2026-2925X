@@ -217,6 +217,7 @@ void taskFn_intake_control(void) {
 void taskFn_hood_control(void) {
   bool hood_state = false;
   printf("%s(): Entered \n", __func__);
+  pros::Task intake_lift_task(liftIntakeWallStake);
   while (true) {
     int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
     // Toggle the basket state with the Y button

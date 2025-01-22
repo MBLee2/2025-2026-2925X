@@ -773,7 +773,7 @@ void auton_60s_skills_1() {
   chassis.setPose(5,-58.75,90);
 
   lemlib::Pose currentPose = chassis.getPose();
-
+  pros::Task intake_lift_task(liftIntakeWallStake);
   liftPneumaticUp();
   pros::delay(300);
   chassis.moveToPoint(-5, -58.75,1000,{.forwards=false, .minSpeed = 12, .earlyExitRange = 0.5});
