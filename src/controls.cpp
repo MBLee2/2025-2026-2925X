@@ -163,20 +163,19 @@ void taskFn_intake_control(void) {
         closeRedirect();
         stopSorting();
       }
-    }
+    }   
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      if(getLiftPosition() > 86 || getLiftPosition() < 76)
+      
+      if(getLiftPosition() < 86 && getLiftPosition() > 76)
       {
-        if(lift_counter == 0){
-          pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
-        } 
+        lift_counter = 15;
       }
       
       else if(lift_counter > 15) {
         temp_state = false;
 
-        if(getLiftPosition() > 100){
+        if(getLiftPosition() > 105){
           stopIntakeHold();
         } else {
           spinIntake(127);
@@ -188,6 +187,12 @@ void taskFn_intake_control(void) {
         else if(getLiftPosition()){
           liftPneumaticDown();
         }
+      }
+      else if(getLiftPosition() > 86 || getLiftPosition() < 76)
+      {
+        if(lift_counter == 0){
+          pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
+        } 
       }
       lift_counter++;
     } 
@@ -208,6 +213,13 @@ void taskFn_intake_control(void) {
         temp_state = true;
       }
     }
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+    {
+      climb_up();
+    }
+
+
+
     pros::delay(20);
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging

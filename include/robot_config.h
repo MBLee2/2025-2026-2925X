@@ -60,6 +60,7 @@ extern pros::adi::Pneumatics intake_lift;
 extern pros::adi::Pneumatics intake_ramp_lift;
 extern pros::adi::Pneumatics mogo_rush;
 extern pros::adi::Pneumatics mogo_rush_clamp;
+extern pros::adi::Pneumatics climb;
 //extern pros::adi::Pneumatics lastring;
 
 extern pros::adi::Pneumatics redirect1;

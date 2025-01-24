@@ -167,5 +167,10 @@ void saveRing(int timeout = 1000);
 void basketRings(bool withSave = true);
 void liftIntakeWallStake();
 
+void climb_piston_extend();
+void climb_piston_retract();
+void climb_piston_toggle();
+void climb_up();
+
 
 #endif

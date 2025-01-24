@@ -1,6 +1,7 @@
 #include "hal.h"
 #include "auton_basics.h"
 #include "fmt/format.h"
+#include "pros/device.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "pros/vision.h"
@@ -1169,6 +1170,24 @@ void liftIntakeWallStake()
         }
     }
      
+}
+void climb_piston_extend()
+{
+    climb.extend();
+}
+void climb_piston_retract()
+{
+    climb.retract();
+}
+void climb_piston_toggle()
+{
+    climb.toggle();
+}
+void climb_up()
+{
+    climb.extend();
+    pros::delay(200);
+    liftDown(); 
 }
 
 /*

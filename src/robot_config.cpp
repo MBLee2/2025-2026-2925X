@@ -51,6 +51,8 @@ pros::adi::Pneumatics redirect1('a', false);
 pros::adi::Pneumatics lift_helper1('f', false);
 pros::adi::Pneumatics lift_helper2('c',false );
 
+pros::adi::Pneumatics climb({8, 'f'}, false);
+
 
 /* SENSORS */
 pros::Optical intake_color(14);
