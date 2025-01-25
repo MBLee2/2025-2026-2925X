@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "BLUE - Wisco-Sig-Code",
+    "project_name": "RED - Wisco-Sig-Code",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -301,7 +301,7 @@
       "after": "screen",
       "description": "",
       "icon": "pros",
-      "slot": 2
+      "slot": 1
     },
     "use_early_access": false
   }

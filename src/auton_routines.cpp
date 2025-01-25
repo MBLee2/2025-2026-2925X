@@ -702,7 +702,7 @@ void red_solo_wp(){ // DONE execpt for ring hold
   chassis.waitUntilDone();
   speed1 = 127;
   temp_pos = chassis.getPose().y;
-  chassis.moveToPoint(50,temp_pos-12,2000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
+  chassis.moveToPoint(50,temp_pos,2000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   chassis.turnToHeading(180, 1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
   chassis.moveToPoint(12, temp_pos, 2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   chassis.turnToHeading(315, 1000);
