@@ -21,7 +21,7 @@ typedef struct s_auton_routine
 //change all of these
 extern auton_routine null_routine; 
 extern auton_routine goal_rush, blue_ring_rush, blue_neg_awp, neg_six_ring_red, rush_wp_a;
-extern auton_routine safe_positive, negative_four,solo_WP;
+extern auton_routine safe_positive, safe_negative,solo_WP;
 extern auton_routine skills_1, skills_2;
 
 // functions to render the menu and read inputs from it
@@ -36,6 +36,7 @@ void safePos();
 void negativeFour();
 void solo_wp();
 void positive_half_wp();
+void negative_half_wp();
 void auton_60s_skills_1();
 void auton_60s_skills_2();
 #endif // _AUTON_ROUTINES_H_

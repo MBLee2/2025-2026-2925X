@@ -201,26 +201,22 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
+
 	auton = true;
    	printf("%s(): Entered\n", __func__);
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
     pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running autonomous()");
-
-	selected_auton_routine = default_routine;
 	
 	// ensure that an auton routine has been slected
 	if (selected_auton_routine.routine_func == nullptr)
 	{
 		selected_auton_routine = default_routine;
 		pros::screen::set_pen(pros::c::COLOR_RED);
-		while (true)
-		{
-	    	pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected!!");
-			pros::delay(250);
-		}	
+		pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected");
+		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: safe_positive");
 	}
 
 	// Call the function associated with the selected auton routine		

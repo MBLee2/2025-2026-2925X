@@ -12,7 +12,7 @@
 #include <queue>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -836,7 +836,7 @@ void addCurrentRing(){
 
             if(detectRed(hue)) //If we detect red
             {
-                printf("Detected red %i\n", hue);
+                //printf("Detected red %i\n", hue);
                 ringQueue.push(true); //Add to queue as upcoming
                 
                 while(detectRed(hue)){ //Wait for ring to continue through intake
@@ -846,7 +846,7 @@ void addCurrentRing(){
             }
             else if(detectBlue(hue)) //If we detect blue
             {
-                printf("Detected blue %i\n", hue);
+                //printf("Detected blue %i\n", hue);
                 ringQueue.push(false); //Add to queue as upcoming
 
                 while(detectBlue(hue)){ //Wait for ring to continue through intake
@@ -904,11 +904,12 @@ void countRings() {
                 if(COLOR == true){ //If we are red 
                     waitForExitRed(); //wait for it to score to avoid opening early
                     ringQueue.pop(); //then remove from queue
-                    printf("Exiting red %i\n", hue);
+                    //printf("Exiting red %i\n", hue);
+                    pros::delay(50);
                 } else { //If we are not red
                     pros::delay(30);
                     ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
-                    printf("Exiting red %i\n", hue);
+                    //printf("Exiting red %i\n", hue);
                     waitForExitRed(); //wait for it to exit
                 }
             }
@@ -918,11 +919,12 @@ void countRings() {
                 if(COLOR == false){ //If we are blue
                     waitForExitBlue(); //wait for it to score to avoid opening early
                     ringQueue.pop(); //then remove from queue
-                    printf("Exiting blue %i\n", hue);
+                    //printf("Exiting blue %i\n", hue);
+                    pros::delay(50);
                 } else {
                     pros::delay(30);
                     ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
-                    printf("Exiting blue %i\n", hue);
+                    //xprintf("Exiting blue %i\n", hue);
                     waitForExitBlue(); //wait for it to exit
                 }
             }
@@ -948,6 +950,7 @@ void startSorting() {
 void stopSorting() {
     if(autoIntake){
         master.clear_line(1);
+        closeRedirect();
         autoIntake = false;
         clearRingQueue();
     }
@@ -1111,7 +1114,7 @@ void saveOurRing(int timeout){
             return;
         }
         int hue = get2ndIntakeColor();
-        printf("Color %d\n",hue);
+        //printf("Color %d\n",hue);
         if(detectOurColor(hue))
         {
             //pros::delay(100);
@@ -1131,7 +1134,6 @@ void saveRing(int timeout){
             return;
         }
         int hue = get2ndIntakeColor();
-        printf("Color %d\n",hue);
         if(detectOurColor(hue))
         {
             //pros::delay(100);

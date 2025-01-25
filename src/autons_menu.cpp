@@ -30,7 +30,7 @@ std::vector<auton_menu_button> button_list = {
                       blue_neg_awp},
     auton_menu_button{{245, 115, 345, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NegSafe", pros::E_TEXT_MEDIUM},
-                      solo_WP},
+                      safe_negative},
     auton_menu_button{{360, 115, 460, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "StackBreak", pros::E_TEXT_MEDIUM},
                        blue_ring_rush},
