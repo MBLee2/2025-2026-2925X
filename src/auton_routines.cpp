@@ -777,7 +777,8 @@ void neg_6_ring_red(){ //DONE
   chassis.moveToPoint(-40,-13,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
 
   chassis.moveToPoint(-48,-24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-48,-13,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.moveToPoint(-48,-11,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2}, false);
+  pros::delay(500);
   chassis.moveToPoint(-48,-52,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
   speed = 127;
   speed1 = float(speed);
@@ -839,13 +840,13 @@ void neg_6_ring_blue(){ //DONE
   speed = 90;
   speed1 = float(speed);
 
-  chassis.turnToPoint(-42,8.5,1300,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-43,8.5,1300,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
+  chassis.turnToPoint(-42,12,1300,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-43,12,1300,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
   pros::delay(250);
 
   chassis.moveToPoint(-48,24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-48,7,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  pros::delay(250);
+  chassis.moveToPoint(-48,12,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
+  pros::delay(500);
   chassis.moveToPoint(-48,47,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
   speed = 127;
   speed1 = float(speed);
@@ -1415,4 +1416,13 @@ void auton_60s_skills_1() {
 
 } // end auton_60s_skills_1()
 // Auton skills number 2 fully done
-void auton_60s_skills_2() {}
+void auton_60s_skills_2() {
+  pros::Task([=]{
+    while(true){
+      if(!autoSkill){
+        return;
+      }
+    }
+  });
+  auton_60s_skills_1();
+}

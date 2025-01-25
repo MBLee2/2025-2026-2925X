@@ -100,7 +100,7 @@ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwhee
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    nullptr,//&vertical_tracking_wheel, //SKILLSa  
+    nullptr, //&vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
     nullptr, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr

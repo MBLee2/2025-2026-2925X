@@ -201,7 +201,7 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = neg_six_ring; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
@@ -250,5 +250,7 @@ void opcontrol() {
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
 	pros::Task hood(taskFn_hood_control,"intake_push_task");
-    
+
+    // SKILLS ONLY
+	//auton_60s_skills_1();
 }
