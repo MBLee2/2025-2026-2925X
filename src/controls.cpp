@@ -188,7 +188,7 @@ void taskFn_intake_control(void) {
           liftPneumaticDown();
         }
       }
-      else if(getLiftPosition() > 86 || getLiftPosition() < 76)
+      else if(getLiftPosition() > 86 || getLiftPosition() < 40)
       {
         if(lift_counter == 0){
           pros::Task lift_wall_stake([=] {moveLiftToPos(81);});

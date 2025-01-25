@@ -24,7 +24,7 @@ std::vector<auton_menu_button> button_list = {
                        goal_rush},
      auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NegSix", pros::E_TEXT_MEDIUM},
-                      neg_six_ring_red},
+                      neg_six_ring},
     auton_menu_button{{130, 115, 230, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NegSix+Stake", pros::E_TEXT_MEDIUM},
                       blue_neg_awp},
