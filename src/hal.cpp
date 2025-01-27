@@ -12,7 +12,7 @@
 #include <queue>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;

@@ -133,34 +133,34 @@ void redPositiveHalfWP(){ //
   printPositionV2((char *) "Goal pickup");
 
   chassis.turnToPoint(43, -24, 2000, {.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-
   chassis.moveToPoint(45, -24, 1500,{.minSpeed = 12, .earlyExitRange = 2}, false);
+  openRedirectAfterOurRing(2000);
   printPositionV2((char *) "1st Ring");
-  pros::delay(300);
   chassis.turnToPoint(48, -48, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 8}); 
   chassis.moveToPoint(48, -46, 1000,{.maxSpeed = speed1});
-  saveRing(1500);
-  chassis.turnToHeading(225, 1000,{});
-  spinIntake(-127);
-  pros::delay(500);
+  chassis.turnToHeading(220, 1000,{});
+  pros::delay(1000);
   chassis.turnToHeading(135, 2000, {.maxSpeed = speed, .minSpeed = 8, .earlyExitRange = 2},false);
+  closeRedirect();
+  startSorting();
   spinIntake(127);
   temp_pos1 = chassis.getPose().x;
   temp_pos2 = chassis.getPose().y;
-  chassis.moveToPoint(temp_pos1 +19, temp_pos2 - 19, 2000,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
+  chassis.moveToPoint(temp_pos1 + 20, temp_pos2 - 20, 2000,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
   chassis.moveToPoint(48, -50, 2000,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
   liftIntake();
   chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(25, -50, 3000,{.minSpeed = 12, .earlyExitRange = 3});
+  chassis.moveToPoint(27, -50, 3000,{.minSpeed = 12, .earlyExitRange = 3});
+  chassis.moveToPoint(19, -50, 1000,{.maxSpeed=40,.minSpeed = 30, .earlyExitRange = 6});
+  chassis.waitUntil(10000);
+  dropIntake();
 
-  chassis.moveToPoint(17.5, -50, 1000,{.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
   chassis.moveToPoint(30, -50, 3000,{.forwards=false,.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
   speed = 80;
   speed1 = int(speed);
-  chassis.turnToPoint(23, -20, 1000);
-  chassis.moveToPoint(23, -20, 1000,{.maxSpeed = speed1});
+  chassis.turnToPoint(25, -22, 1000);
+  chassis.moveToPoint(25, -22, 1000,{.maxSpeed = speed1});
   chassis.turnToHeading(315, 1000,{.maxSpeed=speed},false);
-  dropIntake();
 
   master.clear_line(0);
   int temp = pros::millis();
