@@ -4,6 +4,7 @@
 #include "controls.h"
 #include "hal.h"
 #include "lemlib/api.hpp"
+#include "lemlib/pose.hpp"
 #include "lemlib/util.hpp"
 #include "liblvgl/core/lv_obj_class.h"
 #include "liblvgl/draw/lv_draw_label.h"
@@ -35,7 +36,7 @@ auton_routine goal_rush{0, 0, 0, "None - Invalid Routine", &goalRush};
 
 auton_routine goal_rush_and_stake{0, 0, 0, "None - Invalid Routine", &goalRushWallStake};
 
-auton_routine safe_negative{0, 0, 0, "None - Invalid Routine", &negativeHalfWP};
+auton_routine safe_negative{0, 0, 0, "None - Invalid Routine", &negativeHalfWP}; //EVERYTHING DONE
 
 auton_routine negetive_6_ring{0, 0, 0, "None - Invalid Routine", &negSixRing};
 
@@ -169,7 +170,7 @@ void redPositiveHalfWP(){ //
 
 }
 
-void bluePositiveHalfWP(){ //EVERYTHING DONE can add one more ring from corrner
+void bluePositiveHalfWP(){ //EVERYTHING DONE
   int time = pros::millis();
   int speed = 123;
   float speed1 = float(speed);
@@ -491,10 +492,63 @@ void redNegativeHalfWP(){//EVERYTHING DONE
   
 }
 
-void blueNegativeHalfWP(){
+void blueNegativeHalfWP(){//EVERYTHING DONE
+int time = pros::millis();
+  int speed = 127;
+  float speed1 = float(speed);
+  COLOR = false;
+  lemlib::Pose temp_pos = chassis.getPose();
+
+  chassis.setPose(0,60,90);
+  startSorting();
+  openClamp();
+  liftPneumaticUp();
+  pros::delay(300);
+  chassis.moveToPoint(-7,60,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.waitUntil(4);
+  liftPneumaticDown();
+  chassis.moveToPoint(-19,36,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 2},false);
+  chassis.moveToPoint(-24,26,2000,{.forwards=false,.maxSpeed = 80,.minSpeed = 20, .earlyExitRange = 2},false);
+  pros::delay(200);
+  closeClamp();
+  pros::delay(200);
+  spinIntake(127);
+  chassis.turnToPoint(-43,24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-44,24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 2});
+  speed1 = float(speed);
+  chassis.turnToPoint(-42,11,1300,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-43,11,1300,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
+  pros::delay(250);
+  chassis.moveToPoint(-48,24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.moveToPoint(-48,11,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
+  pros::delay(250);
+  chassis.moveToPoint(-48,48,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
+  speed = 127;
+  speed1 = float(speed);
+  temp_pos = chassis.getPose();
+
+  chassis.turnToHeading(315,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(temp_pos.x - 22 ,temp_pos.y + 22,1000,{.maxSpeed = 127,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.moveToPoint(-50,48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
+  chassis.turnToPoint(0,48,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-15,48,2000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  liftIntake();
+  chassis.moveToPoint(-7,47,2000,{.maxSpeed = speed1-40,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.waitUntil(10000);
+  dropIntake();
+  chassis.moveToPoint(-24,48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.turnToPoint(-16,16,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-16,16,2000,{.maxSpeed = speed1,.minSpeed = 20, .earlyExitRange = 8});
+
+  chassis.turnToHeading(145, 800,{},false);
+  master.clear_line(0);
+  int temp = pros::millis();
+  while (true) {
+  master.print(0, 0, "Time: %d", (temp-time));
+  }
 }
 
-void negativeHalfWP(){
+void negativeHalfWP(){//EVERYTHING DONE
   if(COLOR){
     redNegativeHalfWP();
   } else {
