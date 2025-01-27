@@ -274,7 +274,7 @@ void bluePossitiveFullWP(){ //EVERYTHING DONE
   openClamp();
   chassis.moveToPoint(36, 24, 2000,{ .maxSpeed = speed1 - 30, .minSpeed = 6, .earlyExitRange = 2});
   chassis.turnToPoint(48, 0, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(43, 6, 2000,{.forwards = false, .maxSpeed = speed1-30, .minSpeed = 10, .earlyExitRange = 3});
+  chassis.moveToPoint(42, 6.5, 2000,{.forwards = false, .maxSpeed = speed1-30, .minSpeed = 10, .earlyExitRange = 3});
   chassis.waitUntil(100);
   closeClamp();
   chassis.turnToPoint(48, 48, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 8}); 
