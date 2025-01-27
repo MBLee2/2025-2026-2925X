@@ -268,9 +268,12 @@ void bluePossitiveFullWP(){ //EVERYTHING DONE
   closeClamp();
   spinIntake(127);
   pros::delay(400);
+  chassis.moveToPoint(12, 32, 2000,{ .forwards=false,.maxSpeed = speed1, .minSpeed = 6, .earlyExitRange = 2});
+  chassis.turnToHeading(90, 500,{.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
+  chassis.waitUntil(10000);
+  openClamp();
   chassis.moveToPoint(36, 24, 2000,{ .maxSpeed = speed1 - 30, .minSpeed = 6, .earlyExitRange = 2});
   chassis.turnToPoint(48, 0, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  openClamp();
   chassis.moveToPoint(43, 6, 2000,{.forwards = false, .maxSpeed = speed1-30, .minSpeed = 10, .earlyExitRange = 3});
   chassis.waitUntil(100);
   closeClamp();
@@ -281,7 +284,7 @@ void bluePossitiveFullWP(){ //EVERYTHING DONE
   spinIntake(127);
   temp_pos1 = chassis.getPose().x;
   temp_pos2 = chassis.getPose().y;
-  chassis.moveToPoint(temp_pos1 +22, temp_pos2 + 22, 800,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
+  chassis.moveToPoint(temp_pos1 +24, temp_pos2 + 26, 800,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
   chassis.moveToPoint(48, 50, 2000,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
   chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
   chassis.moveToPoint(12, 48, 3000,{.minSpeed = 30, .earlyExitRange = 6});
@@ -305,7 +308,7 @@ void bluePossitiveFullWP(){ //EVERYTHING DONE
   }
 }
 
-void redPossitiveFullWP(){ //EVERYTHING DONE
+void redPossitiveFullWP(){ 
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
