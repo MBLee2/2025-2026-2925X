@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "RED - Wisco-Sig-Code",
+    "project_name": "RED - Wisco - sig code",
     "target": "v5",
     "templates": {
       "LemLib": {

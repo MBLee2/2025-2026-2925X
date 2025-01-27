@@ -70,6 +70,7 @@ void taskFn_mogo_control(void) {
     // Get the input from the right joystick and normalize the input to a range
     // of -1 to 1
     int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
+    int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
     // If the joystick is pushed upward past 85%, extend the mogo_rush arm
     // (extended)
     if (rightY > 0.85) {
@@ -80,19 +81,11 @@ void taskFn_mogo_control(void) {
     if (rightY < -0.85) {
       retractSweep();
     }
-    
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) 
-    {
-        if (sixth_ring_state == false)
-        {
-            sixth_ring_state = true;
-            extendSixRing();
-        }
-        else if(sixth_ring_state == true)
-        {
-            sixth_ring_state = false;
-            retractSixRing();
-        }
+    if (rightX > 0.85) {
+      liftIntake();
+    }
+    if (rightX < -0.85) {
+      dropIntake();
     }
 
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
@@ -119,7 +112,7 @@ void taskFn_intake_control(void) {
   {
     double pos = getLiftPosition();; // Get the current position of the lift
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      if ((current_state == OUTAKE || current_state == STOP) && intakeMode) // If the intake is stopped or ejecting, start intake
+      if ((current_state == OUTAKE || current_state == STOP) && getLiftPosition() < 30) // If the intake is stopped or ejecting, start intake
       {
         //autoIntake = false;
         current_state = INTAKE;
@@ -136,7 +129,7 @@ void taskFn_intake_control(void) {
     }
     // Eject objects with the B button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      if ((current_state == INTAKE || current_state == STOP) && intakeMode) // If intake is running or stopped, start ejecting
+      if ((current_state == INTAKE || current_state == STOP) && getLiftPosition() < 30) // If intake is running or stopped, start ejecting
       {
         //autoIntake = false;
         spinIntake(-127);
@@ -166,42 +159,35 @@ void taskFn_intake_control(void) {
     }   
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      
-      if(getLiftPosition() < 86 && getLiftPosition() > 76)
+      if(getLiftPosition() < 40)
       {
-        lift_counter = 15;
-      }
-      
-      else if(lift_counter > 15) {
-        temp_state = false;
-
-        if(getLiftPosition() > 105){
-          stopIntakeHold();
-        } else {
-          spinIntake(127);
+        if(lift_counter == 0){
+          pros::Task lift_wall_stake([=] {moveLiftToPos(83);});
         }
+      }
+
+      else if(getLiftPosition() < 130 && getLiftPosition() > 40)
+      {
+        spinIntake(127);
 
         if(getLiftPosition() < 24){
           liftPneumaticUp();
         }
-        else if(getLiftPosition()){
+        else if(getLiftPosition() > 24){
           liftPneumaticDown();
         }
       }
-      else if(getLiftPosition() > 86 || getLiftPosition() < 40)
-      {
-        if(lift_counter == 0){
-          pros::Task lift_wall_stake([=] {moveLiftToPos(81);});
-        } 
+      else {
+        stopIntake();
       }
-      lift_counter++;
-    } 
+    }
+
     else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
       liftPneumaticDown();
-      lift_counter = 0;
       temp_state = false;
       spinIntake(-127);
     } 
+
     else if(!temp_state){
       lift_counter = 0;
       if(getLiftPosition() > 24 && getLiftPosition() < 300){
@@ -229,9 +215,7 @@ void taskFn_intake_control(void) {
 void taskFn_hood_control(void) {
   bool hood_state = false;
   printf("%s(): Entered \n", __func__);
-  pros::Task intake_lift_task(liftIntakeWallStake);
   while (true) {
-    int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
     // Toggle the basket state with the Y button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       toggleHood();
@@ -253,12 +237,6 @@ void taskFn_hood_control(void) {
       retractRushClamp();
     }
     // Control the intake lift based on joystick position
-    if (rightX > 0.85) {
-      liftIntake();
-    }
-    if (rightX < -0.85) {
-      dropIntake();
-    }
     pros::delay(20);
   }
 

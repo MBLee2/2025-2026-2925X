@@ -20,25 +20,27 @@ typedef struct s_auton_routine
 
 //change all of these
 extern auton_routine null_routine; 
-extern auton_routine goal_rush, blue_ring_rush, blue_neg_awp, neg_six_ring, rush_wp_a;
-extern auton_routine safe_positive, safe_negative,solo_WP;
-extern auton_routine skills_1, skills_2;
+
+extern auton_routine safe_positive, positive_WP, goal_rush, goal_rush_and_stake;
+
+extern auton_routine safe_negative, negetive_6_ring, negetive_6_ring_wall_stake, negetive_6_ring_both_stake;
+
+extern auton_routine skills_1, solo_WP ,skills_2;
 
 // functions to render the menu and read inputs from it
-void neg_6_ring();
-void neg_6_ring_red();
-void neg_6_ring_blue();
-void goal_rush_pull_back();
-void ring_rush();
-void blue_negative_four();
-void DescoreRushElim();
-void rushelim();
-void rushWP();
-void safePos();
-void negativeFour();
-void solo_wp();
-void positive_half_wp();
-void negative_half_wp();
+
+/************ THESE ARE ALL THE AUTONS FOR WISCO SIG **********/
+void positiveHalfWp();
+void possitiveFullWP();
+void goalRush();
+void goalRushWallStake();
+void negativeHalfWP();
+void negSixRing();
+void negSixRingWallStake();
+void negSixRingBothStake();
 void auton_60s_skills_1();
+void soloWP();
 void auton_60s_skills_2();
+
+/*****************************************************************************/
 #endif // _AUTON_ROUTINES_H_

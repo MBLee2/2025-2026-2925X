@@ -12,7 +12,7 @@
 #include <queue>
 
 
-bool COLOR = true; // true = red, false = blue
+bool COLOR = false; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -1173,6 +1173,28 @@ void liftIntakeWallStake()
     }
      
 }
+void openRedirectAfterOurRing(int timeout)
+{
+    int time = 0;
+    while (true) {
+        int hue = get2ndIntakeColor();
+        if(detectOurColor(hue))
+        {
+            pros::delay(250);
+            redirectRings();
+            return;
+        }
+        if(timeout < time)
+        {
+            return;
+        }
+        time += 20;
+        pros::delay(20);
+    }
+     
+}
+
+
 void climb_piston_extend()
 {
     climb.extend();

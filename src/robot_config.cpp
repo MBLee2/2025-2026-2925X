@@ -10,6 +10,7 @@
 #include "pros/vision.h"
 #include "robot_config.h"
 #include "dashboard.h"
+#include <cstddef>
 
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
