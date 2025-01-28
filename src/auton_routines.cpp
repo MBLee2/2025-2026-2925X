@@ -1121,7 +1121,7 @@ void auton_60s_skills_1() {
       x++;
     }
     x=0;
-  pros::delay(200);
+  pros::delay(300);
   printf("\n Time at 2nd wallstake: %d", pros::millis() - time);
   chassis.moveToPoint(48,currentPose.y,1000,{.forwards=false, .maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.5},false);
   currentPose = chassis.getPose();
@@ -1265,6 +1265,7 @@ void auton_60s_skills_1() {
   spinIntake(-127);
   chassis.moveToPoint(48, 48, 4000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange=0.5});
   chassis.moveToPoint(24, 48, 1000);
+  closeClamp();
   chassis.turnToPoint(-72, 72,1000,{.forwards=false});
   chassis.moveToPoint(-72, 72,1900,{.forwards=false});
   printf("\n Time at 4th goal: %d", pros::millis() - time);
