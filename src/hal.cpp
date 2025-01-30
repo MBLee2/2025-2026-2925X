@@ -569,7 +569,7 @@ void liftUpWallStake() {
 }
 
 void liftDown() {
-    moveLiftToPos(14);
+    moveLiftToPos(20);
 }
 
 void moveLiftToPos(float pos,int timeout){
