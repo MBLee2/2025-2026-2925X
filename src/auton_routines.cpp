@@ -899,7 +899,7 @@ void red_solo_wp(){
   chassis.waitUntilDone();
   speed1 = 127;
   temp_pos = chassis.getPose().y;
-  chassis.moveToPoint(50,temp_pos-4,2000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 2});
+  chassis.moveToPoint(50,temp_pos-4,1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 2});
   chassis.turnToPoint(14, temp_pos-4,1500,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 3});
   chassis.moveToPoint(14, temp_pos-4, 2000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 3});
   chassis.turnToHeading(315, 1000);
@@ -1215,8 +1215,8 @@ void auton_60s_skills_1() {
     placehold = chassis.getPose();
     while(x<2)
     {
-      chassis.turnToHeading(placehold.theta - 10, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
       chassis.turnToHeading(placehold.theta + 10, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
+      chassis.turnToHeading(placehold.theta - 10, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
       x++;
     }
     x=0;
@@ -1243,6 +1243,10 @@ void auton_60s_skills_1() {
   openClamp();
   pros::delay(300);
   printf("\n Time at corner 2nd goal: %d", pros::millis() - time);
+  chassis.moveToPoint(-48, -48, 2000,{.maxSpeed = speed, .minSpeed = speed - 30, .earlyExitRange = 0.5});
+  chassis.turnToHeading(0, 1000,{.maxSpeed = (int) speed, .minSpeed = 30, .earlyExitRange = 0.5});
+
+
   chassis.moveToPoint(48, 0, 3000, {.maxSpeed = speed, .minSpeed = speed - 30, .earlyExitRange = 0.5});
   chassis.turnToPoint(27, 24, 1000,{.maxSpeed = (int)speed, .minSpeed = 12, .earlyExitRange = 0.5});
   chassis.moveToPoint(27, 24, 2000, {.maxSpeed = speed,.minSpeed=12,.earlyExitRange=0.5});
@@ -1299,7 +1303,7 @@ void auton_60s_skills_1() {
   printPosition((char *)"Middle Ring", false);
 
   chassis.turnToPoint(34, 48, 2000, {.maxSpeed = (int) speed, .minSpeed = 12,.earlyExitRange = 3});
-  chassis.moveToPoint(18, 25.5, 2000, {.maxSpeed = speed-60, .minSpeed = 12, .earlyExitRange=2.0});
+  chassis.moveToPoint(18, 25.5, 2000, {.maxSpeed = speed-30, .minSpeed = 12, .earlyExitRange=2.0});
   chassis.moveToPoint(34, 48, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange=0.5});
   startSorting();
   chassis.turnToPoint(50, 48, 1000,{.maxSpeed = (int) speed, .minSpeed = 12,.earlyExitRange = 3});
@@ -1314,12 +1318,19 @@ void auton_60s_skills_1() {
   chassis.waitUntil(15);
   openClamp();
   printf("\n Time corner at 3rd goal: %d", pros::millis() - time);
+
+
   //*/
   spinIntake(-127);
+  
   chassis.moveToPoint(48, 40, 4000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange=0.5});
-  chassis.moveToPoint(24, 40, 1000);
+  chassis.turnToHeading(90, 1000, {.earlyExitRange=2.0},false);
+  currentPose = chassis.getPose();
+  chassis.setPose(72 - fabs(distToWallF()*sin(deg2rad(currentPose.theta))), 72 - fabs(distToWallL() * sin(deg2rad(currentPose.theta))),currentPose.theta);
+  pros::delay(50);
+  printPosition((char *)"3rd corrner" , false);
+  chassis.moveToPoint(24, 40, 1000,{.forwards = false});
   closeClamp();
-  chassis.turnToHeading(90, 1000, {.earlyExitRange=2.0});
   //chassis.turnToPoint(-72, 72,1000,{.forwards=false});
   chassis.moveToPoint(-72, 72,1900,{.forwards=false});
   pros::Task lift_for_climb([=] {moveLiftToPos(105);});
