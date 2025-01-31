@@ -159,7 +159,8 @@ void competition_initialize() {
 	// weird bug in system; without the following delay, was getting a white screen
 	// on the brain rather than the display as expected
 	pros::delay(10); 
-
+    master.clear();
+	auton_color_setter();
 
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();

@@ -45,5 +45,6 @@ void draw_rectangle_patch(rectangle_patch p);
 void highlight_rectangle_patch(rectangle_patch p);
 void draw_auton_menu_screen();
 auton_routine select_auton_routine(); 
+void auton_color_setter();
 
 #endif // _AUTON_MENU_H_
