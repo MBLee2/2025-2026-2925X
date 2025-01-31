@@ -571,7 +571,7 @@ void redNegativeHalfWP(){//EVERYTHING DONE
   chassis.moveToPoint(-48,-24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
 
   chassis.turnToPoint(-48,-10,1000,{.maxSpeed = speed-30,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-48,-10,1000,{.maxSpeed = speed1},false);
+  chassis.moveToPoint(-48,-10.25,1000,{.maxSpeed = speed1},false);
   pros::delay(300);
 
   chassis.moveToPoint(-48,-52,2000,{.forwards=false,.maxSpeed = speed1-30,.minSpeed = 30, .earlyExitRange = 6});

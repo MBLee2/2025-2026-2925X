@@ -245,7 +245,22 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	/*chassis.setPose(5,-58.75,90);
+
+  	lemlib::Pose currentPose = chassis.getPose();
+  	liftPneumaticUp();
+  	pros::delay(300);
+  	chassis.moveToPoint(-5, -58.75,1000,{.forwards=false, .minSpeed = 12, .earlyExitRange = 0.5});
+  	chassis.moveToPoint(-24, -48, 2000,{.forwards=false, .maxSpeed=127-30, .minSpeed = 12, .earlyExitRange = 0.5});
+	liftPneumaticDown();
+	chassis.waitUntil(17);
+	spinIntake(-127);
+	closeClamp();
+	chassis.turnToHeading(0, 800, {.maxSpeed = (int) 127, .minSpeed = 12, .earlyExitRange = 3});
+	spinIntake(127);
+	chassis.waitUntil(10000);
 	master.clear();
+	//*/
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
