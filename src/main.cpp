@@ -202,7 +202,7 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = goal_rush; //DEFAULT ROUTINE
+	auton_routine default_routine = solo_WP; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
@@ -217,7 +217,7 @@ void autonomous() {
 		selected_auton_routine = default_routine;
 		pros::screen::set_pen(pros::c::COLOR_RED);
 		pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected");
-		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: safe_positive");
+		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: solo_WP");
 	}
 
 	// Call the function associated with the selected auton routine		

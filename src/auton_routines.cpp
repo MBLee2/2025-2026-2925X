@@ -394,11 +394,70 @@ void possitiveFullWP(){
 
 void RedGoalRush(){
   int time = pros::millis();
-  int speed = 40;
+  int speed = 127;
   float speed1 = float(speed);
-  chassis.setPose(-61,-53,0);
-  
+  lemlib::Pose temp_pose = chassis.getPose();
+
+  startSorting();
+
+  chassis.setPose(33.5,-53,5);
+  chassis.moveToPoint(37.5, -15.5, 10000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  extendSweep();
+  chassis.waitUntilDone();
+  extendRushClamp();
+  chassis.turnToHeading(72, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(42, -14, 1000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.waitUntil(5);
+  retractRushClamp();
+  chassis.moveToPoint(37.5, -15.5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.turnToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.waitUntil(18);
+  closeClamp();
+
+  chassis.turnToHeading(90, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(46.5, -22, 1000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  spinIntake(127);
+  retractSweep();
+
+  chassis.turnToPoint(24, -30, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(22, -31.5, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.waitUntilDone();
+  pros::delay(200);
+  openClamp();
+
+  chassis.moveToPoint(36, -12, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  stopSorting();
+  chassis.turnToHeading(-90, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+
+  chassis.moveToPoint(46, -12, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
+  chassis.moveToPoint(50, -12, 2000, {.forwards = false, .maxSpeed = speed1 - 30, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.waitUntil(4);
+  closeClamp();
+
+  chassis.turnToPoint(24, -24, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(24, -24, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.turnToHeading(135, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(48, -48, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  saveRing1(3000);
+  chassis.moveToPoint(58, -58, 3000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.waitUntil(2);
+  startSorting();
+  spinIntake(127);
+  pros::delay(1500);
+  chassis.moveToPoint(54, -54, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+
+  chassis.turnToHeading(-10, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(55, -18, 3000, {.maxSpeed = speed1});
+  spinIntake(-127);
+
+  int temp = pros::millis();
+  while (true) {
+    master.print(0, 0, "Time: %d", (temp-time));
+  }
 }
+
+
 void BlueGoalRush(){
   int time = pros::millis();
   int speed = 127;

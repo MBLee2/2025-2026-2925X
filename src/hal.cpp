@@ -1150,6 +1150,31 @@ void saveRing(int timeout){
         time += 20;
     }
 }
+
+void saveRing1(int timeout){
+    int time = 0;
+    while (true) {
+        if (time >= timeout)
+        {
+            return;
+        }
+        int hue = getIntakeColor();
+        if(detectOurColor(hue))
+        {
+            //pros::delay(100);
+            stopIntake();
+            return;
+        }
+        if(detectTheirColor(hue))
+        {
+            //pros::delay(100);
+            stopIntake();
+            return;
+        }
+        pros::delay(20);
+        time += 20;
+    }
+}
   
 void liftIntakeWallStake()
 {
