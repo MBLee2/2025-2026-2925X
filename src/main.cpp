@@ -202,7 +202,7 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = solo_WP; //DEFAULT ROUTINE
+	auton_routine default_routine = negetive_6_ring; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

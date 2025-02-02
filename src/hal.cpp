@@ -776,17 +776,17 @@ bool sort_color(bool sort) {
 }
 
 int redLower = 0;
-int redUpper = 35;
+int redUpper = 25;
 
-int blueLower = 140;
-int blueUpper = 260;
+int blueLower = 190;
+int blueUpper = 230;
 
 bool detectRed(int hue){
-    return hue >= 0 && hue <= 55;
+    return hue >= 0 && hue <= 25;
 }
 
 bool detectBlue(int hue){
-    return hue >= 140 && hue <= 260;
+    return hue >= 190 && hue <= 230;
 }
 
 bool detectOurColor(int hue){
