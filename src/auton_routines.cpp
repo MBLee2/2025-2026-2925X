@@ -1332,7 +1332,12 @@ void auton_60s_skills_1() {
   //chassis.setPose(72 - fabs(distToWallF()*sin(deg2rad(currentPose.theta))), 72 - fabs(distToWallL() * sin(deg2rad(currentPose.theta))),currentPose.theta);
   pros::delay(150);
   printPosition((char *)"3rd corrner" , false);
+
+  //chassis.moveToPoint(0, currentPose.y + 4, 1000,{.forwards = false}); //OLD VERSION FROM WISCO
+
   chassis.moveToPoint(0, currentPose.y, 1000,{.forwards = false});
+  
+  
   closeClamp();
   //chassis.turnToPoint(-72, 72,1000,{.forwards=false});
   chassis.moveToPoint(-72, 73,2100,{.forwards=false});
