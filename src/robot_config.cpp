@@ -65,7 +65,7 @@ pros::Distance distance_rb(18);
 pros::Distance distance_bl(21);
 pros::Distance distance_br(10);
 
-pros::Distance distance_front(16);
+pros::Distance distance_front(5);
 pros::Distance distance_left(15);
 
 pros::GPS gps(3);
