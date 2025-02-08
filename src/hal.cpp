@@ -468,6 +468,12 @@ float wheelRotToInches(float rotations){
 
 // Controlled Functions
 
+void driveFor(float speed, int ms){
+    driveStraight(speed);
+    pros::delay(ms);
+    stopDrive();
+}
+
 // Drive
 void driveDistance(float distance, int timeout, int maxSpeed) {
     float startLeft = getLeftMotorPositionInInches();
