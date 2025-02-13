@@ -12,7 +12,7 @@
 #include <queue>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -792,7 +792,7 @@ bool detectRed(int hue){
 }
 
 bool detectBlue(int hue){
-    return hue >= 185 && hue <= 230;
+    return hue >= 195 && hue <= 240;
 }
 
 bool detectOurColor(int hue){
