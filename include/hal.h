@@ -21,6 +21,7 @@
 #define VISION_RANGE_TIMEOUT 200
 
 #define F_DISTANCE_OFFSET 6.25
+#define B_DISTANCE_OFFSET 6.25
 #define L_DISTANCE_OFFSET 7.5
 
 extern bool COLOR;
@@ -90,6 +91,7 @@ void liftPneumaticDown();
 bool getLiftPneumatic();
 
 float distToWallF();
+float distToWallB();
 float distToWallL();
 
 int getIntakeColor();

@@ -4,6 +4,7 @@
 #include "api.h"
 #include "lemlib/api.hpp"
 #include "pros/adi.hpp"
+#include "pros/distance.hpp"
 #include "pros/gps.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
@@ -82,6 +83,7 @@ extern pros::Distance distance_bl;
 extern pros::Distance distance_br;
 extern pros::Distance distance_front;
 extern pros::Distance distance_left;
+extern pros::Distance distance_back;
 extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;

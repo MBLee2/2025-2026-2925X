@@ -283,6 +283,10 @@ int getFrontDistance() {
     return distance_front.get();
 }
 
+int getBackDistance() {
+    return distance_back.get();
+}
+
 int getLeftDistance() {
     return distance_left.get();
 }
@@ -291,9 +295,15 @@ float distToWallF() {
     return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
 }
 
+float distToWallB() {
+    return (getBackDistance() / 25.4) + B_DISTANCE_OFFSET;
+}
+
 float distToWallL() {
     return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
 }
+
+
 
 //Color
 int getIntakeColor() {
@@ -585,8 +595,8 @@ void moveLiftToPos(float pos,int timeout){
     if(pos <= 13){
         pos = 13.5;
     }
-    else if(pos >= 101){
-        pos = 101;
+    else if(pos >= 102){
+        pos = 102;
     }
     autoLift = true;
 
