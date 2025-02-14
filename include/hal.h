@@ -90,6 +90,10 @@ void liftPneumaticUp();
 void liftPneumaticDown();
 bool getLiftPneumatic();
 
+void highClimbUp();
+void highClimbDown();
+void toggleHighClimb();
+
 float distToWallF();
 float distToWallB();
 float distToWallL();

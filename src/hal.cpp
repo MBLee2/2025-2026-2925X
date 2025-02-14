@@ -267,6 +267,19 @@ bool getLiftPneumatic() {
     return lift_helper1.is_extended();
 }
 
+//High Climb
+void highClimbUp(){
+    high_climb.extend();
+}
+
+void highClimbDown(){
+    high_climb.retract();
+}
+
+void toggleHighClimb() {
+    high_climb.toggle();
+}
+
 // Sensors
 
 //IMU
