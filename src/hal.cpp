@@ -12,7 +12,7 @@
 #include <queue>
 
 
-bool COLOR = true; // true = red, false = blue
+bool COLOR = false; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -1152,13 +1152,33 @@ void saveRing(int timeout){
         int hue = get2ndIntakeColor();
         if(detectOurColor(hue))
         {
-            //pros::delay(100);
+            pros::delay(100);
             stopIntake();
             return;
         }
         if(detectTheirColor(hue))
         {
-            //pros::delay(100);
+            pros::delay(100);
+            stopIntake();
+            return;
+        }
+        pros::delay(20);
+        time += 20;
+    }
+}
+
+void saveOurRing1(int timeout){
+    int time = 0;
+    while (true) {
+        if (time >= timeout)
+        {
+            return;
+        }
+        int hue = getIntakeColor();
+        //printf("Color %d\n",hue);
+        if(detectOurColor(hue))
+        {
+            pros::delay(100);
             stopIntake();
             return;
         }

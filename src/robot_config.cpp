@@ -44,7 +44,7 @@ pros::adi::Pneumatics intake_lift('h', false);
 pros::adi::Pneumatics intake_ramp_lift({8, 'd'}, false);
 
 pros::adi::Pneumatics mogo_rush('g', false);
-pros::adi::Pneumatics mogo_rush_clamp({8, 'g'}, false);
+pros::adi::Pneumatics mogo_rush_clamp({7, 'g'}, false);
 //pros::adi::Pneumatics lastring('a', false);
 
 pros::adi::Pneumatics redirect1('a', false);
@@ -102,9 +102,9 @@ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwhee
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    &vertical_tracking_wheel, //&vertical_tracking_wheel, //SKILLSa  
+    nullptr, //&vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
-    &horizontal_tracking_wheel, //&horizontal_tracking_wheel,//SKILLS
+    nullptr,//&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &imu // inertial sensor
 );  
