@@ -411,16 +411,15 @@ void RedGoalRush(){
   startSorting();
 
   chassis.setPose(33.5,-53,5);
-  chassis.moveToPoint(37.5, -15.5, 10000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(39.4, -16, 10000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
   extendSweep();
-  chassis.waitUntilDone();
+  chassis.waitUntil(34);
   extendRushClamp();
   chassis.turnToHeading(72, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(42, -14, 1000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.waitUntil(5);
+  chassis.moveToPoint(42, -14, 1000, {.maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
+  chassis.waitUntil(3);
   retractRushClamp();
-  chassis.moveToPoint(37.5, -15.5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.turnToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(37.5, -15.5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
   chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
   chassis.waitUntil(18);
   closeClamp();
@@ -433,11 +432,10 @@ void RedGoalRush(){
   chassis.turnToPoint(24, -30, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
   chassis.moveToPoint(22, -31.5, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
   chassis.waitUntilDone();
-  pros::delay(200);
+  pros::delay(500);
   openClamp();
 
   chassis.moveToPoint(36, -12, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  stopSorting();
   chassis.turnToHeading(-90, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
 
   chassis.moveToPoint(46, -12, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
@@ -445,21 +443,20 @@ void RedGoalRush(){
   chassis.waitUntil(4);
   closeClamp();
 
-  chassis.turnToPoint(24, -24, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(24, -24, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.turnToHeading(135, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(48, -48, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  saveRing1(3000);
-  chassis.moveToPoint(58, -58, 3000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.waitUntil(2);
-  startSorting();
-  spinIntake(127);
-  pros::delay(1500);
-  chassis.moveToPoint(54, -54, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.turnToPoint(48, -24, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(48, -24, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.turnToHeading(160, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(55, -57, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.turnToHeading(135, 1000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 4}, false);
+  int temp_pos1 = chassis.getPose().x;
+  int temp_pos2 = chassis.getPose().y;
+  chassis.moveToPoint(temp_pos1 + 5, temp_pos2 - 5, 1000, {.maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2}, false);
+  pros::delay(400);
+  chassis.moveToPoint(temp_pos1 - 5, temp_pos2 + 5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
 
   chassis.turnToHeading(-10, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(55, -18, 3000, {.maxSpeed = speed1});
-  spinIntake(-127);
+  chassis.moveToPoint(48, -18, 3000, {.maxSpeed = speed1});
+
 
   int temp = pros::millis();
   while (true) {
