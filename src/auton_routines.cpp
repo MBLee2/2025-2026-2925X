@@ -728,43 +728,46 @@ void redNegSixRing(){
   pros::delay(200);
   spinIntake(127);
 
-  chassis.turnToPoint(-43,-24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-43,-24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
+  chassis.turnToPoint(-42,-24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
+  chassis.moveToPoint(-42,-24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   startSorting();
 
   //FIRST RING
-  chassis.turnToPoint(-43,-10,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 1});
-  chassis.moveToPoint(-43,-10.25,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 6});
+  chassis.turnToPoint(-42,-10,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 1});
+  chassis.moveToPoint(-42,-10,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 6});
 
   chassis.moveToPoint(-48,-24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
 
   chassis.turnToPoint(-48,-10,1000,{.maxSpeed = speed-30,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-49,-10.25,1000,{.maxSpeed = speed1},false);
+  chassis.moveToPoint(-49,-10,1000,{.maxSpeed = speed1},false);
   pros::delay(300);
 
   chassis.moveToPoint(-48,-52,2000,{.forwards=false,.maxSpeed = speed1-30,.minSpeed = 30, .earlyExitRange = 6});
-  chassis.waitUntil(18);
   chassis.turnToPoint(-72, -74, 4000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 5});
-  //chassis.moveToPoint(-72,-74,600,{.maxSpeed = speed1});
-  chassis.moveToPoint(-72,-74,800,{.maxSpeed = speed1-60});
-  chassis.moveToPoint(-54,-50,1000,{.forwards=false,.maxSpeed = speed1 - 20,.minSpeed = 20, .earlyExitRange = 8},false);
+  chassis.moveToPoint(-72,-74,800,{.maxSpeed = speed1-65}, false);
+  pros::delay(200);
+  chassis.moveToPoint(-50,-52,1000,{.forwards=false,.maxSpeed = speed1 - 30,.minSpeed = 20, .earlyExitRange = 2},false);
   liftIntake();
   pros::delay(100);
+  chassis.moveToPoint(-72,-74,800,{.maxSpeed = speed1}, false);
+  pros::delay(300);
+  dropIntake();
+  chassis.moveToPoint(-54,-50,1000,{.forwards=false,.maxSpeed = speed1 - 20,.minSpeed = 20, .earlyExitRange = 8}, false);
+  pros::delay(400);
   
   chassis.turnToPoint(0,-48,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
   chassis.waitUntil(24);
   liftIntake();
-  chassis.moveToPoint(-10,-51,1400,{.maxSpeed = 80});
+  chassis.moveToPoint(-5,-52,1400,{.maxSpeed = 80});
   chassis.waitUntil(10000);
+  pros::delay(200);
   dropIntake(); 
   pros::delay(100);
-  chassis.moveToPoint(-24,-48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  chassis.moveToPoint(-20,-48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
+  printPositionV2((char*) "Last ring", false, false, time);
   chassis.waitUntil(8);
-  stopIntake();
-  startSorting();
-  pros::delay(1500);
+  pros::delay(500);
   chassis.moveToPoint(24, -48,3000);
-  spinIntake(-127);
   master.clear_line(0);
   //*/
   int temp = pros::millis();
