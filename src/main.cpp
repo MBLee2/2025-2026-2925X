@@ -119,7 +119,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -202,7 +202,7 @@ void autonomous() {
 	//chassis.moveToPoint(0, 30, 10000);
 	//HERE
 	
-	auton_routine default_routine = negetive_6_ring; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

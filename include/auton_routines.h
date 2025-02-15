@@ -23,7 +23,7 @@ extern auton_routine null_routine;
 
 extern auton_routine safe_positive, positive_WP, goal_rush, goal_rush_and_stake;
 
-extern auton_routine safe_negative, negetive_6_ring, negetive_6_ring_wall_stake, negetive_6_ring_both_stake;
+extern auton_routine safe_negative, negetive_6_ring, negetive_6_ring_wall_stake, safe_six_ring;
 
 extern auton_routine skills_1, solo_WP ,skills_2;
 
@@ -37,7 +37,7 @@ void goalRushWallStake();
 void negativeHalfWP();
 void negSixRing();
 void negSixRingWallStake();
-void negSixRingBothStake();
+void safeSixRing();
 void auton_60s_skills_1();
 void soloWP();
 void auton_60s_skills_2();
