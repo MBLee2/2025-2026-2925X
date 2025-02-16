@@ -221,7 +221,9 @@ void bluePositiveHalfWP(){ //EVERYTHING DONE
   temp_pos2 = chassis.getPose().y;
   chassis.moveToPoint(temp_pos1 +18, temp_pos2 + 14, 1000,{.maxSpeed = 80, .minSpeed = 12, .earlyExitRange = 3});
   chassis.moveToPoint(48, 50, 2000,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
+  
+  
+  /*chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
   chassis.moveToPoint(12, 48, 3000,{.minSpeed = 30, .earlyExitRange = 8});
   liftIntake();
 
@@ -229,9 +231,9 @@ void bluePositiveHalfWP(){ //EVERYTHING DONE
   chassis.moveToPoint(24, 48, 3000,{.forwards=false,.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
   dropIntake();
   speed = 80;
-  speed1 = int(speed);
+  speed1 = int(speed);//*/
   chassis.turnToPoint(15, 17, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(15, 17, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 3});
+  chassis.moveToPoint(18.5, 20.5, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 3});
   chassis.turnToHeading(225, 1000,{.maxSpeed=speed},false);
   dropIntake();
   //*/
@@ -415,9 +417,9 @@ void RedGoalRush(){
   extendSweep();
   chassis.waitUntil(34);
   extendRushClamp();
-  chassis.turnToHeading(72, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(42, -14, 1000, {.maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
-  chassis.waitUntil(3);
+  chassis.turnToHeading(72, 1400, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(42, -14, 400, {.maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
+  chassis.waitUntil(5);
   retractRushClamp();
   chassis.moveToPoint(37.5, -15.5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
   chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
@@ -430,7 +432,7 @@ void RedGoalRush(){
   retractSweep();
 
   chassis.turnToPoint(24, -30, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(22, -31.5, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.moveToPoint(23, -29, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
   chassis.waitUntilDone();
   pros::delay(500);
   openClamp();

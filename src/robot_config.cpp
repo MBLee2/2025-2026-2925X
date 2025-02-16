@@ -41,8 +41,6 @@ pros::adi::Pneumatics mogo_clamp('e', false);
 //pros::adi::Pneumatics mogo_clamp2('d', false);
 
 pros::adi::Pneumatics intake_lift('h', false);
-pros::adi::Pneumatics intake_ramp_lift({8, 'd'}, false);
-
 pros::adi::Pneumatics mogo_rush('g', false);
 pros::adi::Pneumatics mogo_rush_clamp({7, 'g'}, false);
 //pros::adi::Pneumatics lastring('a', false);
