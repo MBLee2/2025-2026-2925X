@@ -159,27 +159,8 @@ void taskFn_intake_control(void) {
     }   
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      if(getLiftPosition() < 40)
-      {
-        if(lift_counter == 0){
-          pros::Task lift_wall_stake([=] {moveLiftToPos(83);});
-        }
-      }
-
-      else if(getLiftPosition() < 130 && getLiftPosition() > 40)
-      {
-        spinIntake(127);
-
-        if(getLiftPosition() < 24){
-          liftPneumaticUp();
-        }
-        else if(getLiftPosition() > 24){
-          liftPneumaticDown();
-        }
-      }
-      else {
-        stopIntake();
-      }
+      closeClamp();
+      moveLiftToPos(120);
     }
 
     else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
