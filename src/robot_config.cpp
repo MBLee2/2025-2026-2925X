@@ -16,12 +16,12 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(6, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(-8, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(10, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(-3, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(11, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(-18, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(3, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(10, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(-8, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor rf(-4, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(-20, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(13, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
@@ -32,9 +32,9 @@ pros::MotorGroup right_side_motors({-3, 11, -18}, pros::v5::MotorGears::blue);
 pros::Motor intake(-12, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
-pros::Motor ladybrownL(17, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-20, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({17, -20}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(-1, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(11, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({-1, 11}, pros::v5::MotorGears::green);
 
 
 //Other Motor
