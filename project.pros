@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "STATES/WORLDS",
+    "project_name": "DO NOT TOUCH",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -299,9 +299,9 @@
     },
     "upload_options": {
       "after": "screen",
-      "description": "",
+      "description": "STATES/WORLDS",
       "icon": "pros",
-      "slot": 1
+      "slot": 6
     },
     "use_early_access": false
   }

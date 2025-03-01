@@ -12,7 +12,8 @@
 #include <queue>
 
 
-bool COLOR = true; // true = red, false = blue
+bool COLOR = false; // true = red, false = blue
+int COLOR_SIG = (COLOR) ? 1 : 2;
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -243,13 +244,20 @@ bool getLimitSwitch() {
 }
 
 // Vision Sensor
+pros::vision_object_s_t getRed() {
+    return vision_sensor.get_by_sig(0, 1);
+}
+pros::vision_object_s_t getBlue() {
+    return vision_sensor.get_by_sig(0, 2);
+}
+
 pros::vision_object_s_t getOurColorObject() {
     return vision_sensor.get_by_sig(0, COLOR_SIG);
 }
 
 pros::vision_object_s_t getMostRelevantObject() {
     pros::vision_object_s_t object_arr[5];
-    int availableObjects = vision_sensor.read_by_sig(0, (COLOR) ? 2 : 1, 5, object_arr);
+    int availableObjects = vision_sensor.read_by_sig(0, COLOR_SIG, 5, object_arr);
 
     int highestY = 0;
     int highestYIndex = 0;
@@ -267,7 +275,7 @@ pros::vision_object_s_t getMostRelevantObject() {
     }
 
     if(availableObjects <= 1){
-        //printf("X: %d", object_arr[highestYIndex].x_middle_coord);
+		printf("(%d, %d)\n", object_arr[highestYIndex].x_middle_coord, object_arr[highestYIndex].y_middle_coord);
         return object_arr[highestYIndex];
     }
 
@@ -285,7 +293,7 @@ pros::vision_object_s_t getMostRelevantObject() {
         }
     }
 
-    //printf("X: %d", object_arr[lowestXOffsetIndex].x_middle_coord);
+    printf("(%d, %d)\n", object_arr[lowestXOffsetIndex].x_middle_coord, object_arr[lowestXOffsetIndex].y_middle_coord);
     return object_arr[lowestXOffsetIndex];
 }
 

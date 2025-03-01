@@ -16,12 +16,12 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(6, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(-8, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(10, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(-3, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(11, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(-18, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(-3, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(-2, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(-1, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor rf(13, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(14, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(11, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
@@ -45,28 +45,34 @@ pros::adi::Pneumatics mogo_clamp('b', false);
 
 
 /* SENSORS */
-pros::Optical intake_color(14);
+pros::Optical intake_color(21);
 pros::Optical intake_color2(5);
-pros::Distance distance_lf(12);
-pros::Distance distance_lb(20);
-pros::Distance distance_rf(10);
-pros::Distance distance_rb(18);
+pros::Distance distance_lf(21);
+pros::Distance distance_lb(21);
+pros::Distance distance_rf(21);
+pros::Distance distance_rb(21);
 pros::Distance distance_bl(21);
-pros::Distance distance_br(10);
+pros::Distance distance_br(21);
 
 pros::Distance distance_front(4);
 pros::Distance distance_back(10);
 pros::Distance distance_left(15);
 
-pros::GPS gps(3);
+pros::GPS gps(21);
 pros::IMU imu(19);
 
 pros::adi::Button limitSwitch('e');
 pros::Rotation lift_rotation(6); 
 
-//pros::Vision vision_sensor(5);
-pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
-pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
+pros::Vision vision_sensor(9);
+//pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
+//pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
+
+
+
+    //pros::Vision::signature_from_utility(2, -4201, -3529, -3865, 6125, 8787, 7456, 2.5, 0);
+    //pros::Vision::signature_from_utility(2, -3619, -3223, -3421, 6207, 6919, 6563, 2.5, 0);
+
 
 
 lemlib::Drivetrain drivetrain(

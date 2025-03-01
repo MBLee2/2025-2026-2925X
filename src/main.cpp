@@ -60,6 +60,14 @@ void initialize() {
     setIntakeColor2LED(100);
 	sort_color_queue();
 	autoIntake = false;
+
+	vision_sensor.set_exposure(27);
+	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1, 8075, 9011, 8543, 143, 683, 413, 2.5, 0);
+	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3619, -3223, -3421, 6207, 6919, 6563, 2.5, 0);
+	//{2, {1, 0, 0}, 3.000, -3739, -3099, -3419, 4911, 6975, 5943, 0, 0};
+	vision_sensor.set_signature(1, &RED_SIG);
+	vision_sensor.set_signature(2, &BLUE_SIG);
+	vision_sensor.set_zero_point(pros::E_VISION_ZERO_TOPLEFT);
 	
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
@@ -245,6 +253,14 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	turnToRing(15000, 80);
+
+	while(true){
+		pros::vision_object_s_t ring = getMostRelevantObject();
+		printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
+		pros::delay(100);
+	}
+
 	stopSorting();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	

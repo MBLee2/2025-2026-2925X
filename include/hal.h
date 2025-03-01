@@ -17,8 +17,8 @@
 #define TURN_KD 0
 
 #define VISION_KP 0.5
-#define VISION_RANGE 15
-#define VISION_RANGE_TIMEOUT 200
+#define VISION_RANGE 25
+#define VISION_RANGE_TIMEOUT 120
 
 #define F_DISTANCE_OFFSET 6.25
 #define B_DISTANCE_OFFSET 6.25
@@ -165,6 +165,8 @@ void clearRingQueue();
 
 pros::vision_object_s_t getOurColorObject();
 pros::vision_object_s_t getMostRelevantObject();
+pros::vision_object_s_t getRed();
+pros::vision_object_s_t getBlue();
 void turnToRing(int timeout = 15000, float maxSpeed = 130);
 void driveToRing(int timeout = 15000, int maxSpeed = 130);
 float calcDistance();
