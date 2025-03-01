@@ -48,27 +48,17 @@ extern pros::MotorGroup left_side_motors;              // Left drivetrain of dri
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
 
 //Motors
-extern pros::Motor intakeL;
-extern pros::Motor intakeR;
+extern pros::Motor intake;
+
+extern pros::Motor ladybrownL;
+extern pros::Motor ladybrownR;
+extern pros::MotorGroup ladybrown;
+
 //extern pros::Motor lift;
 
 //pistons
-extern pros::adi::Pneumatics hood1;
-extern pros::adi::Pneumatics hood2;
 extern pros::adi::Pneumatics mogo_clamp;
-extern pros::adi::Pneumatics mogo_clamp2;
-extern pros::adi::Pneumatics intake_lift;
-extern pros::adi::Pneumatics intake_ramp_lift;
-extern pros::adi::Pneumatics mogo_rush;
-extern pros::adi::Pneumatics mogo_rush_clamp;
-extern pros::adi::Pneumatics climb;
-//extern pros::adi::Pneumatics lastring;
 
-extern pros::adi::Pneumatics redirect1;
-extern pros::adi::Pneumatics redirect2;
-
-extern pros::adi::Pneumatics lift_helper1;
-extern pros::adi::Pneumatics lift_helper2;
 
 //Sensors
 //extern pros::Optical intake_color;

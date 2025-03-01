@@ -61,6 +61,11 @@ void stopIntake();
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
 
+void spinLift(int speed);
+void stopLift();
+void stopLiftHold();
+void setLiftBrake(pros::motor_brake_mode_e mode);
+
 void openClamp();
 void closeClamp();
 void toggleClamp();
@@ -132,6 +137,7 @@ float getLiftPosition();
 
 void moveLiftToPos(float position, int timeout = 5000);
 void liftUpWallStake();
+void liftPickup();
 void liftDown();
 
 void resetIntakePosition();

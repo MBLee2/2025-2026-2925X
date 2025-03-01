@@ -1,3 +1,4 @@
+#include "lemlib/chassis/trackingWheel.hpp"
 #include "main.h"
 #include "pros/abstract_motor.hpp"
 #include "pros/adi.hpp"
@@ -15,42 +16,32 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-18, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(8, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(-9, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(13, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(-1, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(6, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(-8, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(10, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor rf(-3, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(11, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(-18, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({-18, 8, -9}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({13, -1, 2}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-3, 11, -18}, pros::v5::MotorGears::blue);
 
 
-// intake motor group
-pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
-pros::Motor intakeR(11, pros::v5::MotorGears::red);
+// intake motor 
+pros::Motor intake(-12, pros::v5::MotorGears::red);  // port 4, reversed
+
+//lady brown group
+pros::Motor ladybrownL(17, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(-20, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({17, -20}, pros::v5::MotorGears::green);
+
 
 //Other Motor
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
 
 //Pistons
-pros::adi::Pneumatics hood1('d', false);
-
-pros::adi::Pneumatics mogo_clamp('e', false);
-//pros::adi::Pneumatics mogo_clamp2('d', false);
-
-pros::adi::Pneumatics intake_lift('h', false);
-pros::adi::Pneumatics mogo_rush('g', false);
-pros::adi::Pneumatics mogo_rush_clamp({7, 'g'}, false);
-//pros::adi::Pneumatics lastring('a', false);
-
-pros::adi::Pneumatics redirect1('a', false);
-
-pros::adi::Pneumatics lift_helper1('f', false);
-pros::adi::Pneumatics lift_helper2('c',false );
-
-pros::adi::Pneumatics climb({7, 'f'}, false);
+pros::adi::Pneumatics mogo_clamp('b', false);
 
 
 /* SENSORS */
@@ -70,7 +61,7 @@ pros::Distance distance_left(15);
 pros::GPS gps(3);
 pros::IMU imu(19);
 
-pros::adi::Button limitSwitch('B');
+pros::adi::Button limitSwitch('e');
 pros::Rotation lift_rotation(6); 
 
 //pros::Vision vision_sensor(5);
@@ -82,8 +73,8 @@ lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
     12, // track width
-    lemlib::Omniwheel::NEW_4,// wheel diameter
-    300, // wheel rpm
+    lemlib::Omniwheel::NEW_275,// wheel diameter
+    600, // wheel rpm
 	8 //chase Power
 );
 // left tracking wheel encoder
@@ -100,7 +91,7 @@ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwhee
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    &vertical_tracking_wheel, //&vertical_tracking_wheel, //SKILLSa  
+    nullptr, //&vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
     &horizontal_tracking_wheel,//&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
@@ -161,8 +152,8 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake L", intakeL},
-        dashboard_motor_display {320, 190, "Intake R", intakeR}
+        dashboard_motor_display {320, 135, "Intake L", intake},
+        dashboard_motor_display {320, 190, "Intake R", ladybrownL}
         
         
     };

@@ -11,8 +11,12 @@
 #include "main.h"
 
 bool intakeMode = true; //Mason Rudra place where should be
-
-
+enum intake_state {
+  INTAKE, // Intake objects
+  OUTAKE, // Eject objects
+  STOP  // Stop the intake
+};
+intake_state current_state = STOP;
 #define TURN_CONST                                                             \
   1.4 // Constant multipled by X input to allow for instant turns during driver
       // control
@@ -74,18 +78,14 @@ void taskFn_mogo_control(void) {
     // If the joystick is pushed upward past 85%, extend the mogo_rush arm
     // (extended)
     if (rightY > 0.85) {
-      extendSweep();
     }
     // If the joystick is pushed downward past 85%, retract the mogo_rush arm
     // (retracted)
     if (rightY < -0.85) {
-      retractSweep();
     }
     if (rightX > 0.85) {
-      liftIntake();
     }
     if (rightX < -0.85) {
-      dropIntake();
     }
 
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
@@ -98,21 +98,14 @@ void taskFn_mogo_control(void) {
 void taskFn_intake_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
   // Define an enum to represent the intake's possible states
-  enum intake_state {
-    INTAKE, // Intake objects
-    OUTAKE, // Eject objects
-    STOP  // Stop the intake
-  };
+  
 
   intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
-  intake_state current_state = STOP; // Initialize with a default state, STOP
-  int lift_counter = 0;
-  bool temp_state = true;
   while (true) // Infinite loop to keep checking controller input for intake
   {
     double pos = getLiftPosition();; // Get the current position of the lift
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      if ((current_state == OUTAKE || current_state == STOP) && getLiftPosition() < 30) // If the intake is stopped or ejecting, start intake
+      if ((current_state == OUTAKE || current_state == STOP)) // If the intake is stopped or ejecting, start intake
       {
         //autoIntake = false;
         current_state = INTAKE;
@@ -129,7 +122,7 @@ void taskFn_intake_control(void) {
     }
     // Eject objects with the B button
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      if ((current_state == INTAKE || current_state == STOP) && getLiftPosition() < 30) // If intake is running or stopped, start ejecting
+      if ((current_state == INTAKE || current_state == STOP)) // If intake is running or stopped, start ejecting
       {
         //autoIntake = false;
         spinIntake(-127);
@@ -153,38 +146,9 @@ void taskFn_intake_control(void) {
       }
       else if (autoIntake == true) // If intake is ejecting, stop it
       {
-        closeRedirect();
         stopSorting();
       }
     }   
-
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-      closeClamp();
-      moveLiftToPos(120);
-    }
-
-    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      liftPneumaticDown();
-      temp_state = false;
-      spinIntake(-127);
-    } 
-
-    else if(!temp_state){
-      lift_counter = 0;
-      if(getLiftPosition() > 24 && getLiftPosition() < 300){
-        liftPneumaticDown();
-        stopIntakeHold();
-      }
-      else{
-        stopIntake();
-        temp_state = true;
-      }
-    }
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-    {
-      climb_up();
-    }
-
 
 
     pros::delay(20);
@@ -192,35 +156,43 @@ void taskFn_intake_control(void) {
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_intake_control
 
-// Intake control
-void taskFn_hood_control(void) {
-  bool hood_state = false;
-  printf("%s(): Entered \n", __func__);
-  while (true) {
-    // Toggle the basket state with the Y button
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      toggleHood();
-      if(!getHood()){
-        stopSorting();
-        closeRedirect();
-      } else {
-        redirectRings();
-      }
+void taskFn_lift_control(void)
+{
+  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
+  // Define an enum to represent the intake's possible states
+  enum lift_state {
+    WALLSTAKE, // Intake objects
+    PICKUP, // Eject objects
+    DOWN  // Stop the intake
+  };
+
+  ladybrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
+  lift_state current_state1X = DOWN; // Initialize with a default state, STOP
+
+  while (true) // Infinite loop to keep checking controller input for intake
+  { 
+    while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      spinLift(127);
     }
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-      stopSorting();
-      toggleRedirect();
+    while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+      spinLift(-127);
     }
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
-      extendRushClamp();
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      stopIntake();
+      current_state = STOP;
+      liftUpWallStake();
+
     }
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
-      retractRushClamp();
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+      liftPickup();
     }
-    // Control the intake lift based on joystick position
+    if(limitSwitch.get_value() == true)
+    {
+      resetLiftPosition();
+    }
+    stopLiftHold();
+    
+
     pros::delay(20);
   }
-
-
-  printf("%s(): Exiting \n", __func__);
-} // end of taskFn_auto_intake_push_control
+}

@@ -131,28 +131,42 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 
 // Intake Movement
 void spinIntake(int speed) {
-    intakeL.move(speed);
-    intakeR.move(speed);
+    intake.move(speed);
 }
 
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
-    intakeL.brake();
-    intakeR.brake();
+    intake.brake();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
-    intakeL.brake();
-    intakeR.brake();
+    intake.brake();
 }
 
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
-    intakeL.set_brake_mode(mode);
-    intakeR.set_brake_mode(mode);
+    intake.set_brake_mode(mode);
 }
 
+// Intake Movement
+void spinLift(int speed) {
+    ladybrown.move(speed);
+}
+
+void stopLift() {
+    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    ladybrown.brake();
+}
+void stopLiftHold() {
+    setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+    ladybrown.brake();
+}
+
+
+void setLiftBrake(pros::motor_brake_mode_e mode) {
+    ladybrown.set_brake_mode_all(mode);
+}
 
 
 //Pneumatics
@@ -169,105 +183,6 @@ void closeClamp() {
 void toggleClamp() {
     mogo_clamp.toggle();
 }
-
-
-
-//Redirect
-void redirectRings() {
-    redirect1.extend();
-}
-
-void closeRedirect() {
-    redirect1.retract();
-}
-
-void toggleRedirect() {
-    redirect1.toggle();
-}
-
-bool getRedirect() {
-    return redirect1.is_extended();
-}
-
-// Hood
-
-void toggleHood(){
-    if(getHood()){
-        hoodBwd();
-    } else {
-        hoodFwd();
-    }
-}
-
-void hoodFwd() {
-    hood1.extend();
-    stopSorting();
-}
-
-void hoodBwd() {
-    hood1.retract();
-}
-
-bool getHood(){
-    return hood1.is_extended();
-}
-
-// Intake Lift
-void liftIntake() {
-    intake_lift.extend();
-}
-
-void dropIntake() {
-    intake_lift.retract();
-}
-
-// Sweeper
-void extendSweep() {
-    mogo_rush.extend();
-}
-
-void retractSweep() {
-    mogo_rush.retract();
-}
-
-void extendRushClamp()
-{
-    mogo_rush_clamp.extend();
-}
-void retractRushClamp()
-{
-    mogo_rush_clamp.retract();
-}
-
-// Sixth-ring
-void extendSixRing() {
-    //lastring.set_value(true);
-}
-
-void retractSixRing() {
-    //lastring.set_value(false);
-}
-
-void toggleSixRing() {
-    //lastring.toggle();
-}
-
-//Lift Helper
-void liftPneumaticUp() {
-    lift_helper1.extend();
-    lift_helper2.extend();
-}
-
-void liftPneumaticDown() {
-    lift_helper1.retract();
-    lift_helper2.retract();
-}
-
-bool getLiftPneumatic() {
-    return lift_helper1.is_extended();
-}
-
-// Sensors
 
 //IMU
 void resetIMUHeading() {
@@ -425,22 +340,22 @@ float getRightMotorPositionInInches() {
 }
 
 void resetLiftPosition(){
-    lift_rotation.reset();
-    lift_rotation.reset_position();
-    lift_rotation.set_position(0);
+    ladybrown.tare_position();
 }
 
 float getLiftPosition() {
-    return lift_rotation.get_angle() / 100.0;
+
+    printf("LB pos = %f\n",ladybrown.get_position());
+    return (ladybrown.get_position());
+
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
-    intakeL.set_encoder_units(mode);
-    intakeR.set_encoder_units(mode);
+    intake.set_encoder_units(mode);
 }
 
 float getIntakePosition() {
-    return (intakeL.get_position() + intakeR.get_position()) / 2.0;
+    return (intake.get_position());
 }
 
 // Reset Motor Positions
@@ -463,8 +378,7 @@ void resetDriveMotorPosition() {
 
 
 void resetIntakePosition() {
-    intakeL.tare_position();
-    intakeR.tare_position();
+    intake.tare_position();
 }
 
 float wheelDegToInches(float degrees) {
@@ -581,27 +495,41 @@ void turn(float degrees, int timeout) {
 
 // Lift
 void liftUpWallStake() {
-    moveLiftToPos(82);
+    ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
+    moveLiftToPos(230);
+    printf("WALL STAKE");
+}
+
+void liftPickup() {
+    int time = 0;
+    while(limitSwitch.get_value() == false && time < 1000)
+    {
+        spinLift(-60);
+        pros::delay(20);
+        time +=20;
+    }
+    resetLiftPosition();
+    moveLiftToPos(80);
 }
 
 void liftDown() {
-    moveLiftToPos(14);
+    moveLiftToPos(4);
 }
 
 void moveLiftToPos(float pos,int timeout){
+    
     int time = pros::millis();
     autoLift = true;
 
-    if(pos <= 13){
-        pos = 13.5;
+    if(pos <= 0){
+        pos = 0;
     }
-    else if(pos >= 102){
-        pos = 102;
+    else if(pos >= 900){
+        pos = 902;
     }
     autoLift = true;
-
     if(getLiftPosition() > pos){
-        spinIntake(-127);
+        spinLift(127);
 
         while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
         {
@@ -610,27 +538,21 @@ void moveLiftToPos(float pos,int timeout){
         }
 
         if(getLiftPosition() > 25 && getLiftPosition() < 300){
-            liftPneumaticDown();
-            stopIntakeHold();
+            stopLiftHold();
         }
         else{
-            stopIntake();
+            stopLift();
         }
     }
     else if(getLiftPosition() < pos){
-        spinIntake(127);
-
-        if(getLiftPosition() < 25){
-            liftPneumaticUp();
-        }
+        spinLift(127);
 
         while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
-        liftPneumaticDown();
-        stopIntakeHold();
+        stopLiftHold();
     }
 
     autoLift = false;
@@ -876,20 +798,20 @@ void addCurrentRing(){
 }
 
 void checkQueue() {
-    while(true){
-        if(autoIntake){
-            if(!ringQueue.empty()){
-                if(ringQueue.front() == COLOR && getRedirect()){ //If next ring is ours and redirect is up
-                    closeRedirect(); //close redirect
-                    printf("Scoring rings\n");
-                } else if(ringQueue.front() != COLOR && !getRedirect()) { //If next ring is opp.'s and redirect is closed
-                    redirectRings(); //open redirect
-                    printf("Sorting out\n");
-                }
-            }
-        }
-        pros::delay(5);
-    }
+    // while(true){
+    //     if(autoIntake){
+    //         if(!ringQueue.empty()){
+    //             if(ringQueue.front() == COLOR && getRedirect()){ //If next ring is ours and redirect is up
+    //                 closeRedirect(); //close redirect
+    //                 printf("Scoring rings\n");
+    //             } else if(ringQueue.front() != COLOR && !getRedirect()) { //If next ring is opp.'s and redirect is closed
+    //                 redirectRings(); //open redirect
+    //                 printf("Sorting out\n");
+    //             }
+    //         }
+    //     }
+    //     pros::delay(5);
+    // }
 }
 
 void waitForExitRed(){
@@ -957,7 +879,7 @@ void sort_color_queue(){
 }
 
 void startSorting() {
-    if(!autoIntake && !getHood()){
+    if(!autoIntake ){
         master.print(1,0,"Sorting");
         autoIntake = true;
     }
@@ -966,7 +888,6 @@ void startSorting() {
 void stopSorting() {
     if(autoIntake){
         master.clear_line(1);
-        closeRedirect();
         autoIntake = false;
         clearRingQueue();
     }
@@ -1234,63 +1155,3 @@ void liftIntakeWallStake()
     }
      
 }
-void openRedirectAfterOurRing(int timeout)
-{
-    int time = 0;
-    while (true) {
-        int hue = get2ndIntakeColor();
-        if(detectOurColor(hue))
-        {
-            pros::delay(250);
-            redirectRings();
-            return;
-        }
-        if(timeout < time)
-        {
-            return;
-        }
-        time += 20;
-        pros::delay(20);
-    }
-     
-}
-
-
-void climb_piston_extend()
-{
-    climb.extend();
-}
-void climb_piston_retract()
-{
-    climb.retract();
-}
-void climb_piston_toggle()
-{
-    climb.toggle();
-}
-void climb_up()
-{
-    climb.extend();
-    pros::delay(200);
-    liftDown(); 
-}
-
-/*
-void basketRings(bool withSave){
-    autoIntake = true;
-    if(withSave){
-     saveRings();
-    }
-
-    if (basket_state == false)
-    {
-        spinIntake(90);
-        while(getIntakeDist() < 50 && (auton || autoSkill || autoIntake))  // If hue matches specific values
-        {
-            pros::delay(10);
-        }
-        intakeFor(90, 23.f);
-        outakeFor(105, 370);
-    }
-    spinIntake(127);
-}*/
