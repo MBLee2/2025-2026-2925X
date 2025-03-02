@@ -1,5 +1,6 @@
 #include "hal.h"
 #include "auton_basics.h"
+#include "auton_routines.h"
 #include "fmt/format.h"
 #include "pros/device.hpp"
 #include "pros/motors.h"
@@ -9,10 +10,12 @@
 #include "controls.h"
 #include "main.h"
 #include <cstdio>
+#include <limits>
 #include <queue>
+#include <type_traits>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 int COLOR_SIG = (COLOR) ? 1 : 2;
 
 bool auton = false, autoSkill = false;
@@ -132,22 +135,26 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 
 // Intake Movement
 void spinIntake(int speed) {
-    intake.move(speed);
+    intakeL.move(speed);
+    intakeR.move(speed);
 }
 
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
-    intake.brake();
+    intakeL.brake();
+    intakeR.brake();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
-    intake.brake();
+    intakeL.brake();
+    intakeR.brake();
 }
 
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
-    intake.set_brake_mode(mode);
+    intakeL.set_brake_mode(mode);
+    intakeR.set_brake_mode(mode);
 }
 
 // Intake Movement
@@ -255,16 +262,16 @@ pros::vision_object_s_t getOurColorObject() {
     return vision_sensor.get_by_sig(0, COLOR_SIG);
 }
 
-pros::vision_object_s_t getMostRelevantObject() {
+pros::vision_object_s_t getMostRelevantObject(bool color) {
     pros::vision_object_s_t object_arr[5];
-    int availableObjects = vision_sensor.read_by_sig(0, COLOR_SIG, 5, object_arr);
+    int availableObjects = vision_sensor.read_by_sig(0, (color) ? 1 : 2, 5, object_arr);
 
     int highestY = 0;
     int highestYIndex = 0;
 
     for(int i = 0; i < 5; i++){
         if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr->x_middle_coord - 158) > 120){
+            if(abs(object_arr->x_middle_coord - VISION_CENTER) > 130){
                 object_arr[i].signature = VISION_OBJECT_ERR_SIG;
                 availableObjects--;
             } else if (object_arr[i].y_middle_coord > highestY){
@@ -275,25 +282,23 @@ pros::vision_object_s_t getMostRelevantObject() {
     }
 
     if(availableObjects <= 1){
-		printf("(%d, %d)\n", object_arr[highestYIndex].x_middle_coord, object_arr[highestYIndex].y_middle_coord);
         return object_arr[highestYIndex];
     }
 
-    int lowestXOffset = 158;
+    int lowestXOffset = 160;
     int lowestXOffsetIndex = 0;
 
     for(int i = 0; i < 5; i++){
         if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
             if(abs(object_arr[i].y_middle_coord - highestY) < 10) {
-                if(abs(object_arr[i].x_middle_coord - 158) < lowestXOffset){
-                    lowestXOffset = abs(object_arr[i].x_middle_coord - 158);
+                if(abs(object_arr[i].x_middle_coord - VISION_CENTER) < lowestXOffset){
+                    lowestXOffset = abs(object_arr[i].x_middle_coord - VISION_CENTER);
                     lowestXOffsetIndex = i;
                 }
             }
         }
     }
 
-    printf("(%d, %d)\n", object_arr[lowestXOffsetIndex].x_middle_coord, object_arr[lowestXOffsetIndex].y_middle_coord);
     return object_arr[lowestXOffsetIndex];
 }
 
@@ -359,11 +364,11 @@ float getLiftPosition() {
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
-    intake.set_encoder_units(mode);
+    intakeL.set_encoder_units(mode);
 }
 
 float getIntakePosition() {
-    return (intake.get_position());
+    return (intakeL.get_position());
 }
 
 // Reset Motor Positions
@@ -386,7 +391,7 @@ void resetDriveMotorPosition() {
 
 
 void resetIntakePosition() {
-    intake.tare_position();
+    intakeL.tare_position();
 }
 
 float wheelDegToInches(float degrees) {
@@ -924,19 +929,24 @@ void stopSorting() {
     stopDrive();
 }*/
 
+bool checkRing(pros::vision_object_s_t ring){
+    return (ring.x_middle_coord != 0 || ring.y_middle_coord != 0) && abs(ring.x_middle_coord) < 160 && abs(ring.y_middle_coord) < 110;
+}
+
 void turnToRing(int timeout, float maxSpeed){
     bool reached = false;
     int counter = 0;
+    int error;
 
     while(!reached && timeout > 0){
 
         pros::vision_object_s_t nearestRing = getMostRelevantObject();
 
-        if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+        if(checkRing(nearestRing)){
 
-            int error = nearestRing.x_middle_coord - 158;
+            error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            float motorPower = VISION_KP * error;
+            float motorPower = (VISION_TURN_KP * error);
 
             if(motorPower > maxSpeed){
                 motorPower = maxSpeed;
@@ -946,22 +956,55 @@ void turnToRing(int timeout, float maxSpeed){
 
             drive(motorPower, -motorPower);
 
+            printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord, error, motorPower);
+            
+
             if(abs(error) < VISION_RANGE) {
+                counter += 20;
                 if(counter >= VISION_RANGE_TIMEOUT) {
                     reached = true;
-                } else {
-                    counter += 30;
-                }
+                } 
             } else {
                 counter = 0;
             }
         }
 
-        pros::delay(30);
-        timeout -= 30;
+        pros::delay(20);
+        timeout -= 20;
     }
 
     stopDrive();
+}
+
+
+void driveTowardsRing(int timeout, int maxSpeed){
+    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+    float motorPower;
+
+    pros::vision_object_s_t ring = getMostRelevantObject();
+    if(checkRing(ring) && ring.y_middle_coord < 100){
+        while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0){
+            ring = getMostRelevantObject();
+
+            if(checkRing(ring)){
+                int error = 106 + ring.y_middle_coord;
+                motorPower = VISION_LAT_KP * error;
+
+                if(motorPower > maxSpeed){
+                    motorPower = maxSpeed;
+                }
+            }
+
+            driveStraight(motorPower);
+            printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
+
+            pros::delay(30);
+            timeout -= 30;
+
+        }
+
+        stopDrive();
+    }
 }
 
 void driveToRing(int timeout, int maxSpeed) {
@@ -973,16 +1016,17 @@ void driveToRing(int timeout, int maxSpeed) {
 
         pros::vision_object_s_t nearestRing = getMostRelevantObject();
 
-        if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+        if(checkRing(nearestRing)){
 
-            int vision_error = nearestRing.x_middle_coord - 158;
+            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            turnPower = VISION_KP * vision_error;
+            turnPower = VISION_TURN_KP * vision_error;
 
-            printf("Turn: %f\n", turnPower);
+            
+            printf("(%d, %d)\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
         } 
 
-        drive(maxSpeed + turnPower, maxSpeed - turnPower);
+        drive(60 + turnPower, 60 - turnPower);
         //printf("Motor Power: %f\n", motorPower);
 
         pros::delay(15);
@@ -1013,9 +1057,9 @@ void driveFullVision(int timeout, int maxSpeed) {
 
         if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
 
-            int vision_error = nearestRing.x_middle_coord - 158;
+            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            turnPower = VISION_KP * vision_error;
+            turnPower = VISION_TURN_KP * vision_error;
 
             distance = calcDistance();
 

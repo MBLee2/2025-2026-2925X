@@ -16,12 +16,12 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-3, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(-2, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(-1, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor lf(-18, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(8, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(-9, pros::v5::MotorGears::blue);  // port 9, reversed
 pros::Motor rf(13, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(14, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(11, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor rm(-1, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
@@ -29,7 +29,8 @@ pros::MotorGroup right_side_motors({-3, 11, -18}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-12, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intakeR(11, pros::v5::MotorGears::red);
 
 //lady brown group
 pros::Motor ladybrownL(17, pros::v5::MotorGears::green);  // port 4, reversed
@@ -45,7 +46,7 @@ pros::adi::Pneumatics mogo_clamp('b', false);
 
 
 /* SENSORS */
-pros::Optical intake_color(21);
+pros::Optical intake_color(14);
 pros::Optical intake_color2(5);
 pros::Distance distance_lf(21);
 pros::Distance distance_lb(21);
@@ -64,7 +65,7 @@ pros::IMU imu(19);
 pros::adi::Button limitSwitch('e');
 pros::Rotation lift_rotation(6); 
 
-pros::Vision vision_sensor(9);
+pros::Vision vision_sensor(4);
 //pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
 //pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
 
@@ -158,7 +159,7 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake L", intake},
+        dashboard_motor_display {320, 135, "Intake L", intakeL},
         dashboard_motor_display {320, 190, "Intake R", ladybrownL}
         
         
