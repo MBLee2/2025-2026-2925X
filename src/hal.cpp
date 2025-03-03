@@ -184,6 +184,32 @@ void toggleClamp() {
     mogo_clamp.toggle();
 }
 
+// leftsweeper
+void extendLeftSweeper() {
+    left_sweeper.extend();
+}
+
+void retractLeftSweeper() {
+    left_sweeper.retract();
+}
+
+void toggleLeftSweeper() {
+    left_sweeper.toggle();
+}
+
+// right sweeper
+void extendRightSweeper() {
+    right_sweeper.extend();
+}
+
+void retractRightSweeper() {
+    right_sweeper.retract();
+}
+
+void toggleRightSweeper() {
+    right_sweeper.toggle();
+}
+
 //IMU
 void resetIMUHeading() {
     imu.tare_heading();
@@ -509,7 +535,7 @@ void liftPickup() {
         time +=20;
     }
     resetLiftPosition();
-    moveLiftToPos(80);
+    moveLiftToPos(60);
 }
 
 void liftDown() {

@@ -70,6 +70,14 @@ void openClamp();
 void closeClamp();
 void toggleClamp();
 
+void extendLeftSweeper();
+void retractLeftSweeper();
+void toggleLeftSweeper();
+
+void extendRightSweeper();
+void retractRightSweeper();
+void toggleRightSweeper();
+
 void toggleHood();
 void hoodFwd();
 void hoodBwd();

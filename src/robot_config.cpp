@@ -16,12 +16,12 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(3, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(10, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(-8, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(-4, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(-20, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(13, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(15, pros::v5::MotorGears::blue);  // port 18, reversed
+pros::Motor lm(4, pros::v5::MotorGears::blue);  // port 10, forward
+pros::Motor lb(-20, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor rf(-9, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm( -1, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(10, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
@@ -29,19 +29,23 @@ pros::MotorGroup right_side_motors({-3, 11, -18}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-12, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(-5, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
-pros::Motor ladybrownL(-1, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(11, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({-1, 11}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(-12, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({11, -12}, pros::v5::MotorGears::green);
 
 
 //Other Motor
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
 
 //Pistons
-pros::adi::Pneumatics mogo_clamp('b', false);
+pros::adi::Pneumatics mogo_clamp('d', false);
+pros::adi::Pneumatics left_sweeper('b', false);
+pros::adi::Pneumatics right_sweeper('a', false);
+pros::adi::Pneumatics intake_lift('g', false);
+
 
 
 /* SENSORS */
@@ -61,7 +65,7 @@ pros::Distance distance_left(15);
 pros::GPS gps(3);
 pros::IMU imu(19);
 
-pros::adi::Button limitSwitch('e');
+pros::adi::Button limitSwitch('h');
 pros::Rotation lift_rotation(6); 
 
 //pros::Vision vision_sensor(5);
@@ -80,13 +84,17 @@ lemlib::Drivetrain drivetrain(
 // left tracking wheel encoder
 // right tracking wheel encoder
 pros::Rotation vertical_rot(12); // port 1, not reversed
-pros::Rotation horizontal_rot(17); // port 1, not reversed
+pros::Rotation horizontal_rot(8); // port 1, not reversed
 
 // back tracking wheel encoder  
  
 // vertical tracking wheel
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 1.25); // 2.00" wheel diameter, 1.25" offset from tracking center 
 // horizontal tracking wheel
+
+/*
+NOT SET UP YET
+*/
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, 1.00); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct

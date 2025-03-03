@@ -75,17 +75,18 @@ void taskFn_mogo_control(void) {
     // of -1 to 1
     int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
     int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
-    // If the joystick is pushed upward past 85%, extend the mogo_rush arm
-    // (extended)
     if (rightY > 0.85) {
+      extendRightSweeper();
     }
-    // If the joystick is pushed downward past 85%, retract the mogo_rush arm
     // (retracted)
-    if (rightY < -0.85) {
+    if (rightY > -0.85) {
+      retractRightSweeper();
     }
-    if (rightX > 0.85) {
+    if (rightX > 0.85) { 
+      extendLeftSweeper();
     }
     if (rightX < -0.85) {
+      retractLeftSweeper();
     }
 
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
@@ -181,7 +182,6 @@ void taskFn_lift_control(void)
       stopIntake();
       current_state = STOP;
       liftUpWallStake();
-
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       liftPickup();
