@@ -154,8 +154,7 @@ void spinLift(int speed) {
     ladybrown.move(speed);
 }
 
-void stopLift() {
-    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+void stopLift(){
     ladybrown.brake();
 }
 void stopLiftHold() {
@@ -366,14 +365,13 @@ float getRightMotorPositionInInches() {
 }
 
 void resetLiftPosition(){
-    ladybrown.tare_position();
+    ladybrown.tare_position_all();
+    master.rumble("-");
 }
 
 float getLiftPosition() {
-
-    printf("LB pos = %f\n",ladybrown.get_position());
-    return (ladybrown.get_position());
-
+    float pos = (ladybrownL.get_position() + ladybrownR.get_position()) / 2 ;
+    return (pos);
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
@@ -522,27 +520,48 @@ void turn(float degrees, int timeout) {
 // Lift
 void liftUpWallStake() {
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    moveLiftToPos(230);
+    moveLiftToPos(240,127);
     printf("WALL STAKE");
 }
 
 void liftPickup() {
     int time = 0;
-    while(limitSwitch.get_value() == false && time < 1000)
+    if(getLiftPosition() > 75)
     {
-        spinLift(-60);
-        pros::delay(20);
-        time +=20;
+        while (LB_dist.get_distance() > 5 && time < 1400) {
+            if (getLiftPosition() < 150)
+            {
+            spinLift(-20);
+            }
+            else if(getLiftPosition() > 150)
+            {
+            spinLift(-127);
+            }
+            pros::delay(20);
+            time=+20;
+        }
+        while (LB_dist.get_distance() < 53 && time < 1600) {
+            spinLift(30);
+            pros::delay(20);
+            time =+20;
+        }
     }
-    resetLiftPosition();
-    moveLiftToPos(60);
+    else if(getLiftPosition() < 75 && time < 1300)
+    {
+       while (LB_dist.get_distance() < 53) {
+            spinLift(30);
+            pros::delay(20);
+            time =+20;
+        }
+    }
+    stopLiftHold();
 }
 
 void liftDown() {
     moveLiftToPos(4);
 }
 
-void moveLiftToPos(float pos,int timeout){
+void moveLiftToPos(float pos,int speed,int timeout){
     
     int time = pros::millis();
     autoLift = true;
@@ -555,32 +574,25 @@ void moveLiftToPos(float pos,int timeout){
     }
     autoLift = true;
     if(getLiftPosition() > pos){
-        spinLift(127);
 
+        spinLift(-speed);
         while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
-
-        if(getLiftPosition() > 25 && getLiftPosition() < 300){
-            stopLiftHold();
-        }
-        else{
-            stopLift();
-        }
+        stopLift();
     }
     else if(getLiftPosition() < pos){
-        spinLift(127);
+        spinLift(speed);
 
         while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
         {
             pros::delay(20);
             //printf("Lift %f\n",getLiftPosition());
         }
-        stopLiftHold();
+        stopLift();
     }
-
     autoLift = false;
 }
 

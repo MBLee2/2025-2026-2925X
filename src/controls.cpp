@@ -75,17 +75,17 @@ void taskFn_mogo_control(void) {
     // of -1 to 1
     int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
     int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
-    if (rightY > 0.85) {
-      extendRightSweeper();
-    }
     // (retracted)
-    if (rightY > -0.85) {
+    if (rightY < -0.85) {
       retractRightSweeper();
+      retractLeftSweeper();
     }
     if (rightX > 0.85) { 
       extendLeftSweeper();
+      retractRightSweeper();
     }
     if (rightX < -0.85) {
+      extendRightSweeper();
       retractLeftSweeper();
     }
 
@@ -172,6 +172,7 @@ void taskFn_lift_control(void)
 
   while (true) // Infinite loop to keep checking controller input for intake
   { 
+    printf("Dist: %f\n",(double)LB_dist.get_distance());
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       spinLift(127);
     }
@@ -182,17 +183,24 @@ void taskFn_lift_control(void)
       stopIntake();
       current_state = STOP;
       liftUpWallStake();
+      setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       liftPickup();
+      setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
     }
-    if(limitSwitch.get_value() == true)
+    if(getLiftPosition() > 40)
+    {
+    stopLiftHold();
+    }
+    else if(getLiftPosition() < 40)
+    {
+    stopLift();
+    }
+    if(LB_dist.get_distance() < 3)
     {
       resetLiftPosition();
     }
-    stopLiftHold();
-    
-
     pros::delay(20);
   }
 }

@@ -63,6 +63,7 @@ void setIntakeBrake(pros::motor_brake_mode_e mode);
 
 void spinLift(int speed);
 void stopLift();
+void stopLiftPID();
 void stopLiftHold();
 void setLiftBrake(pros::motor_brake_mode_e mode);
 
@@ -143,7 +144,7 @@ void turn(float degrees, int timeout = 15000);
 void resetLiftPosition();
 float getLiftPosition();
 
-void moveLiftToPos(float position, int timeout = 5000);
+void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
 void liftUpWallStake();
 void liftPickup();
 void liftDown();

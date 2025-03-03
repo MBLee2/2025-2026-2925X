@@ -24,17 +24,17 @@ pros::Motor rm( -1, pros::v5::MotorGears::blue); // port 1, reversed
 pros::Motor rb(10, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-3, 11, -18}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({15, 4, -20}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-9, -1, -10}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-5, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(-19, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
 pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-12, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({11, -12}, pros::v5::MotorGears::green);
+pros::Motor ladybrownR(-14, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({11, -14}, pros::v5::MotorGears::green);
 
 
 //Other Motor
@@ -49,6 +49,8 @@ pros::adi::Pneumatics intake_lift('g', false);
 
 
 /* SENSORS */
+pros::Distance LB_dist(3);
+
 pros::Optical intake_color(14);
 pros::Optical intake_color2(5);
 pros::Distance distance_lf(12);

@@ -68,6 +68,7 @@ extern pros::adi::Pneumatics intake_lift;
 //extern pros::Optical intake_color;
 extern pros::Optical intake_color;
 extern pros::Optical intake_color2;
+extern pros::Distance LB_dist;
 
 extern pros::Distance distance_rb;
 extern pros::Distance distance_rf;
