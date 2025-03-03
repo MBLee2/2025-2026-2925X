@@ -15,7 +15,7 @@
 #include <type_traits>
 
 
-bool COLOR = true; // true = red, false = blue
+bool COLOR = false; // true = red, false = blue
 int COLOR_SIG = (COLOR) ? 1 : 2;
 
 bool auton = false, autoSkill = false;
@@ -303,7 +303,7 @@ pros::vision_object_s_t getMostRelevantObject(bool color) {
 }
 
 // Motor Encoder
-void setDriveEncoder(pros::motor_encoder_units_e mode){
+void setDriveEncoder(pros::motor_encoder_units_e_t mode){
     lf.set_encoder_units(mode);
     lm.set_encoder_units(mode);
     lb.set_encoder_units(mode);
@@ -312,44 +312,44 @@ void setDriveEncoder(pros::motor_encoder_units_e mode){
     rb.set_encoder_units(mode);
 }
 
-float getLFPosition() {
+double getLFPosition() {
     return lf.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
-float getLMPosition() {
+double getLMPosition() {
     return lm.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
-float getLBPosition() {
+double getLBPosition() {
     return lb.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
-float getRFPosition() {
+double getRFPosition() {
     return rf.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
-float getRMPosition() {
+double getRMPosition() {
     return rm.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
-float getRBPosition() {
+double getRBPosition() {
     return rb.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
-float getLeftMotorPosition() {
+double getLeftMotorPosition() {
     return getLFPosition();
 }
 
-float getRightMotorPosition() {
+double getRightMotorPosition() {
     return getRFPosition();
 }
 
-float getLeftMotorPositionInInches() {
+double getLeftMotorPositionInInches() {
     return wheelRotToInches(getLeftMotorPosition());
 }
 
-float getRightMotorPositionInInches() {
-    return wheelRotToInches(getLeftMotorPosition());
+double getRightMotorPositionInInches() {
+    return wheelRotToInches(getRightMotorPosition());
 }
 
 void resetLiftPosition(){
@@ -394,12 +394,16 @@ void resetIntakePosition() {
     intakeL.tare_position();
 }
 
-float wheelDegToInches(float degrees) {
+double wheelDegToInches(double degrees) {
     return (PI * DRIVEBASE_WHEEL_DIAMETER) * (degrees / 360.0);
 }
 
-float wheelRotToInches(float rotations){
+double wheelRotToInches(double rotations){
     return (PI * DRIVEBASE_WHEEL_DIAMETER) * rotations;
+}
+
+int getRightLine() {
+    return lineRight.get_value();
 }
 
 
@@ -1007,14 +1011,27 @@ void driveTowardsRing(int timeout, int maxSpeed){
     }
 }
 
-void driveToRing(int timeout, int maxSpeed) {
+void driveToRing(int timeout, int maxSpeed, float maxDist, bool useLeftLine, bool useRightLine) {
     int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+
     autoDrive = true;
-    float turnPower;
+    float motorPower = maxSpeed, turnPower, ringPower;
+    //float initLeft = getLeftMotorPositionInInches(), initRight = getRightMotorPositionInInches();
+	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
+    resetDriveMotorPosition();
+    //printf("Left: %f\t Right: %f\n", initLeft, initRight);
+    float distTravelled, drive_error = maxDist, derivative, prevError;
+    int counter;
+    bool reached = false;
+    float leftSpeed, rightSpeed;
+
     pros::delay(50);
-    while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill || autoDrive)) {
+    while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill || autoDrive) && !reached) {
 
         pros::vision_object_s_t nearestRing = getMostRelevantObject();
+
+        derivative = drive_error - prevError;
+        motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
 
         if(checkRing(nearestRing)){
 
@@ -1022,15 +1039,56 @@ void driveToRing(int timeout, int maxSpeed) {
 
             turnPower = VISION_TURN_KP * vision_error;
 
-            
+            if(nearestRing.y_middle_coord < 70){
+                int error = 106 + nearestRing.y_middle_coord;
+                ringPower = VISION_LAT_KP * error;
+                if(ringPower < motorPower){
+                    motorPower = ringPower;
+                }
+            }
+  
             printf("(%d, %d)\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
-        } 
+        }
 
-        drive(60 + turnPower, 60 - turnPower);
-        //printf("Motor Power: %f\n", motorPower);
+        if(motorPower > maxSpeed){ motorPower = maxSpeed; }
+
+        leftSpeed = motorPower + turnPower, rightSpeed = motorPower - turnPower;
+
+        if(useRightLine && getRightLine() < 2700){
+            printf("Detecting line\t Theta: %f\n", chassis.getPose().theta);
+            if(COLOR){
+                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
+                rightSpeed += TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
+            } else {
+                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
+                rightSpeed += TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
+            }
+        }
+
+        printf("Left: %f\t Right %f\n", leftSpeed, rightSpeed);
+        drive(leftSpeed, rightSpeed);
+        prevError = drive_error;
 
         pros::delay(15);
         timeout -= 15;
+
+        float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
+        distTravelled = (leftPos + rightPos) / 2;
+        drive_error = maxDist - distTravelled;
+        if(timeout % 60 == 0){
+            //printf("Left: %f\t Right: %f\t Distance Travelled: %f\n", leftPos, rightPos, distTravelled);
+        }
+
+        if(fabs(drive_error) < LAT_SMALL_RANGE) {
+            if(counter >= LAT_SMALL_RANGE_TIMEOUT) {
+                reached = true;
+            } else {
+                counter += 15;
+            }
+        } else {
+            counter = 0;
+        }
+        
     }
 
     stopDrive();

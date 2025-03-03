@@ -24,8 +24,8 @@ pros::Motor rm(-1, pros::v5::MotorGears::blue); // port 1, reversed
 pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({6, -8, 10}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-3, 11, -18}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({-18, 8, -9}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({13, -1, 2}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
@@ -69,10 +69,7 @@ pros::Vision vision_sensor(4);
 //pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
 //pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
 
-
-
-    //pros::Vision::signature_from_utility(2, -4201, -3529, -3865, 6125, 8787, 7456, 2.5, 0);
-    //pros::Vision::signature_from_utility(2, -3619, -3223, -3421, 6207, 6919, 6563, 2.5, 0);
+pros::adi::AnalogIn lineRight({7, 'a'});
 
 
 
@@ -100,7 +97,7 @@ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwhee
 lemlib::OdomSensors sensors(
     nullptr, //&vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
-    &horizontal_tracking_wheel,//&horizontal_tracking_wheel,//SKILLS
+    nullptr, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &imu // inertial sensor
 );  

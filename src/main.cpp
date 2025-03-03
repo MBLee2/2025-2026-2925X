@@ -51,7 +51,6 @@ void initialize() {
 	resetLiftPosition();
 
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
-	
 
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
@@ -252,13 +251,14 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::delay(3000);
-	spinIntake(100);
+	chassis.setPose(0, 0, 135);
+	pros::delay(1500);
+	driveToRing(3000, 30, 24, false, true);
 
-	driveToRing(15000, 32);
 	while(true){
 		pros::delay(300);
 	}
+
 
 	stopSorting();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");

@@ -5,22 +5,22 @@
 #include "auton_basics.h"
 #include "pros/motors.h"
 
-#define LAT_KP  7
+#define LAT_KP  8
 #define LAT_KI  0
-#define LAT_KD  0 //2
+#define LAT_KD  2
 
 #define LAT_SMALL_RANGE 1
 #define LAT_SMALL_RANGE_TIMEOUT 150
 
-#define TURN_KP 0
+#define TURN_KP 4
 #define TURN_KI 0
 #define TURN_KD 0
 
 #define VISION_CENTER 20
-#define VISION_TURN_KP 0.28
+#define VISION_TURN_KP 0.3
 #define VISION_RANGE 30
 #define VISION_RANGE_TIMEOUT 250
-#define VISION_LAT_KP 0.5
+#define VISION_LAT_KP 0.4
 
 #define F_DISTANCE_OFFSET 6.25
 #define B_DISTANCE_OFFSET 6.25
@@ -106,25 +106,25 @@ int get2ndIntakeColor();
 void setIntakeColorLED(int value);
 void setIntakeColor2LED(int value);
 
-void setDriveEncoder(pros::motor_encoder_units_e mode);
-float getLFPosition();
-float getLMPosition();
-float getLBPosition();
-float getRFPosition();
-float getRMPosition();
-float getRBPosition();
+void setDriveEncoder(pros::motor_encoder_units_e_t mode);
+double getLFPosition();
+double getLMPosition();
+double getLBPosition();
+double getRFPosition();
+double getRMPosition();
+double getRBPosition();
 
 void resetLeftMotorPosition();
 void resetRightMotorPosition();
 void resetDriveMotorPosition();
 
-float getLeftMotorPosition();
-float getRightMotorPosition();
-float getLeftMotorPositionInInches();
-float getRightMotorPositionInInches();
+double getLeftMotorPosition();
+double getRightMotorPosition();
+double getLeftMotorPositionInInches();
+double getRightMotorPositionInInches();
 
-float wheelDegToInches(float degrees);
-float wheelRotToInches(float rotations);
+double wheelDegToInches(double degrees);
+double wheelRotToInches(double rotations);
 
 void resetIMUHeading();
 float getHeading();
@@ -145,6 +145,8 @@ void liftDown();
 void resetIntakePosition();
 void setIntakeEncoder(pros::motor_encoder_units_e mode);
 float getIntakePosition();
+
+int getRightLine();
 
 void intakeFor(int ms);
 void intakeFor(float degrees);
@@ -172,7 +174,7 @@ pros::vision_object_s_t getBlue();
 bool checkRing(pros::vision_object_s_t ring);
 void turnToRing(int timeout = 15000, float maxSpeed = 130);
 void driveTowardsRing(int timeout = 15000, int maxSpeed = 130);
-void driveToRing(int timeout = 15000, int maxSpeed = 130);
+void driveToRing(int timeout = 15000, int maxSpeed = 130, float maxDist = 300, bool useLeftLine = false, bool useRightLine = false);
 float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 
