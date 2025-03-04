@@ -366,7 +366,7 @@ float getRightMotorPositionInInches() {
 
 void resetLiftPosition(){
     ladybrown.tare_position_all();
-    master.rumble("-");
+    // master.rumble("-");
 }
 
 float getLiftPosition() {
