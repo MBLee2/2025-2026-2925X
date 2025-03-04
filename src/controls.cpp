@@ -172,7 +172,6 @@ void taskFn_lift_control(void)
 
   while (true) // Infinite loop to keep checking controller input for intake
   { 
-    printf("Dist: %f\n",(double)LB_dist.get_distance());
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       spinLift(127);
     }
@@ -197,10 +196,7 @@ void taskFn_lift_control(void)
     {
     stopLift();
     }
-    if(LB_dist.get_distance() < 3)
-    {
-      resetLiftPosition();
-    }
+    resetLiftPositionWithDistance();
     pros::delay(20);
   }
 }

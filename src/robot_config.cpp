@@ -24,12 +24,12 @@ pros::Motor rm( -1, pros::v5::MotorGears::blue); // port 1, reversed
 pros::Motor rb(10, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({15, 4, -18}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({15, 4, -20}, pros::v5::MotorGears::blue);
 pros::MotorGroup right_side_motors({-9, -1, -10}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-20, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(-19, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
 pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
@@ -51,21 +51,21 @@ pros::adi::Pneumatics intake_lift('g', false);
 /* SENSORS */
 pros::Distance LB_dist(3);
 
-pros::Optical intake_color(14);
-pros::Optical intake_color2(5);
-pros::Distance distance_lf(12);
-pros::Distance distance_lb(20);
-pros::Distance distance_rf(10);
-pros::Distance distance_rb(18);
-pros::Distance distance_bl(21);
-pros::Distance distance_br(10);
+pros::Optical intake_color(22);
+pros::Optical intake_color2(22);
+pros::Distance distance_lf(22);
+pros::Distance distance_lb(22);
+pros::Distance distance_rf(22);
+pros::Distance distance_rb(22);
+pros::Distance distance_bl(22);
+pros::Distance distance_br(22);
 
 pros::Distance distance_front(4);
 pros::Distance distance_back(10);
 pros::Distance distance_left(15);
 
 pros::GPS gps(3);
-pros::IMU imu(19);
+pros::IMU imu(6);
 
 pros::adi::Button limitSwitch('h');
 pros::Rotation lift_rotation(6); 
@@ -85,7 +85,7 @@ lemlib::Drivetrain drivetrain(
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
-pros::Rotation vertical_rot(12); // port 1, not reversed
+pros::Rotation vertical_rot(12); // NOT ON BOT
 pros::Rotation horizontal_rot(8); // port 1, not reversed
 
 // back tracking wheel encoder  
@@ -97,7 +97,7 @@ lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::N
 /*
 NOT SET UP YET
 */
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, 1.00); // 2.00" wheel diameter, 1.00" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275_HALF, -3.50); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
@@ -109,28 +109,28 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(9, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(5, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              21, // derivative gain (kD)
+                                              12, // derivative gain (kD)
                                               0, // anti windup
                                               0, // small error range, in inches
-                                              00, // small error range timeout, in milliseconds
+                                              0, // small error range timeout, in milliseconds
                                               0, // large error range, in inches
-                                              000, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              0, // large error range timeout, in milliseconds
+                                              30 // maximum acceleration (slew)
 );
 
 // turning PID
-lemlib::ControllerSettings angular_controller(5 , // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              37, // derivative gain (kD)
-                                              3, // anti windup
-                                              1, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              1000, // large error range timeout, in milliseconds
-                                              127 // maximum acceleration (slew)
-);
+                                              18.5, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
+); 
 
 
 // input curve for throttle input during driver control

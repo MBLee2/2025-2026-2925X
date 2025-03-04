@@ -119,7 +119,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -153,7 +153,6 @@ void competition_initialize() {
  */
 {
 	//HERE
-	
 	printf("%s(): Entered\n", __func__);
 
 	// weird bug in system; without the following delay, was getting a white screen
@@ -199,10 +198,30 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
-	//chassis.moveToPoint(0, 30, 10000);
+	// float min_speed = 5;
+	// float earlyrange = 0.5;
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.turnToHeading(90, 1000,{.minSpeed=12,.earlyExitRange=2},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(36, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 36, 2000,{.forwards=false,.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.turnToHeading(0, 2000,{.minSpeed=12,.earlyExitRange=2},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
 	//HERE
-	
-	auton_routine default_routine = goal_rush; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

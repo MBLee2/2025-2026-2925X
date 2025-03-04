@@ -12,7 +12,7 @@
 #include <queue>
 
 
-bool COLOR = true; // true = red, false = blue
+bool COLOR = false; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false;
@@ -365,12 +365,23 @@ float getRightMotorPositionInInches() {
 }
 
 void resetLiftPosition(){
-    ladybrown.tare_position_all();
-    // master.rumble("-");
+    ladybrownL.tare_position();
+    ladybrownR.tare_position();
+}
+void resetLiftPositionWithDistance(){
+   while (true) {
+    if(LB_dist.get_distance() < 3)
+    {
+      resetLiftPosition();
+      //master.rumble("-");
+    }
+    pros::delay(200);
+   }
 }
 
 float getLiftPosition() {
     float pos = (ladybrownL.get_position() + ladybrownR.get_position()) / 2 ;
+    printf("ladybrown Pos: %f \n",pos);
     return (pos);
 }
 
