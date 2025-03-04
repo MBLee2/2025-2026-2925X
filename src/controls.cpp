@@ -81,12 +81,12 @@ void taskFn_mogo_control(void) {
       retractLeftSweeper();
     }
     if (rightX > 0.85) { 
-      extendLeftSweeper();
-      retractRightSweeper();
-    }
-    if (rightX < -0.85) {
       extendRightSweeper();
       retractLeftSweeper();
+    }
+    if (rightX < -0.85) {
+      extendLeftSweeper();
+      retractRightSweeper();
     }
 
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
