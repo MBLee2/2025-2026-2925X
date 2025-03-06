@@ -24,12 +24,12 @@ pros::Motor rm( -1, pros::v5::MotorGears::blue); // port 1, reversed
 pros::Motor rb(10, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({15, 4, -20}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-9, -1, -10}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({15, 4, -18}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-9, -1, 10}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-19, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(-20, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
 pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
@@ -109,27 +109,27 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(5, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              12, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              30 // maximum acceleration (slew)
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              0.25, // small error range, in inches
+                                              50, // small error range timeout, in milliseconds
+                                              1, // large error range, in inches
+                                              300, // large error range timeout, in millisecond
+                                              0 // maximum acceleration (slew)
 );
 
 // turning PID
 lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               18.5, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              2, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (sle
 ); 
 
 
@@ -162,8 +162,8 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake L", intake},
-        dashboard_motor_display {320, 190, "Intake R", ladybrownL}
+        dashboard_motor_display {320, 135, "Intake", intake},
+        dashboard_motor_display {320, 190, "lbrown", ladybrownL}
         
         
     };

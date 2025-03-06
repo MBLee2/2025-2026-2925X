@@ -70,6 +70,12 @@ void taskFn_mogo_control(void) {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
       toggleClamp();
     }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+      liftIntake();
+    }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      dropIntake();
+    }
 
     // Get the input from the right joystick and normalize the input to a range
     // of -1 to 1
@@ -98,9 +104,8 @@ void taskFn_mogo_control(void) {
 // Intake control
 void taskFn_intake_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  // Define an enum to represent the intake's possible states
-  
-
+  // Define an enum to represent the intake's possible states  
+  int counter = 0;
   intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
   while (true) // Infinite loop to keep checking controller input for intake
   {
@@ -149,9 +154,8 @@ void taskFn_intake_control(void) {
       {
         stopSorting();
       }
-    }   
-
-
+    }
+    printf("Actual velocity: %lf\n", intake.get_actual_velocity());
     pros::delay(20);
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging

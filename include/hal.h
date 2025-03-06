@@ -60,6 +60,8 @@ void spinIntake(int speed);
 void stopIntake();
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
+void intakeAntiJam();
+void intakeAntiJamTaskFunc();
 
 void spinLift(int speed);
 void stopLift();
@@ -143,6 +145,7 @@ void turn(float degrees, int timeout = 15000);
 
 void resetLiftPosition();
 void resetLiftPositionWithDistance();
+void resetLiftWithDistTaskFunc();
 float getLiftPosition();
 
 void moveLiftToPos(float position,int speed = 127, int timeout = 5000);

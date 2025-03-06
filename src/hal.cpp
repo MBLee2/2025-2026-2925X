@@ -15,7 +15,7 @@
 bool COLOR = false; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
-bool autoDrive = false, autoLift = false, autoIntake = false;
+bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false;
 
 std::queue<bool> ringQueue;
 
@@ -132,15 +132,22 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 // Intake Movement
 void spinIntake(int speed) {
     intake.move(speed);
+    if(speed == 0)
+    {
+        isintaking = false;
+    }
+    isintaking = true;
 }
 
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
+    isintaking = false;
     intake.brake();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
+    isintaking = false;
     intake.brake();
 }
 
@@ -149,7 +156,32 @@ void setIntakeBrake(pros::motor_brake_mode_e mode) {
     intake.set_brake_mode(mode);
 }
 
-// Intake Movement
+void intakeAntiJam() {
+    if(intake.get_actual_velocity() < 5)
+    {
+        spinIntake(-127);
+        pros::delay(100);
+        spinIntake(127);
+    }
+}
+void intakeAntiJamTaskFunc(){
+    int counter = 0;
+    while (true) {
+        if(intake.get_actual_velocity() < 5 && isintaking)
+        {
+            counter++;
+        }
+        if(counter >= 15)
+        {
+            intakeAntiJam();
+            counter = 0;
+        }
+        pros::delay(20);
+    }
+}
+
+
+// Lift Movement
 void spinLift(int speed) {
     ladybrown.move(speed);
 }
@@ -208,6 +240,15 @@ void retractRightSweeper() {
 void toggleRightSweeper() {
     right_sweeper.toggle();
 }
+//IntakeLift
+void liftIntake() {
+    intake_lift.extend();
+}
+void dropIntake()
+{
+    intake_lift.retract();
+}
+
 
 //IMU
 void resetIMUHeading() {
@@ -217,6 +258,8 @@ void resetIMUHeading() {
 float getHeading() {
     return imu.get_heading();
 }
+
+
 
 //Distance
 int getFrontDistance() {
@@ -369,19 +412,21 @@ void resetLiftPosition(){
     ladybrownR.tare_position();
 }
 void resetLiftPositionWithDistance(){
-   while (true) {
     if(LB_dist.get_distance() < 3)
     {
       resetLiftPosition();
-      //master.rumble("-");
     }
-    pros::delay(200);
-   }
 }
+void resetLiftWithDistTaskFunc(){
+    while (true) {
+        resetLiftPositionWithDistance();
+        pros::delay(100);
+    }
+}
+
 
 float getLiftPosition() {
     float pos = (ladybrownL.get_position() + ladybrownR.get_position()) / 2 ;
-    printf("ladybrown Pos: %f \n",pos);
     return (pos);
 }
 
@@ -581,7 +626,7 @@ void moveLiftToPos(float pos,int speed,int timeout){
         pos = 0;
     }
     else if(pos >= 900){
-        pos = 902;
+        pos = 1000;
     }
     autoLift = true;
     if(getLiftPosition() > pos){
@@ -1180,27 +1225,4 @@ void saveRing1(int timeout){
         pros::delay(20);
         time += 20;
     }
-}
-  
-void liftIntakeWallStake()
-{
-    while (true) {
-        int hue = getIntakeColor();
-        if(detectOurColor(hue) && getLiftPosition() > 50)
-        {
-            //pros::delay(100);
-            liftIntake();
-        }
-        else if(detectTheirColor(hue) && getLiftPosition() > 50)
-        {
-            //pros::delay(100);
-            liftIntake();
-        }
-        else
-        {
-            dropIntake();
-
-        }
-    }
-     
 }

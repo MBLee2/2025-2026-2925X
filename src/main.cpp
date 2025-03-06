@@ -198,14 +198,14 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
-	// float min_speed = 5;
-	// float earlyrange = 0.5;
+	float min_speed = 0;
+	float earlyrange = 0;
 	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
 
-	// chassis.moveToPoint(0, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// chassis.moveToPoint(0, 60, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
 	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
 
-	// chassis.turnToHeading(90, 1000,{.minSpeed=12,.earlyExitRange=2},false);
+	// chassis.moveToPoint(0, 0, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
 	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
 
 	// chassis.moveToPoint(36, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
@@ -219,6 +219,7 @@ void autonomous() {
 
 	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
 	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
 
 	//HERE
 	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
