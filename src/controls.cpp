@@ -17,6 +17,7 @@ enum intake_state {
   STOP  // Stop the intake
 };
 intake_state current_state = STOP;
+bool LBPickup1 = false;
 #define TURN_CONST                                                             \
   1.4 // Constant multipled by X input to allow for instant turns during driver
       // control
@@ -106,7 +107,7 @@ void taskFn_intake_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
   // Define an enum to represent the intake's possible states  
   int counter = 0;
-  intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
+  intake_color.set_led_pwm(18);  // Set the LED PWM for the intake color
   while (true) // Infinite loop to keep checking controller input for intake
   {
     double pos = getLiftPosition();; // Get the current position of the lift
@@ -155,7 +156,16 @@ void taskFn_intake_control(void) {
         stopSorting();
       }
     }
-    printf("Actual velocity: %lf\n", intake.get_actual_velocity());
+    if(intake.get_actual_velocity() < 5 && current_state == INTAKE && !LBPickup1)
+        {
+          counter++;
+        }
+        if(counter >= 15)
+        {
+          intakeAntiJam();
+          counter = 0;
+        }
+        pros::delay(20);
     pros::delay(20);
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
@@ -191,6 +201,7 @@ void taskFn_lift_control(void)
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       liftPickup();
       setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+      LBPickup1 = true;
     }
     if(getLiftPosition() > 40)
     {
@@ -201,6 +212,10 @@ void taskFn_lift_control(void)
     stopLift();
     }
     resetLiftPositionWithDistance();
+    if(LB_dist.get_distance() < 10 || LB_dist.get_distance() > 80)
+    {
+      LBPickup1 = false;
+    }
     pros::delay(20);
   }
 }

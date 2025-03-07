@@ -12,10 +12,10 @@
 #include <queue>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 
 bool auton = false, autoSkill = false;
-bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false;
+bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false, LBPickup = false;
 
 std::queue<bool> ringQueue;
 
@@ -167,7 +167,7 @@ void intakeAntiJam() {
 void intakeAntiJamTaskFunc(){
     int counter = 0;
     while (true) {
-        if(intake.get_actual_velocity() < 5 && isintaking)
+        if(intake.get_actual_velocity() < 5 && isintaking && !LBPickup)
         {
             counter++;
         }
@@ -413,14 +413,15 @@ void resetLiftPosition(){
 }
 void resetLiftPositionWithDistance(){
     if(LB_dist.get_distance() < 3)
-    {
-      resetLiftPosition();
+    { 
+        LBPickup = false;
+        resetLiftPosition();
     }
 }
 void resetLiftWithDistTaskFunc(){
     while (true) {
         resetLiftPositionWithDistance();
-        pros::delay(100);
+        pros::delay(20);
     }
 }
 
@@ -582,6 +583,7 @@ void liftUpWallStake() {
 
 void liftPickup() {
     int time = 0;
+    LBPickup = true;
     if(getLiftPosition() > 75)
     {
         while (LB_dist.get_distance() > 5 && time < 1400) {
@@ -807,18 +809,18 @@ bool sort_color(bool sort) {
     return false;
 }
 
-int redLower = 0;
-int redUpper = 25;
+int redLower = 345;
+int redUpper = 15;
 
-int blueLower = 190;
-int blueUpper = 230;
+int blueLower = 210;
+int blueUpper = 250;
 
 bool detectRed(int hue){
-    return hue >= 0 && hue <= 25;
+    return hue >= 345 && hue <= 15;
 }
 
 bool detectBlue(int hue){
-    return hue >= 195 && hue <= 240;
+    return hue >= 210 && hue <= 250;
 }
 
 bool detectOurColor(int hue){
@@ -1124,10 +1126,8 @@ void driveFullVision(int timeout, int maxSpeed) {
         pros::delay(15);
         timeout -= 15;
     }
-
     stopDrive();
 }
-
 
 
 

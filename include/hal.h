@@ -175,6 +175,7 @@ void sort_color_queue();
 void startSorting();
 void stopSorting();
 void clearRingQueue();
+void basicColorSort();
 
 pros::vision_object_s_t getOurColorObject();
 pros::vision_object_s_t getMostRelevantObject();

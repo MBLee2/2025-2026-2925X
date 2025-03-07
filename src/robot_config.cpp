@@ -49,10 +49,11 @@ pros::adi::Pneumatics intake_lift('g', false);
 
 
 /* SENSORS */
-pros::Distance LB_dist(3);
+pros::Distance LB_dist(12);
 
-pros::Optical intake_color(22);
-pros::Optical intake_color2(22);
+pros::Optical intake_color(3);
+pros::Distance intake_dist(2);
+pros::Optical intake_color2(22); //deprecated
 pros::Distance distance_lf(22);
 pros::Distance distance_lb(22);
 pros::Distance distance_rf(22);
