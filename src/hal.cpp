@@ -286,7 +286,9 @@ float distToWallL() {
     return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
 }
 
-
+int getIntakeDist(){
+    return intake_dist.get();
+}
 
 //Color
 int getIntakeColor() {
@@ -815,8 +817,16 @@ int redUpper = 15;
 int blueLower = 210;
 int blueUpper = 250;
 
+bool detectRing() {
+    return getIntakeDist() < 30;
+}
+
+bool detectRing(int hue){
+    return (hue >= 345 || hue <= 15) || (hue >= 210 && hue <= 250);
+}
+
 bool detectRed(int hue){
-    return hue >= 345 && hue <= 15;
+    return hue >= 345 || hue <= 15;
 }
 
 bool detectBlue(int hue){
@@ -877,6 +887,7 @@ void addCurrentRing(){
                     pros::delay(20);
                     hue = getIntakeColor();
                 }
+                printRingQueue();
             }
             else if(detectBlue(hue)) //If we detect blue
             {
@@ -887,6 +898,7 @@ void addCurrentRing(){
                     pros::delay(20);
                     hue = getIntakeColor();
                 }
+                printRingQueue();
             }
         }
         pros::delay(10);
@@ -925,6 +937,17 @@ void waitForExitBlue(){
     while(detectBlue(hue)){
         pros::delay(20);
         hue = get2ndIntakeColor();
+    }
+}
+
+void waitForExitRing() {
+    while(detectRing()){
+        pros::delay(20);
+    }
+    if(COLOR){
+        printf("Exiting Red \n");
+    } else {
+        printf("Exiting Blue \n");
     }
 }
 
@@ -967,11 +990,34 @@ void countRings() {
     }
 }
 
+void countRingsDist() {
+    while(true) {
+        if(autoIntake && !ringQueue.empty()){
+            if(detectRing())
+            {
+                printRingQueue();
+                if(COLOR == ringQueue.front()){
+                    waitForExitRing();
+                    ringQueue.pop();
+                } else {
+                    printf("sorting out");
+                    waitForExitRing();
+                    //pros::delay(100);
+                    spinIntake(-127);
+                    ringQueue.pop();
+                    pros::delay(70);
+                    spinIntake(127);
+                }
+            }
+        }
+        pros::delay(20);
+    }
+}
+
 void sort_color_queue(){
     printf("Sorting started\n");
     pros::Task add_ring_task(addCurrentRing);
-    pros::Task count_ring_task(countRings);
-    pros::Task check_queue_task(checkQueue);
+    pros::Task count_ring_task(countRingsDist);
 }
 
 void startSorting() {
