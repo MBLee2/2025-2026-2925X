@@ -653,7 +653,7 @@ void blueNegativeHalfWP(){//EVERYTHING DONE
   chassis.turnToHeading(90,600,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
   temp_pos = chassis.getPose();
   chassis.turnToPoint(-24, temp_pos.y,500,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
-  chassis.moveToPoint(-32, temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-32, temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=40,.earlyExitRange=4});
   liftIntake();
   chassis.moveToPoint(-18, temp_pos.y,1000,{.maxSpeed=speed1-50,.minSpeed=15,.earlyExitRange=2});
   chassis.waitUntil(1000);
@@ -661,10 +661,9 @@ void blueNegativeHalfWP(){//EVERYTHING DONE
   chassis.moveToPoint(-32, temp_pos.y,1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=4,.earlyExitRange=2},false);
   pros::delay(200);
   chassis.turnToPoint(-30, 15,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
-  chassis.moveToPoint(-30, 15,3000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
   chassis.waitUntil(8);
   stopIntake();
-  chassis.turnToHeading(315, 1000);
+  chassis.turnToHeading(315, 1000,{},false);
   moveLiftToPos(0,127,200);
 
   //*/
