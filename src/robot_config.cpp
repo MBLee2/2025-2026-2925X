@@ -61,6 +61,8 @@ pros::Distance distance_rb(22);
 pros::Distance distance_bl(22);
 pros::Distance distance_br(22);
 
+pros::Distance distance_proxi(7);
+
 pros::Distance distance_front(4);
 pros::Distance distance_back(10);
 pros::Distance distance_left(15);

@@ -274,6 +274,10 @@ int getLeftDistance() {
     return distance_left.get();
 }
 
+int getProximity() {
+    return distance_proxi.get();
+}
+
 float distToWallF() {
     return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
 }
@@ -284,6 +288,10 @@ float distToWallB() {
 
 float distToWallL() {
     return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
+}
+
+float distToObject() {
+    return (getProximity() / 25.4) + PROXI_OFFSET;
 }
 
 int getIntakeDist(){
@@ -629,8 +637,8 @@ void moveLiftToPos(float pos,int speed,int timeout){
     if(pos <= 0){
         pos = 0;
     }
-    else if(pos >= 900){
-        pos = 1000;
+    else if(pos >= 2000){
+        pos = 2000;
     }
     autoLift = true;
     if(getLiftPosition() > pos){
