@@ -156,16 +156,6 @@ void taskFn_intake_control(void) {
         stopSorting();
       }
     }
-    if(intake.get_actual_velocity() < 5 && current_state == INTAKE && !LBPickup1)
-        {
-          counter++;
-        }
-        if(counter >= 15)
-        {
-          intakeAntiJam();
-          counter = 0;
-        }
-        pros::delay(20);
     pros::delay(20);
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
@@ -212,10 +202,6 @@ void taskFn_lift_control(void)
     stopLift();
     }
     resetLiftPositionWithDistance();
-    if(LB_dist.get_distance() < 10 || LB_dist.get_distance() > 80)
-    {
-      LBPickup1 = false;
-    }
     pros::delay(20);
   }
 }
