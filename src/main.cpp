@@ -119,7 +119,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**

@@ -176,7 +176,7 @@ void taskFn_lift_control(void)
   autoLift = false;
 
   ladybrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-  lift_state current_state1X = DOWN; // Initialize with a default state, STOP
+  lift_state current_state1 = DOWN; // Initialize with a default state, STOP
 
   while (true) // Infinite loop to keep checking controller input for intake
   { 
@@ -191,22 +191,19 @@ void taskFn_lift_control(void)
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       stopIntake();
       current_state = STOP;
-      //liftUpWallStake();
-      target = 240, time = pros::millis();
-      dir = getLiftPosition() < target;
-      autoLift = true;
+      liftUpWallStake();
+      // target = 240, time = pros::millis();
+      // dir = getLiftPosition() < target;
+      // autoLift = true;
       setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     }
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      //liftPickup();
-      target = 75, time = pros::millis();
-      dir = getLiftPosition() < target;
-      autoLift = true;
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      pros::Task lift_task(liftPickup);
       setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
       LBPickup1 = true;
     }
 
-    moveLiftToPosCancel(target, dir, time, 127, 1500);
+    // moveLiftToPosCancel(target, dir, time, 127, 1500);
 
     if(getLiftPosition() > 40)
     {

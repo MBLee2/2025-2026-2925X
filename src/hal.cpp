@@ -602,6 +602,7 @@ void liftUpWallStake() {
 void liftPickup() {
     int time = 0;
     LBPickup = true;
+    autoLift = true;
     if(getLiftPosition() > 75)
     {
         while (LB_dist.get_distance() > 5 && time < 1200) {
@@ -613,11 +614,19 @@ void liftPickup() {
             {
             spinLift(-127);
             }
+            if(!autoLift)
+            {
+                break;
+            }
             pros::delay(20);
             time=+20;
         }
         while (LB_dist.get_distance() < 53 && time < 1200) {
             spinLift(30);
+            if(!autoLift)
+            {
+                break;
+            }
             pros::delay(20);
             time =+20;
         }
@@ -626,6 +635,10 @@ void liftPickup() {
     {
        while (LB_dist.get_distance() < 53) {
             spinLift(30);
+            if(!autoLift)
+            {
+                break;
+            }
             pros::delay(20);
             time =+20;
         }
