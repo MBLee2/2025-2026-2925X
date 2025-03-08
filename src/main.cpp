@@ -266,6 +266,7 @@ void autonomous() {
  */
 void opcontrol() {
 	odom_lift.extend();
+	stopSorting();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
