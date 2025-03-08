@@ -153,6 +153,8 @@ void resetLiftWithDistTaskFunc();
 float getLiftPosition();
 
 void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
+void moveLiftToPosCancel(float pos, int time, int speed = 127, int timeout = 5000);
+void moveLiftToPosCancel(float pos, bool dir, int time, int speed = 127, int timeout = 5000);
 void liftUpWallStake();
 void liftPickup();
 void liftDown();

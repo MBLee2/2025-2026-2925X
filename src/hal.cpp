@@ -672,6 +672,38 @@ void moveLiftToPos(float pos,int speed,int timeout){
     autoLift = false;
 }
 
+void moveLiftToPosCancel(float pos, int time, int speed, int timeout){
+    if(autoLift){
+        if(getLiftPosition() > pos){
+            spinLift(-speed);
+            pros::delay(20);
+            if(getLiftPosition() < pos || pros::millis() - time > timeout)  {
+                autoLift = false;
+                stopLift();
+            }
+        } else if(getLiftPosition() < pos){
+            spinLift(speed);
+            pros::delay(20);
+            if(getLiftPosition() > pos || pros::millis() - time > timeout) {
+                autoLift = false;
+                stopLift();
+            }
+        }
+    }
+}
+
+void moveLiftToPosCancel(float pos, bool dir, int time, int speed, int timeout){
+    if(autoLift){
+        if((getLiftPosition() < pos) == dir && pros::millis() - time < timeout){
+            spinLift(dir ? speed : -speed);
+        } else {
+            autoLift = false;
+            stopLift();
+        }
+    }
+}
+
+
 // Intake
 void intakeFor(int ms){
     spinIntake(127);

@@ -170,6 +170,10 @@ void taskFn_lift_control(void)
     PICKUP, // Eject objects
     DOWN  // Stop the intake
   };
+  float target = 0;
+  int time = 0;
+  bool dir = true;
+  autoLift = false;
 
   ladybrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
   lift_state current_state1X = DOWN; // Initialize with a default state, STOP
@@ -178,28 +182,39 @@ void taskFn_lift_control(void)
   { 
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       spinLift(127);
+      autoLift = false;
     }
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       spinLift(-127);
+      autoLift = false;
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       stopIntake();
       current_state = STOP;
-      liftUpWallStake();
+      //liftUpWallStake();
+      target = 240, time = pros::millis();
+      dir = getLiftPosition() < target;
+      autoLift = true;
       setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      liftPickup();
+      //liftPickup();
+      target = 75, time = pros::millis();
+      dir = getLiftPosition() < target;
+      autoLift = true;
       setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
       LBPickup1 = true;
     }
+
+    moveLiftToPosCancel(target, dir, time, 127, 1500);
+
     if(getLiftPosition() > 40)
     {
-    stopLiftHold();
+      stopLiftHold();
     }
     else if(getLiftPosition() < 40)
     {
-    stopLift();
+      stopLift();
     }
     resetLiftPositionWithDistance();
     pros::delay(20);
