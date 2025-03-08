@@ -265,6 +265,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	odom_lift.extend();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");

@@ -604,7 +604,7 @@ void liftPickup() {
     LBPickup = true;
     if(getLiftPosition() > 75)
     {
-        while (LB_dist.get_distance() > 5 && time < 1400) {
+        while (LB_dist.get_distance() > 5 && time < 1200) {
             if (getLiftPosition() < 150)
             {
             spinLift(-20);
@@ -616,13 +616,13 @@ void liftPickup() {
             pros::delay(20);
             time=+20;
         }
-        while (LB_dist.get_distance() < 53 && time < 1600) {
+        while (LB_dist.get_distance() < 53 && time < 1200) {
             spinLift(30);
             pros::delay(20);
             time =+20;
         }
     }
-    else if(getLiftPosition() < 75 && time < 1300)
+    else if(getLiftPosition() < 75 && time < 1200)
     {
        while (LB_dist.get_distance() < 53) {
             spinLift(30);
