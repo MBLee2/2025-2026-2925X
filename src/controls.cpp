@@ -107,7 +107,7 @@ void taskFn_intake_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
   // Define an enum to represent the intake's possible states  
   int counter = 0;
-  intake_color.set_led_pwm(18);  // Set the LED PWM for the intake color
+  intake_color.set_led_pwm(25);  // Set the LED PWM for the intake color
   while (true) // Infinite loop to keep checking controller input for intake
   {
     double pos = getLiftPosition();; // Get the current position of the lift

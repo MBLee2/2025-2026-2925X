@@ -81,6 +81,7 @@ extern pros::Distance distance_proxi;
 extern pros::Distance distance_front;
 extern pros::Distance distance_left;
 extern pros::Distance distance_back;
+extern pros::Distance distance_right;
 extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;

@@ -274,6 +274,10 @@ int getLeftDistance() {
     return distance_left.get();
 }
 
+int getRightDistance() {
+    return distance_right.get();
+}
+
 int getProximity() {
     return distance_proxi.get();
 }
@@ -288,6 +292,10 @@ float distToWallB() {
 
 float distToWallL() {
     return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
+}
+
+float distToWallR() {
+    return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
 }
 
 float distToObject() {
@@ -830,15 +838,15 @@ bool detectRing() {
 }
 
 bool detectRing(int hue){
-    return (hue >= 345 || hue <= 15) || (hue >= 210 && hue <= 250);
+    return (hue >= 310 || hue <= 345) || (hue >= 210 && hue <= 250);
 }
 
 bool detectRed(int hue){
-    return hue >= 345 || hue <= 15;
+    return hue >= 0 && hue <= 50;
 }
 
 bool detectBlue(int hue){
-    return hue >= 210 && hue <= 250;
+    return hue >= 140 && hue <= 185;
 }
 
 bool detectOurColor(int hue){

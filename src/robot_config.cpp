@@ -50,10 +50,18 @@ pros::adi::Pneumatics intake_lift('g', false);
 
 /* SENSORS */
 pros::Distance LB_dist(12);
+pros::Distance distance_proxi(7);
 
 pros::Optical intake_color(3);
-pros::Distance intake_dist(2);
+pros::Distance intake_dist(16);
+pros::Distance distance_back(2);
+pros::Distance distance_left(17);
+pros::Distance distance_right(5);
+
+
+
 pros::Optical intake_color2(22); //deprecated
+pros::Distance distance_front(22);
 pros::Distance distance_lf(22);
 pros::Distance distance_lb(22);
 pros::Distance distance_rf(22);
@@ -61,11 +69,7 @@ pros::Distance distance_rb(22);
 pros::Distance distance_bl(22);
 pros::Distance distance_br(22);
 
-pros::Distance distance_proxi(7);
 
-pros::Distance distance_front(4);
-pros::Distance distance_back(10);
-pros::Distance distance_left(15);
 
 pros::GPS gps(3);
 pros::IMU imu(6);
