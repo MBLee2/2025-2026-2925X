@@ -222,7 +222,7 @@ void autonomous() {
 
 
 	//HERE
-	auton_routine default_routine = positive_WP; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

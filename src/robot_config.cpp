@@ -45,6 +45,7 @@ pros::adi::Pneumatics mogo_clamp('d', false);
 pros::adi::Pneumatics left_sweeper('b', false);
 pros::adi::Pneumatics right_sweeper('a', false);
 pros::adi::Pneumatics intake_lift('g', false);
+pros::adi::Pneumatics odom_lift('e', false);
 
 
 
