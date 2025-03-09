@@ -119,7 +119,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -222,7 +222,7 @@ void autonomous() {
 
 
 	//HERE
-	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
