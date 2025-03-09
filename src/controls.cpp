@@ -124,7 +124,7 @@ void taskFn_intake_control(void) {
         //autoIntake = false;
         current_state = STOP;
         stopIntake();
-        clearRingQueue();
+        stopSorting();
       }
     }
     // Eject objects with the B button
@@ -133,7 +133,7 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         spinIntake(-127);
-        clearRingQueue();
+        stopSorting();
         current_state = OUTAKE;
 
       } 
@@ -141,13 +141,12 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         current_state = STOP;
-        clearRingQueue();
         stopIntake();
       }
     }
     
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-      if (autoIntake == false)
+      if (autoIntake == false && current_state != OUTAKE)
       {
         startSorting();
       }

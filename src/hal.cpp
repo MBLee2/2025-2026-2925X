@@ -1005,7 +1005,7 @@ void waitForExitRing() {
     while(detectRing()){
         pros::delay(20);
     }
-    if(COLOR){
+    if(ringQueue.front()){
         printf("Exiting Red \n");
     } else {
         printf("Exiting Blue \n");
@@ -1061,7 +1061,7 @@ void countRingsDist() {
                     waitForExitRing();
                     ringQueue.pop();
                 } else {
-                    printf("sorting out");
+                    printf("sorting out\n");
                     waitForExitRing();
                     //pros::delay(100);
                     spinIntake(-127);
