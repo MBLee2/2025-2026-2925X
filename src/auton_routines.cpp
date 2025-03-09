@@ -1313,6 +1313,15 @@ void auton_60s_skills_1() {
   pros::delay(600);
   chassis.turnToPoint(72, 65, 1000,{});
   chassis.moveToPoint(72, 65, 1000,{});
+  chassis.moveToPoint(40, 59, 2000,{.forwards = false});
+  chassis.turnToHeading(270, 1000);
+  chassis.setPose(72 - fabs(distToWallB() * sin(deg2rad(currentPose.theta))), 72 - fabs(distToWallR() * sin(deg2rad(currentPose.theta))), currentPose.theta);
+  chassis.moveToPoint(-28, 60, 1000,{});
+  chassis.turnToPoint(-72, 65, 1000);
+  chassis.moveToPoint(-72, 65, 1800);
+  chassis.moveToPoint(-30, 59, 1800,{.forwards = false});
+
+
   master.clear_line(0);
   temp = pros::millis();
   while (true) {
