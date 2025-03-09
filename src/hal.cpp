@@ -887,11 +887,11 @@ bool detectRing(int hue){
 }
 
 bool detectRed(int hue){
-    return hue >= 0 && hue <= 50;
+    return hue >= 350 || hue <= 30;
 }
 
 bool detectBlue(int hue){
-    return hue >= 140 && hue <= 185;
+    return hue >= 180 && hue <= 220;
 }
 
 bool detectOurColor(int hue){

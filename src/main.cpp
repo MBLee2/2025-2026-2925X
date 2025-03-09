@@ -56,7 +56,7 @@ void initialize() {
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
-	setIntakeColorLED(100);
+	setIntakeColorLED(10);
     //setIntakeColor2LED(100);
 	sort_color_queue();
 	autoIntake = false;
