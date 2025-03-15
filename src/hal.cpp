@@ -135,26 +135,25 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 
 // Intake Movement
 void spinIntake(int speed) {
-    intakeL.move(speed);
-    intakeR.move(speed);
+    intakeL.move(speed);//
 }
 
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
     intakeL.brake();
-    intakeR.brake();
+    //intakeR.brake();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
     intakeL.brake();
-    intakeR.brake();
+    //intakeR.brake();
 }
 
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
     intakeL.set_brake_mode(mode);
-    intakeR.set_brake_mode(mode);
+    //intakeR.set_brake_mode(mode);
 }
 
 // Intake Movement
@@ -214,6 +213,10 @@ int getLeftDistance() {
     return distance_left.get();
 }
 
+int getProxiDistance() {
+    return distance_proxi.get();
+}
+
 float distToWallF() {
     return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
 }
@@ -224,6 +227,10 @@ float distToWallB() {
 
 float distToWallL() {
     return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
+}
+
+float distToObject() {
+    return (getProxiDistance() / 25.4) + PROXI_OFFSET;
 }
 
 
@@ -730,6 +737,10 @@ bool sort_color(bool sort) {
     return false;
 }
 
+bool detectRingFront(){
+    return distToObject() < 3.7;
+}
+
 int redLower = 0;
 int redUpper = 25;
 
@@ -937,14 +948,14 @@ bool checkRing(pros::vision_object_s_t ring){
     return (ring.x_middle_coord != 0 || ring.y_middle_coord != 0) && abs(ring.x_middle_coord) < 160 && abs(ring.y_middle_coord) < 110;
 }
 
-void turnToRing(int timeout, float maxSpeed){
+void turnToRing(int timeout, float maxSpeed, bool color){
     bool reached = false;
     int counter = 0;
     int error;
 
     while(!reached && timeout > 0){
 
-        pros::vision_object_s_t nearestRing = getMostRelevantObject();
+        pros::vision_object_s_t nearestRing = getMostRelevantObject(color);
 
         if(checkRing(nearestRing)){
 
@@ -981,11 +992,11 @@ void turnToRing(int timeout, float maxSpeed){
 }
 
 
-void driveTowardsRing(int timeout, int maxSpeed){
+void driveTowardsRing(int timeout, int maxSpeed, bool color){
     int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
     float motorPower;
 
-    pros::vision_object_s_t ring = getMostRelevantObject();
+    pros::vision_object_s_t ring = getMostRelevantObject(color);
     if(checkRing(ring) && ring.y_middle_coord < 100){
         while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0){
             ring = getMostRelevantObject();
@@ -1011,7 +1022,97 @@ void driveTowardsRing(int timeout, int maxSpeed){
     }
 }
 
-void driveToRing(int timeout, int maxSpeed, float maxDist, bool useLeftLine, bool useRightLine) {
+/** driveToRingParams
+ *  @param maxDist maximum distance allowed to travel
+ *  @param driveThrough stop once any ring enters intake
+ *  @param keepDriving continue seeking all available rings (if driveThrough is false, this is ignored)
+ *  @param color which color to seek
+ *  @param useLeftLine use left line tracker to avoid crossing line (not done)
+ *  @param useRightLine use right line tracker to avoid crossing line (not done)
+ */
+void driveToRing(int timeout, int maxSpeed, driveToRingParams params) {
+    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+
+    autoDrive = true;
+    float motorPower = maxSpeed, turnPower, ringPower;
+    //float initLeft = getLeftMotorPositionInInches(), initRight = getRightMotorPositionInInches();
+	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
+    resetDriveMotorPosition();
+    //printf("Left: %f\t Right: %f\n", initLeft, initRight);
+    float distTravelled, drive_error = params.maxDist, derivative, prevError;
+    float leftSpeed, rightSpeed;
+
+    pros::delay(50);
+    while(timeout > 0 && (auton || autoSkill || autoDrive)) {
+
+        pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
+        if(timeout % 90 == 0){
+            printf("(%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
+        }
+
+        if(params.driveThrough){
+            if(detectOurColor(getIntakeColor()) && (!checkRing(nearestRing) || !params.keepDriving)){
+                break;
+            }
+        } else if(detectRingFront()) {break;}
+
+        float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
+        distTravelled = (leftPos + rightPos) / 2;
+        if(distTravelled > params.maxDist) {
+            break;
+        }
+        drive_error = params.maxDist - distTravelled;
+
+
+        derivative = drive_error - prevError;
+        motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
+        if(motorPower < 16) {motorPower = 16;}
+
+        if(checkRing(nearestRing)){
+
+            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
+
+            turnPower = VISION_TURN_KP * vision_error;
+
+            if(nearestRing.y_middle_coord < 70 && !params.keepDriving){
+                int error = 106 + nearestRing.y_middle_coord;
+                ringPower = VISION_LAT_KP * error;
+                if(ringPower < motorPower){
+                    motorPower = ringPower;
+                }
+            }
+        }
+
+        if(motorPower > maxSpeed){ motorPower = maxSpeed; }
+
+        leftSpeed = motorPower + turnPower, rightSpeed = motorPower - turnPower;
+
+        if(params.useRightLine && getRightLine() < 2700){
+            printf("Detecting line\t Theta: %f\n", chassis.getPose().theta);
+            if(COLOR){
+                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
+                rightSpeed += TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
+            } else {
+                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
+                rightSpeed += TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
+            }
+        }
+
+        if(timeout % 90 == 0){
+            printf("Left: %f\t Right %f\n", leftSpeed, rightSpeed);
+        }
+        drive(leftSpeed, rightSpeed);
+        prevError = drive_error;
+
+        pros::delay(15);
+        timeout -= 15;
+        
+    }
+
+    stopDrive();
+}
+
+void driveToRing(int timeout, int maxSpeed, float maxDist, bool driveThrough, bool color, bool useLeftLine, bool useRightLine) {
     int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
 
     autoDrive = true;
@@ -1026,9 +1127,14 @@ void driveToRing(int timeout, int maxSpeed, float maxDist, bool useLeftLine, boo
     float leftSpeed, rightSpeed;
 
     pros::delay(50);
-    while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill || autoDrive) && !reached) {
+    while(!detectOurColor(getIntakeColor()) && timeout > 0 && (auton || autoSkill || autoDrive) && !reached) {
 
-        pros::vision_object_s_t nearestRing = getMostRelevantObject();
+        pros::vision_object_s_t nearestRing = getMostRelevantObject(color);
+        if(driveThrough){
+
+        } else {
+            if(distToObject() < 3.7) {break;}
+        }
 
         derivative = drive_error - prevError;
         motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
@@ -1046,8 +1152,9 @@ void driveToRing(int timeout, int maxSpeed, float maxDist, bool useLeftLine, boo
                     motorPower = ringPower;
                 }
             }
-  
-            printf("(%d, %d)\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
+            if(timeout % 60 == 0){
+                printf("(%d, %d)\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
+            }
         }
 
         if(motorPower > maxSpeed){ motorPower = maxSpeed; }

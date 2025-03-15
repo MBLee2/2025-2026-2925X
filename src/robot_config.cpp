@@ -16,16 +16,16 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-18, pros::v5::MotorGears::blue);  // port 18, reversed
-pros::Motor lm(8, pros::v5::MotorGears::blue);  // port 10, forward
-pros::Motor lb(-9, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(13, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(-1, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(2, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(15, pros::v5::MotorGears::blue);  // port 15, forward
+pros::Motor lm(4, pros::v5::MotorGears::blue);  // port 4, forward
+pros::Motor lb(-18, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor rf(-9, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm( -1, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(10, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({-18, 8, -9}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({13, -1, 2}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({15, 4, -18}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-9, -1, 10}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
@@ -34,8 +34,8 @@ pros::Motor intakeR(11, pros::v5::MotorGears::red);
 
 //lady brown group
 pros::Motor ladybrownL(17, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-20, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({17, -20}, pros::v5::MotorGears::green);
+pros::Motor ladybrownR(-21, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({17, -21}, pros::v5::MotorGears::green);
 
 
 //Other Motor
@@ -46,7 +46,10 @@ pros::adi::Pneumatics mogo_clamp('b', false);
 
 
 /* SENSORS */
-pros::Optical intake_color(14);
+pros::Distance distance_proxi(7);
+
+
+pros::Optical intake_color(2);
 pros::Optical intake_color2(5);
 pros::Distance distance_lf(21);
 pros::Distance distance_lb(21);
@@ -60,16 +63,16 @@ pros::Distance distance_back(10);
 pros::Distance distance_left(15);
 
 pros::GPS gps(21);
-pros::IMU imu(19);
+pros::IMU imu(6);
 
 pros::adi::Button limitSwitch('e');
 pros::Rotation lift_rotation(6); 
 
-pros::Vision vision_sensor(4);
+pros::Vision vision_sensor(19);
 //pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
 //pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
 
-pros::adi::AnalogIn lineRight({7, 'a'});
+pros::adi::AnalogIn lineRight({21, 'a'});
 
 
 

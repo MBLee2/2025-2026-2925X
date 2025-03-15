@@ -16,15 +16,16 @@
 #define TURN_KI 0
 #define TURN_KD 0
 
-#define VISION_CENTER 20
+#define VISION_CENTER 18
 #define VISION_TURN_KP 0.3
-#define VISION_RANGE 30
+#define VISION_RANGE 20
 #define VISION_RANGE_TIMEOUT 250
-#define VISION_LAT_KP 0.4
+#define VISION_LAT_KP 0.7
 
 #define F_DISTANCE_OFFSET 6.25
 #define B_DISTANCE_OFFSET 6.25
 #define L_DISTANCE_OFFSET 7.5
+#define PROXI_OFFSET 1.5
 
 extern bool COLOR;
 extern int COLOR_SIG;
@@ -100,6 +101,7 @@ bool getLiftPneumatic();
 float distToWallF();
 float distToWallB();
 float distToWallL();
+float distToObject();
 
 int getIntakeColor();
 int get2ndIntakeColor();
@@ -172,9 +174,18 @@ pros::vision_object_s_t getMostRelevantObject(bool color = COLOR);
 pros::vision_object_s_t getRed();
 pros::vision_object_s_t getBlue();
 bool checkRing(pros::vision_object_s_t ring);
-void turnToRing(int timeout = 15000, float maxSpeed = 130);
-void driveTowardsRing(int timeout = 15000, int maxSpeed = 130);
-void driveToRing(int timeout = 15000, int maxSpeed = 130, float maxDist = 300, bool useLeftLine = false, bool useRightLine = false);
+void turnToRing(int timeout = 15000, float maxSpeed = 130, bool color = COLOR);
+void driveTowardsRing(int timeout = 15000, int maxSpeed = 130, bool color = COLOR);
+struct driveToRingParams {
+    float maxDist = 300;
+    bool driveThrough = true;
+    bool keepDriving = false;
+    bool color = COLOR;
+    bool useLeftLine = false;
+    bool useRightLine = false;
+};
+void driveToRing(int timeout = 15000, int maxSpeed = 130, driveToRingParams params = {});
+void driveToRing(int timeout = 15000, int maxSpeed = 130, float maxDist = 300, bool driveThrough = true, bool color = COLOR, bool useLeftLine = false, bool useRightLine = false);
 float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 
