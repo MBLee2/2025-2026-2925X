@@ -49,7 +49,7 @@ pros::adi::Pneumatics mogo_clamp('b', false);
 pros::Distance distance_proxi(7);
 
 
-pros::Optical intake_color(2);
+pros::Optical intake_color(3);
 pros::Optical intake_color2(5);
 pros::Distance distance_lf(21);
 pros::Distance distance_lb(21);

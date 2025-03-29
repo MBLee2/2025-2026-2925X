@@ -17,7 +17,7 @@
 #define TURN_KD 0
 
 #define VISION_CENTER 18
-#define VISION_TURN_KP 0.3
+#define VISION_TURN_KP 0.8
 #define VISION_RANGE 20
 #define VISION_RANGE_TIMEOUT 250
 #define VISION_LAT_KP 0.7
@@ -177,6 +177,7 @@ bool checkRing(pros::vision_object_s_t ring);
 void turnToRing(int timeout = 15000, float maxSpeed = 130, bool color = COLOR);
 void driveTowardsRing(int timeout = 15000, int maxSpeed = 130, bool color = COLOR);
 struct driveToRingParams {
+    float maxSpeed = 130;
     float maxDist = 300;
     bool driveThrough = true;
     bool keepDriving = false;
@@ -184,8 +185,8 @@ struct driveToRingParams {
     bool useLeftLine = false;
     bool useRightLine = false;
 };
-void driveToRing(int timeout = 15000, int maxSpeed = 130, driveToRingParams params = {});
-void driveToRing(int timeout = 15000, int maxSpeed = 130, float maxDist = 300, bool driveThrough = true, bool color = COLOR, bool useLeftLine = false, bool useRightLine = false);
+void driveToRing(int timeout = 15000, driveToRingParams params = {});
+void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {});
 float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 

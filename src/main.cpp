@@ -61,7 +61,7 @@ void initialize() {
 	autoIntake = false;
 
 	vision_sensor.set_exposure(25);
-	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1, 	5879, 7483, 6681, -451, 429, -11, 3.7, 0);
+	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
 	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
 	vision_sensor.set_signature(1, &RED_SIG);
 	vision_sensor.set_signature(2, &BLUE_SIG);
@@ -251,21 +251,25 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+
 	pros::delay(3000);
 
 	chassis.setPose(0, 0, 0);
 
 	spinIntake(127);
 	pros::delay(200);
-	driveToRing(2000, 45, {.maxDist = 35});
+	
+	moveToPointWithVis(0, 20, 5000, {.maxSpeed = 40, .maxDist = 10});
 
-	chassis.moveToPoint(0, 0, 2000, {.forwards = false, .maxSpeed = 45}, false);
-	lemlib::Pose currPose = chassis.getPose();
-	printf((char *) "Position: (%f, %f, %f)", currPose.x, currPose.y, currPose.theta);
+	lemlib::Pose currentPose = chassis.getPose();
+	printf("(X: %f, Y: %f, theta: %f)\n", currentPose.x, currentPose.y, currentPose.theta);
+	pros::delay(500);
 
 	while(true){
-		pros::vision_object_s_t ring = getMostRelevantObject();
-		printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
+		/*pros::vision_object_s_t ring = getMostRelevantObject();
+		if(checkRing(ring)){
+			printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
+		}*/
 		pros::delay(300);
 	}
 

@@ -9,6 +9,7 @@
 #include "robot_config.h"
 #include "controls.h"
 #include "main.h"
+#include <cmath>
 #include <cstdio>
 #include <limits>
 #include <queue>
@@ -269,6 +270,12 @@ pros::vision_object_s_t getOurColorObject() {
     return vision_sensor.get_by_sig(0, COLOR_SIG);
 }
 
+void swap_objects(pros::vision_object_s_t obj_arr[], int a, int b){
+    pros::vision_object_s_t temp = obj_arr[a];
+    obj_arr[a] = obj_arr[b];
+    obj_arr[b] = temp;
+}
+
 pros::vision_object_s_t getMostRelevantObject(bool color) {
     pros::vision_object_s_t object_arr[5];
     int availableObjects = vision_sensor.read_by_sig(0, (color) ? 1 : 2, 5, object_arr);
@@ -278,7 +285,7 @@ pros::vision_object_s_t getMostRelevantObject(bool color) {
 
     for(int i = 0; i < 5; i++){
         if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr->x_middle_coord - VISION_CENTER) > 130){
+            if(abs(object_arr->x_middle_coord - VISION_CENTER) > 120){
                 object_arr[i].signature = VISION_OBJECT_ERR_SIG;
                 availableObjects--;
             } else if (object_arr[i].y_middle_coord > highestY){
@@ -1022,7 +1029,12 @@ void driveTowardsRing(int timeout, int maxSpeed, bool color){
     }
 }
 
+float limitSpeed(float speed, float maxSpeed){
+    return (maxSpeed - 15) / (1 + pow(M_E, (-1./15) * (speed - ((maxSpeed + 30) / 2)))) + 15;
+}
+
 /** driveToRingParams
+ *  @param maxSpeed maximum speed
  *  @param maxDist maximum distance allowed to travel
  *  @param driveThrough stop once any ring enters intake
  *  @param keepDriving continue seeking all available rings (if driveThrough is false, this is ignored)
@@ -1030,11 +1042,10 @@ void driveTowardsRing(int timeout, int maxSpeed, bool color){
  *  @param useLeftLine use left line tracker to avoid crossing line (not done)
  *  @param useRightLine use right line tracker to avoid crossing line (not done)
  */
-void driveToRing(int timeout, int maxSpeed, driveToRingParams params) {
-    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+void driveToRing(int timeout, driveToRingParams params) {
 
     autoDrive = true;
-    float motorPower = maxSpeed, turnPower, ringPower;
+    float motorPower = params.maxSpeed, turnPower, ringPower;
     //float initLeft = getLeftMotorPositionInInches(), initRight = getRightMotorPositionInInches();
 	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
     resetDriveMotorPosition();
@@ -1051,8 +1062,8 @@ void driveToRing(int timeout, int maxSpeed, driveToRingParams params) {
         }
 
         if(params.driveThrough){
-            if(detectOurColor(getIntakeColor()) && (!checkRing(nearestRing) || !params.keepDriving)){
-                break;
+            if(!params.keepDriving || !checkRing(nearestRing)){
+                if(detectOurColor(getIntakeColor())) { break; }
             }
         } else if(detectRingFront()) {break;}
 
@@ -1062,11 +1073,12 @@ void driveToRing(int timeout, int maxSpeed, driveToRingParams params) {
             break;
         }
         drive_error = params.maxDist - distTravelled;
-
+        if(timeout % 90 == 0){
+            printf("DistToMax: %f\t", drive_error);
+        }
 
         derivative = drive_error - prevError;
         motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
-        if(motorPower < 16) {motorPower = 16;}
 
         if(checkRing(nearestRing)){
 
@@ -1083,20 +1095,17 @@ void driveToRing(int timeout, int maxSpeed, driveToRingParams params) {
             }
         }
 
-        if(motorPower > maxSpeed){ motorPower = maxSpeed; }
-
-        leftSpeed = motorPower + turnPower, rightSpeed = motorPower - turnPower;
 
         if(params.useRightLine && getRightLine() < 2700){
             printf("Detecting line\t Theta: %f\n", chassis.getPose().theta);
             if(COLOR){
-                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
-                rightSpeed += TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
+                turnPower -= TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
             } else {
-                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
-                rightSpeed += TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
+                turnPower -= TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
             }
         }
+
+        leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
 
         if(timeout % 90 == 0){
             printf("Left: %f\t Right %f\n", leftSpeed, rightSpeed);
@@ -1112,93 +1121,24 @@ void driveToRing(int timeout, int maxSpeed, driveToRingParams params) {
     stopDrive();
 }
 
-void driveToRing(int timeout, int maxSpeed, float maxDist, bool driveThrough, bool color, bool useLeftLine, bool useRightLine) {
-    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+/** driveToRingParams are same as driveToRing except for maxDist
+ *  maxDist counts distance beyond distance to the original point
+ */
+void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params){
+    chassis.moveToPoint(x, y, timeout, {.maxSpeed = params.maxSpeed});
+	int temp = pros::millis();
+	while(!checkRing(getMostRelevantObject(params.color)) && chassis.isInMotion()){
+		pros::delay(20);
+	}
+	if(chassis.isInMotion()){
+		chassis.cancelAllMotions();
+        pros::delay(10);
+        lemlib::Pose currentPose = chassis.getPose();
+        params.maxDist += sqrt(pow(x - currentPose.x, 2) + pow(y - currentPose.y, 2));
+        printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
+		driveToRing(timeout - (pros::millis() - temp), params);
+	}
 
-    autoDrive = true;
-    float motorPower = maxSpeed, turnPower, ringPower;
-    //float initLeft = getLeftMotorPositionInInches(), initRight = getRightMotorPositionInInches();
-	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
-    resetDriveMotorPosition();
-    //printf("Left: %f\t Right: %f\n", initLeft, initRight);
-    float distTravelled, drive_error = maxDist, derivative, prevError;
-    int counter;
-    bool reached = false;
-    float leftSpeed, rightSpeed;
-
-    pros::delay(50);
-    while(!detectOurColor(getIntakeColor()) && timeout > 0 && (auton || autoSkill || autoDrive) && !reached) {
-
-        pros::vision_object_s_t nearestRing = getMostRelevantObject(color);
-        if(driveThrough){
-
-        } else {
-            if(distToObject() < 3.7) {break;}
-        }
-
-        derivative = drive_error - prevError;
-        motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
-
-        if(checkRing(nearestRing)){
-
-            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
-
-            turnPower = VISION_TURN_KP * vision_error;
-
-            if(nearestRing.y_middle_coord < 70){
-                int error = 106 + nearestRing.y_middle_coord;
-                ringPower = VISION_LAT_KP * error;
-                if(ringPower < motorPower){
-                    motorPower = ringPower;
-                }
-            }
-            if(timeout % 60 == 0){
-                printf("(%d, %d)\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
-            }
-        }
-
-        if(motorPower > maxSpeed){ motorPower = maxSpeed; }
-
-        leftSpeed = motorPower + turnPower, rightSpeed = motorPower - turnPower;
-
-        if(useRightLine && getRightLine() < 2700){
-            printf("Detecting line\t Theta: %f\n", chassis.getPose().theta);
-            if(COLOR){
-                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
-                rightSpeed += TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
-            } else {
-                leftSpeed -= TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
-                rightSpeed += TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
-            }
-        }
-
-        printf("Left: %f\t Right %f\n", leftSpeed, rightSpeed);
-        drive(leftSpeed, rightSpeed);
-        prevError = drive_error;
-
-        pros::delay(15);
-        timeout -= 15;
-
-        float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
-        distTravelled = (leftPos + rightPos) / 2;
-        drive_error = maxDist - distTravelled;
-        if(timeout % 60 == 0){
-            //printf("Left: %f\t Right: %f\t Distance Travelled: %f\n", leftPos, rightPos, distTravelled);
-        }
-
-        if(fabs(drive_error) < LAT_SMALL_RANGE) {
-            if(counter >= LAT_SMALL_RANGE_TIMEOUT) {
-                reached = true;
-            } else {
-                counter += 15;
-            }
-        } else {
-            counter = 0;
-        }
-        
-    }
-
-    stopDrive();
 }
 
 bool basket_state;
