@@ -5,22 +5,25 @@
 #include "auton_basics.h"
 #include "pros/motors.h"
 
-#define LAT_KP  7
+#define LAT_KP  8
 #define LAT_KI  0
-#define LAT_KD  0 //2
+#define LAT_KD  2
 
 #define LAT_SMALL_RANGE 1
 #define LAT_SMALL_RANGE_TIMEOUT 150
 
-#define TURN_KP 0
+#define TURN_KP 4
 #define TURN_KI 0
 #define TURN_KD 0
 
-#define VISION_KP 0.5
-#define VISION_RANGE 15
-#define VISION_RANGE_TIMEOUT 200
+#define VISION_CENTER 18
+#define VISION_TURN_KP 0.8
+#define VISION_RANGE 20
+#define VISION_RANGE_TIMEOUT 250
+#define VISION_LAT_KP 1.2
 
 #define F_DISTANCE_OFFSET 6.25
+
 #define B_DISTANCE_OFFSET 2.5
 #define L_DISTANCE_OFFSET 6
 #define R_DISTANCE_OFSET 6
@@ -119,25 +122,25 @@ int get2ndIntakeColor();
 void setIntakeColorLED(int value);
 void setIntakeColor2LED(int value);
 
-void setDriveEncoder(pros::motor_encoder_units_e mode);
-float getLFPosition();
-float getLMPosition();
-float getLBPosition();
-float getRFPosition();
-float getRMPosition();
-float getRBPosition();
+void setDriveEncoder(pros::motor_encoder_units_e_t mode);
+double getLFPosition();
+double getLMPosition();
+double getLBPosition();
+double getRFPosition();
+double getRMPosition();
+double getRBPosition();
 
 void resetLeftMotorPosition();
 void resetRightMotorPosition();
 void resetDriveMotorPosition();
 
-float getLeftMotorPosition();
-float getRightMotorPosition();
-float getLeftMotorPositionInInches();
-float getRightMotorPositionInInches();
+double getLeftMotorPosition();
+double getRightMotorPosition();
+double getLeftMotorPositionInInches();
+double getRightMotorPositionInInches();
 
-float wheelDegToInches(float degrees);
-float wheelRotToInches(float rotations);
+double wheelDegToInches(double degrees);
+double wheelRotToInches(double rotations);
 
 void resetIMUHeading();
 float getHeading();
@@ -163,6 +166,8 @@ void resetIntakePosition();
 void setIntakeEncoder(pros::motor_encoder_units_e mode);
 float getIntakePosition();
 
+int getRightLine();
+
 void intakeFor(int ms);
 void intakeFor(float degrees);
 void intakeFor(float speed, int ms);
@@ -184,9 +189,25 @@ void clearRingQueue();
 void basicColorSort();
 
 pros::vision_object_s_t getOurColorObject();
-pros::vision_object_s_t getMostRelevantObject();
-void turnToRing(int timeout = 15000, float maxSpeed = 130);
-void driveToRing(int timeout = 15000, int maxSpeed = 130);
+pros::vision_object_s_t getMostRelevantObject(bool color = COLOR);
+pros::vision_object_s_t getRed();
+pros::vision_object_s_t getBlue();
+bool checkRing(pros::vision_object_s_t ring);
+void turnToRing(int timeout = 15000, float maxSpeed = 130, bool color = COLOR);
+void driveTowardsRing(int timeout = 15000, int maxSpeed = 130, bool color = COLOR);
+struct driveToRingParams {
+    float maxSpeed = 130;
+    float maxDist = 300;
+    float xLimit = 80;
+    float yLimit = 80;
+    bool driveThrough = true;
+    bool keepDriving = false;
+    bool color = COLOR;
+    bool useLeftLine = false;
+    bool useRightLine = false;
+};
+void driveToRing(int timeout = 15000, driveToRingParams params = {});
+void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {}, int delay = 0);
 float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 

@@ -51,7 +51,6 @@ void initialize() {
 	resetLiftPosition();
 
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
-	
 
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
@@ -60,6 +59,13 @@ void initialize() {
     //setIntakeColor2LED(100);
 	sort_color_queue();
 	autoIntake = false;
+
+	vision_sensor.set_exposure(25);
+	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
+	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
+	vision_sensor.set_signature(1, &RED_SIG);
+	vision_sensor.set_signature(2, &BLUE_SIG);
+	vision_sensor.set_zero_point(pros::E_VISION_ZERO_CENTER);
 	
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();

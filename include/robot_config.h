@@ -20,10 +20,10 @@
 #define rad2deg(radians)  (radians * 180/PI)   // radians to degress
 
 // drivebase attributes
-#define DRIVEBASE_WHEEL_DIAMETER     lemlib::Omniwheel::NEW_4 // inches
-#define DRIVEBASE_GEAR_SIZE_ON_MOTOR 36.0   // 36 tooth gear
-#define DRIVEBASE_GEAR_SIZE_ON_WHEEL 72.0   // 60 tooth gear
-#define DRIVEBASE_GEAR_RATIO         DRIVEBASE_GEAR_SIZE_ON_MOTOR / DRIVEBASE_GEAR_SIZE_ON_WHEEL
+#define DRIVEBASE_WHEEL_DIAMETER     lemlib::Omniwheel::NEW_275 // inches
+#define DRIVEBASE_GEAR_SIZE_ON_MOTOR 24.0   // 36 tooth gear
+#define DRIVEBASE_GEAR_SIZE_ON_WHEEL 24.0   // 60 tooth gear
+#define DRIVEBASE_GEAR_RATIO         1
 #define LIFT_GEAR_RATIO              1/6.
 #define DRIVEBASE_X_AXIS_ACCEPTED_ERROR 20 //deadzone for x axis
 // drivebase dimensions
@@ -48,7 +48,8 @@ extern pros::MotorGroup left_side_motors;              // Left drivetrain of dri
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
 
 //Motors
-extern pros::Motor intake;
+extern pros::Motor intakeL;
+extern pros::Motor intakeR;
 
 extern pros::Motor ladybrownL;
 extern pros::Motor ladybrownR;
@@ -87,5 +88,7 @@ extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;
 extern pros::Rotation lift_rotation;
 extern pros::Vision vision_sensor;
+extern pros::adi::AnalogIn lineRight;
+extern pros::adi::AnalogIn lineLeft;
 
 #endif //_ROBOT_CONFIG_H_   

@@ -50,6 +50,7 @@ pros::adi::Pneumatics odom_lift('e', false);
 
 
 /* SENSORS */
+
 pros::Distance LB_dist(12);
 pros::Distance distance_proxi(7);
 
@@ -78,9 +79,12 @@ pros::IMU imu(6);
 pros::adi::Button limitSwitch('h');
 pros::Rotation lift_rotation(6); 
 
-//pros::Vision vision_sensor(5);
-pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
-pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
+pros::Vision vision_sensor(19);
+//pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
+//pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
+
+pros::adi::AnalogIn lineRight({21, 'a'});
+pros::adi::AnalogIn lineLeft({21, 'b'});
 
 
 lemlib::Drivetrain drivetrain(
@@ -111,7 +115,7 @@ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwhee
 lemlib::OdomSensors sensors(
     nullptr, //&vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
-    &horizontal_tracking_wheel,//&horizontal_tracking_wheel,//SKILLS
+    nullptr, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &imu // inertial sensor
 );  
