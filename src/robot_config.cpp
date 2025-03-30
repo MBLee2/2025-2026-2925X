@@ -73,7 +73,7 @@ pros::Vision vision_sensor(19);
 //pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
 
 pros::adi::AnalogIn lineRight({21, 'a'});
-
+pros::adi::AnalogIn lineLeft({21, 'b'});
 
 
 lemlib::Drivetrain drivetrain(

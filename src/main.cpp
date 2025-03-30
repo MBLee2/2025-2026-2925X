@@ -252,24 +252,24 @@ void autonomous() {
  */
 void opcontrol() {
 
-	pros::delay(3000);
+	pros::delay(5000);
 
-	chassis.setPose(0, 0, 0);
+	chassis.setPose(0, 0, 45);
 
 	spinIntake(127);
 	pros::delay(200);
 	
-	moveToPointWithVis(0, 20, 5000, {.maxSpeed = 40, .maxDist = 10});
+	moveToPointWithVis(15, 15, 5000, {.maxSpeed = 60, .xLimit = 20, .yLimit = 20});
 
 	lemlib::Pose currentPose = chassis.getPose();
 	printf("(X: %f, Y: %f, theta: %f)\n", currentPose.x, currentPose.y, currentPose.theta);
 	pros::delay(500);
 
 	while(true){
-		/*pros::vision_object_s_t ring = getMostRelevantObject();
+		pros::vision_object_s_t ring = getMostRelevantObject();
 		if(checkRing(ring)){
 			printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
-		}*/
+		}
 		pros::delay(300);
 	}
 

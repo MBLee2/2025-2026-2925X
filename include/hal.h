@@ -20,7 +20,7 @@
 #define VISION_TURN_KP 0.8
 #define VISION_RANGE 20
 #define VISION_RANGE_TIMEOUT 250
-#define VISION_LAT_KP 0.7
+#define VISION_LAT_KP 1.2
 
 #define F_DISTANCE_OFFSET 6.25
 #define B_DISTANCE_OFFSET 6.25
@@ -179,6 +179,8 @@ void driveTowardsRing(int timeout = 15000, int maxSpeed = 130, bool color = COLO
 struct driveToRingParams {
     float maxSpeed = 130;
     float maxDist = 300;
+    float xLimit = 80;
+    float yLimit = 80;
     bool driveThrough = true;
     bool keepDriving = false;
     bool color = COLOR;
@@ -186,7 +188,7 @@ struct driveToRingParams {
     bool useRightLine = false;
 };
 void driveToRing(int timeout = 15000, driveToRingParams params = {});
-void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {});
+void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {}, int delay = 0);
 float calcDistance();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 

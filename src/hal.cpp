@@ -420,6 +420,21 @@ int getRightLine() {
     return lineRight.get_value();
 }
 
+int getLeftLine() {
+    return lineLeft.get_value();
+}
+
+bool detectLine(int value) {
+    return value < 2700;
+}
+
+bool detectRightLine() {
+    return detectLine(getRightLine());
+}
+
+bool detectLeftLine() {
+    return detectLine(getLeftLine());
+}
 
 // Controlled Functions
 
@@ -755,11 +770,11 @@ int blueLower = 190;
 int blueUpper = 230;
 
 bool detectRed(int hue){
-    return hue >= 0 && hue <= 25;
+    return hue >= 350 || hue <= 30;
 }
 
 bool detectBlue(int hue){
-    return hue >= 195 && hue <= 240;
+    return hue >= 180 && hue <= 220;
 }
 
 bool detectOurColor(int hue){
@@ -1036,9 +1051,12 @@ float limitSpeed(float speed, float maxSpeed){
 /** driveToRingParams
  *  @param maxSpeed maximum speed
  *  @param maxDist maximum distance allowed to travel
- *  @param driveThrough stop once any ring enters intake
+ *  @param xLimit X coordinate that cannot be crossed
+ *  @param yLimit Y coordinate that cannot be crossed
+ *  @param driveThrough use color sensor to stop (as opposed to distance)
  *  @param keepDriving continue seeking all available rings (if driveThrough is false, this is ignored)
  *  @param color which color to seek
+ *  @param intakeColor
  *  @param useLeftLine use left line tracker to avoid crossing line (not done)
  *  @param useRightLine use right line tracker to avoid crossing line (not done)
  */
@@ -1052,41 +1070,51 @@ void driveToRing(int timeout, driveToRingParams params) {
     //printf("Left: %f\t Right: %f\n", initLeft, initRight);
     float distTravelled, drive_error = params.maxDist, derivative, prevError;
     float leftSpeed, rightSpeed;
+    lemlib::Pose initialPose = chassis.getPose();
+    bool startLessX = initialPose.x < params.xLimit, startLessY = initialPose.y < params.yLimit;
 
     pros::delay(50);
     while(timeout > 0 && (auton || autoSkill || autoDrive)) {
 
         pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
-        if(timeout % 90 == 0){
-            printf("(%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
-        }
 
         if(params.driveThrough){
             if(!params.keepDriving || !checkRing(nearestRing)){
-                if(detectOurColor(getIntakeColor())) { break; }
+                if(detectOurColor(getIntakeColor())) { 
+                    printf("Stop by intake");
+                    break; 
+                }
             }
-        } else if(detectRingFront()) {break;}
+        } else if(detectRingFront()) { 
+            printf("Stop by intake");
+            break; 
+        }
 
+        lemlib::Pose currentPose = chassis.getPose();
         float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
         distTravelled = (leftPos + rightPos) / 2;
-        if(distTravelled > params.maxDist) {
+        if(distTravelled > params.maxDist || 
+                startLessX != (currentPose.x < params.xLimit) || 
+                startLessY != (currentPose.y < params.yLimit)) {
+            printf("Stop by maximum\n");
             break;
         }
-        drive_error = params.maxDist - distTravelled;
-        if(timeout % 90 == 0){
-            printf("DistToMax: %f\t", drive_error);
-        }
+        drive_error = std::min({params.maxDist - distTravelled, 
+            (float) fabs((1/sin(deg2rad(currentPose.theta))) * (params.xLimit - currentPose.x)), 
+            (float) fabs((1/cos(deg2rad(currentPose.theta))) * (params.yLimit - currentPose.y))});
 
         derivative = drive_error - prevError;
         motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
 
         if(checkRing(nearestRing)){
-
+            if(timeout % 90 == 0){
+                //printf("(%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
+            }
             int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
 
             turnPower = VISION_TURN_KP * vision_error;
 
-            if(nearestRing.y_middle_coord < 70 && !params.keepDriving){
+            if(nearestRing.y_middle_coord < 0 && !params.keepDriving){
                 int error = 106 + nearestRing.y_middle_coord;
                 ringPower = VISION_LAT_KP * error;
                 if(ringPower < motorPower){
@@ -1094,21 +1122,35 @@ void driveToRing(int timeout, driveToRingParams params) {
                 }
             }
         }
+        if(timeout % 90 == 0){
+            printf("(%f, %f)\t", currentPose.x, currentPose.y);
+            printf("DistToMax: %f\t", drive_error);
+        }
 
-
-        if(params.useRightLine && getRightLine() < 2700){
-            printf("Detecting line\t Theta: %f\n", chassis.getPose().theta);
+        if(params.useLeftLine && params.useRightLine && detectLeftLine() && detectRightLine()){
+            driveStraight(-motorPower);
+            break;
+        } else if(params.useRightLine && detectRightLine()){
+            printf("Detecting line\t Theta: %f\t", chassis.getPose().theta);
             if(COLOR){
-                turnPower -= TURN_KP * fmod((chassis.getPose().theta + 90 + 360), 360);
+                turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
             } else {
-                turnPower -= TURN_KP * fmod((chassis.getPose().theta - 90 + 360), 360);
+                turnPower = TURN_KP * fmod(90 - currentPose.theta, 360);
+            }
+        } else if(params.useLeftLine && detectLeftLine()){
+            printf("Detecting line\t Theta: %f\t", chassis.getPose().theta);
+            if(COLOR){
+                turnPower = TURN_KP * fmod(90 - currentPose.theta, 360);
+            } else {
+                turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
             }
         }
 
         leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
 
         if(timeout % 90 == 0){
-            printf("Left: %f\t Right %f\n", leftSpeed, rightSpeed);
+            //printf("Left: %f\t Right %f\t", leftSpeed, rightSpeed);
+            printf("\n");
         }
         drive(leftSpeed, rightSpeed);
         prevError = drive_error;
@@ -1117,6 +1159,9 @@ void driveToRing(int timeout, driveToRingParams params) {
         timeout -= 15;
         
     }
+    if(timeout <= 0){
+        printf("Stop by timeout");
+    }
 
     stopDrive();
 }
@@ -1124,10 +1169,10 @@ void driveToRing(int timeout, driveToRingParams params) {
 /** driveToRingParams are same as driveToRing except for maxDist
  *  maxDist counts distance beyond distance to the original point
  */
-void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params){
+void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params, int delay){
     chassis.moveToPoint(x, y, timeout, {.maxSpeed = params.maxSpeed});
 	int temp = pros::millis();
-	while(!checkRing(getMostRelevantObject(params.color)) && chassis.isInMotion()){
+	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
 		pros::delay(20);
 	}
 	if(chassis.isInMotion()){

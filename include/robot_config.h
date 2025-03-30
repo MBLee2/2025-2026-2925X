@@ -82,5 +82,6 @@ extern pros::adi::Button limitSwitch;
 extern pros::Rotation lift_rotation;
 extern pros::Vision vision_sensor;
 extern pros::adi::AnalogIn lineRight;
+extern pros::adi::AnalogIn lineLeft;
 
 #endif //_ROBOT_CONFIG_H_   
