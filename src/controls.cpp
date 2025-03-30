@@ -17,6 +17,7 @@ enum intake_state {
   STOP  // Stop the intake
 };
 intake_state current_state = STOP;
+bool LBPickup1 = false;
 #define TURN_CONST                                                             \
   1.4 // Constant multipled by X input to allow for instant turns during driver
       // control
@@ -70,22 +71,29 @@ void taskFn_mogo_control(void) {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
       toggleClamp();
     }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+      liftIntake();
+    }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      dropIntake();
+    }
 
     // Get the input from the right joystick and normalize the input to a range
     // of -1 to 1
     int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
     int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
-    // If the joystick is pushed upward past 85%, extend the mogo_rush arm
-    // (extended)
-    if (rightY > 0.85) {
-    }
-    // If the joystick is pushed downward past 85%, retract the mogo_rush arm
     // (retracted)
     if (rightY < -0.85) {
+      retractRightSweeper();
+      retractLeftSweeper();
     }
-    if (rightX > 0.85) {
+    if (rightX > 0.85) { 
+      extendRightSweeper();
+      retractLeftSweeper();
     }
     if (rightX < -0.85) {
+      extendLeftSweeper();
+      retractRightSweeper();
     }
 
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
@@ -97,10 +105,9 @@ void taskFn_mogo_control(void) {
 // Intake control
 void taskFn_intake_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  // Define an enum to represent the intake's possible states
-  
-
-  intake_color.set_led_pwm(100);  // Set the LED PWM for the intake color
+  // Define an enum to represent the intake's possible states  
+  int counter = 0;
+  intake_color.set_led_pwm(25);  // Set the LED PWM for the intake color
   while (true) // Infinite loop to keep checking controller input for intake
   {
     double pos = getLiftPosition();; // Get the current position of the lift
@@ -117,7 +124,7 @@ void taskFn_intake_control(void) {
         //autoIntake = false;
         current_state = STOP;
         stopIntake();
-        clearRingQueue();
+        stopSorting();
       }
     }
     // Eject objects with the B button
@@ -126,7 +133,7 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         spinIntake(-127);
-        clearRingQueue();
+        stopSorting();
         current_state = OUTAKE;
 
       } 
@@ -134,13 +141,12 @@ void taskFn_intake_control(void) {
       {
         //autoIntake = false;
         current_state = STOP;
-        clearRingQueue();
         stopIntake();
       }
     }
     
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-      if (autoIntake == false)
+      if (autoIntake == false && current_state != OUTAKE)
       {
         startSorting();
       }
@@ -148,9 +154,7 @@ void taskFn_intake_control(void) {
       {
         stopSorting();
       }
-    }   
-
-
+    }
     pros::delay(20);
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
@@ -165,34 +169,50 @@ void taskFn_lift_control(void)
     PICKUP, // Eject objects
     DOWN  // Stop the intake
   };
+  float target = 0;
+  int time = 0;
+  bool dir = true;
+  autoLift = false;
 
   ladybrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-  lift_state current_state1X = DOWN; // Initialize with a default state, STOP
+  lift_state current_state1 = DOWN; // Initialize with a default state, STOP
 
   while (true) // Infinite loop to keep checking controller input for intake
   { 
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       spinLift(127);
+      autoLift = false;
     }
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       spinLift(-127);
+      autoLift = false;
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       stopIntake();
       current_state = STOP;
       liftUpWallStake();
+      // target = 240, time = pros::millis();
+      // dir = getLiftPosition() < target;
+      // autoLift = true;
+      setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      pros::Task lift_task(liftPickup);
+      setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+      LBPickup1 = true;
+    }
 
-    }
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-      liftPickup();
-    }
-    if(limitSwitch.get_value() == true)
+    // moveLiftToPosCancel(target, dir, time, 127, 1500);
+
+    if(getLiftPosition() > 40)
     {
-      resetLiftPosition();
+      stopLiftHold();
     }
-    stopLiftHold();
-    
-
+    else if(getLiftPosition() < 40)
+    {
+      stopLift();
+    }
+    resetLiftPositionWithDistance();
     pros::delay(20);
   }
 }

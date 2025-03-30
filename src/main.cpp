@@ -55,8 +55,8 @@ void initialize() {
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
-	setIntakeColorLED(100);
-    setIntakeColor2LED(100);
+	setIntakeColorLED(10);
+    //setIntakeColor2LED(100);
 	sort_color_queue();
 	autoIntake = false;
 
@@ -159,7 +159,6 @@ void competition_initialize() {
  */
 {
 	//HERE
-	
 	printf("%s(): Entered\n", __func__);
 
 	// weird bug in system; without the following delay, was getting a white screen
@@ -205,10 +204,31 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
-	//chassis.moveToPoint(0, 30, 10000);
+	float min_speed = 0;
+	float earlyrange = 0;
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 60, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 0, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(36, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 36, 2000,{.forwards=false,.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.turnToHeading(0, 2000,{.minSpeed=12,.earlyExitRange=2},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
+	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
+
+
 	//HERE
-	
-	auton_routine default_routine = goal_rush; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
@@ -251,35 +271,13 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-
-	pros::delay(5000);
-
-	chassis.setPose(0, 0, 45);
-
-	spinIntake(127);
-	pros::delay(200);
-	
-	moveToPointWithVis(15, 15, 5000, {.maxSpeed = 60, .xLimit = 20, .yLimit = 20});
-
-	lemlib::Pose currentPose = chassis.getPose();
-	printf("(X: %f, Y: %f, theta: %f)\n", currentPose.x, currentPose.y, currentPose.theta);
-	pros::delay(500);
-
-	while(true){
-		pros::vision_object_s_t ring = getMostRelevantObject();
-		if(checkRing(ring)){
-			printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
-		}
-		pros::delay(300);
-	}
-
-
+	odom_lift.extend();
 	stopSorting();
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
-	pros::Task lift_control(&taskFn_lift_control,"lift-task");
+	pros::Task lift_control(taskFn_lift_control,"lift-task");
 
     // SKILLS ONLY
 	//auton_60s_skills_1();

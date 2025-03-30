@@ -29,43 +29,54 @@ pros::MotorGroup right_side_motors({-9, -1, 10}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intakeL(-20, pros::v5::MotorGears::red);  // port 4, reversed
-pros::Motor intakeR(11, pros::v5::MotorGears::red);
+pros::Motor intake(-20, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
-pros::Motor ladybrownL(17, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-21, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({17, -21}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(-14, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({11, -14}, pros::v5::MotorGears::green);
 
 
 //Other Motor
 //pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
 
 //Pistons
-pros::adi::Pneumatics mogo_clamp('b', false);
+pros::adi::Pneumatics mogo_clamp('d', false);
+pros::adi::Pneumatics left_sweeper('b', false);
+pros::adi::Pneumatics right_sweeper('a', false);
+pros::adi::Pneumatics intake_lift('g', false);
+pros::adi::Pneumatics odom_lift('e', false);
+
 
 
 /* SENSORS */
+
+pros::Distance LB_dist(12);
 pros::Distance distance_proxi(7);
 
-
 pros::Optical intake_color(3);
-pros::Optical intake_color2(5);
-pros::Distance distance_lf(21);
-pros::Distance distance_lb(21);
-pros::Distance distance_rf(21);
-pros::Distance distance_rb(21);
-pros::Distance distance_bl(21);
-pros::Distance distance_br(21);
+pros::Distance intake_dist(16);
+pros::Distance distance_back(2);
+pros::Distance distance_left(17);
+pros::Distance distance_right(5);
 
-pros::Distance distance_front(4);
-pros::Distance distance_back(10);
-pros::Distance distance_left(15);
 
-pros::GPS gps(21);
+
+pros::Optical intake_color2(22); //deprecated
+pros::Distance distance_front(22);
+pros::Distance distance_lf(22);
+pros::Distance distance_lb(22);
+pros::Distance distance_rf(22);
+pros::Distance distance_rb(22);
+pros::Distance distance_bl(22);
+pros::Distance distance_br(22);
+
+
+
+pros::GPS gps(3);
 pros::IMU imu(6);
 
-pros::adi::Button limitSwitch('e');
+pros::adi::Button limitSwitch('h');
 pros::Rotation lift_rotation(6); 
 
 pros::Vision vision_sensor(19);
@@ -86,15 +97,19 @@ lemlib::Drivetrain drivetrain(
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
-pros::Rotation vertical_rot(12); // port 1, not reversed
-pros::Rotation horizontal_rot(17); // port 1, not reversed
+pros::Rotation vertical_rot(12); // NOT ON BOT
+pros::Rotation horizontal_rot(8); // port 1, not reversed
 
 // back tracking wheel encoder  
  
 // vertical tracking wheel
 lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 1.25); // 2.00" wheel diameter, 1.25" offset from tracking center 
 // horizontal tracking wheel
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, 1.00); // 2.00" wheel diameter, 1.00" offset from tracking center
+
+/*
+NOT SET UP YET
+*/
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275_HALF, -3.50); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
@@ -106,28 +121,28 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(9, // proportional gain (kP)
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              21, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              00, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              000, // large error range timeout, in milliseconds
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              0.25, // small error range, in inches
+                                              50, // small error range timeout, in milliseconds
+                                              1, // large error range, in inches
+                                              300, // large error range timeout, in millisecond
                                               0 // maximum acceleration (slew)
 );
 
 // turning PID
-lemlib::ControllerSettings angular_controller(5 , // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              37, // derivative gain (kD)
+                                              18.5, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              1000, // large error range timeout, in milliseconds
-                                              127 // maximum acceleration (slew)
-);
+                                              2, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (sle
+); 
 
 
 // input curve for throttle input during driver control
@@ -159,8 +174,8 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {110, 190, "DB-RM", rm},
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake L", intakeL},
-        dashboard_motor_display {320, 190, "Intake R", ladybrownL}
+        dashboard_motor_display {320, 135, "Intake", intake},
+        dashboard_motor_display {320, 190, "lbrown", ladybrownL}
         
         
     };

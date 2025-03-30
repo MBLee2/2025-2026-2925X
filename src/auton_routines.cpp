@@ -17,6 +17,7 @@
 #include "pros/rtos.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
+#include <cmath>
 #include <cstdio>
 #include <sys/_intsup.h>
 #include <sys/_stdint.h>
@@ -33,7 +34,7 @@ auton_routine safe_positive{0, 0, 0, "None - Invalid Routine", &positiveHalfWp};
 
 auton_routine positive_WP{0, 0, 0, "None - Invalid Routine", &possitiveFullWP};
 
-auton_routine goal_rush{0, 0, 0, "None - Invalid Routine", &goalRush};
+auton_routine late_stake{0, 0, 0, "None - Invalid Routine", &lateStake};
 
 auton_routine goal_rush_and_stake{0, 0, 0, "None - Invalid Routine", &goalRushWallStake};
 
@@ -113,63 +114,55 @@ void printPositionV2(char *msg, bool withDistanceSensors = false,
  */
 void redPositiveHalfWP(){ //EVERYTHING DONE
   int time = pros::millis();
-  int speed = 127;
+  int speed = 80;
   float speed1 = float(speed);
-  int temp_pos1 = 0;
-  int temp_pos2 = 0;
-
+  COLOR = true;
   stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
+  pros::delay(2000);
   
-  chassis.setPose(-0.5, -58.5, 270);
-  temp_pos2=chassis.getPose().y;
-
-  
-  chassis.moveToPoint(20, temp_pos2, 900, {.forwards = false, .minSpeed = 12, .earlyExitRange = 0.5});
-  chassis.waitUntil(0.6);
- 
-
-  chassis.moveToPoint(48, -48, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 12, .earlyExitRange = 0.5});
- 
-  spinIntake(-127);
-  chassis.waitUntil(100);
-  spinIntake(127);
-
-  chassis.turnToPoint(43, -24, 2000, {.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8}, false);
-  startSorting();
-  pros::Task save_ring([=] {saveOurRing(3000);});
-  chassis.moveToPoint(45, -24, 1500,{.minSpeed = 12, .earlyExitRange = 2}, false);
-  printPositionV2((char *) "1st Ring", false, false, time);
-  
-  chassis.turnToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  //chassis.moveToPoint(24, -33.5, 4000,{.forwards = false, .maxSpeed = speed1, .minSpeed = 10, .earlyExitRange = 3});
-  chassis.moveToPoint(25, -24, 2000,{.forwards=false, .maxSpeed = speed1 - 30, .minSpeed = 6, .earlyExitRange = 2});
-  chassis.waitUntil(18);
+  chassis.setPose(14.5,-57,230);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(12, -59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(930);});    
+  pros::delay(300); 
+  chassis.moveToPoint(19.5, -53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(24, -24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(24, -33,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(24, -21,600,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.waitUntil(4);
   closeClamp();
-  pros::delay(10);
+  pros::delay(280);
+  chassis.turnToPoint(48, -24, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
   spinIntake(127);
-  printPositionV2((char *) "Goal pickup",false,false,time);
+  chassis.moveToPoint(54, -24, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(46, -24, 1000,{.forwards = false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  // chassis.turnToPoint(48, -48, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  // chassis.moveToPoint(48, -48, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(54, -47, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1}, false);
+  startSorting();
+  chassis.moveToPoint(54, -47, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  pros::Task lift3 ([=] {moveLiftToPos(350);});      
+  chassis.moveToPoint(58, -51, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToHeading(90, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1},false);
+  pros::delay(500);
+  chassis.turnToHeading(135, 1400,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1},false);
+  stopSorting();
+  temp_pos = chassis.getPose();
+  chassis.moveToPoint(temp_pos.x+12,  temp_pos.y-12 , 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y+2, 800,{.forwards=false,.maxSpeed=127,.minSpeed=5,.earlyExitRange=1},false);
+  chassis.moveToPoint(temp_pos.x+5.5,  temp_pos.y-5.5, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y+2, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(14,-14,2000,{.forwards = false});
+  chassis.waitUntil(15);
+  stopIntake();
+  chassis.waitUntil(1000);
+  moveLiftToPos(-10,50,200);
 
- 
-  chassis.turnToPoint(60, -60, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 8}); 
-  chassis.moveToPoint(48, -46, 1000,{.maxSpeed = speed1, .minSpeed = 30, .earlyExitRange = 5}, false);
-  temp_pos1 = chassis.getPose().x;
-  temp_pos2 = chassis.getPose().y;
-  chassis.moveToPoint(temp_pos1 + 20, temp_pos2 - 20, 2000,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(48, -50, 2000,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-   
-  chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(20, -50, 3000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(9, -51, 1000,{.maxSpeed=50,.minSpeed = 30, .earlyExitRange = 6});
-  chassis.waitUntil(10000);
-   
-
-  chassis.moveToPoint(30, -50, 3000,{.forwards=false,.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
-  speed = 80;
-  speed1 = int(speed);
-  chassis.turnToPoint(25, -22, 1000);
-  chassis.moveToPoint(16, -15, 1000,{.maxSpeed = speed1});
-  chassis.turnToHeading(315, 1000,{.maxSpeed=speed},false);
-
+  //*/
   master.clear_line(0);
   int temp = pros::millis();
   while (true) {
@@ -180,63 +173,58 @@ void redPositiveHalfWP(){ //EVERYTHING DONE
 
 void bluePositiveHalfWP(){ //EVERYTHING DONE
   int time = pros::millis();
-  int speed = 123;
+  int speed = 80;
   float speed1 = float(speed);
-  int temp_pos1 = 0;
-  int temp_pos2 = 0;
   COLOR = false;
-  
   stopSorting();
-  chassis.setPose(-1, 58.5, 270);
-  temp_pos2=chassis.getPose().y;
-
-  chassis.moveToPoint(20, temp_pos2, 900, {.forwards = false, .minSpeed = 30, .earlyExitRange = 8});
-  chassis.waitUntil(0.6);
- 
-
-  chassis.moveToPoint(48, 48, 900, {.forwards = false, .minSpeed = 12, .earlyExitRange = 0.5});
- 
-  spinIntake(-127);
-  pros::delay(100);
-  spinIntake(127);
-  chassis.turnToPoint(48, 24, 2000, {.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(48, 24, 1500,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 2});
-  startSorting();
-  saveOurRing(3000);
-  printPositionV2((char *) "1st Ring", false, false, time);
-
-
-  chassis.turnToPoint(24, 24, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(32, 23, 4000,{.forwards = false, .maxSpeed = speed1, .minSpeed = 30, .earlyExitRange = 5});
-  chassis.moveToPoint(26, 23, 800,{.forwards=false, .maxSpeed = speed1 - 60});
+  lemlib::Pose temp_pos = chassis.getPose();
+  pros::delay(2000);
+  chassis.setPose(14.5,57,-50);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(12, 59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(950);});    
+  pros::delay(500); 
+  chassis.moveToPoint(19.5, 53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(22.5, 38,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(24.75, 19,600,{.forwards=false,.maxSpeed=speed1 - 40,.minSpeed=5,.earlyExitRange=1});
   chassis.waitUntil(1000);
   closeClamp();
-  pros::delay(200);
-  printPositionV2((char *) "Goal pickup", false, false, time);
-
-  chassis.turnToPoint(54, 54, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 8});
+  pros::delay(280);
+  chassis.turnToPoint(49, 24, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
   spinIntake(127);
-  chassis.moveToPoint(54, 54, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 4});
-  chassis.turnToHeading(45, 1000, {.maxSpeed = speed},false);
-  temp_pos1 = chassis.getPose().x;
-  temp_pos2 = chassis.getPose().y;
-  chassis.moveToPoint(temp_pos1 +18, temp_pos2 + 14, 1000,{.maxSpeed = 80, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(48, 50, 2000,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  
-  
-  /*chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(12, 48, 3000,{.minSpeed = 30, .earlyExitRange = 8});
-   
+  chassis.moveToPoint(54, 24, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(40, 24, 1000,{.forwards = false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  // chassis.turnToPoint(48, -48, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  // chassis.moveToPoint(48, -48, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(54, 47, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  startSorting();
+  chassis.moveToPoint(48, 48, 1600,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  pros::Task lift3 ([=] {moveLiftToPos(300);});
+  chassis.turnToHeading(90,1000);
+  chassis.turnToHeading(45, 700,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1},false);
+  stopSorting();
+  pros::delay(200);
+  temp_pos = chassis.getPose();
+  chassis.moveToPoint(temp_pos.x+10,  temp_pos.y+10 , 600,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(temp_pos.x+25,  temp_pos.y+25 , 600,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.waitUntil(1000);
+  pros::delay(200);
+  chassis.moveToPoint(temp_pos.x+1,  temp_pos.y+1, 800,{.forwards=false,.maxSpeed=80,.minSpeed=5,.earlyExitRange=1},false);
+  chassis.moveToPoint(temp_pos.x+6,  temp_pos.y+6, 600,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1},false);
+  chassis.waitUntil(1000);
+  pros::delay(500);
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y-2, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});  
+  chassis.moveToPoint(15,15,1500,{.forwards = false,.maxSpeed = 80});
+  chassis.waitUntil(15);
+  stopIntake();
+  chassis.waitUntil(1000);
+  pros::delay(100);
+  moveLiftToPos(-10,50,200);
 
-  chassis.moveToPoint(8, 48, 1000,{.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});  
-  chassis.moveToPoint(24, 48, 3000,{.forwards=false,.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
-   
-  speed = 80;
-  speed1 = int(speed);//*/
-  chassis.turnToPoint(15, 17, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(18.5, 20.5, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 3});
-  chassis.turnToHeading(225, 1000,{.maxSpeed=speed},false);
-   
   //*/
   master.clear_line(0);
   int temp = pros::millis();
@@ -259,134 +247,151 @@ void bluePossitiveFullWP(){ //EVERYTHING DONE
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
-  int temp_pos1 = 0;
-  int temp_pos2 = 0;
-  COLOR = false;
+  COLOR = true;
+  stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
   
-  startSorting();
-  chassis.setPose(-1, 58.5, 270);
-  temp_pos2=chassis.getPose().y;
-
- 
+  chassis.setPose(14.5,57,-50);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(12, 59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(930);});    
+  pros::delay(450); 
+  chassis.moveToPoint(19.5, 53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(48, 24,1500,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  intake_anti_jam.suspend();
+  pros::Task lift2 ([=] {liftPickup();});  
+  chassis.moveToPoint(48, 24,1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=0.5});
+  spinIntake(127);
+  intake_anti_jam.suspend();
+  chassis.turnToHeading(180, 700,{},false);
+  temp_pos = chassis.getPose();
+  chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), 72 - fabs(distToWallB() * cos(deg2rad(temp_pos.theta))), temp_pos.theta);
+  chassis.moveToPoint(48, 21.5,1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=0.5});
+  printPosition((char *) "Before WS", false, false);
+  pros::delay(50);
+  chassis.turnToPoint(71, 0,1000,{.maxSpeed=speed-40});
+  chassis.moveToPoint(61, 7,2000,{.maxSpeed=speed1-60});
+  chassis.waitUntil(100);
+  stopIntake();
+  moveLiftToPos(850,127,1000);
+  pros::delay(100);
+  return;
+  spinIntake(127);
+  moveLiftToPos(1100,25,500);    
+  pros::delay(100);
+  chassis.arcade(-15, 0);
   pros::delay(200);
-  chassis.moveToPoint(20, temp_pos2, 900, {.forwards = false, .minSpeed = 30, .earlyExitRange = 3}, false);
- 
-  chassis.turnToPoint(48, 24, 3000, {.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(48, 24, 1500,{.minSpeed = 12, .earlyExitRange = 2});
-  chassis.waitUntil(12);
-  spinIntake(127);
-  pros::Task save_ring([=] {saveOurRing(2000);});
-  chassis.turnToPoint(24, 24, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(24, 24, 1000,{.forwards = false, .maxSpeed = speed1-40});
-  chassis.waitUntil(100);
-  closeClamp();
-  spinIntake(127);
-  pros::delay(400);
-  chassis.moveToPoint(12, 32, 2000,{ .forwards=false,.maxSpeed = speed1, .minSpeed = 6, .earlyExitRange = 2});
-  chassis.turnToHeading(90, 500,{.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.waitUntil(10000);
-  openClamp();
-  chassis.moveToPoint(36, 24, 2000,{ .maxSpeed = speed1 - 30, .minSpeed = 6, .earlyExitRange = 2});
-  chassis.turnToPoint(48, 0, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(42, 6.5, 2000,{.forwards = false, .maxSpeed = speed1-30, .minSpeed = 10, .earlyExitRange = 3});
-  chassis.waitUntil(100);
-  closeClamp();
-  chassis.turnToPoint(48, 48, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 8}); 
-  spinIntake(-127);
-  chassis.moveToPoint(50, 48, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.turnToHeading(45, 2000, {.maxSpeed = speed, .minSpeed = 8, .earlyExitRange = 2},false);
-  spinIntake(127);
-  temp_pos1 = chassis.getPose().x;
-  temp_pos2 = chassis.getPose().y;
-  chassis.moveToPoint(temp_pos1 +24, temp_pos2 + 26, 800,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(48, 50, 2000,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.turnToHeading(270, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(12, 48, 3000,{.minSpeed = 30, .earlyExitRange = 6});
-   
-
-  chassis.moveToPoint(6, 48, 1000,{.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
-  chassis.waitUntil(100000);
-   
-  chassis.moveToPoint(24, 48, 3000,{.forwards=false,.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
-  speed = 80;
-  speed1 = int(speed);
-  chassis.turnToPoint(12, 20, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(12, 20, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 3});
-  chassis.turnToHeading(225, 1000,{.maxSpeed=speed},false);
-   
+  chassis.arcade(0, 0);
+  chassis.moveToPoint(51, -23,1000,{.forwards=false,.minSpeed=5,.earlyExitRange=0.5});
+  chassis.turnToHeading(180, 800,{.minSpeed=5,.earlyExitRange=0.5},false);
+  temp_pos = chassis.getPose();
+  printf("Back Dist: %f", distToWallB());
+  chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), - 72 + fabs(distToWallB() * cos(deg2rad(temp_pos.theta))), temp_pos.theta);
+  pros::delay(100);
+  return;
+  if(distToObject() < 20.66)
+  {
+    chassis.turnToPoint(51, 0, 1000,{.forwards =false,.minSpeed=5,.earlyExitRange=0.5});
+    chassis.moveToPoint(50, -11.5, 1000,{.forwards =false,.maxSpeed = 50});
+    chassis.waitUntil(1000);
+    closeClamp();
+    /*chassis.waitUntilDone();
+    closeClamp();
+    pros::delay(200);
+    startSorting();
+    chassis.moveToPoint(48, -44, 2000);
+    chassis.turnToHeading(135, 1000);
+    chassis.moveToPoint(72, -72, 1000);
+    chassis.moveToPoint(56, -56, 1000,{.forwards = false});
+    //*/
+    printf("Lift Pos: %f",getLiftPosition());
+  } else  {
+    chassis.turnToPoint(24, -24, 1000,{.forwards =false});
+  }
+  
   //*/
   master.clear_line(0);
   int temp = pros::millis();
   while (true) {
     master.print(0, 0, "Time: %d", (temp-time));
   }
+
 }
 
 void redPossitiveFullWP(){ //90% done
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
-  int temp_pos1 = 0;
-  int temp_pos2 = 0;
   COLOR = true;
+  stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
   
-  startSorting();
-  chassis.setPose(0, -60, 270);
-  temp_pos2=chassis.getPose().y;
-
- 
-  pros::delay(200);
-  chassis.moveToPoint(20, temp_pos2, 900, {.forwards = false, .minSpeed = 30, .earlyExitRange = 3});
-  chassis.turnToPoint(42, -26, 3000, {.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
- 
-  chassis.moveToPoint(42, -26, 1500,{.minSpeed = 12, .earlyExitRange = 2});
-  chassis.waitUntil(12);
+  chassis.setPose(14.5,-57,230);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(12, -59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(930);});    
+  pros::delay(450); 
+  chassis.moveToPoint(19.5, -53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(48, -24,1500,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  intake_anti_jam.suspend();
+  pros::Task lift2 ([=] {liftPickup();});  
+  chassis.moveToPoint(48, -24,1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=0.5});
   spinIntake(127);
-  chassis.waitUntil(10);
-  pros::Task save_ring([=] {saveRing(2000);});
-
-  chassis.turnToPoint(24, -26, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(19, -26, 700,{.forwards = false, .maxSpeed = speed1-60});
-  chassis.waitUntil(100);
+  intake_anti_jam.suspend();
+  chassis.turnToHeading(0, 700,{},false);
+  temp_pos = chassis.getPose();
+  chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), - 72 + fabs(distToWallB() * cos(deg2rad(temp_pos.theta))), temp_pos.theta);
+  chassis.moveToPoint(48, -21.5,1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=0.5});
+  printPosition((char *) "Before WS", false, false);
   pros::delay(50);
-  closeClamp();
-  spinIntake(127);
-  pros::delay(400);
-  chassis.moveToPoint(5, -34, 2000,{ .forwards=false,.maxSpeed = speed1, .minSpeed = 6, .earlyExitRange = 2});
-  chassis.turnToHeading(90, 500,{.maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.waitUntil(10000);
-  openClamp();
-  chassis.moveToPoint(35, -26, 2000,{ .maxSpeed = speed1 - 30, .minSpeed = 6, .earlyExitRange = 2});
-  chassis.turnToPoint(38, 0, 2000, {.forwards = false, .maxSpeed = speed,.minSpeed = 12, .earlyExitRange = 8});
-  chassis.moveToPoint(38, -3 , 2000,{.forwards = false, .maxSpeed = speed1-60, .minSpeed = 10, .earlyExitRange = 3});
+  chassis.turnToPoint(71, 0,1000,{.maxSpeed=speed-40});
+  chassis.moveToPoint(61, -7,2000,{.maxSpeed=speed1-60});
   chassis.waitUntil(100);
+  stopIntake();
+  moveLiftToPos(850,127,1000);
   pros::delay(100);
-  closeClamp();
-  chassis.turnToPoint(47, -48, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 8}); 
-  chassis.moveToPoint(47, -48, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 8});
-  /* 
-  chassis.turnToHeading(225, 2000, {.maxSpeed = speed, .minSpeed = 8, .earlyExitRange = 2},false);
-  pros::delay(400);//*/
-  chassis.turnToHeading(135, 2000, {.maxSpeed = speed, .minSpeed = 8, .earlyExitRange = 2},false);
-  temp_pos1 = chassis.getPose().x;
-  temp_pos2 = chassis.getPose().y;
-   
-  chassis.moveToPoint(temp_pos1 +24, temp_pos2 -24, 1000,{.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(temp_pos1-3, temp_pos2+3, 1400,{.forwards= false,.maxSpeed = 60, .minSpeed = 12, .earlyExitRange = 3});
-  chassis.turnToPoint(12, -45, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(12, -45, 3000,{.minSpeed = 30, .earlyExitRange = 6});
-   
+  return;
+  spinIntake(127);
+  moveLiftToPos(1100,25,500);    
+  pros::delay(100);
+  chassis.arcade(-15, 0);
+  pros::delay(200);
+  chassis.arcade(0, 0);
+  chassis.moveToPoint(51, -23,1000,{.forwards=false,.minSpeed=5,.earlyExitRange=0.5});
+  chassis.turnToHeading(0, 800,{.minSpeed=5,.earlyExitRange=0.5},false);
+  temp_pos = chassis.getPose();
+  printf("Back Dist: %f", distToWallB());
+  chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), - 72 + fabs(distToWallB() * cos(deg2rad(temp_pos.theta))), temp_pos.theta);
+  pros::delay(100);
+  return;
+  if(distToObject() < 20.66)
+  {
+    chassis.turnToPoint(51, 0, 1000,{.forwards =false,.minSpeed=5,.earlyExitRange=0.5});
+    chassis.moveToPoint(50, -11.5, 1000,{.forwards =false,.maxSpeed = 50});
+    chassis.waitUntil(1000);
+    closeClamp();
+    /*chassis.waitUntilDone();
+    closeClamp();
+    pros::delay(200);
+    startSorting();
+    chassis.moveToPoint(48, -44, 2000);
+    chassis.turnToHeading(135, 1000);
+    chassis.moveToPoint(72, -72, 1000);
+    chassis.moveToPoint(56, -56, 1000,{.forwards = false});
+    //*/
+    printf("Lift Pos: %f",getLiftPosition());
+  } else  {
+    chassis.turnToPoint(24, -24, 1000,{.forwards =false});
+  }
 
-  chassis.moveToPoint(6, -45, 1000,{.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
-  chassis.waitUntil(100000);
-   
-  chassis.moveToPoint(22, -45, 3000,{.forwards=false,.maxSpeed=50,.minSpeed = 12, .earlyExitRange = 3});
-  speed = 80;
-  speed1 = int(speed);
-  chassis.turnToPoint(12, -20, 1000,{.minSpeed = 12, .earlyExitRange = 3});
-  chassis.moveToPoint(12, -20, 1000,{.maxSpeed = speed1,.minSpeed = 12, .earlyExitRange = 3});
-  chassis.turnToHeading(315, 1000,{.maxSpeed=speed},false);
-   
+
+
+
+  
   //*/
   master.clear_line(0);
   int temp = pros::millis();
@@ -405,61 +410,81 @@ void possitiveFullWP(){
 
 /*********************** GOAL RUSH ***********************/
 
-void RedGoalRush(){
+void RedLateStake(){
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
-  lemlib::Pose temp_pose = chassis.getPose();
-
-  startSorting();
-
-  chassis.setPose(33.5,-53,5);
-  chassis.moveToPoint(39.4, -16, 10000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.waitUntil(34);
- 
-  chassis.turnToHeading(72, 1400, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(42, -14, 400, {.maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
-  chassis.waitUntil(5);
-
-  chassis.moveToPoint(37.5, -15.5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
-  chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.waitUntil(18);
-  closeClamp();
-
-  chassis.turnToHeading(90, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(46.5, -22, 1000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  spinIntake(127);
+  COLOR = true;
+  stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
   
-
-  chassis.turnToPoint(24, -30, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(23, -29, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.waitUntilDone();
-  pros::delay(500);
-  openClamp();
-
-  chassis.moveToPoint(36, -12, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.turnToHeading(-90, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-
-  chassis.moveToPoint(46, -12, 2000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2});
-  chassis.moveToPoint(50, -12, 2000, {.forwards = false, .maxSpeed = speed1 - 30, .minSpeed = 25, .earlyExitRange = 2});
+  chassis.setPose(14.5,-57,230);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(12, -59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(930);});    
+  pros::delay(300); 
+  chassis.moveToPoint(19.5, -53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(24, -24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(24, -33,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(24, -21,600,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
   chassis.waitUntil(4);
   closeClamp();
+  pros::delay(280);
+  chassis.turnToPoint(48, -24, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  spinIntake(127);
+  startSorting();
+  chassis.moveToPoint(54, -24, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(46, -24, 1000,{.forwards = false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  // chassis.turnToPoint(48, -48, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  // chassis.moveToPoint(48, -48, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(54, -47, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(54, -47, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(58, -51, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToHeading(135, 1400,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1},false);
+  temp_pos = chassis.getPose();
+  chassis.moveToPoint(temp_pos.x+10,  temp_pos.y-10 , 1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y+2, 800,{.forwards=false,.maxSpeed=127,.minSpeed=5,.earlyExitRange=1},false);
+  pros::delay(500);
+  liftPickup();
+  chassis.moveToPoint(temp_pos.x+5.5,  temp_pos.y-5.5, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  intake_anti_jam.suspend();
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y+2, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(52, -16, 1000,{});
+  chassis.moveToPoint(52, -16, 1000, {.maxSpeed = speed1});
+  chassis.turnToHeading(0, 300,{});
+  liftIntake();
+  chassis.waitUntil(8);
+  openClamp();
+  spinIntake(5);
+  chassis.waitUntil(1000);
+  temp_pos = chassis.getPose();
+  chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), temp_pos.y, temp_pos.theta);
+  pros::delay(50);
+  if(distToObject() < 20.66)
+  {
+    temp_pos = chassis.getPose();
+    chassis.moveToPoint(temp_pos.x, temp_pos.y + (distToObject() - 10.5), 800, {.maxSpeed = 100});
+    chassis.turnToHeading(0, 300,{},false);
+    moveLiftToPos(1500,127,1000); 
+    intake_anti_jam.resume();
+    chassis.moveToPoint(51,-18, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=25,.earlyExitRange=3});
+    pros::Task lift2 ([=] {moveLiftToPos(0);});    
+    chassis.moveToPoint(51,-26, 600,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+    chassis.waitUntil(1000);
+    closeClamp();    
+    dropIntake();
+    chassis.moveToPoint(38, -7,1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});    
+    chassis.swingToHeading(0, lemlib::DriveSide::RIGHT, 1000);
+    printf("Lift Pos: %f",getLiftPosition());
+  } else  {
+    chassis.turnToPoint(72, 0, 1000, {.maxSpeed = speed, .minSpeed = 5, .earlyExitRange = 1});
+  }
 
-  chassis.turnToPoint(48, -24, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(48, -24, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.turnToHeading(160, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(55, -57, 2000, {.maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.turnToHeading(135, 1000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 4}, false);
-  int temp_pos1 = chassis.getPose().x;
-  int temp_pos2 = chassis.getPose().y;
-  chassis.moveToPoint(temp_pos1 + 5, temp_pos2 - 5, 1000, {.maxSpeed = speed1, .minSpeed = 40, .earlyExitRange = 2}, false);
-  pros::delay(400);
-  chassis.moveToPoint(temp_pos1 - 5, temp_pos2 + 5, 1000, {.forwards = false, .maxSpeed = speed1, .minSpeed = 25, .earlyExitRange = 2});
-
-  chassis.turnToHeading(-10, 2000, {.maxSpeed = speed, .minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(48, -18, 3000, {.maxSpeed = speed1});
-
-
+  //*/
+  master.clear_line(0);
   int temp = pros::millis();
   while (true) {
     master.print(0, 0, "Time: %d", (temp-time));
@@ -467,7 +492,7 @@ void RedGoalRush(){
 }
 
 
-void BlueGoalRush(){
+void BlueLateStake(){
   int time = pros::millis();
   int speed = 115;
   float speed1 = float(speed);
@@ -528,11 +553,11 @@ void BlueGoalRush(){
   
 }
 
-void goalRush(){
+void lateStake(){
   if(COLOR){
-    RedGoalRush();
+    RedLateStake();
   } else {
-    BlueGoalRush();
+    BlueLateStake();
   }
 }
 
@@ -563,59 +588,65 @@ void redNegativeHalfWP(){//EVERYTHING DONE
   float speed1 = float(speed);
   COLOR = true;
   stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
+  pros::delay(2000);
 
-  chassis.setPose(0.5,-59,90);
-  openClamp();
-  chassis.moveToPoint(-9,-60,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.waitUntil(1.25);
- 
-  
-  chassis.moveToPoint(-19,-36,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 6},false);
- 
-  spinIntake(-127);
-  chassis.moveToPoint(-25,-24,2000,{.forwards=false,.maxSpeed = 80,.minSpeed = 30, .earlyExitRange = 6},false);
-  pros::delay(200);
+  chassis.setPose(-14.5,-57,130);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(-12, -59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(950);});    
+  pros::delay(500); 
+  chassis.moveToPoint(-24, -53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(-24, -24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(-24, -36,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(-23.5, -19,800,{.forwards=false,.maxSpeed=speed1 - 80,.minSpeed=5,.earlyExitRange=1});
+  chassis.waitUntil(10);
   closeClamp();
-  pros::delay(200);
+  pros::delay(280);
   spinIntake(127);
-
-  chassis.turnToPoint(-43,-24,1000,{.maxSpeed = 127,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-43,-24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
   startSorting();
 
-  //FIRST RING
-  chassis.turnToPoint(-43,-10,1000,{.maxSpeed = 127,.minSpeed = 20, .earlyExitRange = 1});
-  chassis.moveToPoint(-43,-10.25,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 6});
-
-  chassis.moveToPoint(-48,-24,2000,{.forwards=false,.maxSpeed = 127,.minSpeed = 30, .earlyExitRange = 2});
-  spinIntake(-127);
-  pros::delay(40);
+  chassis.turnToPoint(-40,-10.5,1000,{.maxSpeed = 127,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.moveToPoint(-40,-10.5,1000,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.turnToHeading(270,700,{.maxSpeed = speed,.minSpeed = 15, .earlyExitRange = 5});
+  chassis.moveToPoint(-51,-10,1200,{.maxSpeed = speed1 - 40 ,.minSpeed = 10, .earlyExitRange = 1});
+  chassis.moveToPoint(-37,-24,1500,{.forwards=false,.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.turnToPoint(-48,-24,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.moveToPoint(-48,-24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.turnToPoint(-51,-51,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.moveToPoint(-52,-54,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.waitUntil(10);
+  pros::Task lift3 ([=] {moveLiftToPos(310);});    
+  chassis.turnToHeading(225,500,{},false);
+  temp_pos = chassis.getPose();
   spinIntake(127);
+  //stopSorting();
+  chassis.moveToPoint(temp_pos.x-14,  temp_pos.y-14 , 700,{.maxSpeed=speed1,.minSpeed=25,.earlyExitRange=2},false);
+  pros::delay(200);
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y-2, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=0.5});
+  chassis.moveToPoint(temp_pos.x-12,  temp_pos.y-12, 1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  startSorting();
+  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y-2, 600,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  // chassis.turnToHeading(90, 600,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
+  // temp_pos = chassis.getPose();
+  // chassis.moveToPoint(-6,temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  // chassis.waitUntil(10);
+  // liftIntake();
+  // startSorting();
+  // chassis.waitUntil(1000);
+  // dropIntake();
+  // chassis.moveToPoint(-20.5,temp_pos.y,1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(0,0,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(-10,-18,1000,{.forwards=false,.maxSpeed=speed1 - 20,.minSpeed=5,.earlyExitRange=1});
+  chassis.waitUntil(12);
+  stopIntake();
+  chassis.waitUntil(1000);
+  moveLiftToPos(-10,127,200);
 
-  chassis.turnToPoint(-48,-10,1000,{.maxSpeed = 127,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-48,-11.75,1000,{.maxSpeed = speed1, .minSpeed = 12, .earlyExitRange = 2},false);
-  pros::delay(300);
 
-  chassis.moveToPoint(-48,-52,2000,{.forwards=false,.maxSpeed = 127-30,.minSpeed = 30, .earlyExitRange = 6});
-  spinIntake(-127);
-  pros::delay(40);
-  spinIntake(127);
-  chassis.waitUntil(18);
-  chassis.turnToPoint(-72, -74, 1000,{.maxSpeed = 127, .minSpeed = 20, .earlyExitRange = 5});
-  chassis.moveToPoint(-64,-65,600,{.maxSpeed = speed1, .minSpeed = 20, .earlyExitRange = 5});
-  chassis.moveToPoint(-72,-74,600,{.maxSpeed = speed1-30});
-  chassis.moveToPoint(-54,-50,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 20, .earlyExitRange = 8},false);
-  chassis.turnToPoint(0,-48,2000,{.maxSpeed = 127,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.waitUntil(24);
-   
-  chassis.moveToPoint(-8,-51,1400,{.maxSpeed = 80});
-  chassis.waitUntil(10000);
-    
-  pros::delay(100);
-  chassis.moveToPoint(-24,-48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.turnToPoint(-15,-23,2000,{.maxSpeed = 127,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-13,-18,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.turnToHeading(45, 1000,{},false);
   master.clear_line(0);
   //*/
   int temp = pros::millis();
@@ -626,63 +657,71 @@ void redNegativeHalfWP(){//EVERYTHING DONE
 }
 
 void blueNegativeHalfWP(){//EVERYTHING DONE
-  int time = pros::millis();
+   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
   COLOR = false;
 
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
-
-  chassis.setPose(0.5,59,90);
-  openClamp();
-  chassis.moveToPoint(-9,60,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.waitUntil(1.25);
- 
-  chassis.waitUntil(6);
- 
-  chassis.waitUntil(10000);
-
-  chassis.moveToPoint(-19,36,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 2},false);
-  chassis.moveToPoint(-24,26,2000,{.forwards=false,.maxSpeed = 80,.minSpeed = 20, .earlyExitRange = 2},false);
-  pros::delay(200);
-  closeClamp();
-  pros::delay(200);
+  pros::delay(2000);
+  chassis.setPose(-14.5,57,50);
   startSorting();
-  spinIntake(127);
-  
-  chassis.turnToPoint(-43,24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-43,21,1000,{.maxSpeed = speed1,.minSpeed = 20, .earlyExitRange = 4});
-  chassis.moveToPoint(-47,21,1000,{.maxSpeed = speed1 - 20,.minSpeed = 10, .earlyExitRange = 2});
-  chassis.turnToPoint(-42,11,1300,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-43,7.25,1300,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  pros::delay(250);
-  chassis.moveToPoint(-48,24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-48,8.5,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  pros::delay(250);
-  chassis.moveToPoint(-50,43,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  speed = 127;
-  speed1 = float(speed);
-  temp_pos = chassis.getPose();
-
-  chassis.turnToHeading(315,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  //startSorting();
-  chassis.moveToPoint(temp_pos.x - 22 ,temp_pos.y + 22,1000,{.maxSpeed = 127,.minSpeed = 30, .earlyExitRange = 2});
-  //stopSorting();
-  chassis.moveToPoint(-50,48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  chassis.turnToPoint(0,48,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  //startSorting();
-  chassis.moveToPoint(-15,44,2000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-   
-  chassis.moveToPoint(-9,43,2000,{.maxSpeed = speed1-40,.minSpeed = 10, .earlyExitRange = 0.5});
-  chassis.waitUntil(10000);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(-12, 59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(930);});
+  pros::delay(300); 
+  chassis.moveToPoint(-19.5, 53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToPoint(-24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(-24, 32,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(-24.25, 22,500,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.waitUntil(1000);
+  closeClamp();
   pros::delay(300);
-  
-  chassis.moveToPoint(-24,48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.turnToPoint(-16,16,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-14,14,2000,{.maxSpeed = speed1,.minSpeed = 20, .earlyExitRange = 8});
-
-  chassis.turnToHeading(145, 800,{},false);
+  chassis.turnToPoint(-46, 5,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=3});
+  chassis.moveToPoint(-45.5, 7,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  spinIntake(127);
+  spinIntake(127);
+  chassis.turnToHeading(270, 700,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
+  // chassis.swingToHeading(270, ::DriveSide::RIGHT, 2000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2},false);
+  temp_pos = chassis.getPose();
+  chassis.moveToPoint(-48, temp_pos.y+0.5,1000,{.maxSpeed=speed1-40,.minSpeed=15,.earlyExitRange=2}, false);
+  pros::delay(200);
+  chassis.moveToPoint(-55, temp_pos.y+1,1000,{.maxSpeed=speed1-40,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-40, 16,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToPoint(-48, 16,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  chassis.moveToPoint(-48,16,1000,{.maxSpeed=speed1,.minSpeed=14,.earlyExitRange=2});
+  chassis.turnToPoint(-62,46,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  pros::Task lift3 ([=] {moveLiftToPos(330);});    
+  chassis.moveToPoint(-60.5,47.5,1000,{.maxSpeed=speed1-30,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToHeading(315, 500,{.minSpeed=4,.earlyExitRange=0.5},false);
+  temp_pos = chassis.getPose();
+  spinIntake(127);
+  chassis.moveToPoint(temp_pos.x-30,  temp_pos.y+30 , 700,{.maxSpeed=speed1-40,.minSpeed=45,.earlyExitRange=2},false);
+  pros::delay(300);
+  chassis.moveToPoint(temp_pos.x+4,  temp_pos.y-4, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=0.5});
+  chassis.moveToPoint(temp_pos.x-5,  temp_pos.y+5, 1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(temp_pos.x+5,  temp_pos.y-5, 600,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2},false);
+    /*chassis.turnToHeading(90, 600,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
+  temp_pos = chassis.getPose();
+  // chassis.moveToPoint(-32, temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=35,.earlyExitRange=5});
+  chassis.moveToPoint(-16, temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.waitUntil(5);
+  liftIntake();
+  chassis.waitUntil(1000);
+  dropIntake();
+  chassis.moveToPoint(-28, temp_pos.y,700,{.forwards=false,.maxSpeed=speed1,.minSpeed=4,.earlyExitRange=2});
+  pros::delay(300);*/
+  chassis.turnToPoint(-27, 9,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-21, 9,3000,{.forwards=false,.minSpeed=5,.earlyExitRange=0.5});
+  chassis.waitUntil(8);
+  stopIntake();
+  chassis.turnToHeading(315, 500);
+  moveLiftToPos(-20,127,600);
+  //*/
   master.clear_line(0);
   int temp = pros::millis();
   while (true) {
@@ -708,74 +747,6 @@ void negativeHalfWP(){//EVERYTHING DONE
  * Scores 1 ring from middle
  */
 void redNegSixRing(){ 
- int time = pros::millis();
-  int speed = 115;
-  float speed1 = float(speed);
-  COLOR = true;
-  stopSorting();
-  chassis.setPose(0,-60,90);
-  openClamp();
-  chassis.moveToPoint(-9,-60,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 6});
-  chassis.waitUntil(1.25);
- 
-  chassis.moveToPoint(-19,-26,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 6},false);
- 
-  chassis.moveToPoint(-25,-26,2000,{.forwards=false,.maxSpeed = 50,.minSpeed = 30, .earlyExitRange = 6},false);
-  pros::delay(200);
-  closeClamp();
-  pros::delay(200);
-  spinIntake(127);
-
-  chassis.turnToPoint(-42,-24,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.moveToPoint(-42,-24,1000,{.maxSpeed = speed1,.minSpeed = 10, .earlyExitRange = 6});
-  startSorting();
-
-  //FIRST RING
-  chassis.turnToPoint(-42,-10,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 1});
-  chassis.moveToPoint(-42,-10,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 6});
-
-  chassis.moveToPoint(-48,-24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-
-  chassis.turnToPoint(-48,-10,1000,{.maxSpeed = speed-30,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-49,-10,1000,{.maxSpeed = speed1},false);
-  pros::delay(300);
-
-  chassis.moveToPoint(-48,-52,2000,{.forwards=false,.maxSpeed = speed1-30,.minSpeed = 30, .earlyExitRange = 6});
-  chassis.turnToPoint(-72, -74, 4000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 5});
-  chassis.moveToPoint(-72,-74,800,{.maxSpeed = speed1-65}, false);
-  pros::delay(200);
-  chassis.moveToPoint(-50,-52,1000,{.forwards=false,.maxSpeed = speed1 - 30,.minSpeed = 20, .earlyExitRange = 2},false);
-   
-  pros::delay(100);
-  chassis.moveToPoint(-72,-74,800,{.maxSpeed = speed1}, false);
-  pros::delay(300);
-  
-  chassis.moveToPoint(-54,-50,1000,{.forwards=false,.maxSpeed = speed1 - 20,.minSpeed = 20, .earlyExitRange = 8}, false);
-  pros::delay(400);
-  
-  chassis.turnToPoint(0,-48,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  chassis.waitUntil(24);
-   
-  chassis.moveToPoint(-5,-52,1400,{.maxSpeed = 80});
-  chassis.waitUntil(10000);
-  pros::delay(200);
-   
-  pros::delay(100);
-  chassis.moveToPoint(-20,-48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  printPositionV2((char*) "Last ring", false, false, time);
-  chassis.waitUntil(8);
-  pros::delay(500);
-  chassis.moveToPoint(24, -48,3000);
-  master.clear_line(0);
-  //*/
-  int temp = pros::millis();
-  while (true) {
-  master.print(0, 0, "Time: %d", (temp-time));
-  }
-  
-}
-
-void blueNegSixRing(){ 
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
@@ -783,65 +754,130 @@ void blueNegSixRing(){
 
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
-
-  chassis.setPose(0.5,59,90);
-  openClamp();
-  chassis.moveToPoint(-11,60,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 4});
-  chassis.waitUntil(1.25);
- 
-  chassis.waitUntil(6);
- 
-  chassis.waitUntil(10000);
-  spinIntake(-127);
-
-  chassis.moveToPoint(-19,36,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 60, .earlyExitRange = 3},false);
-  chassis.moveToPoint(-24,26,2000,{.forwards=false,.maxSpeed = 100,.minSpeed = 20, .earlyExitRange = 2},false);
-  pros::delay(200);
+  chassis.setPose(-14.5,-57,135);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(-12.5, -59, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(4);
+  moveLiftToPos(930);    
+  pros::delay(300); 
+  chassis.moveToPoint(-19.5, -53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToPoint(-24, -24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(-24, -32,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(-24, -20,600,{.forwards=false,.maxSpeed=127,.minSpeed=15,.earlyExitRange=2});
+  chassis.waitUntil(3.5);
   closeClamp();
-  pros::delay(50);
-  startSorting();
+  pros::delay(300);
+  chassis.turnToPoint(-46, -8,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=3});
+  chassis.moveToPoint(-46, -8,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
   spinIntake(127);
-  chassis.turnToPoint(-43,24,1000,{.maxSpeed = speed,.minSpeed = 30, .earlyExitRange = 8});
-  chassis.moveToPoint(-48,21,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 4});
-  speed1 = float(speed);
-  chassis.turnToPoint(-43,11,1300,{.maxSpeed = speed,.minSpeed = 30, .earlyExitRange = 8});
-  chassis.moveToPoint(-43.5,7,1300,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  pros::delay(150);
-  chassis.moveToPoint(-48,24,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.moveToPoint(-51,7,1000,{.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  pros::delay(150);
-  chassis.moveToPoint(-51,43,2000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-
+  chassis.swingToHeading(270, ::DriveSide::RIGHT, 2000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2},false);
   temp_pos = chassis.getPose();
-
-  chassis.turnToHeading(315,1000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  //startSorting();
-  chassis.moveToPoint(temp_pos.x - 15,temp_pos.y + 15,800,{.maxSpeed = 50,.minSpeed = 10, .earlyExitRange = 4});
-  //chassis.moveToPoint(temp_pos.x - 21,temp_pos.y + 21,400,{.maxSpeed = 30,.minSpeed = 15, .earlyExitRange = 2});
-  chassis.moveToPoint(temp_pos.x - 3 ,temp_pos.y + 3,1000,{.forwards=false,.maxSpeed = 50});
-  chassis.waitUntil(100);
-   
-
-  pros::delay(100);
-  chassis.moveToPoint(temp_pos.x - 16,temp_pos.y + 16,800,{.maxSpeed = 60,.minSpeed = 10, .earlyExitRange = 4});
-  chassis.waitUntil(100000);
-  
-
-  chassis.moveToPoint(-50,44,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2});
-  /**/
-  chassis.turnToPoint(0,48,2000,{.maxSpeed = speed,.minSpeed = 20, .earlyExitRange = 8});
-  spinIntake(-127);
-  pros::delay(100);
+  chassis.moveToPoint(-55, temp_pos.y+1,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-34, -19,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToPoint(-48, -19,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  chassis.moveToPoint(-48,-19,1000,{.maxSpeed=speed1,.minSpeed=14,.earlyExitRange=2});
+  chassis.turnToPoint(-62,-49,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  pros::Task lift3 ([=] {moveLiftToPos(330);});    
+  chassis.moveToPoint(-62,-49,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToHeading(225, 500,{.minSpeed=4,.earlyExitRange=0.5},false);
+  return;
+  temp_pos = chassis.getPose();
   spinIntake(127);
-  chassis.moveToPoint(-15,44,2000,{.maxSpeed = speed1,.minSpeed = 40, .earlyExitRange = 2});
-   
-  chassis.moveToPoint(-7,44,2000,{.maxSpeed = speed1-40,.minSpeed = 30, .earlyExitRange = 2});
-  chassis.waitUntil(10000);
+  chassis.moveToPoint(temp_pos.x-30,  temp_pos.y-30, 1000,{.maxSpeed=speed1,.minSpeed=45,.earlyExitRange=2},false);
+  pros::delay(200);
+  chassis.moveToPoint(temp_pos.x+3,  temp_pos.y+3, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(temp_pos.x-5,  temp_pos.y-5, 1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(temp_pos.x+5,  temp_pos.y+3.5, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToHeading(90,600,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
+  temp_pos = chassis.getPose();
+  chassis.turnToPoint(-24, temp_pos.y,500,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  chassis.moveToPoint(-32, temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  liftIntake();
+  chassis.moveToPoint(-20, temp_pos.y,1000,{.maxSpeed=speed1-50,.minSpeed=15,.earlyExitRange=2});
+  chassis.waitUntil(1000);
+  pros::delay(200);
+  dropIntake();
+  chassis.moveToPoint(-32, temp_pos.y,1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=4,.earlyExitRange=2},false);
+  pros::delay(200);
+  chassis.turnToPoint(-30, -15,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-30, -15,3000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  moveLiftToPos(160);
+  chassis.waitUntil(8);
+  stopIntake();
+  chassis.turnToHeading(225, 1000);
+  moveLiftToPos(0,127,200);
+
+  master.clear_line(0);
+  int temp = pros::millis();
+  while (true) {
+  master.print(0, 0, "Time: %d", (temp-time));
+  }
   
-  chassis.moveToPoint(-24,48,1000,{.forwards=false,.maxSpeed = speed1,.minSpeed = 30, .earlyExitRange = 2},false);
-  //pros::delay(1000);
-  //chassis.moveToPoint(24,48,2000,{.maxSpeed = speed1},false);
-  //*/
+}
+
+void blueNegSixRing(){  // CODED FOR STATES needs little testing
+  int time = pros::millis();
+  int speed = 127;
+  float speed1 = float(speed);
+  COLOR = false;
+
+  stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
+  chassis.setPose(-14.5,57,50);
+  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(-12.5, 59, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(4);
+  moveLiftToPos(930);    
+  pros::delay(300); 
+  chassis.moveToPoint(-19.5, 53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToPoint(-24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(-24, 32,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(-24, 20,600,{.forwards=false,.maxSpeed=127,.minSpeed=15,.earlyExitRange=2});
+  chassis.waitUntil(2);
+  closeClamp();
+  pros::delay(300);
+  chassis.turnToPoint(-46, 5,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=3});
+  chassis.moveToPoint(-46, 5,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  spinIntake(127);
+  chassis.swingToHeading(270, ::DriveSide::RIGHT, 2000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2},false);
+  temp_pos = chassis.getPose();
+  chassis.moveToPoint(-55, temp_pos.y-1,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-34, 16,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToPoint(-48, 16,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  chassis.moveToPoint(-48,16,1000,{.maxSpeed=speed1,.minSpeed=14,.earlyExitRange=2});
+  chassis.turnToPoint(-62,46,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  pros::Task lift3 ([=] {moveLiftToPos(330);});    
+  chassis.moveToPoint(-62,46,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToHeading(315, 500,{.minSpeed=4,.earlyExitRange=0.5},false);
+  temp_pos = chassis.getPose();
+  spinIntake(127);
+  chassis.moveToPoint(temp_pos.x-30,  temp_pos.y+30 , 1000,{.maxSpeed=speed1,.minSpeed=45,.earlyExitRange=2},false);
+  pros::delay(200);
+  chassis.moveToPoint(temp_pos.x+3,  temp_pos.y-3, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(temp_pos.x-5,  temp_pos.y+5, 1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(temp_pos.x+5,  temp_pos.y-3.5, 1500,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  chassis.turnToHeading(90,600,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
+  temp_pos = chassis.getPose();
+  chassis.turnToPoint(-24, temp_pos.y,500,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=5});
+  chassis.moveToPoint(-32, temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
+  liftIntake();
+  chassis.moveToPoint(-20, temp_pos.y,1000,{.maxSpeed=speed1-50,.minSpeed=15,.earlyExitRange=2});
+  chassis.waitUntil(1000);
+  pros::delay(200);
+  dropIntake();
+  chassis.moveToPoint(-32, temp_pos.y,1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=4,.earlyExitRange=2},false);
+  pros::delay(200);
+  chassis.turnToPoint(-30, 15,1000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  chassis.moveToPoint(-30, 15,3000,{.forwards=false,.minSpeed=15,.earlyExitRange=2});
+  moveLiftToPos(160);
+  chassis.waitUntil(8);
+  stopIntake();
+  chassis.turnToHeading(315, 1000);
+  moveLiftToPos(0,127,200);
 
   master.clear_line(0);
   int temp = pros::millis();
@@ -1170,306 +1206,128 @@ void auton_60s_skills_1() {
   COLOR = true;
   stopSorting();
   int time = pros::millis();
-  float speed = 127;
+  float speed = 70;
+  int speed1 = (int) speed;
   int temp = 0;
-  chassis.setPose(1,-60.5,90);
-  stopSorting();
-
-
-  /*
-  DONT 
-  CHANGE 
-  FIRST 
-  HALF 
-  OF 
-  SKILLS  
-  */
-
+  chassis.setPose(0,-61.3,0);
   lemlib::Pose currentPose = chassis.getPose();
+  stopSorting();
+  spinIntake(127);
+  pros::delay(500);
 
-  
-  chassis.moveToPoint(-5, -60.5,1000,{.forwards=false, .minSpeed = 40, .earlyExitRange = 3});
-  chassis.waitUntil(0.9);
-  chassis.moveToPoint(-24, -48, 2000,{.forwards=false, .maxSpeed=speed-30, .minSpeed = 40, .earlyExitRange = 3});
-  chassis.waitUntil(17);
-  spinIntake(-127);
-  closeClamp();
-  printPositionV2((char *) "Goal #1 pickup",false,false,time);
-  chassis.turnToPoint(-24, -24,1000, {.maxSpeed = (int) speed, .minSpeed = 40, .earlyExitRange = 8});
-  spinIntake(127);
-  chassis.moveToPoint(-23, -24, 2000,{.maxSpeed=speed, .minSpeed = 40, .earlyExitRange = 8});
-  chassis.waitUntil(12);
-  spinIntake(127);
-  chassis.turnToHeading(-90, 1000, {.maxSpeed = (int) speed, .minSpeed = 40, .earlyExitRange = 8});
-  chassis.moveToPoint(-48, -24, 2000,{.maxSpeed=speed, .minSpeed =40, .earlyExitRange = 7});
-  chassis.turnToPoint(-56, 0, 1000, {.maxSpeed = (int) speed, .minSpeed = 40, .earlyExitRange = 8});
-  chassis.moveToPoint(-56, 3, 1000,{.maxSpeed=speed, .minSpeed = 40, .earlyExitRange = 7});
-  chassis.waitUntil(26);
-  //printPosition((char *)"Ring by stake", false);
-  chassis.turnToPoint(-48, 24, 1000, {.maxSpeed = (int) speed, .minSpeed = 40, .earlyExitRange = 8});
-   
-  chassis.moveToPoint(-46, 28, 1000,{.maxSpeed=speed-10, .minSpeed = 20, .earlyExitRange = 0.5});
-   
-  //printPosition((char *)"Basket ring", false);
+  chassis.moveToPoint(0, -48, 800, {.maxSpeed = speed},false);
+  currentPose = chassis.getPose();
+  chassis.turnToPoint(-24, currentPose.y, 1500, {.forwards = false, .maxSpeed = speed1});
+  stopIntake();
   chassis.waitUntil(1000);
-  pros::delay(300);
-  chassis.moveToPoint(-48, 3.8, 1400,{.forwards = false, .maxSpeed=speed - 15, .minSpeed = 5, .earlyExitRange = 0.5});
-  chassis.turnToHeading(270,1000, {.maxSpeed = (int) speed});
-   
-  liftUpWallStake();
-  chassis.waitUntil(100);
-   
   currentPose = chassis.getPose();
-  chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
-  pros::delay(10);
-  //printPosition((char *)"Facing wall stake", false);
-  chassis.moveToPoint(-61, currentPose.y+0.3, 1000, {.maxSpeed = speed, .minSpeed = 7, .earlyExitRange = 0.5}, false);
-  //printPosition((char *)"At stake", false);//*/
-  int lift_angle_down = 78;
-  int x = 0;
-  int angle = 7;
-  lemlib::Pose placehold = chassis.getPose();
-  pros::Task lift_wall_stake([=] {moveLiftToPos(lift_angle_down);}); 
+  chassis.moveToPoint(-24, currentPose.y, 1500, {.forwards = false, .maxSpeed = speed - 40});
+  chassis.waitUntil(19.5);
+  closeClamp();
 
-    while(x<2 || getLiftPosition() > lift_angle_down)
-    {
-      chassis.turnToHeading(placehold.theta + angle, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 3});
-      chassis.turnToHeading(placehold.theta - angle, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 3});
-      x++;
-    }
-    x=0;
-  printPositionV2((char *) "Wall Stake #1",false,false,time);
-   
-  //printf("\n Time at 1st stake: %d", pros::millis() - time);
-  chassis.moveToPoint(-52,0,1000,{.forwards=false, .maxSpeed=speed, .minSpeed = 12, .earlyExitRange = 0.5},false);
-  currentPose = chassis.getPose();
-  chassis.setPose(-72 + fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
-  pros::delay(50);
-  //printPosition((char *)"After reset", false);
-  chassis.turnToHeading(180,800, {.maxSpeed = (int) speed, .minSpeed = 30, .earlyExitRange = 5});
-  pros::Task lift_down(liftDown);
-   
+  printPositionV2((char *) "Goal clamp"); 
+  chassis.turnToPoint(-24, -24, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  spinIntake(127);
+  chassis.moveToPoint(-24, -24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "1st ring");
+  chassis.turnToPoint(-48, -24, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-50, -22, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "2nd ring");
+  chassis.turnToPoint(-50, -48, 1500, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-50, -45, 2000, {.maxSpeed = 60,}, false);
   pros::delay(200);
-
-  chassis.moveToPoint(-48, -48, 2000,{.maxSpeed=speed, .minSpeed = 50, .earlyExitRange = 6});
-  chassis.waitUntil(5);
-  spinIntake(127);
-  spinIntake(127);
-  spinIntake(127);
-  spinIntake(127);
-  spinIntake(127);
-  chassis.moveToPoint(-48, -56, 2000,{.maxSpeed=speed-40, .minSpeed = 50, .earlyExitRange = 4});
-   spinIntake(127);
-
-  chassis.moveToPoint(-40, -48, 2000,{.forwards=false, .maxSpeed = speed, .minSpeed = 50, .earlyExitRange = 4});
-  //printPosition((char *)"4th and 5th rings", false);
-  chassis.turnToHeading(270, 1000, {.maxSpeed = (int) speed, .minSpeed = 40, .earlyExitRange = 8});
-  chassis.moveToPoint(-58, -46, 2000,{.maxSpeed=speed, .minSpeed = 40, .earlyExitRange = 5});
-  //printPosition((char *)"6th ring", false);
-
-  chassis.turnToPoint(-72, -72, 1000,{.forwards=false, .maxSpeed = (int) speed - 10, .minSpeed = 10, .earlyExitRange = 3}, false);
-
-  currentPose = chassis.getPose();
-  chassis.moveToPoint(currentPose.x-2,currentPose.y-10 ,1000,{.forwards=false,.maxSpeed = speed, .minSpeed = 10, .earlyExitRange = 3},false);
-  pros::delay(600);
+  chassis.moveToPoint(-50, -57, 2000, {.maxSpeed = 60,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "4th and 5th ring");
+  chassis.turnToPoint(-42, -48, 1000, {.forwards = false, .maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-42, -48, 1000, {.forwards = false, .maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.turnToPoint(-60, -48, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-57, -48, 1000, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "6th ring");
+  pros::delay(350);
+  chassis.turnToPoint(-68, -72, 1500, {.forwards = false, .maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-65, -62, 1000, {.forwards = false, .maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   openClamp();
+  spinIntake(-127);
+  printPositionV2((char *) "Goal drop");
+  pros::delay(300);
 
-  printPositionV2((char *) "Goal #1 Drop",false,false,time);
-  //printf("\n Time at 1st goal: %d", pros::millis() - time);
-  chassis.moveToPoint(-52, -52, 2000, {.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.5});
-  
-  chassis.turnToHeading(270,1000, {.maxSpeed = (int) speed, .minSpeed = 12, .earlyExitRange = 1},false);
+  chassis.moveToPoint(-57, -48, 1000, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.turnToHeading(0, 1000, {.maxSpeed = speed1}, false);
+  pros::delay(50);
   currentPose = chassis.getPose();
-  //grabbing second goal
-  chassis.moveToPoint(10, -48, 4000,{.forwards = false, .maxSpeed = speed, .minSpeed = 60, .earlyExitRange = 4});
-  chassis.moveToPoint(21, -48, 2000,{.forwards=false, .maxSpeed = speed - 50, .minSpeed = 10, .earlyExitRange = 0.5});
+  chassis.setPose(-68.5 + fabs(distToWallL() * cos(deg2rad(currentPose.theta))), -70 + fabs(distToWallB() * cos(deg2rad(currentPose.theta))), currentPose.theta);
+  pros::delay(50);
+  printPositionV2((char *) "Reset");
+
+  chassis.turnToPoint(0, -48, 1000, {.forwards = false, .maxSpeed = speed1});
+  chassis.moveToPoint(0, -48, 3000, {.forwards = false, .maxSpeed = speed - 10});
+  chassis.turnToPoint(24, -48, 2000, {.forwards = false, .maxSpeed = speed1});
+  chassis.moveToPoint(24, -48.4, 1000, {.forwards = false, .maxSpeed = speed - 40});
   chassis.waitUntil(22);
   closeClamp();
-  printPositionV2((char *) "Goal #2 Pickup",false,false,time);
-  chassis.turnToPoint(22,-24,1000, {.maxSpeed = (int) speed, .minSpeed = 50, .earlyExitRange = 5});
-  chassis.moveToPoint(22, -24, 2000,{.maxSpeed=speed, .minSpeed = 50, .earlyExitRange = 8});
-  chassis.turnToHeading(90,1000, {.maxSpeed = (int) speed, .minSpeed = 50, .earlyExitRange = 5});
-  chassis.moveToPoint(48, -24, 2000,{.maxSpeed=speed, .minSpeed = 50, .earlyExitRange = 8});
-  chassis.turnToPoint(56, 0,1000, {.maxSpeed = (int) speed, .minSpeed = 50, .earlyExitRange = 5});
-  chassis.moveToPoint(56, 4, 2000,{.maxSpeed=speed-10, .minSpeed = 50, .earlyExitRange = 7});
+  printPositionV2((char *) "Goal clamp");
 
-  chassis.turnToPoint(48,24,2000, {.maxSpeed = (int) speed, .minSpeed = 50, .earlyExitRange = 3});
-   
-  chassis.moveToPoint(48, 24, 2000,{.maxSpeed=speed-10, .minSpeed = 20, .earlyExitRange = 0.5});
-   
-  //printPosition((char *)"Basket ring", false);
-  chassis.waitUntil(1000);
+  printPositionV2((char *) "Goal clamp"); 
+  chassis.turnToPoint(24, -24, 1000, {.maxSpeed = speed1}, false);
+  spinIntake(127);
+  chassis.moveToPoint(24, -24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "1st ring");
+  chassis.turnToPoint(48, -24, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(50, -22, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "2nd ring");
+  chassis.turnToPoint(50, -48, 1500, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(50, -44, 2000, {.maxSpeed = 60}, false);
+  pros::delay(200);
+  chassis.moveToPoint(50, -56, 2000, {.maxSpeed = 60,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "4th and 5th ring");
+  chassis.turnToPoint(42, -48, 1000, {.forwards = false, .maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(42, -48, 1000, {.forwards = false, .maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.turnToPoint(60, -48, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(57, -48, 1000, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  printPositionV2((char *) "6th ring");
+  pros::delay(350);
+  chassis.turnToPoint(68, -72, 1500, {.forwards = false, .maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(65, -62, 1000, {.forwards = false, .maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  openClamp();
+  spinIntake(-127);
+  printPositionV2((char *) "Goal drop");
   pros::delay(300);
 
-  chassis.moveToPoint(46, 1.7, 1400,{.forwards=false, .maxSpeed=speed,.minSpeed = 12, .earlyExitRange = 0.5});
-  chassis.turnToHeading(90,600, {.maxSpeed = (int)speed});
-  liftUpWallStake();
-   
-  chassis.waitUntilDone();
+  chassis.moveToPoint(54, -48, 1000, {.maxSpeed = speed});
+  chassis.turnToHeading(0, 1000, {.maxSpeed = speed1}, false);
+  pros::delay(50);
   currentPose = chassis.getPose();
-  chassis.setPose(72 - fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
-  pros::delay(10);
-  //printPosition((char *)"Facing 2nd Stake", false);
-  chassis.moveToPoint(62, currentPose.y+0.5, 800,{.maxSpeed=speed, .minSpeed = 12, .earlyExitRange = 1}, false);
-  //printPosition((char *)"At 2nd Wall Stake", false);
-  pros::Task lift_wall_stake1([=] {moveLiftToPos(lift_angle_down);});    
-    placehold = chassis.getPose();
-    while(x<2 || getLiftPosition() > lift_angle_down)
-    {
-      chassis.turnToHeading(placehold.theta + 10, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
-      chassis.turnToHeading(placehold.theta - 10, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
-      x++;
-    }
-    x=0;
-  printPositionV2((char *) "Wall Stake #2",false,false,time);
-  // printf("\n Time at 2nd wallstake: %d", pros::millis() - time);
-  chassis.moveToPoint(48,currentPose.y,1000,{.forwards=false, .maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.5},false);
+  chassis.setPose(68.5 - fabs(distToWallR() * cos(deg2rad(currentPose.theta))), -70 + fabs(distToWallB() * cos(deg2rad(currentPose.theta))), currentPose.theta);
+  pros::delay(50);
+  printPositionV2((char *) "Reset");
+  chassis.moveToPoint(34, 34, 3000,{},false);
+  chassis.turnToHeading(180, 1300,{},false);//*/
   currentPose = chassis.getPose();
-  chassis.setPose(72 - fabs(distToWallF() * sin(deg2rad(currentPose.theta))), currentPose.y, currentPose.theta);
-  pros::delay(10);
-  // printPosition((char *)"After 2nd reset", false);
-  chassis.turnToHeading(180,1000, {.maxSpeed = (int) speed, .minSpeed = 12, .earlyExitRange = 6});
-  pros::Task lift_down1(liftDown);
-   
+  chassis.setPose(72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta))), 72 - fabs(distToWallB() * cos(deg2rad(currentPose.theta))), currentPose.theta);
   pros::delay(200);
-  chassis.moveToPoint(48, -59, 2000,{.maxSpeed = speed - 10, .minSpeed = 12, .earlyExitRange = 0.5});
-  chassis.waitUntil(5);
-  spinIntake(127);
-  spinIntake(127);
-  spinIntake(127);
-  spinIntake(127);
-  spinIntake(127);
-  chassis.moveToPoint(40, -45, 2000,{.forwards = false, .maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.5});
-  spinIntake(127);
-  // printPosition((char *)"4th & 5th rings", false);
-  chassis.moveToPoint(60, -48, 2000,{.maxSpeed=speed, .minSpeed = 12, .earlyExitRange = 0.5});
-  // printPosition((char *)"6th ring", false);
-  chassis.turnToPoint(72, -72, 1000,{.forwards=false, .maxSpeed = (int) speed, .minSpeed = 12, .earlyExitRange = 3},false);
-  currentPose = chassis.getPose();
-  chassis.moveToPoint(currentPose.x+4,currentPose.y-9 ,1000,{.forwards=false,.maxSpeed = speed, .minSpeed = 10, .earlyExitRange = 3},false);
-  openClamp();
-  pros::delay(500);
-  printPositionV2((char *) "Goal #2 Drop",false,false,time);
-  //chassis.moveToPoint(48, -48, 2000,{.maxSpeed = speed, .minSpeed = speed - 30, .earlyExitRange = 0.5});
-  //chassis.turnToPoint(48,0, 1000,{.maxSpeed = (int) speed, .minSpeed = 30, .earlyExitRange = 0.5});
-  chassis.moveToPoint(48, 0, 3000, {.maxSpeed = speed, .minSpeed  = 40, .earlyExitRange = 6});
-  chassis.turnToPoint(24, 24, 1000,{.maxSpeed = (int)speed, .minSpeed = 40, .earlyExitRange = 3});
-  chassis.waitUntil(10000);
-  chassis.moveToPoint(24, 24, 1900, {.maxSpeed = speed,.minSpeed=40,.earlyExitRange=3});
-   
-   
-  chassis.waitUntil(100);
+  chassis.turnToPoint(26, 60, 1000,{.forwards = false});
+  chassis.moveToPoint(26, 60, 1500,{.forwards = false,.maxSpeed = speed - 20});
+  chassis.waitUntil(1000);
+  closeClamp();
+  chassis.turnToPoint(68, 68, 1000,{.forwards = false},false);
+  chassis.arcade(-40, 0);
   pros::delay(600);
-  chassis.turnToPoint(0, 48, 1000, {.forwards = false, .maxSpeed = (int)speed - 50, .minSpeed = 30, .earlyExitRange = 3});
-
-  // printPosition((char *)"3rd Basket", false);
-  chassis.moveToPoint(8, 40, 4000,{.forwards = false, .maxSpeed = speed, .minSpeed = 10, .earlyExitRange = 3});
-
-  chassis.moveToPoint(2, 47, 500, {.forwards = false, .maxSpeed = speed-30},false);
-  //*/
-
-
-  closeClamp();
-   
-  pros::delay(150);
-
-  pros::Task lift_wall_stake2([=] {moveLiftToPos(55);}); 
-  printPositionV2((char *) "Goal #3 Pickup",false,false,time);
-  chassis.turnToHeading(0, 900, {.maxSpeed = (int)speed, .earlyExitRange = 1},false);
-   
-  currentPose = chassis.getPose();
-  pros::delay(50);
-  chassis.setPose(currentPose.x, 72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta))) , currentPose.theta);
-  pros::delay(10);
-  //printPositionV2((char *)"Facing Blue WS");
-  pros::delay(50);
-   
-  chassis.moveToPoint(currentPose.x+0.4, 57.5, 1000, {.maxSpeed = speed, .minSpeed = 10, .earlyExitRange = 0.5}, false);
-  //printPosition((char *)"At Blue WS", false);
-  lift_angle_down = 30;
-  angle = 6;
-  pros::Task lift_wall_stake3([=] {moveLiftToPos(lift_angle_down);});    
-    placehold = chassis.getPose();
-    while(x<1)
-    {
-      chassis.turnToHeading(placehold.theta + angle, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
-      chassis.turnToHeading(placehold.theta - angle, 300, {.maxSpeed = (int) speed,.minSpeed=50,.earlyExitRange = 2});
-      x++;
-    } 
-    x=0;
-  printPositionV2((char *) "Wall Stake #3",false,false,time);
-  chassis.moveToPoint(currentPose.x, 48, 1000, {.forwards = false,.maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.5},false);
-  liftDown();
-   
-  pros::delay(50);
-  chassis.waitUntilDone();
-  spinIntake(-127);
-
-  currentPose = chassis.getPose();
-  chassis.setPose(currentPose.x, 72 - fabs(distToWallF() * cos(deg2rad(currentPose.theta))) , currentPose.theta);
-  pros::delay(10);
-  //printPositionV2((char *)"After Blue WS", false, false, time);
-  spinIntake(-127);
-  
-
-  chassis.turnToPoint(-22, 28, 1000, {.maxSpeed = (int) speed,.minSpeed = 55, .earlyExitRange = 6});
-  chassis.waitUntil(6);
-  spinIntake(127);
-  chassis.moveToPoint(-22, 28, 3000, {.maxSpeed = speed,.minSpeed = 55,.earlyExitRange=6});
-
-
-  chassis.turnToPoint(-52, 28, 1000, {.maxSpeed = (int) speed,.minSpeed = 55, .earlyExitRange = 6});
-  spinIntake(127);
-  startSorting();
-  chassis.moveToPoint(-52, 28, 3000, {.maxSpeed = speed,.minSpeed = 50,.earlyExitRange=5});
-  chassis.turnToPoint(-46, 48, 1000, {.maxSpeed = (int) speed,.minSpeed = 55, .earlyExitRange = 6});
-  startSorting();
-  chassis.moveToPoint(-45, 47, 1000, {.maxSpeed = speed,.minSpeed = 50, .earlyExitRange = 2});
-  
-  chassis.turnToPoint(-45, 56, 1000, {.maxSpeed = (int) speed,.minSpeed = 55, .earlyExitRange = 6});
-  chassis.moveToPoint(-45, 56, 1000, {.maxSpeed = speed,.minSpeed = 15, .earlyExitRange = 2});
-  chassis.moveToPoint(-45, 47, 1000, {.forwards=false,.maxSpeed = speed,.minSpeed = 25, .earlyExitRange = 2});
-
-  chassis.turnToHeading(270, 1000, {.maxSpeed = (int) speed,.minSpeed = 25, .earlyExitRange = 3});
-  chassis.moveToPoint(-53,51.5, 1000, {.maxSpeed = speed,.minSpeed = 25, .earlyExitRange = 2});
-  chassis.moveToPoint(-47, 52, 1000, {.forwards=false,.maxSpeed = speed,.minSpeed = 25, .earlyExitRange = 2});
-  chassis.turnToHeading(135, 1000,{.maxSpeed = (int) speed},false);
-  pros::delay(150);
   openClamp();
-  pros::delay(100);
-  driveFor(speed-60, 300);
-  pros::delay(100);
-  closeClamp();
-  driveFor(-speed+50, 1200);
-  printPositionV2((char *) "Drop #3 Goal",false,false,time);
-  spinIntake(-127);  
-  driveFor(speed-50, 600);
-
-  master.clear();
-  chassis.turnToHeading(90,1000,{},false);
-  currentPose = chassis.getPose();
-  chassis.setPose(-72 + fabs(distToWallB()*sin(deg2rad(currentPose.theta))), 72 - fabs(distToWallL() * sin(deg2rad(currentPose.theta))),currentPose.theta);
-  pros::delay(10);
-  printPositionV2((char *)"Last reset", false, false, time);
-
-  chassis.turnToPoint(0, 48, 2000,{.forwards = false,.minSpeed = 50, .earlyExitRange=6});  
-  chassis.moveToPoint(0, 48, 2000,{.forwards = false,.minSpeed = 50, .earlyExitRange=6});  
-  closeClamp();
-
-  chassis.moveToPoint(64, 64,1900,{.forwards=false,.maxSpeed=120});
-  pros::Task lift_for_climb([=] {moveLiftToPos(120);});
-  chassis.waitUntil(10000);
-  printPositionV2((char *) "Drop #4 Goal",false,false,time);
-
-  chassis.moveToPoint(10, 14, 1500, {.maxSpeed = speed});
-  pros::delay(1000);
-  chassis.moveToPoint(-10, -10, 500,{.maxSpeed = 80});
+  chassis.arcade(40, 0);
   pros::delay(600);
-  printPositionV2((char *) "Climb function",false,false,time );
-  temp = pros::millis() + 2000;
-  //printf("\n Final time: %d", pros::millis() - time);
-  //*/
-  
+  chassis.turnToPoint(72, 65, 1000,{});
+  chassis.moveToPoint(72, 65, 1000,{});
+  chassis.moveToPoint(40, 59, 2000,{.forwards = false});
+  chassis.turnToHeading(270, 1000);
+  chassis.setPose(72 - fabs(distToWallB() * sin(deg2rad(currentPose.theta))), 72 - fabs(distToWallR() * sin(deg2rad(currentPose.theta))), currentPose.theta);
+  chassis.moveToPoint(28, -60, 1000,{});
+  chassis.turnToPoint(72, -65, 1000);
+  chassis.moveToPoint(72, -65, 1800);
+  chassis.moveToPoint(30, -59, 1800,{.forwards = false});
+
+
+  master.clear_line(0);
+  temp = pros::millis();
   while (true) {
     master.print(0, 0, "Time: %d", (temp-time));
   }

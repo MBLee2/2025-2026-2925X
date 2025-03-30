@@ -23,8 +23,10 @@
 #define VISION_LAT_KP 1.2
 
 #define F_DISTANCE_OFFSET 6.25
-#define B_DISTANCE_OFFSET 6.25
-#define L_DISTANCE_OFFSET 7.5
+
+#define B_DISTANCE_OFFSET 2.5
+#define L_DISTANCE_OFFSET 6
+#define R_DISTANCE_OFSET 6
 #define PROXI_OFFSET 1.5
 
 extern bool COLOR;
@@ -63,15 +65,26 @@ void spinIntake(int speed);
 void stopIntake();
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
+void intakeAntiJam();
+void intakeAntiJamTaskFunc();
 
 void spinLift(int speed);
 void stopLift();
+void stopLiftPID();
 void stopLiftHold();
 void setLiftBrake(pros::motor_brake_mode_e mode);
 
 void openClamp();
 void closeClamp();
 void toggleClamp();
+
+void extendLeftSweeper();
+void retractLeftSweeper();
+void toggleLeftSweeper();
+
+void extendRightSweeper();
+void retractRightSweeper();
+void toggleRightSweeper();
 
 void toggleHood();
 void hoodFwd();
@@ -101,6 +114,7 @@ bool getLiftPneumatic();
 float distToWallF();
 float distToWallB();
 float distToWallL();
+float distToWallR();
 float distToObject();
 
 int getIntakeColor();
@@ -137,9 +151,13 @@ void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
 void resetLiftPosition();
+void resetLiftPositionWithDistance();
+void resetLiftWithDistTaskFunc();
 float getLiftPosition();
 
-void moveLiftToPos(float position, int timeout = 5000);
+void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
+void moveLiftToPosCancel(float pos, int time, int speed = 127, int timeout = 5000);
+void moveLiftToPosCancel(float pos, bool dir, int time, int speed = 127, int timeout = 5000);
 void liftUpWallStake();
 void liftPickup();
 void liftDown();
@@ -168,6 +186,7 @@ void sort_color_queue();
 void startSorting();
 void stopSorting();
 void clearRingQueue();
+void basicColorSort();
 
 pros::vision_object_s_t getOurColorObject();
 pros::vision_object_s_t getMostRelevantObject(bool color = COLOR);

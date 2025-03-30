@@ -59,12 +59,18 @@ extern pros::MotorGroup ladybrown;
 
 //pistons
 extern pros::adi::Pneumatics mogo_clamp;
+extern pros::adi::Pneumatics left_sweeper;
+extern pros::adi::Pneumatics right_sweeper;
+extern pros::adi::Pneumatics intake_lift;
+extern pros::adi::Pneumatics odom_lift;
 
 
 //Sensors
 //extern pros::Optical intake_color;
 extern pros::Optical intake_color;
+extern pros::Distance intake_dist;
 extern pros::Optical intake_color2;
+extern pros::Distance LB_dist;
 
 extern pros::Distance distance_rb;
 extern pros::Distance distance_rf;
@@ -72,10 +78,11 @@ extern pros::Distance distance_lb;
 extern pros::Distance distance_lf;
 extern pros::Distance distance_bl;
 extern pros::Distance distance_br;
+extern pros::Distance distance_proxi;
 extern pros::Distance distance_front;
 extern pros::Distance distance_left;
 extern pros::Distance distance_back;
-extern pros::Distance distance_proxi;
+extern pros::Distance distance_right;
 extern pros::GPS gps;
 extern pros::IMU imu;
 extern pros::adi::Button limitSwitch;
