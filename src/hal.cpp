@@ -159,7 +159,7 @@ void stopIntakeHold() {
 
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
-    intakeL.set_brake_mode(mode);
+    intake.set_brake_mode(mode);
     //intakeR.set_brake_mode(mode);
 }
 
@@ -468,11 +468,11 @@ float getLiftPosition() {
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
-    intakeL.set_encoder_units(mode);
+    intake.set_encoder_units(mode);
 }
 
 float getIntakePosition() {
-    return (intakeL.get_position());
+    return (intake.get_position());
 }
 
 // Reset Motor Positions
@@ -495,7 +495,7 @@ void resetDriveMotorPosition() {
 
 
 void resetIntakePosition() {
-    intakeL.tare_position();
+    intake.tare_position();
 }
 
 double wheelDegToInches(double degrees) {
@@ -928,11 +928,11 @@ bool detectRing(int hue){
 }
 
 bool detectRed(int hue){
-    return hue >= 350 || hue <= 30;
+    return hue >= 340 || hue <= 10;
 }
 
 bool detectBlue(int hue){
-    return hue >= 180 && hue <= 220;
+    return hue >= 200 && hue <= 250;
 }
 
 bool detectOurColor(int hue){
@@ -1242,6 +1242,10 @@ float limitSpeed(float speed, float maxSpeed){
     return (maxSpeed - 15) / (1 + pow(M_E, (-1./15) * (speed - ((maxSpeed + 30) / 2)))) + 15;
 }
 
+float distBetweenPts(float x1, float y1, float x2, float y2){
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
 /** driveToRingParams
  *  @param maxSpeed maximum speed
  *  @param maxDist maximum distance allowed to travel
@@ -1250,7 +1254,6 @@ float limitSpeed(float speed, float maxSpeed){
  *  @param driveThrough use color sensor to stop (as opposed to distance)
  *  @param keepDriving continue seeking all available rings (if driveThrough is false, this is ignored)
  *  @param color which color to seek
- *  @param intakeColor
  *  @param useLeftLine use left line tracker to avoid crossing line (not done)
  *  @param useRightLine use right line tracker to avoid crossing line (not done)
  */
@@ -1259,15 +1262,16 @@ void driveToRing(int timeout, driveToRingParams params) {
     autoDrive = true;
     float motorPower = params.maxSpeed, turnPower, ringPower;
     //float initLeft = getLeftMotorPositionInInches(), initRight = getRightMotorPositionInInches();
-	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
-    resetDriveMotorPosition();
+    printf("(%f, %f) - before reset\n", chassis.getPose().x, chassis.getPose().y);
+    //resetDriveMotorPosition();
+    printf("(%f, %f) - after reset\n", chassis.getPose().x, chassis.getPose().y);
     //printf("Left: %f\t Right: %f\n", initLeft, initRight);
     float distTravelled, drive_error = params.maxDist, derivative, prevError;
     float leftSpeed, rightSpeed;
     lemlib::Pose initialPose = chassis.getPose();
     bool startLessX = initialPose.x < params.xLimit, startLessY = initialPose.y < params.yLimit;
 
-    pros::delay(50);
+    printf("(%f, %f) - before loop\n", chassis.getPose().x, chassis.getPose().y);
     while(timeout > 0 && (auton || autoSkill || autoDrive)) {
 
         pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
@@ -1285,8 +1289,13 @@ void driveToRing(int timeout, driveToRingParams params) {
         }
 
         lemlib::Pose currentPose = chassis.getPose();
-        float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
-        distTravelled = (leftPos + rightPos) / 2;
+        //float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
+        float dist = distBetweenPts(currentPose.x, currentPose.y, initialPose.x, initialPose.y);
+        distTravelled += dist;
+        if(timeout % 30 == 0){
+            printf("Current dist: %f\t Total dist: %f\t", dist, distTravelled);
+        }
+
         if(distTravelled > params.maxDist || 
                 startLessX != (currentPose.x < params.xLimit) || 
                 startLessY != (currentPose.y < params.yLimit)) {
@@ -1316,7 +1325,7 @@ void driveToRing(int timeout, driveToRingParams params) {
                 }
             }
         }
-        if(timeout % 90 == 0){
+        if(timeout % 30 == 0){
             printf("(%f, %f)\t", currentPose.x, currentPose.y);
             printf("DistToMax: %f\t", drive_error);
         }
@@ -1342,12 +1351,13 @@ void driveToRing(int timeout, driveToRingParams params) {
 
         leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
 
-        if(timeout % 90 == 0){
-            //printf("Left: %f\t Right %f\t", leftSpeed, rightSpeed);
+        if(timeout % 30 == 0){
+            printf("Left: %f\t Right %f\t", leftSpeed, rightSpeed);
             printf("\n");
         }
         drive(leftSpeed, rightSpeed);
         prevError = drive_error;
+        initialPose = currentPose;
 
         pros::delay(15);
         timeout -= 15;
@@ -1358,6 +1368,7 @@ void driveToRing(int timeout, driveToRingParams params) {
     }
 
     stopDrive();
+    printf("\n");
 }
 
 /** driveToRingParams are same as driveToRing except for maxDist
@@ -1369,10 +1380,12 @@ void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params,
 	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
 		pros::delay(20);
 	}
+    lemlib::Pose currentPose = chassis.getPose();
+    printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
 	if(chassis.isInMotion()){
 		chassis.cancelAllMotions();
         pros::delay(10);
-        lemlib::Pose currentPose = chassis.getPose();
+        currentPose = chassis.getPose();
         params.maxDist += sqrt(pow(x - currentPose.x, 2) + pow(y - currentPose.y, 2));
         printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
 		driveToRing(timeout - (pros::millis() - temp), params);

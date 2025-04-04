@@ -172,30 +172,55 @@ void redPositiveHalfWP(){ //EVERYTHING DONE
 }
 
 void bluePositiveHalfWP(){ //EVERYTHING DONE
+
+
   int time = pros::millis();
-  int speed = 80;
+  int speed = 70;
   float speed1 = float(speed);
   COLOR = false;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
+
+  
+
+  /*pros::delay(3000);
+  chassis.setPose(0, 0, 0);
+  printPosition((char *) "start");
+  spinIntake(127);
+  pros::delay(200);
+  moveToPointWithVis(0, 24, 5000, {.maxSpeed = speed1});
+  printPosition((char *) "end");
+  return;*/
+
+
   pros::delay(2000);
   chassis.setPose(14.5,57,-50);
   pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
   pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
-  chassis.moveToPoint(12, 59.5, 500,{.maxSpeed=speed1});
+  chassis.moveToPoint(11.5, 61, 500,{.maxSpeed=speed1});
   chassis.waitUntil(5);
   pros::Task lift1 ([=] {moveLiftToPos(950);});    
   pros::delay(500); 
-  chassis.moveToPoint(19.5, 53, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(16, 53.5, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+
+  chassis.turnToPoint(16, 37.86,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=2});
+  pros::Task lift2a ([=] {moveLiftToPos(-10);});    
+  chassis.moveToPoint(16, 37.86,2000,{.forwards=false, .maxSpeed = speed1, .minSpeed=5,.earlyExitRange=2});
   chassis.turnToPoint(24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
-  pros::Task lift2 ([=] {moveLiftToPos(-10);});    
-  chassis.moveToPoint(22.5, 38,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
-  chassis.moveToPoint(24.75, 19,600,{.forwards=false,.maxSpeed=speed1 - 40,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(24, 24,600,{.forwards=false,.maxSpeed=speed1 - 20,.minSpeed=5,.earlyExitRange=1});
   chassis.waitUntil(1000);
   closeClamp();
   pros::delay(280);
   chassis.turnToPoint(49, 24, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  printPosition((char *) "Before vision");
   spinIntake(127);
+
+  moveToPointWithVis(54, 24, 2000, {.maxSpeed = speed1, .xLimit = 62});
+  printPosition((char *) "After vision");
+  chassis.turnToPoint(48, 48, 1500, {.maxSpeed = speed, .minSpeed = 15, .earlyExitRange = 2});
+  startSorting();
+  chassis.moveToPoint(48, 48, 1600,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  return;
   chassis.moveToPoint(54, 24, 1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
   chassis.moveToPoint(40, 24, 1000,{.forwards = false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
   // chassis.turnToPoint(48, -48, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});

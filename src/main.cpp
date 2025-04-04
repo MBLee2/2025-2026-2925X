@@ -51,6 +51,7 @@ void initialize() {
 	resetLiftPosition();
 
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
+	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
 
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
@@ -228,7 +229,7 @@ void autonomous() {
 
 
 	//HERE
-	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
@@ -273,6 +274,7 @@ void autonomous() {
 void opcontrol() {
 	odom_lift.extend();
 	stopSorting();
+
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
