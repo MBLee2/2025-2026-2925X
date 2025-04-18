@@ -180,14 +180,15 @@ void taskFn_lift_control(void)
   while (true) // Infinite loop to keep checking controller input for intake
   { 
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      spinLift(127);
+      spinLift(80);
       autoLift = false;
     }
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-      spinLift(-127);
+      spinLift(-80);
       autoLift = false;
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      autoLift = false;
       stopIntake();
       current_state = STOP;
       liftUpWallStake();
@@ -197,9 +198,14 @@ void taskFn_lift_control(void)
       setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      autoLift = false;
       pros::Task lift_task(liftPickup);
       setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
       LBPickup1 = true;
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+      printf("Lift %f\n",getLiftPosition());
     }
 
     // moveLiftToPosCancel(target, dir, time, 127, 1500);

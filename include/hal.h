@@ -144,12 +144,13 @@ double wheelRotToInches(double rotations);
 
 void resetIMUHeading();
 float getHeading();
-bool getLimitSwitch();
+bool getLBLimitSwitch();
 
 void driveFor(float speed, int ms);
 void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
+void setLiftEncoder(pros::motor_encoder_units_e mode);
 void resetLiftPosition();
 void resetLiftPositionWithDistance();
 void resetLiftWithDistTaskFunc();

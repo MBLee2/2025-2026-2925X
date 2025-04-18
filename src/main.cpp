@@ -56,6 +56,8 @@ void initialize() {
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
+	setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+
 	setIntakeColorLED(10);
     //setIntakeColor2LED(100);
 	sort_color_queue();

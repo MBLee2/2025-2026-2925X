@@ -84,7 +84,7 @@ extern pros::Distance distance_back;
 extern pros::Distance distance_right;
 extern pros::GPS gps;
 extern pros::IMU imu;
-extern pros::adi::Button limitSwitch;
+extern pros::adi::Button LB_limit;
 extern pros::Rotation lift_rotation;
 extern pros::Vision vision_sensor;
 extern pros::adi::AnalogIn lineRight;

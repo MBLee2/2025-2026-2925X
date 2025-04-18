@@ -32,9 +32,9 @@ pros::MotorGroup right_side_motors({-9, -1, 10}, pros::v5::MotorGears::blue);
 pros::Motor intake(-20, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
-pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-14, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({11, -14}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(14, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(-11, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({14, -11}, pros::v5::MotorGears::green);
 
 
 //Other Motor
@@ -60,8 +60,6 @@ pros::Distance distance_back(2);
 pros::Distance distance_left(17);
 pros::Distance distance_right(5);
 
-
-
 pros::Optical intake_color2(22); //deprecated
 pros::Distance distance_front(22);
 pros::Distance distance_lf(22);
@@ -76,7 +74,7 @@ pros::Distance distance_br(22);
 pros::GPS gps(3);
 pros::IMU imu(6);
 
-pros::adi::Button limitSwitch('h');
+pros::adi::Button LB_limit('f');
 pros::Rotation lift_rotation(6); 
 
 pros::Vision vision_sensor(19);

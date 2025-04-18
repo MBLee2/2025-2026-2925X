@@ -194,6 +194,7 @@ void spinLift(int speed) {
 }
 
 void stopLift(){
+    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     ladybrown.brake();
 }
 void stopLiftHold() {
@@ -331,8 +332,8 @@ void setIntakeColor2LED(int value){
 }
 
 // Limit Switch
-bool getLimitSwitch() {
-    return limitSwitch.get_value();
+bool getLBLimitSwitch() {
+    return LB_limit.get_value();
 }
 
 // Vision Sensor
@@ -448,7 +449,7 @@ void resetLiftPosition(){
     ladybrownR.tare_position();
 }
 void resetLiftPositionWithDistance(){
-    if(LB_dist.get_distance() < 3)
+    if(getLBLimitSwitch())
     { 
         LBPickup = false;
         resetLiftPosition();
@@ -459,6 +460,11 @@ void resetLiftWithDistTaskFunc(){
         resetLiftPositionWithDistance();
         pros::delay(20);
     }
+}
+
+void setLiftEncoder(pros::motor_encoder_units_e mode) {
+    ladybrownL.set_encoder_units(mode);
+    ladybrownR.set_encoder_units(mode);
 }
 
 
@@ -640,47 +646,39 @@ void liftPickup() {
     int time = 0;
     LBPickup = true;
     autoLift = true;
-    if(getLiftPosition() > 75)
+    ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
+    if(getLiftPosition() < 70)
     {
-        while (LB_dist.get_distance() > 5 && time < 1200) {
-            if (getLiftPosition() < 150)
-            {
-            spinLift(-20);
-            }
-            else if(getLiftPosition() > 150)
-            {
-            spinLift(-127);
-            }
-            if(!autoLift)
-            {
-                break;
-            }
+        while (!getLBLimitSwitch() && time < 1200 && autoLift) {
+            spinLift(-40);
             pros::delay(20);
             time=+20;
         }
-        while (LB_dist.get_distance() < 53 && time < 1200) {
-            spinLift(30);
-            if(!autoLift)
-            {
-                break;
-            }
+        resetLiftPositionWithDistance();
+        int count = 0;
+        while (getLiftPosition() < 40 && time < 1200 && autoLift) {
+            spinLift(25);
+            pros::delay(15);
+            time =+15;
+            count++;
+        }
+    } else {
+        float error, prevError, derivative;
+        while(fabs(45 - getLiftPosition()) > 5 && time < 1200 && autoLift){
+            error = 45 - getLiftPosition();
+
+            derivative = error - prevError;
+
+            float motorPower = 0.8 * error;
+
+            spinLift(motorPower);
+
+            prevError = error;
             pros::delay(20);
-            time =+20;
+            time += 20;
         }
     }
-    else if(getLiftPosition() < 75 && time < 1200)
-    {
-       while (LB_dist.get_distance() < 53) {
-            spinLift(30);
-            if(!autoLift)
-            {
-                break;
-            }
-            pros::delay(20);
-            time =+20;
-        }
-    }
-    stopLiftHold();
+    stopLift();
 }
 
 void liftDown() {
@@ -701,21 +699,21 @@ void moveLiftToPos(float pos,int speed,int timeout){
     autoLift = true;
     if(getLiftPosition() > pos){
 
-        spinLift(-speed);
         while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
         {
+            spinLift(-speed);
             pros::delay(20);
-            //printf("Lift %f\n",getLiftPosition());
+            printf("Lift %f\n",getLiftPosition());
         }
         stopLift();
     }
     else if(getLiftPosition() < pos){
-        spinLift(speed);
-
+        
         while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
         {
+            spinLift(speed);
             pros::delay(20);
-            //printf("Lift %f\n",getLiftPosition());
+            printf("Lift %f\n",getLiftPosition());
         }
         stopLift();
     }
