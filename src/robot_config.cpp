@@ -16,31 +16,29 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(15, pros::v5::MotorGears::blue);  // port 15, forward
-pros::Motor lm(4, pros::v5::MotorGears::blue);  // port 4, forward
-pros::Motor lb(-18, pros::v5::MotorGears::blue);  // port 9, reversed
-pros::Motor rf(-9, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm( -1, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(10, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor lf(11, pros::v5::MotorGears::blue);  // port 15, forward
+pros::Motor lm(-1, pros::v5::MotorGears::blue);  // port 4, forward
+pros::Motor lb(5, pros::v5::MotorGears::blue);  // port 9, reversed
+
+pros::Motor rf(-7, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm( 18, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(-19, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({15, 4, -18}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-9, -1, 10}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({11, -1, 5}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-7, 18, -19}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-20, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(-21, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
-pros::Motor ladybrownL(14, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-11, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({14, -11}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(6, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(-12, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({6, -12}, pros::v5::MotorGears::green);
 
 
-//Other Motor
-//pros::Motor lift(-6, pros::v5::MotorGears::red);  // Robot v1, ignore
-
-//Pistons
+//Pistons NOT DONE
 pros::adi::Pneumatics mogo_clamp('d', false);
 pros::adi::Pneumatics left_sweeper('b', false);
 pros::adi::Pneumatics right_sweeper('a', false);
@@ -49,13 +47,18 @@ pros::adi::Pneumatics odom_lift('e', false);
 
 
 
-/* SENSORS */
+/* SENSORS */ // NOT DONE
+pros::IMU imu(16); //DONE
 
 pros::Distance LB_dist(12);
 pros::Distance distance_proxi(7);
 
-pros::Optical intake_color(3);
-pros::Distance intake_dist(16);
+//Color Sort
+pros::Optical intake_color(3); //DONE
+pros::Distance intake_dist(8); //DONE
+
+
+
 pros::Distance distance_back(2);
 pros::Distance distance_left(17);
 pros::Distance distance_right(5);
@@ -70,9 +73,6 @@ pros::Distance distance_bl(22);
 pros::Distance distance_br(22);
 
 
-
-pros::GPS gps(3);
-pros::IMU imu(6);
 
 pros::adi::Button LB_limit('f');
 pros::Rotation lift_rotation(6); 
