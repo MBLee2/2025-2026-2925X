@@ -172,31 +172,19 @@ void redPositiveHalfWP(){ //EVERYTHING DONE
 }
 
 void bluePositiveHalfWP(){ //EVERYTHING DONE
-
-
   int time = pros::millis();
-  int speed = 70;
+  int speed = 127;
   float speed1 = float(speed);
   COLOR = false;
+
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
-
-  
-
-  /*pros::delay(3000);
-  chassis.setPose(0, 0, 0);
-  printPosition((char *) "start");
+  // chassis.setPose(15.5,58,315);
   spinIntake(127);
-  pros::delay(200);
-  moveToPointWithVis(0, 24, 5000, {.maxSpeed = speed1});
-  printPosition((char *) "end");
-  return;*/
-
-
-  pros::delay(2000);
-  chassis.setPose(14.5,57,-50);
-  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  turnToRing();
+  /*pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
   pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+
   chassis.moveToPoint(11.5, 61, 500,{.maxSpeed=speed1});
   chassis.waitUntil(5);
   pros::Task lift1 ([=] {moveLiftToPos(950);});    
@@ -607,16 +595,14 @@ void goalRushWallStake(){
  * Get positive goal, score one ring
  * Touch ladder
  */
-void redNegativeHalfWP(){//EVERYTHING DONE
+void redNegativeHalfWP(){//PATH DONE
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
   COLOR = true;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
-  pros::delay(2000);
-
-  chassis.setPose(-14.5,-57,130);
+  chassis.setPose(-15.5,-58,135);
   pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
   pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
   chassis.moveToPoint(-12, -59.5, 500,{.maxSpeed=speed1});
@@ -633,28 +619,24 @@ void redNegativeHalfWP(){//EVERYTHING DONE
   pros::delay(280);
   spinIntake(127);
   startSorting();
-
-  chassis.turnToPoint(-40,-10.5,1000,{.maxSpeed = 127,.minSpeed = 5, .earlyExitRange = 1});
-  chassis.moveToPoint(-40,-10.5,1000,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.turnToHeading(310, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(-38,-7,1000,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
   chassis.turnToHeading(270,700,{.maxSpeed = speed,.minSpeed = 15, .earlyExitRange = 5});
-  chassis.moveToPoint(-51,-10,1200,{.maxSpeed = speed1 - 40 ,.minSpeed = 10, .earlyExitRange = 1});
-  chassis.moveToPoint(-37,-24,1500,{.forwards=false,.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.moveToPoint(-51,-7,1200,{.maxSpeed = speed1 - 40 ,.minSpeed = 10, .earlyExitRange = 1});
+  chassis.moveToPoint(-28,-24,1500,{.forwards=false,.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
   chassis.turnToPoint(-48,-24,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
-  chassis.moveToPoint(-48,-24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
-  chassis.turnToPoint(-51,-51,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
-  chassis.moveToPoint(-52,-54,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.moveToPoint(-50,-24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.turnToHeading(180,1000,{.maxSpeed = speed,.minSpeed = 15, .earlyExitRange = 5});
+  chassis.moveToPoint(-52,-55,1500,{.maxSpeed = speed1});
   chassis.waitUntil(10);
   pros::Task lift3 ([=] {moveLiftToPos(310);});    
-  chassis.turnToHeading(225,500,{},false);
+  chassis.turnToHeading(225,1000,{},false);
   temp_pos = chassis.getPose();
   spinIntake(127);
   //stopSorting();
   chassis.moveToPoint(temp_pos.x-14,  temp_pos.y-14 , 700,{.maxSpeed=speed1,.minSpeed=25,.earlyExitRange=2},false);
-  pros::delay(200);
+  pros::delay(300);
   chassis.moveToPoint(temp_pos.x-2,  temp_pos.y-2, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=0.5});
-  chassis.moveToPoint(temp_pos.x-12,  temp_pos.y-12, 1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
-  startSorting();
-  chassis.moveToPoint(temp_pos.x-2,  temp_pos.y-2, 600,{.forwards=false,.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=2});
   // chassis.turnToHeading(90, 600,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=2},false);
   // temp_pos = chassis.getPose();
   // chassis.moveToPoint(-6,temp_pos.y,1000,{.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
@@ -665,7 +647,7 @@ void redNegativeHalfWP(){//EVERYTHING DONE
   // dropIntake();
   // chassis.moveToPoint(-20.5,temp_pos.y,1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
   chassis.turnToPoint(0,0,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
-  chassis.moveToPoint(-10,-18,1000,{.forwards=false,.maxSpeed=speed1 - 20,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(-18,-26,2000,{.forwards=false,.maxSpeed=speed1 - 20,.minSpeed=5,.earlyExitRange=1});
   chassis.waitUntil(12);
   stopIntake();
   chassis.waitUntil(1000);
@@ -776,6 +758,7 @@ void redNegSixRing(){
   int speed = 127;
   float speed1 = float(speed);
   COLOR = false;
+  COLOR_SIG = true;
 
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();

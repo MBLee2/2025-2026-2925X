@@ -40,12 +40,13 @@ void initialize() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-	{
+{
+
+	pros::delay(10);
     pros::lcd::initialize(); // ONLY FOR TUNING PID	
     chassis.calibrate(); // ONLY FOR TUNING PID
-	
 	// weird bug in system; without the following delay, was getting a white screen
-	// on the brain rather than the display as expectedF
+	// on the brain rather than the display as expected
 	pros::delay(10); 
 	// Clear the Brain screen and show status
 	resetLiftPosition();
@@ -128,7 +129,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -207,28 +208,6 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
-	float min_speed = 0;
-	float earlyrange = 0;
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 60, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 0, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(36, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 36, 2000,{.forwards=false,.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.turnToHeading(0, 2000,{.minSpeed=12,.earlyExitRange=2},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
 
 	//HERE
 	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
@@ -275,7 +254,6 @@ void autonomous() {
  */
 void opcontrol() {
 	odom_lift.extend();
-	stopSorting();
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	

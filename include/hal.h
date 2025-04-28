@@ -18,6 +18,7 @@
 
 #define VISION_CENTER 18
 #define VISION_TURN_KP 0.8
+#define VISION_TURN_KD 2
 #define VISION_RANGE 20
 #define VISION_RANGE_TIMEOUT 250
 #define VISION_LAT_KP 1.2
@@ -201,7 +202,7 @@ struct driveToRingParams {
     float maxDist = 300;
     float xLimit = 80;
     float yLimit = 80;
-    bool driveThrough = true;
+    bool driveThrough = false;
     bool keepDriving = false;
     bool color = COLOR;
     bool useLeftLine = false;

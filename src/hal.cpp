@@ -363,7 +363,7 @@ pros::vision_object_s_t getMostRelevantObject(bool color) {
 
     for(int i = 0; i < 5; i++){
         if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr->x_middle_coord - VISION_CENTER) > 120){
+            if(abs(object_arr->x_middle_coord - VISION_CENTER) > 135){
                 object_arr[i].signature = VISION_OBJECT_ERR_SIG;
                 availableObjects--;
             } else if (object_arr[i].y_middle_coord > highestY){
@@ -1166,6 +1166,7 @@ void turnToRing(int timeout, float maxSpeed, bool color){
     bool reached = false;
     int counter = 0;
     int error;
+    float prevError = 0,derivative = 0;
 
     while(!reached && timeout > 0){
 
@@ -1175,7 +1176,9 @@ void turnToRing(int timeout, float maxSpeed, bool color){
 
             error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            float motorPower = (VISION_TURN_KP * error);
+            derivative = error - prevError;
+
+            float motorPower = (VISION_TURN_KP * error) + (VISION_TURN_KD * derivative);
 
             if(motorPower > maxSpeed){
                 motorPower = maxSpeed;
@@ -1184,6 +1187,7 @@ void turnToRing(int timeout, float maxSpeed, bool color){
             }
 
             drive(motorPower, -motorPower);
+            prevError = error;
 
             printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord, error, motorPower);
             
@@ -1204,7 +1208,6 @@ void turnToRing(int timeout, float maxSpeed, bool color){
 
     stopDrive();
 }
-
 
 void driveTowardsRing(int timeout, int maxSpeed, bool color){
     int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
@@ -1365,7 +1368,7 @@ void driveToRing(int timeout, driveToRingParams params) {
         printf("Stop by timeout");
     }
 
-    stopDrive();
+    stopDriveHold();
     printf("\n");
 }
 
@@ -1404,7 +1407,7 @@ void driveFullVision(int timeout, int maxSpeed) {
     int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
     autoDrive = true;
     float turnPower, motorPower = maxSpeed;
-    float distance, prevDistance = 0, derivative = 0;
+    float distance, prevDistance = 0, derivative = 0, prev_vision_error = 0,turn_derivative = 0;
     pros::delay(50);
     while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill) && autoDrive) {
 
@@ -1420,11 +1423,15 @@ void driveFullVision(int timeout, int maxSpeed) {
 
             derivative = distance - prevDistance;
 
+            turn_derivative = vision_error - prev_vision_error;
+
             motorPower = LAT_KP * distance + LAT_KD * derivative;
 
             //printf("Drive: %f\t Turn: %f\n", motorPower, turnPower);
 
             prevDistance = distance;
+    
+            prev_vision_error = vision_error;
 
             if(motorPower > maxSpeed){
                 motorPower = maxSpeed;

@@ -20,7 +20,6 @@ intake_state current_state = STOP;
 bool LBPickup1 = false;
 #define TURN_CONST                                                             \
   1.4 // Constant multipled by X input to allow for instant turns during driver
-      // control
 
 // Drivebase control
 void taskFn_drivebase_control(void) {
@@ -56,7 +55,6 @@ void taskFn_drivebase_control(void) {
   }                  // end of while loop
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_drivebase_control
-
 
 // Mogo Control
 void taskFn_mogo_control(void) {
@@ -100,7 +98,6 @@ void taskFn_mogo_control(void) {
   }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_mogo_control
-
 
 // Intake control
 void taskFn_intake_control(void) {
@@ -199,7 +196,7 @@ void taskFn_lift_control(void)
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       autoLift = false;
-      pros::Task lift_task(liftPickup);
+      //pros::Task lift_task(liftPickup);
       setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
       LBPickup1 = true;
     }
