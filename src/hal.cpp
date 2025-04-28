@@ -194,7 +194,11 @@ void spinLift(int speed) {
 }
 
 void stopLift(){
-    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    if(auton){
+        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+    } else {
+        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    }
     ladybrown.brake();
 }
 void stopLiftHold() {
@@ -638,7 +642,7 @@ void turn(float degrees, int timeout) {
 // Lift
 void liftUpWallStake() {
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    moveLiftToPos(240,127);
+    moveLiftToPos(300,127);
     printf("WALL STAKE");
 }
 
@@ -647,38 +651,14 @@ void liftPickup() {
     LBPickup = true;
     autoLift = true;
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    if(getLiftPosition() < 70)
-    {
-        while (!getLBLimitSwitch() && time < 1200 && autoLift) {
-            spinLift(-40);
-            pros::delay(20);
-            time=+20;
-        }
-        resetLiftPositionWithDistance();
-        int count = 0;
-        while (getLiftPosition() < 40 && time < 1200 && autoLift) {
-            spinLift(25);
-            pros::delay(15);
-            time =+15;
-            count++;
-        }
-    } else {
-        float error, prevError, derivative;
-        while(fabs(45 - getLiftPosition()) > 5 && time < 1200 && autoLift){
-            error = 45 - getLiftPosition();
-
-            derivative = error - prevError;
-
-            float motorPower = 0.8 * error;
-
-            spinLift(motorPower);
-
-            prevError = error;
-            pros::delay(20);
-            time += 20;
-        }
+    while (!getLBLimitSwitch() && time < 1200 && autoLift) {
+        spinLift(-80);
+        pros::delay(20);
+        time=+20;
     }
-    stopLift();
+    resetLiftPositionWithDistance();
+    int count = 0;
+    moveLiftToPos(40, 25, 1200 - time);
 }
 
 void liftDown() {

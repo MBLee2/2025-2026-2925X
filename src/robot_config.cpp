@@ -21,12 +21,12 @@ pros::Motor lm(-21, pros::v5::MotorGears::blue);  // port 4, forward
 pros::Motor lb(6, pros::v5::MotorGears::blue);  // port 9, reversed
 
 pros::Motor rf(-10, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(7, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rm(8, pros::v5::MotorGears::blue); // port 1, reversed
 pros::Motor rb(-4, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({18, -21, 6}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-10, 7, -4}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-10, 8, -4}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
@@ -51,7 +51,7 @@ pros::adi::Pneumatics odom_lift('e', false);
 pros::IMU imu(9); //DONE
 
 pros::Distance LB_dist(21);
-pros::Distance distance_proxi(8);
+pros::Distance distance_proxi(2);
 
 //Color Sort
 pros::Optical intake_color(14); //DONE

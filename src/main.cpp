@@ -228,8 +228,11 @@ void autonomous() {
 		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: %s", default_routine);
 	}
 
+	setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();//*/
+	auton = false;
 
 	// Start the independent parallel tasks needed to support autonomous mode
 	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
@@ -254,6 +257,7 @@ void autonomous() {
  */
 void opcontrol() {
 	odom_lift.extend();
+	setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
