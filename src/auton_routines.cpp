@@ -178,8 +178,10 @@ void bluePositiveHalfWP(){ //EVERYTHING DONE
   COLOR = true;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
-  chassis.setPose(15.5,58,-45);
-  pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
+  // chassis.setPose(15.5,58,315);
+  spinIntake(127);
+  turnToHeadingWithVis(160);
+  /*pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
   pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
   /***************A-WALL STAKE**************/
   chassis.moveToPoint(12, 59.5, 500,{.maxSpeed=speed1});

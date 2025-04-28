@@ -1374,7 +1374,26 @@ void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params,
 
 }
 
-bool basket_state;
+void turnToHeadingWithVis(float angle, int timeout,int range, driveToRingParams params,int delay)
+{
+
+    chassis.turnToHeading(angle, timeout, {.maxSpeed = (int)params.maxSpeed});
+    int temp = pros::millis();
+	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
+        if(abs(int(chassis.getPose().y - angle)) > range)
+        {
+		    pros::delay(20);
+        }
+	}
+    lemlib::Pose currentPose = chassis.getPose();
+    printf("(%f, \n", currentPose.theta);
+	if(chassis.isInMotion()){
+		chassis.cancelAllMotions();
+        pros::delay(10);
+		turnToRing(timeout - (pros::millis() - temp),params.maxSpeed, params.color);
+	}
+
+}
 
 float calcDistance(){
 
