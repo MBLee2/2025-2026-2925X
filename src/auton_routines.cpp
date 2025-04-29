@@ -260,29 +260,35 @@ void bluePositiveHalfWPStake(){ //EVERYTHING DONE
   /***************A-WALL STAKE**************/
   chassis.moveToPoint(12, 59.5, 500,{.maxSpeed=speed1});
   chassis.waitUntil(5);
-  pros::Task lift1 ([=] {moveLiftToPos(950, 127, 750);});    
-  pros::delay(500);
+  //moveLiftToPos(800, 127, 750);
+  pros::Task lift1 ([=] {moveLiftToPos(950, 127, 750);}); 
+  pros::delay(500);   
+  chassis.moveToPoint(36, 36, 500,{.forwards = false, .maxSpeed=speed1},false);
+  pros::Task lift2 ([=] {liftPickup();/*moveLiftToPos(-10);*/});
+  /***************THIRD RING**************/
+  chassis.turnToPoint(48,24,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
+  spinIntake(127);
+  chassis.moveToPoint(48,24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1}, false);
+  //Add Distance reset
+  // chassis.moveToPoint(42.7, 24, 1500, {.forwards = false, .maxSpeed = speed1});
+  // chassis.turnToPoint(71.25, 0, 1500, {.maxSpeed = speed}, false);
+  // temp_pos = chassis.getPose();
+  // chassis.moveToPoint(62 + (-2.75 * sin(deg2rad(temp_pos.theta))), 6 + (-2.75 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 80}, false);
+  // //pros::delay(100);
+  chassis.moveToPoint(62,10,1500,{.maxSpeed = speed1}, false);
+
+
+  pros::delay(90000);
   /***************GOAL GRAB**************/
   chassis.moveToPoint(38, 48, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
   chassis.turnToPoint(24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
   chassis.moveToPoint(24, 24,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
-  pros::Task lift2 ([=] {liftPickup();/*moveLiftToPos(-10);*/});
   chassis.waitUntil(27);
   closeClamp();
   pros::delay(280);
   spinIntake(127);
   startSorting();
-  /***************THIRD RING**************/
-  chassis.turnToPoint(48,24,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
-  chassis.moveToPoint(50,24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1}, false);
-  pros::delay(200);
-  //Add Distance reset
-  chassis.moveToPoint(42.7, 24, 1500, {.forwards = false, .maxSpeed = speed1});
-  chassis.turnToPoint(71.25, 0, 1500, {.maxSpeed = speed}, false);
-  temp_pos = chassis.getPose();
-  liftUpWallStake();
-  chassis.moveToPoint(60.5 + (-2.75 * sin(deg2rad(temp_pos.theta))), 6.5 + (-2.75 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 80}, false);
-  pros::delay(100);
+
 
   //*/
   master.clear_line(0);
@@ -1054,8 +1060,7 @@ void negSixRing(){
 
 
 /*********************** NEGATIVE SIX RING AND BOTH STAKE ***********************/
-void redSafeSixRing()
-{
+void redSafeSixRing(){
    int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
@@ -1114,8 +1119,7 @@ void redSafeSixRing()
   }
   
 }
-void blueSafeSixRing()
-{
+void blueSafeSixRing(){
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);

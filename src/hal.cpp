@@ -651,6 +651,7 @@ void liftUpWallStake() {
     float error, prevError, derivative;
     int counter = 0;
     moveLiftToPos(300, 100, 1200);
+    pros::delay(100);
     printf("WALL STAKE");
     stopLiftCoast();
 }
@@ -676,7 +677,7 @@ void liftPickup() {
         time = moveToReset(80);
         moveLiftToPos(42, 25, 1200 - time);
     } else {
-        moveLiftToPos(38, 100, 1200);
+        moveLiftToPos(42, 100, 1200);
     }
     stopLiftHold();
     autoLift = false;
