@@ -212,6 +212,7 @@ void driveToRing(int timeout = 15000, driveToRingParams params = {});
 void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {}, int delay = 0);
 void turnToHeadingWithVis(float angle, int timeout = 15000, int range = 30, driveToRingParams prams = {},int delay = 0);
 float calcDistance();
+float calcDistanceGoal();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 
 int getIntakeDist();

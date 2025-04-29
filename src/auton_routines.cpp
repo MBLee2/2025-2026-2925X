@@ -34,7 +34,7 @@ auton_routine safe_positive{0, 0, 0, "None - Invalid Routine", &positiveHalfWp};
 
 auton_routine positive_WP{0, 0, 0, "None - Invalid Routine", &possitiveFullWP};
 
-auton_routine late_stake{0, 0, 0, "None - Invalid Routine", &lateStake};
+auton_routine safe_positive_stake{0, 0, 0, "None - Invalid Routine", &positiveHalfWpStake};
 
 auton_routine goal_rush_and_stake{0, 0, 0, "None - Invalid Routine", &goalRushWallStake};
 
@@ -112,11 +112,10 @@ void printPositionV2(char *msg, bool withDistanceSensors = false,
  * 3/4 rings on one goal
  * Touch bar
  */
-void redPositiveHalfWP(){ //EVERYTHING DONE
+void redPositiveHalfWP(){ //NOT DONE
   int time = pros::millis();
   int speed = 80;
   float speed1 = float(speed);
-  COLOR = true;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
   pros::delay(2000);
@@ -175,7 +174,6 @@ void bluePositiveHalfWP(){ //EVERYTHING DONE
   int time = pros::millis();
   int speed = 100;
   float speed1 = float(speed);
-  COLOR = true;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
   // chassis.setPose(15.5,58,315);
@@ -251,13 +249,63 @@ void positiveHalfWp(){
   }
 }
 
+/*********************** POSSITIVE HALF WP + STAKE ***********************/
+void bluePositiveHalfWPStake(){ //EVERYTHING DONE
+  int time = pros::millis();
+  int speed = 60;
+  float speed1 = float(speed);
+  stopSorting();
+  lemlib::Pose temp_pos = chassis.getPose();
+  chassis.setPose(15.5,58,315);
+  /***************A-WALL STAKE**************/
+  chassis.moveToPoint(12, 59.5, 500,{.maxSpeed=speed1});
+  chassis.waitUntil(5);
+  pros::Task lift1 ([=] {moveLiftToPos(950, 127, 750);});    
+  pros::delay(500);
+  /***************GOAL GRAB**************/
+  chassis.moveToPoint(38, 48, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
+  chassis.turnToPoint(24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
+  chassis.moveToPoint(24, 24,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
+  pros::Task lift2 ([=] {liftPickup();/*moveLiftToPos(-10);*/});
+  chassis.waitUntil(27);
+  closeClamp();
+  pros::delay(280);
+  spinIntake(127);
+  startSorting();
+  /***************THIRD RING**************/
+  chassis.turnToPoint(48,24,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
+  chassis.moveToPoint(50,24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1}, false);
+  pros::delay(200);
+  //Add Distance reset
+  chassis.moveToPoint(42.7, 24, 1500, {.forwards = false, .maxSpeed = speed1});
+  chassis.turnToPoint(71.25, 0, 1500, {.maxSpeed = speed}, false);
+  temp_pos = chassis.getPose();
+  liftUpWallStake();
+  chassis.moveToPoint(60.5 + (-2.75 * sin(deg2rad(temp_pos.theta))), 6.5 + (-2.75 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 80}, false);
+  pros::delay(100);
+
+  //*/
+  master.clear_line(0);
+  int temp = pros::millis();
+  while (true) {
+    master.print(0, 0, "Time: %d", (temp-time));
+  }
+}
+
+void positiveHalfWpStake(){
+  if(COLOR){
+    return;
+  } else {
+    bluePositiveHalfWPStake();
+  }
+}
+
 /*********************** POSSITIVE FULL WP ***********************/
 
 void bluePossitiveFullWP(){ //EVERYTHING DONE
   int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
-  COLOR = true;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
   

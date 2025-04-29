@@ -179,10 +179,22 @@ void taskFn_lift_control(void)
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       spinLift(80);
       autoLift = false;
+      if(getLiftPosition() > 40){
+        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+      }
+      else if(getLiftPosition() < 40){
+        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+      }
     }
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       spinLift(-80);
       autoLift = false;
+      if(getLiftPosition() > 40){
+        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+      }
+      else if(getLiftPosition() < 40){
+        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+      }
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       autoLift = false;
@@ -192,29 +204,19 @@ void taskFn_lift_control(void)
       // target = 240, time = pros::millis();
       // dir = getLiftPosition() < target;
       // autoLift = true;
-      setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       autoLift = false;
-      //pros::Task lift_task(liftPickup);
-      setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-      LBPickup1 = true;
+      pros::delay(50);
+      pros::Task lift_task(liftPickup);
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
       printf("Lift %f\n",getLiftPosition());
     }
+    stopLift();
 
     // moveLiftToPosCancel(target, dir, time, 127, 1500);
-
-    if(getLiftPosition() > 40)
-    {
-      stopLiftHold();
-    }
-    else if(getLiftPosition() < 40)
-    {
-      stopLift();
-    }
     resetLiftPositionWithDistance();
     pros::delay(20);
   }

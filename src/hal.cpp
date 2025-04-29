@@ -194,13 +194,14 @@ void spinLift(int speed) {
 }
 
 void stopLift(){
-    if(auton){
-        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-    } else {
-        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-    }
     ladybrown.brake();
 }
+
+void stopLiftCoast() {
+    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    ladybrown.brake();
+}
+
 void stopLiftHold() {
     setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
     ladybrown.brake();
@@ -642,23 +643,44 @@ void turn(float degrees, int timeout) {
 // Lift
 void liftUpWallStake() {
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    moveLiftToPos(300,127);
+    pros::delay(50);
+    //moveLiftToPos(290,100);
+    int time = 0;
+    autoLift = true;
+
+    float error, prevError, derivative;
+    int counter = 0;
+    moveLiftToPos(300, 100, 1200);
     printf("WALL STAKE");
+    stopLiftCoast();
 }
 
-void liftPickup() {
+int moveToReset(float speed) {
     int time = 0;
     LBPickup = true;
     autoLift = true;
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
     while (!getLBLimitSwitch() && time < 1200 && autoLift) {
-        spinLift(-80);
+        spinLift(-speed);
         pros::delay(20);
         time=+20;
     }
     resetLiftPositionWithDistance();
-    int count = 0;
-    moveLiftToPos(40, 25, 1200 - time);
+    return time;
+}
+
+void liftPickup() {
+    int time = 0;
+    autoLift = true;
+    if(getLiftPosition() < 70){
+        time = moveToReset(80);
+        moveLiftToPos(42, 25, 1200 - time);
+    } else {
+        moveLiftToPos(38, 100, 1200);
+    }
+    stopLiftHold();
+    autoLift = false;
+    LBPickup = true;
 }
 
 void liftDown() {
@@ -677,26 +699,31 @@ void moveLiftToPos(float pos,int speed,int timeout){
         pos = 2000;
     }
     autoLift = true;
-    if(getLiftPosition() > pos){
+    float error, prevError, derivative;
+    int counter = 0;
+    while(counter < 150 && (pros::millis() - time) < timeout && autoLift){
+        error = pos - getLiftPosition();
+        printf("Error: %f\n", error);
 
-        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
-        {
-            spinLift(-speed);
-            pros::delay(20);
-            printf("Lift %f\n",getLiftPosition());
+        derivative = error - prevError;
+
+        float motorPower = 0.8 * error +  derivative;
+        if(motorPower > speed) motorPower = speed;
+        else if(motorPower < -speed) motorPower = -speed;
+
+        spinLift(motorPower);
+
+        prevError = error;
+        pros::delay(20);
+        time += 20;
+
+        if(fabs(pos - getLiftPosition()) < 1.5){
+            counter += 20;
+        } else {
+            counter = 0;
         }
-        stopLift();
     }
-    else if(getLiftPosition() < pos){
-        
-        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
-        {
-            spinLift(speed);
-            pros::delay(20);
-            printf("Lift %f\n",getLiftPosition());
-        }
-        stopLift();
-    }
+    stopLift();
     autoLift = false;
 }
 
@@ -1400,6 +1427,16 @@ float calcDistance(){
     pros::vision_object_s_t nearestRing = getMostRelevantObject();
 
     return (7 * 158.) / (nearestRing.width * tan(deg2rad(32.3)));
+}
+
+float calcDistanceGoal(){
+
+    pros::vision_object_s_t nearestGoal = vision_sensor.get_by_sig(0, 3);
+    if(checkRing(nearestGoal)){
+        return (11.6 * 158.) / (nearestGoal.width * tan(deg2rad(32.3)));
+    } else {
+        return -1;
+    }
 }
 
 void driveFullVision(int timeout, int maxSpeed) {
