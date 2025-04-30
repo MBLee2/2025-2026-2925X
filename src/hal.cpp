@@ -458,6 +458,7 @@ void resetLiftPositionWithDistance(){
     { 
         LBPickup = false;
         resetLiftPosition();
+        printf("Lift reset");
     }
 }
 void resetLiftWithDistTaskFunc(){
@@ -657,6 +658,8 @@ void liftUpWallStake() {
 }
 
 int moveToReset(float speed) {
+    autoLift = false;
+    pros::delay(50);
     int time = 0;
     LBPickup = true;
     autoLift = true;
@@ -675,9 +678,9 @@ void liftPickup() {
     autoLift = true;
     if(getLiftPosition() < 70){
         time = moveToReset(80);
-        moveLiftToPos(42, 25, 1200 - time);
+        moveLiftToPos(40, 40, 1200 - time);
     } else {
-        moveLiftToPos(42, 100, 1200);
+        moveLiftToPos(40, 100, 1200);
     }
     stopLiftHold();
     autoLift = false;
@@ -690,8 +693,8 @@ void liftDown() {
 
 void moveLiftToPos(float pos,int speed,int timeout){
     
-    int time = pros::millis();
-    autoLift = true;
+    autoLift = false;
+    pros::delay(30);
 
     if(pos <= 0){
         pos = 0;
@@ -702,13 +705,13 @@ void moveLiftToPos(float pos,int speed,int timeout){
     autoLift = true;
     float error, prevError, derivative;
     int counter = 0;
-    while(counter < 150 && (pros::millis() - time) < timeout && autoLift){
+    while(counter < 150 && timeout > 0 && autoLift){
         error = pos - getLiftPosition();
-        printf("Error: %f\n", error);
+        printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
 
         derivative = error - prevError;
 
-        float motorPower = 0.8 * error +  derivative;
+        float motorPower = 1.2 * error + derivative;
         if(motorPower > speed) motorPower = speed;
         else if(motorPower < -speed) motorPower = -speed;
 
@@ -716,7 +719,7 @@ void moveLiftToPos(float pos,int speed,int timeout){
 
         prevError = error;
         pros::delay(20);
-        time += 20;
+        timeout -= 20;
 
         if(fabs(pos - getLiftPosition()) < 1.5){
             counter += 20;
@@ -1217,6 +1220,53 @@ void turnToRing(int timeout, float maxSpeed, bool color){
     stopDrive();
 }
 
+void turnToGoal(int timeout, float maxSpeed){
+    bool reached = false;
+    int counter = 0;
+    int error;
+    float prevError = 0,derivative = 0;
+
+    while(!reached && timeout > 0){
+
+        pros::vision_object_s_t nearestGoal = vision_sensor.get_by_sig(0, 3);
+
+        if(checkRing(nearestGoal)){
+
+            error = nearestGoal.x_middle_coord - VISION_CENTER;
+
+            derivative = error - prevError;
+
+            float motorPower = (VISION_TURN_KP * error) + (VISION_TURN_KD * derivative);
+
+            if(motorPower > maxSpeed){
+                motorPower = maxSpeed;
+            } else if (motorPower < -maxSpeed){
+                motorPower = -maxSpeed;
+            }
+
+            drive(motorPower, -motorPower);
+            prevError = error;
+
+            printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestGoal.x_middle_coord, nearestGoal.y_middle_coord, error, motorPower);
+            
+
+            if(abs(error) < VISION_RANGE) {
+                counter += 20;
+                if(counter >= VISION_RANGE_TIMEOUT) {
+                    reached = true;
+                } 
+            } else {
+                counter = 0;
+            }
+        }
+
+        pros::delay(20);
+        timeout -= 20;
+    }
+
+    stopDrive();
+}
+
 void driveTowardsRing(int timeout, int maxSpeed, bool color){
     int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
     float motorPower;
@@ -1422,6 +1472,28 @@ void turnToHeadingWithVis(float angle, int timeout,int range, driveToRingParams 
 	}
 
 }
+
+void turnToHeadingWithVisGoal(float angle, int timeout,int range, int speed, int delay)
+{
+
+    chassis.turnToHeading(angle, timeout, {.maxSpeed = speed});
+    int temp = pros::millis();
+	while((!checkRing(vision_sensor.get_by_sig(0, 3)) || pros::millis() - temp < delay) && chassis.isInMotion()){
+        if(abs(int(chassis.getPose().y - angle)) > range)
+        {
+		    pros::delay(20);
+        }
+	}
+    lemlib::Pose currentPose = chassis.getPose();
+    printf("(%f, \n", currentPose.theta);
+	if(chassis.isInMotion()){
+		chassis.cancelAllMotions();
+        pros::delay(10);
+		turnToGoal(timeout - (pros::millis() - temp),speed);
+	}
+
+}
+
 
 float calcDistance(){
 

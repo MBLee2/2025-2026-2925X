@@ -31,7 +31,8 @@ extern auton_routine skills_1, solo_WP ,skills_2;
 
 /************ THESE ARE ALL THE AUTONS FOR WISCO SIG **********/
 void positiveHalfWp();
-void positiveHalfWpStake();
+void positiveWpStake();
+void positiveWpGoal();
 void possitiveFullWP();
 void lateStake();
 void goalRushWallStake();
