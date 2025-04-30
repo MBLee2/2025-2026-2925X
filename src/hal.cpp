@@ -16,7 +16,7 @@
 #include <type_traits>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 int COLOR_SIG = (COLOR) ? 1 : 2;
 
 
