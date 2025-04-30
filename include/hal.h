@@ -161,6 +161,7 @@ void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
 void moveLiftToPosCancel(float pos, int time, int speed = 127, int timeout = 5000);
 void moveLiftToPosCancel(float pos, bool dir, int time, int speed = 127, int timeout = 5000);
 void liftUpWallStake();
+int moveToReset(float speed);
 void liftPickup();
 void liftDown();
 
@@ -196,6 +197,7 @@ pros::vision_object_s_t getRed();
 pros::vision_object_s_t getBlue();
 bool checkRing(pros::vision_object_s_t ring);
 void turnToRing(int timeout = 15000, float maxSpeed = 130, bool color = COLOR);
+void turnToGoal(int timeout = 15000, float maxSpeed = 130);
 void driveTowardsRing(int timeout = 15000, int maxSpeed = 130, bool color = COLOR);
 struct driveToRingParams {
     float maxSpeed = 130;
@@ -211,6 +213,7 @@ struct driveToRingParams {
 void driveToRing(int timeout = 15000, driveToRingParams params = {});
 void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {}, int delay = 0);
 void turnToHeadingWithVis(float angle, int timeout = 15000, int range = 30, driveToRingParams prams = {},int delay = 0);
+void turnToHeadingWithVisGoal(float angle, int timeout = 15000, int range = 30, int speed = 130, int delay = 0);
 float calcDistance();
 float calcDistanceGoal();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
