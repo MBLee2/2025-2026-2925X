@@ -1358,7 +1358,7 @@ void auton_60s_skills_1() {
   COLOR = true;
   stopSorting();
   int time = pros::millis();
-  float speed = 70;
+  float speed = 130;
   int speed1 = (int) speed;
   int temp = 0;
   chassis.setPose(0,-61.3,0);
@@ -1382,11 +1382,21 @@ void auton_60s_skills_1() {
   spinIntake(127);
   chassis.moveToPoint(-24, -24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   printPositionV2((char *) "1st ring");
+  chassis.turnToPoint(-48, 24, 1000,{.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-48, 24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  liftPickup();
+  chassis.moveToPoint(-36, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  turnToHeadingWithVis(90,1000);
+  liftUpWallStake();
+  chassis.moveToPoint(-65, 0, 1000);
+  //hit wall stake
+  chassis.moveToPoint(-48, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  moveLiftToPos(0);
   chassis.turnToPoint(-48, -24, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
   chassis.moveToPoint(-50, -22, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   printPositionV2((char *) "2nd ring");
   chassis.turnToPoint(-50, -48, 1500, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
-  chassis.moveToPoint(-50, -45, 2000, {.maxSpeed = 60,}, false);
+  chassis.moveToPoint(-50, -48, 2000, {.maxSpeed = 60,}, false);
   pros::delay(200);
   chassis.moveToPoint(-50, -57, 2000, {.maxSpeed = 60,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   printPositionV2((char *) "4th and 5th ring");
@@ -1411,8 +1421,8 @@ void auton_60s_skills_1() {
   pros::delay(50);
   printPositionV2((char *) "Reset");
 
-  chassis.turnToPoint(0, -48, 1000, {.forwards = false, .maxSpeed = speed1});
-  chassis.moveToPoint(0, -48, 3000, {.forwards = false, .maxSpeed = speed - 10});
+  chassis.turnToPoint(24, -24, 1000, {.forwards = false, .maxSpeed = speed1});
+  chassis.moveToPoint(24, -24, 3000, {.forwards = false, .maxSpeed = speed - 10}); 
   chassis.turnToPoint(24, -48, 2000, {.forwards = false, .maxSpeed = speed1});
   chassis.moveToPoint(24, -48.4, 1000, {.forwards = false, .maxSpeed = speed - 40});
   chassis.waitUntil(22);
@@ -1424,6 +1434,17 @@ void auton_60s_skills_1() {
   spinIntake(127);
   chassis.moveToPoint(24, -24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   printPositionV2((char *) "1st ring");
+  chassis.turnToPoint(48, 24, 1000,{.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(48, 24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  liftPickup();
+  chassis.moveToPoint(36, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  turnToHeadingWithVis(90,1000);
+  liftUpWallStake();
+  chassis.moveToPoint(65, 0, 1000);
+  //hit wall stake
+  chassis.moveToPoint(48, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  moveLiftToPos(0);
+
   chassis.turnToPoint(48, -24, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
   chassis.moveToPoint(50, -22, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   printPositionV2((char *) "2nd ring");
