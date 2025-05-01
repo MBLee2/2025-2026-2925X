@@ -152,6 +152,7 @@ void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
 void setLiftEncoder(pros::motor_encoder_units_e mode);
+void setLiftZero(double pos);
 void resetLiftPosition();
 void resetLiftPositionWithDistance();
 void resetLiftWithDistTaskFunc();
@@ -161,7 +162,7 @@ void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
 void moveLiftToPosCancel(float pos, int time, int speed = 127, int timeout = 5000);
 void moveLiftToPosCancel(float pos, bool dir, int time, int speed = 127, int timeout = 5000);
 void liftUpWallStake();
-int moveToReset(float speed);
+int moveToReset(float speed = 127);
 void liftPickup();
 void liftDown();
 

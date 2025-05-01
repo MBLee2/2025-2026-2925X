@@ -449,6 +449,11 @@ double getRightMotorPositionInInches() {
     return wheelRotToInches(getRightMotorPosition());
 }
 
+void setLiftZero(double pos){
+    ladybrownL.set_zero_position(pos);
+    ladybrownR.set_zero_position(pos);
+}
+
 void resetLiftPosition(){
     ladybrownL.tare_position();
     ladybrownR.tare_position();
@@ -458,7 +463,7 @@ void resetLiftPositionWithDistance(){
     { 
         LBPickup = false;
         resetLiftPosition();
-        printf("Lift reset");
+        //printf("Lift reset\n");
     }
 }
 void resetLiftWithDistTaskFunc(){
@@ -1320,11 +1325,6 @@ void driveToRing(int timeout, driveToRingParams params) {
 
     autoDrive = true;
     float motorPower = params.maxSpeed, turnPower, ringPower;
-    //float initLeft = getLeftMotorPositionInInches(), initRight = getRightMotorPositionInInches();
-    printf("(%f, %f) - before reset\n", chassis.getPose().x, chassis.getPose().y);
-    //resetDriveMotorPosition();
-    printf("(%f, %f) - after reset\n", chassis.getPose().x, chassis.getPose().y);
-    //printf("Left: %f\t Right: %f\n", initLeft, initRight);
     float distTravelled, drive_error = params.maxDist, derivative, prevError;
     float leftSpeed, rightSpeed;
     lemlib::Pose initialPose = chassis.getPose();
@@ -1349,10 +1349,9 @@ void driveToRing(int timeout, driveToRingParams params) {
 
         lemlib::Pose currentPose = chassis.getPose();
         //float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
-        float dist = distBetweenPts(currentPose.x, currentPose.y, initialPose.x, initialPose.y);
-        distTravelled += dist;
-        if(timeout % 30 == 0){
-            printf("Current dist: %f\t Total dist: %f\t", dist, distTravelled);
+        distTravelled = distBetweenPts(currentPose.x, currentPose.y, initialPose.x, initialPose.y);
+        if(timeout % 20 == 0){
+            printf("Total dist: %f\t", distTravelled);
         }
 
         if(distTravelled > params.maxDist || 
@@ -1384,7 +1383,7 @@ void driveToRing(int timeout, driveToRingParams params) {
                 }
             }
         }
-        if(timeout % 30 == 0){
+        if(timeout % 20 == 0){
             printf("(%f, %f)\t", currentPose.x, currentPose.y);
             printf("DistToMax: %f\t", drive_error);
         }
@@ -1410,13 +1409,12 @@ void driveToRing(int timeout, driveToRingParams params) {
 
         leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
 
-        if(timeout % 30 == 0){
+        if(timeout % 20 == 0){
             printf("Left: %f\t Right %f\t", leftSpeed, rightSpeed);
             printf("\n");
         }
         drive(leftSpeed, rightSpeed);
         prevError = drive_error;
-        initialPose = currentPose;
 
         pros::delay(15);
         timeout -= 15;

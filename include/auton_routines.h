@@ -33,6 +33,7 @@ extern auton_routine skills_1, solo_WP ,skills_2;
 void positiveHalfWp();
 void positiveWpStake();
 void positiveWpGoal();
+void positiveSmart();
 void possitiveFullWP();
 void lateStake();
 void goalRushWallStake();
