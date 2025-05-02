@@ -16,7 +16,7 @@
 #define TURN_KI 0
 #define TURN_KD 0
 
-#define VISION_CENTER 18
+#define VISION_CENTER 0
 #define VISION_TURN_KP 0.8
 #define VISION_TURN_KD 2
 #define VISION_RANGE 20

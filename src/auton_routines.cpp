@@ -1063,7 +1063,12 @@ void negHalfWPWallStake(){
  * Scores 1 ring from middle
  */
 void redNegSixRing(){ 
-    int time = pros::millis();
+  turnToHeadingWithVis(270,1000,90);
+  pros::delay(100000);
+
+
+
+  int time = pros::millis();
   int speed = 127;
   float speed1 = float(speed);
   COLOR = true;
@@ -1544,12 +1549,14 @@ void auton_60s_skills_1() {
   spinIntake(127);
   chassis.moveToPoint(-24, -24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   printPositionV2((char *) "1st ring");
-  chassis.turnToPoint(-48, 24, 1000,{.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
-  chassis.moveToPoint(-48, 24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.turnToPoint(-50, 24, 1000,{.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-50, 24, 3500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  chassis.moveToPoint(-46, 0, 3500, {.forwards=false,.maxSpeed = speed});
   liftPickup();
-  chassis.moveToPoint(-36, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
-  turnToHeadingWithVis(90,1000);
+  chassis.turnToHeading(270, 1000);
+  /*stopIntake();
   liftUpWallStake();
+  spinIntake(127);  
   chassis.moveToPoint(-65, 0, 1000);
   //hit wall stake
   chassis.moveToPoint(-48, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
@@ -1599,12 +1606,12 @@ void auton_60s_skills_1() {
   chassis.turnToPoint(48, 24, 1000,{.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
   chassis.moveToPoint(48, 24, 1500, {.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
   liftPickup();
-  chassis.moveToPoint(36, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
-  turnToHeadingWithVis(90,1000);
+  chassis.moveToPoint(42, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25});
+  turnToHeadingWithVis(270,1000,20);
   liftUpWallStake();
   chassis.moveToPoint(65, 0, 1000);
   //hit wall stake
-  chassis.moveToPoint(48, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
+  chassis.moveToPoint(45, 0, 1500, {.forwards=false,.maxSpeed = speed,.minSpeed = 3,.earlyExitRange = 0.25}, false);
   moveLiftToPos(0);
 
   chassis.turnToPoint(48, -24, 1000, {.maxSpeed = speed1,.minSpeed = 3,.earlyExitRange = 0.25});
@@ -1636,7 +1643,7 @@ void auton_60s_skills_1() {
   pros::delay(50);
   printPositionV2((char *) "Reset");
   chassis.moveToPoint(34, 34, 3000,{},false);
-  chassis.turnToHeading(180, 1300,{},false);//*/
+  chassis.turnToHeading(180, 1300,{},false);//
   currentPose = chassis.getPose();
   chassis.setPose(72 - fabs(distToWallL() * cos(deg2rad(currentPose.theta))), 72 - fabs(distToWallB() * cos(deg2rad(currentPose.theta))), currentPose.theta);
   pros::delay(200);
@@ -1658,8 +1665,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(28, -60, 1000,{});
   chassis.turnToPoint(72, -65, 1000);
   chassis.moveToPoint(72, -65, 1800);
-  chassis.moveToPoint(30, -59, 1800,{.forwards = false});
-
+  chassis.moveToPoint(30, -59, 1800,{.forwards = false}); /*/
 
   master.clear_line(0);
   temp = pros::millis();

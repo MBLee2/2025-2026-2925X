@@ -1455,14 +1455,13 @@ void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params,
 
 void turnToHeadingWithVis(float angle, int timeout,int range, driveToRingParams params,int delay)
 {
-
     chassis.turnToHeading(angle, timeout, {.maxSpeed = (int)params.maxSpeed});
     int temp = pros::millis();
-	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
-        if(abs(int(chassis.getPose().y - angle)) > range)
-        {
-		    pros::delay(20);
-        }
+	while((!checkRing(getMostRelevantObject(params.color)) 
+           || pros::millis() - temp < delay) && chassis.isInMotion() 
+           || abs(int(chassis.getPose().y - angle)) > range){
+            pros::delay(20);
+            temp += 20;
 	}
     lemlib::Pose currentPose = chassis.getPose();
     printf("(%f, \n", currentPose.theta);
