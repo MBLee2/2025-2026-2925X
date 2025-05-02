@@ -11,6 +11,7 @@
 #include "main.h"
 
 bool intakeMode = true; //Mason Rudra place where should be
+bool tankDrive = false;
 enum intake_state {
   INTAKE, // Intake objects
   OUTAKE, // Eject objects
@@ -26,32 +27,39 @@ bool LBPickup1 = false;
 void taskFn_drivebase_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
   bool drive_state = true;    // true for normal, false for reversed drive direction
+  int leftX, leftY, turnVelleft, rightY;
   while (true) // Infinite loop to keep checking controller input and drive base
                // state
   {
     // Get  horizontal and vertical joystick input for movement and turning
-    int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
     int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
     // Multiply the turning input to prioritize turning over forward movement,
     // enabling agile motion
-    int turnVelleft = TURN_CONST * leftX;
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+    // Control the left and right motors based on the calculated values
+    if(!tankDrive){
+      int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+      turnVelleft = TURN_CONST * leftX;
+      drive(leftY + turnVelleft, leftY - turnVelleft);
+    } else {
+      int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+      drive(leftY, rightY);
+    }
+
+    /*if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
       drive_state = !drive_state; // Toggle drive direction when the X button is pressed
       pros::delay(300); // Add a small delay to avoid rapid toggling of direction
-    }
     // If the drive direction is reversed, negate the joystick input for
     // forward/backward movement
     if (!drive_state) {
       leftY = -leftY;
     }
+    }*/
 
     if(leftY + turnVelleft == 0) {
       autoDrive = false;
     }
 
-    // Control the left and right motors based on the calculated values
-    drive(leftY + turnVelleft, leftY - turnVelleft);
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
   }                  // end of while loop
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
@@ -71,29 +79,25 @@ void taskFn_mogo_control(void) {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
       toggleClamp();
     }
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-      liftIntake();
-    }
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-      dropIntake();
-    }
 
     // Get the input from the right joystick and normalize the input to a range
     // of -1 to 1
-    int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
-    int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
-    // (retracted)
-    if (rightY < -0.85) {
-      retractRightSweeper();
-      retractLeftSweeper();
-    }
-    if (rightX > 0.85) { 
-      extendRightSweeper();
-      retractLeftSweeper();
-    }
-    if (rightX < -0.85) {
-      extendLeftSweeper();
-      retractRightSweeper();
+    if(!tankDrive){
+      int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
+      int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
+      // (retracted)
+      if (rightY < -0.85) {
+        retractRightSweeper();
+        retractLeftSweeper();
+      }
+      if (rightX > 0.85) { 
+        extendRightSweeper();
+        retractLeftSweeper();
+      }
+      if (rightX < -0.85) {
+        extendLeftSweeper();
+        retractRightSweeper();
+      }
     }
 
     pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
@@ -173,6 +177,7 @@ void taskFn_lift_control(void)
   int time = 0;
   bool dir = true;
   autoLift = false;
+  int toggle_counter = 0;
 
   ladybrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
   lift_state current_state1 = DOWN; // Initialize with a default state, STOP
@@ -187,38 +192,39 @@ void taskFn_lift_control(void)
       spinLift(-80);
       autoLift = false;
     }
+
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      autoLift = false;
       stopIntake();
       current_state = STOP;
-      liftUpWallStake();
-      // target = 240, time = pros::millis();
-      // dir = getLiftPosition() < target;
-      // autoLift = true;
-      setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+      pros::Task ws_task(liftUpWallStake);
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      autoLift = false;
-      pros::Task lift_task(liftPickup);
-      setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+      pros::Task load_task(liftPickup);
       LBPickup1 = true;
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-      printf("Lift %f\n",getLiftPosition());
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+      retractLeftSweeper();
+      tankDrive = true;
+      moveLiftToPos(160, 127, 2000);
+      closePTO();
+      retractClimbBalance();
+      pros::delay(1500);
+      openPTO();
+
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && toggle_counter > 10) {
+      retractLeftSweeper();
+      tankDrive = true;
+      togglePTO();
+      toggle_counter = 0;
     }
 
     // moveLiftToPosCancel(target, dir, time, 127, 1500);
-
-    if(getLiftPosition() > 40)
-    {
-      stopLiftHold();
-    }
-    else if(getLiftPosition() < 40)
-    {
+    if(!autoLift){
       stopLift();
     }
     resetLiftPositionWithDistance();
     pros::delay(20);
+    toggle_counter++;
   }
 }

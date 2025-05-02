@@ -39,8 +39,11 @@ pros::MotorGroup ladybrown({6, -12}, pros::v5::MotorGears::green);
 
 
 //Pistons NOT DONE
-pros::adi::Pneumatics mogo_clamp('d', false);
-pros::adi::Pneumatics left_sweeper('b', false);
+pros::adi::Pneumatics mogo_clamp('h', false);
+pros::adi::Pneumatics left_sweeper('c', false);
+pros::adi::Pneumatics pto('g', true);
+pros::adi::Pneumatics climb_balance('d', false);
+
 pros::adi::Pneumatics right_sweeper('a', false);
 pros::adi::Pneumatics intake_lift('g', false);
 pros::adi::Pneumatics odom_lift('e', false);
@@ -74,7 +77,7 @@ pros::Distance distance_br(22);
 
 
 
-pros::adi::Button LB_limit('f');
+pros::adi::Button LB_limit('a');
 pros::Rotation lift_rotation(6); 
 
 pros::Vision vision_sensor(19);
@@ -96,7 +99,7 @@ lemlib::Drivetrain drivetrain(
 // left tracking wheel encoder
 // right tracking wheel encoder
 pros::Rotation vertical_rot(12); // NOT ON BOT
-pros::Rotation horizontal_rot(8); // port 1, not reversed
+pros::Rotation horizontal_rot(13); // port 1, not reversed
 
 // back tracking wheel encoder  
  

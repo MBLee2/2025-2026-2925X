@@ -58,8 +58,7 @@ void initialize() {
 
 	setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 
-	setIntakeColorLED(10);
-    //setIntakeColor2LED(100);
+	setIntakeColorLED(75);
 	sort_color_queue();
 	autoIntake = false;
 

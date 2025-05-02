@@ -22,6 +22,7 @@ int COLOR_SIG = (COLOR) ? 1 : 2;
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false, LBPickup = false;
+bool liftReset = false; //Do not modify
 
 std::queue<bool> ringQueue;
 
@@ -191,15 +192,20 @@ void intakeAntiJamTaskFunc(){
 // Lift Movement
 void spinLift(int speed) {
     ladybrown.move(speed);
+    setLiftBrake((getLiftPosition() > 40) ? pros::E_MOTOR_BRAKE_HOLD : pros::E_MOTOR_BRAKE_COAST);
 }
 
 void stopLift(){
-    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
     ladybrown.brake();
+}
+
+void stopLiftCoast(){
+    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    stopLift();
 }
 void stopLiftHold() {
     setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-    ladybrown.brake();
+    stopLift();
 }
 
 
@@ -256,7 +262,20 @@ void dropIntake()
 {
     intake_lift.retract();
 }
-
+//PTO
+void closePTO() {
+    pto.extend();
+}
+void openPTO() {
+    pto.retract();
+}
+void togglePTO() {
+    pto.toggle();
+}
+//Climb balance
+void retractClimbBalance() {
+    climb_balance.extend();
+}
 
 //IMU
 void resetIMUHeading() {
@@ -452,6 +471,7 @@ void resetLiftPositionWithDistance(){
     if(getLBLimitSwitch())
     { 
         LBPickup = false;
+        liftReset = true;
         resetLiftPosition();
     }
 }
@@ -638,47 +658,38 @@ void turn(float degrees, int timeout) {
 // Lift
 void liftUpWallStake() {
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    moveLiftToPos(240,127);
+    moveLiftToPos(300,127,1200);
+    stopLiftCoast();
     printf("WALL STAKE");
 }
 
-void liftPickup() {
+int moveToReset(float speed) {
+    autoLift = false;
+    pros::delay(50);
     int time = 0;
     LBPickup = true;
     autoLift = true;
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    if(getLiftPosition() < 70)
-    {
-        while (!getLBLimitSwitch() && time < 1200 && autoLift) {
-            spinLift(-40);
-            pros::delay(20);
-            time=+20;
-        }
-        resetLiftPositionWithDistance();
-        int count = 0;
-        while (getLiftPosition() < 40 && time < 1200 && autoLift) {
-            spinLift(25);
-            pros::delay(15);
-            time =+15;
-            count++;
-        }
-    } else {
-        float error, prevError, derivative;
-        while(fabs(45 - getLiftPosition()) > 5 && time < 1200 && autoLift){
-            error = 45 - getLiftPosition();
-
-            derivative = error - prevError;
-
-            float motorPower = 0.8 * error;
-
-            spinLift(motorPower);
-
-            prevError = error;
-            pros::delay(20);
-            time += 20;
-        }
+    while (!getLBLimitSwitch() && time < 1200 && autoLift) {
+        spinLift(-speed);
+        pros::delay(20);
+        time=+20;
     }
+    resetLiftPositionWithDistance();
     stopLift();
+    return time;
+}
+
+void liftPickup() {
+    int time = 0;
+    if(getLiftPosition() < 70 || !liftReset){
+        time = moveToReset(100);
+        moveLiftToPos(40, 80, 1200 - time);
+    } else {
+        moveLiftToPos(40, 100, 1200);
+    }
+    stopLiftHold();
+    LBPickup = true;
 }
 
 void liftDown() {
@@ -686,9 +697,8 @@ void liftDown() {
 }
 
 void moveLiftToPos(float pos,int speed,int timeout){
-    
-    int time = pros::millis();
-    autoLift = true;
+    autoLift = false;
+    pros::delay(30);
 
     if(pos <= 0){
         pos = 0;
@@ -697,26 +707,31 @@ void moveLiftToPos(float pos,int speed,int timeout){
         pos = 2000;
     }
     autoLift = true;
-    if(getLiftPosition() > pos){
+    float error, prevError, derivative;
+    int counter = 0;
+    while(counter < 150 && timeout > 0 && autoLift){
+        error = pos - getLiftPosition();
+        printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
 
-        while(getLiftPosition() >= pos && (pros::millis() - time) < timeout && autoLift)
-        {
-            spinLift(-speed);
-            pros::delay(20);
-            printf("Lift %f\n",getLiftPosition());
+        derivative = error - prevError;
+
+        float motorPower = 1.2 * error + derivative;
+        if(motorPower > speed) motorPower = speed;
+        else if(motorPower < -speed) motorPower = -speed;
+
+        spinLift(motorPower);
+
+        prevError = error;
+        pros::delay(20);
+        timeout -= 20;
+
+        if(fabs(pos - getLiftPosition()) < 0.5){
+            counter += 20;
+        } else {
+            counter = 0;
         }
-        stopLift();
     }
-    else if(getLiftPosition() < pos){
-        
-        while(getLiftPosition() <= pos && (pros::millis() - time) < timeout && autoLift)
-        {
-            spinLift(speed);
-            pros::delay(20);
-            printf("Lift %f\n",getLiftPosition());
-        }
-        stopLift();
-    }
+    stopLift();
     autoLift = false;
 }
 
@@ -911,26 +926,30 @@ bool detectRingFront(){
     return distToObject() < 3.7;
 }
 
-int redLower = 345;
-int redUpper = 15;
+int redLower = 0;
+int redUpper = 20;
 
 int blueLower = 210;
-int blueUpper = 250;
+int blueUpper = 230;
 
 bool detectRing() {
     return getIntakeDist() < 30;
 }
 
 bool detectRing(int hue){
-    return (hue >= 310 || hue <= 345) || (hue >= 210 && hue <= 250);
+    return detectRed(hue) || detectBlue(hue);
 }
 
 bool detectRed(int hue){
-    return hue >= 340 || hue <= 10;
+    if(redUpper < redLower){
+        return hue >= redLower || hue <= redUpper;
+    } else {
+        return hue >= redLower && hue <= redUpper;
+    }
 }
 
 bool detectBlue(int hue){
-    return hue >= 200 && hue <= 250;
+    return hue >= blueLower && hue <= blueUpper;
 }
 
 bool detectOurColor(int hue){

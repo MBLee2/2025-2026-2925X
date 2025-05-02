@@ -71,6 +71,7 @@ void intakeAntiJamTaskFunc();
 void spinLift(int speed);
 void stopLift();
 void stopLiftPID();
+void stopLiftCoast();
 void stopLiftHold();
 void setLiftBrake(pros::motor_brake_mode_e mode);
 
@@ -110,6 +111,12 @@ void toggleRedirect();
 void liftPneumaticUp();
 void liftPneumaticDown();
 bool getLiftPneumatic();
+
+void closePTO();
+void openPTO();
+void togglePTO();
+
+void retractClimbBalance();
 
 float distToWallF();
 float distToWallB();
@@ -160,6 +167,7 @@ void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
 void moveLiftToPosCancel(float pos, int time, int speed = 127, int timeout = 5000);
 void moveLiftToPosCancel(float pos, bool dir, int time, int speed = 127, int timeout = 5000);
 void liftUpWallStake();
+int moveToReset(float speed = 127);
 void liftPickup();
 void liftDown();
 
