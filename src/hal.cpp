@@ -675,6 +675,7 @@ int moveToReset(float speed) {
         time=+20;
     }
     resetLiftPositionWithDistance();
+    stopLiftHold();
     return time;
 }
 
@@ -682,8 +683,8 @@ void liftPickup() {
     int time = 0;
     autoLift = true;
     if(getLiftPosition() < 70){
-        time = moveToReset(80);
-        moveLiftToPos(40, 40, 1200 - time);
+        time = moveToReset(40);
+        moveLiftToPos(30, 40, 1200 - time);
     } else {
         moveLiftToPos(40, 100, 1200);
     }
@@ -712,7 +713,7 @@ void moveLiftToPos(float pos,int speed,int timeout){
     int counter = 0;
     while(counter < 150 && timeout > 0 && autoLift){
         error = pos - getLiftPosition();
-        printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
+        //printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
 
         derivative = error - prevError;
 
@@ -720,6 +721,8 @@ void moveLiftToPos(float pos,int speed,int timeout){
         if(motorPower > speed) motorPower = speed;
         else if(motorPower < -speed) motorPower = -speed;
 
+        motorPower += 30;
+        printf("Motor power: %f \n", motorPower);
         spinLift(motorPower);
 
         prevError = error;

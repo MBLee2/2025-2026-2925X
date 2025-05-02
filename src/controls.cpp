@@ -214,8 +214,10 @@ void taskFn_lift_control(void)
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
       printf("Lift %f\n",getLiftPosition());
     }
-    stopLift();
-
+    if(!autoLift)
+    {
+      stopLift();
+    }
     // moveLiftToPosCancel(target, dir, time, 127, 1500);
     resetLiftPositionWithDistance();
     pros::delay(20);
