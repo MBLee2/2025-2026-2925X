@@ -16,26 +16,26 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(18, pros::v5::MotorGears::blue);  // port 15, forward
-pros::Motor lm(-21, pros::v5::MotorGears::blue);  // port 4, forward
-pros::Motor lb(6, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor lf(11, pros::v5::MotorGears::blue);  // port 15, forward
+pros::Motor lm(-1, pros::v5::MotorGears::blue);  // port 4, forward
+pros::Motor lb(5, pros::v5::MotorGears::blue);  // port 9, reversed
 
-pros::Motor rf(-10, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(8, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(-4, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor rf(-7, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm( 18, pros::v5::MotorGears::blue); // port 1, reversed
+pros::Motor rb(-19, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({18, -21, 6}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-10, 8, -4}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({11, -1, 5}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-7, 18, -19}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-20, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(-21, pros::v5::MotorGears::red);  // port 4, reversed
 
 //lady brown group
-pros::Motor ladybrownL(11, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-13, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({11, -13}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(6, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(-12, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({6, -12}, pros::v5::MotorGears::green);
 
 
 //Pistons NOT DONE
@@ -51,7 +51,7 @@ pros::adi::Pneumatics odom_lift('e', false);
 
 
 /* SENSORS */ // NOT DONE
-pros::IMU imu(9); //DONE
+pros::IMU imu(16); //DONE
 
 pros::Distance LB_dist(21);
 pros::Distance distance_proxi(2);
@@ -79,7 +79,7 @@ pros::Distance distance_br(22);
 pros::adi::Button LB_limit('a');
 pros::Rotation lift_rotation(6); 
 
-pros::Vision vision_sensor(16);
+pros::Vision vision_sensor(4);
 //pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
 //pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
 
@@ -98,7 +98,7 @@ lemlib::Drivetrain drivetrain(
 // left tracking wheel encoder
 // right tracking wheel encoder
 pros::Rotation vertical_rot(12); // NOT ON BOT
-pros::Rotation horizontal_rot(13); // port 1, not reversed
+pros::Rotation horizontal_rot(-13); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
