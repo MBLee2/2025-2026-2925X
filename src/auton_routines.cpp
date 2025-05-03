@@ -193,7 +193,6 @@ void bluePositiveHalfWP(){//PATH DONE
   chassis.moveToPoint(13, 54.625, 1500, {.maxSpeed = speed1});
   chassis.waitUntil(3);
   extendLeftSweeper();
-  //chassis.moveToPoint(41.68, 54.625, 1500, {.forwards = false, .maxSpeed = speed1});
 
   /***************GOAL GRAB**************/
   chassis.turnToPoint(24, 24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
@@ -213,24 +212,29 @@ void bluePositiveHalfWP(){//PATH DONE
 
   /***************CORNER RING**************/
   chassis.turnToPoint(36, 54, 1000, {.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
-  chassis.moveToPoint(36,60,1500,{.maxSpeed = speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(36,56,1500,{.maxSpeed = speed1,.minSpeed=25,.earlyExitRange=2});
   //pros::Task lift3 ([=] {moveLiftToPos(310);});    
   turnToHeadingWithVis(60,1000, 40,{.maxSpeed = speed1});
   extendLeftSweeper();
   temp_pos = chassis.getPose();
-  chassis.moveToPoint(45, 68, 1500,{.maxSpeed=speed1,.minSpeed=30,.earlyExitRange=2},false);
-  chassis.moveToPoint(51, 70, 1500,{.maxSpeed=60,.minSpeed=15,.earlyExitRange=2},false);
+  chassis.moveToPoint(45, 62, 1500,{.maxSpeed=speed1,.minSpeed=30,.earlyExitRange=2},false);
+  spinIntake(127);
+  chassis.moveToPoint(51, 65, 1500,{.maxSpeed=60,.minSpeed=15,.earlyExitRange=2});
+  moveLiftToPos(280, 127, 800);
+  chassis.waitUntil(100);
   pros::delay(200);
-  chassis.turnToHeading(180, 1000, {.maxSpeed = 90, .minSpeed = 50, .earlyExitRange = 5}, false);
-  chassis.turnToHeading(150, 1000, {.maxSpeed = speed, .minSpeed = 5, .earlyExitRange = 2}, false);
+  chassis.turnToHeading(180, 1000, {.maxSpeed = 127, .minSpeed = 50, .earlyExitRange = 5}, false);
+  chassis.turnToHeading(160, 1000, {.maxSpeed = speed, .minSpeed = 5, .earlyExitRange = 2}, false);
   retractLeftSweeper();
-  moveToPointWithVis(60, 48, 2000, {.maxSpeed = speed1, .yLimit = 36, .driveThrough = true, .keepDriving = true});
+  temp_pos = chassis.getPose();
+  chassis.moveToPoint(60, temp_pos.y + ((60 - temp_pos.x) * (1/tan(deg2rad(temp_pos.theta)))), 1000, {.maxSpeed = speed1, .minSpeed = 5, .earlyExitRange = 2}, false);
+  chassis.turnToHeading(180, 1500, {.maxSpeed = speed, .minSpeed = 5, .earlyExitRange = 2}, false);
+  moveToPointWithVis(60, 48, 2000, {.maxSpeed = 70, .yLimit = 20, .driveThrough = true});
   
   /***************TOUCH LADDER**************/
   chassis.turnToPoint(24, 30, 1500, {.maxSpeed = speed, .minSpeed=5,.earlyExitRange=1});
-  //chassis.moveToPoint(27, 23, 1500, {.maxSpeed = speed1,.minSpeed=25,.earlyExitRange=2});
-  chassis.moveToPoint(15, 13, 1500, {.maxSpeed = speed1,.minSpeed=25,.earlyExitRange=2});
-  moveLiftToPos(280, 127, 800);
+  chassis.moveToPoint(27, 23, 1500, {.maxSpeed = speed1,.minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(15, 11, 1500, {.maxSpeed = speed1,.minSpeed=35,.earlyExitRange=6});
 
   //*/
   master.clear_line(0);
@@ -1008,11 +1012,11 @@ void redNegHalfWPWallStake() {//PATH DONE
   chassis.turnToPoint(-71.25, 0, 1500, {.maxSpeed = speed}, false);
   temp_pos = chassis.getPose();
   //liftUpWallStake();
-  chassis.moveToPoint(71.25 + (-11.75 * sin(deg2rad(temp_pos.theta))), 0 + (-11.75 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 60}, false);
+  chassis.moveToPoint(-71.25 + (-11.75 * sin(deg2rad(temp_pos.theta))), 0 + (-11.75 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 60}, false);
   moveLiftToPos(310, 80, 500);
   pros::delay(300);
   /***************CORNER**************/
-  chassis.moveToPoint(71.25 + (-20 * sin(deg2rad(temp_pos.theta))), 0 + (-20 * cos(deg2rad(temp_pos.theta))), 1500, {.forwards = false, .maxSpeed = speed1, .minSpeed=25,.earlyExitRange=2});
+  chassis.moveToPoint(-71.25 + (-20 * sin(deg2rad(temp_pos.theta))), 0 + (-20 * cos(deg2rad(temp_pos.theta))), 1500, {.forwards = false, .maxSpeed = speed1, .minSpeed=25,.earlyExitRange=2});
   chassis.moveToPoint(-48,-24,1500,{.forwards = false, .maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
   chassis.turnToHeading(180,1000,{.maxSpeed = speed,.minSpeed = 15, .earlyExitRange = 5});
   chassis.moveToPoint(-52,-55,1500,{.maxSpeed = speed1});
