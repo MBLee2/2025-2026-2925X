@@ -110,63 +110,63 @@ lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::N
 /*
 NOT SET UP YET
 */
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275_HALF, -3.50); // 2.00" wheel diameter, 1.00" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275_HALF, -3.750); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
     nullptr, //&vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
-    nullptr, //&horizontal_tracking_wheel,//SKILLS
+    &horizontal_tracking_wheel, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
     &imu // inertial sensor
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              3, // derivative gain (kD)
-                                              3, // anti windup
-                                              0.25, // small error range, in inches
-                                              50, // small error range timeout, in milliseconds
-                                              1, // large error range, in inches
-                                              300, // large error range timeout, in millisecond
-                                              0 // maximum acceleration (slew)
+lemlib::ControllerSettings lateral_controller(5, // proportional gain (kP)
+                                              0.15, // integral gain (kI)
+                                              16, // derivative gain (kD)
+                                              2, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in millisecond
+                                              60 // maximum acceleration (slew)
 );
 
 // turning PID
 lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              10, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (sle
+                                              17, // derivative gain (kD)
+                                              3, // anti windup
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              500, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 ); 
 
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller_with_goal(10, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              3, // derivative gain (kD)
-                                              3, // anti windup
-                                              0.25, // small error range, in inches
-                                              50, // small error range timeout, in milliseconds
-                                              1, // large error range, in inches
-                                              300, // large error range timeout, in millisecond
-                                              0 // maximum acceleration (slew)
+lemlib::ControllerSettings lateral_controller_with_goal(6, // proportional gain (kP)
+                                              0.25, // integral gain (kI)
+                                              15, // derivative gain (kD)
+                                              2.5, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in millisecond
+                                              60 // maximum acceleration (slew)
 );
 
 // turning PID
 lemlib::ControllerSettings angular_controller_with_goal(3, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              18.5, // derivative gain (kD)
+                                              20, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
-                                              2, // large error range, in inches
+                                              3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (sle
+                                              0 // maximum acceleration (slew)
 ); 
 
 

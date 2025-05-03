@@ -658,8 +658,8 @@ void turn(float degrees, int timeout) {
 // Lift
 void liftUpWallStake() {
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    moveLiftToPos(300,127,1200);
-    stopLiftCoast();
+    moveLiftToPos(210,127,1200);
+    stopLiftHold();
     printf("WALL STAKE");
 }
 
@@ -684,9 +684,9 @@ void liftPickup() {
     int time = 0;
     if(getLiftPosition() < 70 || !liftReset){
         time = moveToReset(100);
-        moveLiftToPos(40, 80, 1200 - time);
+        moveLiftToPos(60, 100, 1200 - time);
     } else {
-        moveLiftToPos(40, 100, 1200);
+        moveLiftToPos(60, 100, 1200);
     }
     stopLiftHold();
     LBPickup = true;

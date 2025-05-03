@@ -218,8 +218,6 @@ void taskFn_lift_control(void)
       togglePTO();
       toggle_counter = 0;
     }
-
-    // moveLiftToPosCancel(target, dir, time, 127, 1500);
     if(!autoLift){
       stopLift();
     }
