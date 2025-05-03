@@ -15,18 +15,15 @@ ASSET(matchloadturn4ball_txt);
 ASSET(touchbar_txt);
 
 // Auton routine start positions
-auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine",      nullptr                 };
-auton_routine near_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_near_driver_qual};
-auton_routine near_driver_qual2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushWP}; 
-auton_routine near_driver_elim { 1.000, -1.300, 190, "15S Auton - Near Driver # 2",&DescoreRushElim};  // to be updated
-auton_routine near_driver_elim2 { 1.000, -1.300, 190, "15S Auton - Near Driver # 2", &rushelim};  // to be updated
+auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine", nullptr};
+
+auton_routine safe_positive{0, 0, 0, "None - Invalid Routine", &positiveHalfWp};
+
+auton_routine positive_WP{0, 0, 0, "None - Invalid Routine", &possitiveFullWP};
 
 auton_routine safe_positive_stake{0, 0, 0, "None - Invalid Routine", &positiveWpStake};
 
-
-auton_routine far_from_driver_qual { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_far_driver_qual};
-auton_routine far_from_driver_elim { 1.234, -1.234,  90, "15S Auton - Near Driver # 1", &auton_15s_far_driver_elim};
-auton_routine far_from_driver_elim2  { -0.600, 0.600, 180, "extra_1", &safe_6_ball};
+auton_routine goal_rush_and_stake{0, 0, 0, "None - Invalid Routine", &goalRushWallStake};
 
 auton_routine safe_negative{0, 0, 0, "None - Invalid Routine", &negativeHalfWP}; //EVERYTHING DONE
 
@@ -37,6 +34,10 @@ auton_routine negetive_safe_wall_stake{0, 0, 0, "None - Invalid Routine",
 
 auton_routine safe_six_ring{0, 0, 0, "None - Invalid Routine", 
                                          &safeSixRing};
+
+auton_routine skills_1{-0000, 0.000, 00, "60S Auton - Skills # 1", &auton_60s_skills_1};
+                                         
+auton_routine solo_WP{-0.600, 0.600, 180, "extra_1", &soloWP};
 
 //FULLY DONE
 void auton_15s_near_driver_qual() //DONE

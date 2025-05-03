@@ -20,9 +20,11 @@ typedef struct s_auton_routine
 
 //change all of these
 extern auton_routine null_routine; 
-extern auton_routine near_driver_qual, near_driver_elim,near_driver_elim2, near_driver_qual2;
-extern auton_routine far_from_driver_qual, far_from_driver_elim, far_from_driver_elim2;
+
+extern auton_routine safe_positive, positive_WP, safe_positive_stake, goal_rush_and_stake;
+extern auton_routine safe_negative, negetive_6_ring, negetive_safe_wall_stake, safe_six_ring;
 extern auton_routine skills_1, skills_2;
+extern auton_routine solo_WP;
 
 // functions to render the menu and read inputs from it
 void auton_15s_near_driver_qual();
@@ -36,7 +38,10 @@ void auton_60s_skills_1();
 void soloWP();
 void auton_60s_skills_2();
 
+void positiveHalfWp();
+void possitiveFullWP();
 void positiveWpStake();
+void goalRushWallStake();
 void negativeHalfWP();
 void negSixRing();
 void negHalfWPWallStake();
