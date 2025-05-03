@@ -691,9 +691,9 @@ void liftPickup() {
     int time = 0;
     if(getLiftPosition() < 70 || !liftReset){
         time = moveToReset(100);
-        moveLiftToPos(60, 100, 1200 - time);
+        moveLiftToPos(36, 100, 1200 - time);
     } else {
-        moveLiftToPos(60, 100, 1200);
+        moveLiftToPos(40, 100, 1200);
     }
     stopLiftHold();
     LBPickup = true;

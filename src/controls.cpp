@@ -11,7 +11,7 @@
 #include "main.h"
 
 bool intakeMode = true; //Mason Rudra place where should be
-bool tankDrive = false;
+bool tankDrive = true;
 enum intake_state {
   INTAKE, // Intake objects
   OUTAKE, // Eject objects
@@ -170,63 +170,55 @@ void taskFn_lift_control(void)
     PICKUP, // Eject objects
     DOWN  // Stop the intake
   };
-  float target = 0;
-  int time = 0;
-  bool dir = true;
+
   autoLift = false;
   int toggle_counter = 0;
+  while(true){
 
-  ladybrown.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-  lift_state current_state1 = DOWN; // Initialize with a default state, STOP
-
-  while (true) // Infinite loop to keep checking controller input for intake
-  { 
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       spinLift(80);
       autoLift = false;
-      if(getLiftPosition() > 40){
-        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-      }
-      else if(getLiftPosition() < 40){
-        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-      }
     }
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       spinLift(-80);
       autoLift = false;
-      if(getLiftPosition() > 40){
-        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-      }
-      else if(getLiftPosition() < 40){
-        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-      }
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       stopIntake();
       current_state = STOP;
-      liftUpWallStake();
-      // target = 240, time = pros::millis();
-      // dir = getLiftPosition() < target;
-      // autoLift = true;
+      pros::Task ws_task(liftUpWallStake);
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      autoLift = false;
-      pros::delay(50);
-      pros::Task lift_task(liftPickup);
+      pros::Task load_task(liftPickup);
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-      printf("Lift %f\n",getLiftPosition());
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+      retractLeftSweeper();
+      moveLiftToPos(200, 127, 1000);
+      closePTO();
+      retractClimbBalance();
+      pros::delay(1500);
+      openPTO();
+
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && toggle_counter > 15) {
+      retractLeftSweeper();
+
+      togglePTO();
+      tankDrive = true;
+      toggle_counter = 0;
     }
+
+    /*if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+      printf("Lift %f\n",getLiftPosition());
+    }*/
     if(!autoLift)
     {
-
       stopLift();
     }
     // moveLiftToPosCancel(target, dir, time, 127, 1500);
     resetLiftPositionWithDistance();
     pros::delay(20);
-    toggle_counter++;
+    toggle_counter++; 
   }
 }
