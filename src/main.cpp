@@ -40,12 +40,13 @@ void initialize() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-	{
+{
+
+	pros::delay(10);
     pros::lcd::initialize(); // ONLY FOR TUNING PID	
     chassis.calibrate(); // ONLY FOR TUNING PID
-	
 	// weird bug in system; without the following delay, was getting a white screen
-	// on the brain rather than the display as expectedF
+	// on the brain rather than the display as expected
 	pros::delay(10); 
 	// Clear the Brain screen and show status
 	resetLiftPosition();
@@ -65,8 +66,10 @@ void initialize() {
 	vision_sensor.set_exposure(25);
 	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
 	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
+	pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -1379, -61, -720, -5533, -4699, -5116, 5.4, 0);
 	vision_sensor.set_signature(1, &RED_SIG);
 	vision_sensor.set_signature(2, &BLUE_SIG);
+	vision_sensor.set_signature(3, &GOAL_SIG);
 	vision_sensor.set_zero_point(pros::E_VISION_ZERO_CENTER);
 	
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
@@ -235,8 +238,11 @@ void autonomous() {
 		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: %s", default_routine);
 	}
 
+	setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();//*/
+	auton = false;
 
 	// Start the independent parallel tasks needed to support autonomous mode
 	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
@@ -260,8 +266,9 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+
 	odom_lift.extend();
-	stopSorting();
+	setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	

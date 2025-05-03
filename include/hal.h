@@ -16,8 +16,9 @@
 #define TURN_KI 0
 #define TURN_KD 0
 
-#define VISION_CENTER 18
+#define VISION_CENTER 0
 #define VISION_TURN_KP 0.8
+#define VISION_TURN_KD 2
 #define VISION_RANGE 20
 #define VISION_RANGE_TIMEOUT 250
 #define VISION_LAT_KP 1.2
@@ -34,6 +35,8 @@ extern int COLOR_SIG;
 
 extern bool auton, autoSkill;
 extern bool autoDrive, autoLift, autoIntake;
+
+float distBetweenPts(float x1, float y1, float x2, float y2);
 
 void stopAllMotors();
 
@@ -158,6 +161,7 @@ void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
 void setLiftEncoder(pros::motor_encoder_units_e mode);
+void setLiftZero(double pos);
 void resetLiftPosition();
 void resetLiftPositionWithDistance();
 void resetLiftWithDistTaskFunc();
@@ -203,13 +207,14 @@ pros::vision_object_s_t getRed();
 pros::vision_object_s_t getBlue();
 bool checkRing(pros::vision_object_s_t ring);
 void turnToRing(int timeout = 15000, float maxSpeed = 130, bool color = COLOR);
+void turnToGoal(int timeout = 15000, float maxSpeed = 130);
 void driveTowardsRing(int timeout = 15000, int maxSpeed = 130, bool color = COLOR);
 struct driveToRingParams {
     float maxSpeed = 130;
     float maxDist = 300;
     float xLimit = 80;
     float yLimit = 80;
-    bool driveThrough = true;
+    bool driveThrough = false;
     bool keepDriving = false;
     bool color = COLOR;
     bool useLeftLine = false;
@@ -217,7 +222,10 @@ struct driveToRingParams {
 };
 void driveToRing(int timeout = 15000, driveToRingParams params = {});
 void moveToPointWithVis(float x, float y, int timeout = 15000, driveToRingParams params = {}, int delay = 0);
+void turnToHeadingWithVis(float angle, int timeout = 15000, int range = 30, driveToRingParams prams = {},int delay = 0);
+void turnToHeadingWithVisGoal(float angle, int timeout = 15000, int range = 30, int speed = 130, int delay = 0);
 float calcDistance();
+float calcDistanceGoal();
 void driveFullVision(int timeout = 15000, int maxSpeed = 130);
 
 int getIntakeDist();
@@ -225,6 +233,7 @@ void saveOurRing(int timeout = 15000);
 void saveRing(int timeout = 15000);
 void saveOurRing1(int timeout = 15000);
 void saveRing1(int timeout = 15000);
+void saveRingDist(int timeout = 15000);
 void basketRings(bool withSave = true);
 void liftIntakeWallStake();
 void openRedirectAfterOurRing(int timeout = 1000);

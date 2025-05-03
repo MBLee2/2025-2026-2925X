@@ -21,9 +21,9 @@ typedef struct s_auton_routine
 //change all of these
 extern auton_routine null_routine; 
 
-extern auton_routine safe_positive, positive_WP, late_stake, goal_rush_and_stake;
+extern auton_routine safe_positive, positive_WP, late_stake, safe_positive_stake, goal_rush_and_stake;
 
-extern auton_routine safe_negative, negetive_6_ring, negetive_6_ring_wall_stake, safe_six_ring;
+extern auton_routine safe_negative, negetive_6_ring, negetive_safe_wall_stake, safe_six_ring;
 
 extern auton_routine skills_1, solo_WP ,skills_2;
 
@@ -31,12 +31,15 @@ extern auton_routine skills_1, solo_WP ,skills_2;
 
 /************ THESE ARE ALL THE AUTONS FOR WISCO SIG **********/
 void positiveHalfWp();
+void positiveWpStake();
+void positiveWpGoal();
+void positiveSmart();
 void possitiveFullWP();
 void lateStake();
 void goalRushWallStake();
 void negativeHalfWP();
 void negSixRing();
-void negSixRingWallStake();
+void negHalfWPWallStake();
 void safeSixRing();
 void auton_60s_skills_1();
 void soloWP();
