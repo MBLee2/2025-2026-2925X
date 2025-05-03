@@ -3,6 +3,7 @@
 #include "auton_menu.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
+#include "hal.h"
 #include <cmath>
 #include <cstdio>
 #include <sys/_intsup.h>
@@ -491,7 +492,7 @@ void bluePossitiveFullWP(){
   temp_pos = chassis.getPose();
   chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), 72 - fabs(distToWallB() * cos(deg2rad(temp_pos.theta))), temp_pos.theta);
   chassis.moveToPoint(48, 21.5,1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=0.5});
-  printPosition((char *) "Before WS", false, false);
+  printPositionV2((char *) "Before WS", false, false);
   pros::delay(50);
   chassis.turnToPoint(71, 0,1000,{.maxSpeed=speed-40});
   chassis.moveToPoint(61, 7,2000,{.maxSpeed=speed1-60});
@@ -568,7 +569,7 @@ void redPossitiveFullWP(){
   temp_pos = chassis.getPose();
   chassis.setPose(72 - fabs(distToWallR() * cos(deg2rad(temp_pos.theta))), - 72 + fabs(distToWallB() * cos(deg2rad(temp_pos.theta))), temp_pos.theta);
   chassis.moveToPoint(48, -21.5,1000,{.maxSpeed=speed1-50,.minSpeed=5,.earlyExitRange=0.5});
-  printPosition((char *) "Before WS", false, false);
+  printPositionV2((char *) "Before WS", false, false);
   pros::delay(50);
   chassis.turnToPoint(71, 0,1000,{.maxSpeed=speed-40});
   chassis.moveToPoint(61, -7,2000,{.maxSpeed=speed1-60});

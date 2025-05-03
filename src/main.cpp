@@ -130,11 +130,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-<<<<<<< HEAD
     //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
-=======
-    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
->>>>>>> 0cadb32d9d144259018948d949d645d24c33196e
 }
 
 /**
@@ -224,7 +220,7 @@ void autonomous() {
 	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
 
 	//HERE
-	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
+	auton_routine default_routine = null_routine; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
@@ -271,11 +267,8 @@ void autonomous() {
  */
 void opcontrol() {
 
-<<<<<<< HEAD
-=======
 	odom_lift.extend();
 	setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
->>>>>>> 0cadb32d9d144259018948d949d645d24c33196e
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	

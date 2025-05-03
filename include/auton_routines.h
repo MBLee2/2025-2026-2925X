@@ -36,5 +36,11 @@ void auton_60s_skills_1();
 void soloWP();
 void auton_60s_skills_2();
 
+void positiveWpStake();
+void negativeHalfWP();
+void negSixRing();
+void negHalfWPWallStake();
+void safeSixRing();
+
 /*****************************************************************************/
 #endif // _AUTON_ROUTINES_H_

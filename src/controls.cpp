@@ -115,11 +115,11 @@ void taskFn_intake_control(void){
     bool basket_state = false;
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     bool intake_lifted = false;
-    lift.set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES);
-    intake_color.set_led_pwm(100);
+    setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+    setIntakeColorLED(100);
     while (true) 
     {
-        double pos = lift.get_position();
+        double pos = getLiftPosition();
         int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         rightX = rightX/127;
         if (rightX > 0.85){intake_lifted = true;}
@@ -183,63 +183,56 @@ void taskFn_lift_control(void)
     PICKUP, // Eject objects
     DOWN  // Stop the intake
   };
-  float target = 0;
-  int time = 0;
-  bool dir = true;
+
   autoLift = false;
   int toggle_counter = 0;
+  while(true){
 
-            }
-            else if(hood_state == true)
-            {
-                hood_state = false;
-                hood1.set_value(false);
-                hood2.set_value(false);
-            }   
-        }
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
-            hook.move(127);
-            pros::delay(500);
-        }
-        
-        pros::delay(20);
+    while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      spinLift(80);
+      autoLift = false;
     }
     while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       spinLift(-80);
       autoLift = false;
-      if(getLiftPosition() > 40){
-        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-      }
-      else if(getLiftPosition() < 40){
-        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-      }
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       stopIntake();
       current_state = STOP;
-      liftUpWallStake();
-      // target = 240, time = pros::millis();
-      // dir = getLiftPosition() < target;
-      // autoLift = true;
+      pros::Task ws_task(liftUpWallStake);
     }
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      autoLift = false;
-      pros::delay(50);
-      pros::Task lift_task(liftPickup);
+      pros::Task load_task(liftPickup);
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
-      printf("Lift %f\n",getLiftPosition());
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+      retractLeftSweeper();
+      tankDrive = true;
+      moveLiftToPos(160, 127, 2000);
+      closePTO();
+      retractClimbBalance();
+      pros::delay(1500);
+      openPTO();
+
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && toggle_counter > 15) {
+      retractLeftSweeper();
+      tankDrive = true;
+      togglePTO();
+      toggle_counter = 0;
     }
+
+    /*if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
+      printf("Lift %f\n",getLiftPosition());
+    }*/
     if(!autoLift)
     {
-
       stopLift();
     }
     // moveLiftToPosCancel(target, dir, time, 127, 1500);
     resetLiftPositionWithDistance();
     pros::delay(20);
-    toggle_counter++;
+    toggle_counter++; 
   }
 }
+
