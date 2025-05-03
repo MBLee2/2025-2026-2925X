@@ -212,7 +212,7 @@ void autonomous() {
 	// Clear the Brain screen
 
 	//HERE
-	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

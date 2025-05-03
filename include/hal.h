@@ -36,6 +36,8 @@ extern int COLOR_SIG;
 extern bool auton, autoSkill;
 extern bool autoDrive, autoLift, autoIntake;
 
+float distBetweenPts(float x1, float y1, float x2, float y2);
+
 void stopAllMotors();
 
 void spinLFMotor(int speed);
@@ -224,6 +226,7 @@ void saveOurRing(int timeout = 15000);
 void saveRing(int timeout = 15000);
 void saveOurRing1(int timeout = 15000);
 void saveRing1(int timeout = 15000);
+void saveRingDist(int timeout = 15000);
 void basketRings(bool withSave = true);
 void liftIntakeWallStake();
 void openRedirectAfterOurRing(int timeout = 1000);

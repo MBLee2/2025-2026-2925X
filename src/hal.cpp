@@ -16,7 +16,7 @@
 #include <type_traits>
 
 
-bool COLOR = true; // true = red, false = blue
+bool COLOR = false; // true = red, false = blue
 int COLOR_SIG = (COLOR) ? 1 : 2;
 
 
@@ -718,11 +718,11 @@ void moveLiftToPos(float pos,int speed,int timeout){
         derivative = error - prevError;
 
         float motorPower = 1.2 * error + derivative;
+        motorPower += 30;
         if(motorPower > speed) motorPower = speed;
         else if(motorPower < -speed) motorPower = -speed;
 
-        motorPower += 30;
-        printf("Motor power: %f \n", motorPower);
+        //printf("Motor power: %f \n", motorPower);
         spinLift(motorPower);
 
         prevError = error;
@@ -1651,5 +1651,15 @@ void saveRing1(int timeout){
         }
         pros::delay(20);
         time += 20;
+    }
+}
+
+void saveRingDist(int timeout){
+    int time = 0;
+    while(time < timeout){
+        if(detectRingFront()){
+            stopIntake();
+            return;
+        }
     }
 }
