@@ -59,8 +59,7 @@ void initialize() {
 
 	setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 
-	setIntakeColorLED(10);
-    //setIntakeColor2LED(100);
+	setIntakeColorLED(75);
 	sort_color_queue();
 	autoIntake = false;
 
@@ -210,6 +209,15 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
+	float min_speed = 0;
+	float earlyrange = 0;
+	// chassis.setPose(0,0,0);
+	// closeClamp();
+	// pros::delay(200);
+	// chassis.moveToPoint(0, 48, 3000,{},false);
+	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
+	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
+	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
 
 	//HERE
 	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE

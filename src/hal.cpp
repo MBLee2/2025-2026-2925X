@@ -22,6 +22,7 @@ int COLOR_SIG = (COLOR) ? 1 : 2;
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false, LBPickup = false;
+bool liftReset = false; //Do not modify
 
 std::queue<bool> ringQueue;
 
@@ -191,20 +192,20 @@ void intakeAntiJamTaskFunc(){
 // Lift Movement
 void spinLift(int speed) {
     ladybrown.move(speed);
+    setLiftBrake((getLiftPosition() > 40) ? pros::E_MOTOR_BRAKE_HOLD : pros::E_MOTOR_BRAKE_COAST);
 }
 
 void stopLift(){
     ladybrown.brake();
 }
 
-void stopLiftCoast() {
+void stopLiftCoast(){
     setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-    ladybrown.brake();
+    stopLift();
 }
-
 void stopLiftHold() {
     setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-    ladybrown.brake();
+    stopLift();
 }
 
 
@@ -261,7 +262,20 @@ void dropIntake()
 {
     intake_lift.retract();
 }
-
+//PTO
+void closePTO() {
+    pto.extend();
+}
+void openPTO() {
+    pto.retract();
+}
+void togglePTO() {
+    pto.toggle();
+}
+//Climb balance
+void retractClimbBalance() {
+    climb_balance.extend();
+}
 
 //IMU
 void resetIMUHeading() {
@@ -462,6 +476,7 @@ void resetLiftPositionWithDistance(){
     if(getLBLimitSwitch())
     { 
         LBPickup = false;
+        liftReset = true;
         resetLiftPosition();
         //printf("Lift reset\n");
     }
@@ -649,17 +664,10 @@ void turn(float degrees, int timeout) {
 // Lift
 void liftUpWallStake() {
     ladybrown.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
-    pros::delay(50);
-    //moveLiftToPos(290,100);
-    int time = 0;
-    autoLift = true;
-
-    float error, prevError, derivative;
-    int counter = 0;
-    moveLiftToPos(300, 100, 1200);
-    pros::delay(100);
+    moveLiftToPos(210,127,1200);
+    stopLiftHold();
     printf("WALL STAKE");
-    stopLiftCoast();
+    stopLiftHold();
 }
 
 int moveToReset(float speed) {
@@ -675,21 +683,19 @@ int moveToReset(float speed) {
         time=+20;
     }
     resetLiftPositionWithDistance();
-    stopLiftHold();
+    stopLift();
     return time;
 }
 
 void liftPickup() {
     int time = 0;
-    autoLift = true;
-    if(getLiftPosition() < 70){
-        time = moveToReset(40);
-        moveLiftToPos(30, 40, 1200 - time);
+    if(getLiftPosition() < 70 || !liftReset){
+        time = moveToReset(100);
+        moveLiftToPos(60, 100, 1200 - time);
     } else {
-        moveLiftToPos(40, 100, 1200);
+        moveLiftToPos(60, 100, 1200);
     }
     stopLiftHold();
-    autoLift = false;
     LBPickup = true;
 }
 
@@ -698,7 +704,7 @@ void liftDown() {
 }
 
 void moveLiftToPos(float pos,int speed,int timeout){
-    
+
     autoLift = false;
     pros::delay(30);
 
@@ -713,23 +719,21 @@ void moveLiftToPos(float pos,int speed,int timeout){
     int counter = 0;
     while(counter < 150 && timeout > 0 && autoLift){
         error = pos - getLiftPosition();
-        //printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
+        printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
 
         derivative = error - prevError;
 
         float motorPower = 1.2 * error + derivative;
-        motorPower += 30;
+     
         if(motorPower > speed) motorPower = speed;
         else if(motorPower < -speed) motorPower = -speed;
-
-        //printf("Motor power: %f \n", motorPower);
         spinLift(motorPower);
 
         prevError = error;
         pros::delay(20);
         timeout -= 20;
 
-        if(fabs(pos - getLiftPosition()) < 1.5){
+        if(fabs(pos - getLiftPosition()) < 0.5){
             counter += 20;
         } else {
             counter = 0;
@@ -930,26 +934,30 @@ bool detectRingFront(){
     return distToObject() < 3.7;
 }
 
-int redLower = 345;
-int redUpper = 15;
+int redLower = 0;
+int redUpper = 20;
 
 int blueLower = 210;
-int blueUpper = 250;
+int blueUpper = 230;
 
 bool detectRing() {
     return getIntakeDist() < 30;
 }
 
 bool detectRing(int hue){
-    return (hue >= 310 || hue <= 345) || (hue >= 210 && hue <= 250);
+    return detectRed(hue) || detectBlue(hue);
 }
 
 bool detectRed(int hue){
-    return hue >= 340 || hue <= 10;
+    if(redUpper < redLower){
+        return hue >= redLower || hue <= redUpper;
+    } else {
+        return hue >= redLower && hue <= redUpper;
+    }
 }
 
 bool detectBlue(int hue){
-    return hue >= 200 && hue <= 250;
+    return hue >= blueLower && hue <= blueUpper;
 }
 
 bool detectOurColor(int hue){

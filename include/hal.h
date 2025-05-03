@@ -74,6 +74,7 @@ void intakeAntiJamTaskFunc();
 void spinLift(int speed);
 void stopLift();
 void stopLiftPID();
+void stopLiftCoast();
 void stopLiftHold();
 void setLiftBrake(pros::motor_brake_mode_e mode);
 
@@ -113,6 +114,12 @@ void toggleRedirect();
 void liftPneumaticUp();
 void liftPneumaticDown();
 bool getLiftPneumatic();
+
+void closePTO();
+void openPTO();
+void togglePTO();
+
+void retractClimbBalance();
 
 float distToWallF();
 float distToWallB();

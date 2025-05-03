@@ -38,6 +38,7 @@
 extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
+extern lemlib::Chassis chassisWithGoal;
 extern pros::Motor lf; 
 extern pros::Motor lm;
 extern pros::Motor lb;
@@ -59,6 +60,8 @@ extern pros::MotorGroup ladybrown;
 //pistons
 extern pros::adi::Pneumatics mogo_clamp;
 extern pros::adi::Pneumatics left_sweeper;
+extern pros::adi::Pneumatics pto;
+extern pros::adi::Pneumatics climb_balance;
 extern pros::adi::Pneumatics right_sweeper;
 extern pros::adi::Pneumatics intake_lift;
 extern pros::adi::Pneumatics odom_lift;
