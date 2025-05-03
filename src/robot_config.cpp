@@ -136,6 +136,30 @@ lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
 // turning PID
 lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
                                               0, // integral gain (kI)
+                                              10, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (sle
+); 
+
+// forward/backward PID
+lemlib::ControllerSettings lateral_controller_with_goal(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              3, // anti windup
+                                              0.25, // small error range, in inches
+                                              50, // small error range timeout, in milliseconds
+                                              1, // large error range, in inches
+                                              300, // large error range timeout, in millisecond
+                                              0 // maximum acceleration (slew)
+);
+
+// turning PID
+lemlib::ControllerSettings angular_controller_with_goal(3, // proportional gain (kP)
+                                              0, // integral gain (kI)
                                               18.5, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
@@ -166,6 +190,15 @@ lemlib::Chassis chassis(drivetrain,
                         &throttle_curve, 
                         &steer_curve
 );
+
+lemlib::Chassis chassisWithGoal(drivetrain,
+                        lateral_controller_with_goal,
+                        angular_controller_with_goal,
+                        sensors,
+                        &throttle_curve, 
+                        &steer_curve
+);
+
     // define the auton menu buttons
     std::vector <dashboard_motor_display> dashboard_motor_display_items = 
     {

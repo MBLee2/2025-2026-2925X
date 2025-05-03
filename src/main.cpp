@@ -127,7 +127,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -150,6 +150,7 @@ void disabled() {
  */
 void competition_initialize() {
 	chassis.setPose(0,0,0);
+	chassis.setPose(0,0,0);
     /**
  * Runs after initialize(), and before autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
@@ -161,7 +162,7 @@ void competition_initialize() {
  */
 {
 	//HERE
-	printf("%s(): Entered\n", __func__);
+	/*printf("%s(): Entered\n", __func__);
 
 	// weird bug in system; without the following delay, was getting a white screen
 	// on the brain rather than the display as expected
@@ -208,29 +209,10 @@ void autonomous() {
 	// Clear the Brain screen
 	float min_speed = 0;
 	float earlyrange = 0;
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 60, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 0, 7000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(36, 36, 2000,{.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 36, 2000,{.forwards=false,.minSpeed=min_speed,.earlyExitRange=earlyrange},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.turnToHeading(0, 2000,{.minSpeed=12,.earlyExitRange=2},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
-	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
-	// printf("Pos: X: %f, Y: %f, Theta: %f \n",chassis.getPose().x,chassis.getPose().y,chassis.getPose().theta);
-
+	chassis.turnToHeading(90, 10000);
 
 	//HERE
-	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
+	/*auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

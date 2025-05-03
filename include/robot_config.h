@@ -38,6 +38,7 @@
 extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
+extern lemlib::Chassis chassisWithGoal;
 extern pros::Motor lf; 
 extern pros::Motor lm;
 extern pros::Motor lb;
