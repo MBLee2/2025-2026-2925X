@@ -5,8 +5,11 @@
 #include "dashboard.h"
 #include "lemlib/api.hpp"
 #include "controls.h"
+#include "pros/device.hpp"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
+#include "hal.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -15,16 +18,18 @@
  * to keep execution time for this mode under a few seconds.
  */
 int counter = 0;
-// void screen() {
-//     // loop forever
-//     while (true) {
-//         lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
-//         pros::lcd::print(0, "x: %f", pose.x); // print the x position
-//         pros::lcd::print(1, "y: %f", pose.y); // print the y position
-//         pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
-//         pros::delay(10);
-//     }
-// }
+
+
+void screen() {
+    // loop forever
+    while (true) {
+        lemlib::Pose pose = chassis.getPose(); // get the current position of the robot
+        pros::lcd::print(0, "x: %f", pose.x); // print the x position
+        pros::lcd::print(1, "y: %f", pose.y); // print the y position
+        pros::lcd::print(2, "heading: %f", pose.theta); // print the heading
+        pros::delay(10);
+    }
+}
 
 auton_routine selected_auton_routine = null_routine;
 void initialize() {
@@ -35,15 +40,38 @@ void initialize() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-	{
+{
+
+	pros::delay(10);
     pros::lcd::initialize(); // ONLY FOR TUNING PID	
     chassis.calibrate(); // ONLY FOR TUNING PID
-	
 	// weird bug in system; without the following delay, was getting a white screen
-	// on the brain rather than the display as expectedF
+	// on the brain rather than the display as expected
 	pros::delay(10); 
-	
 	// Clear the Brain screen and show status
+	resetLiftPosition();
+
+	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
+	setDriveEncoder(pros::E_MOTOR_ENCODER_ROTATIONS);
+
+    setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
+
+	setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+
+	setIntakeColorLED(75);
+	sort_color_queue();
+	autoIntake = false;
+
+	vision_sensor.set_exposure(25);
+	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
+	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
+	pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -1379, -61, -720, -5533, -4699, -5116, 5.4, 0);
+	vision_sensor.set_signature(1, &RED_SIG);
+	vision_sensor.set_signature(2, &BLUE_SIG);
+	vision_sensor.set_signature(3, &GOAL_SIG);
+	vision_sensor.set_zero_point(pros::E_VISION_ZERO_CENTER);
+	
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
@@ -102,7 +130,11 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
+<<<<<<< HEAD
     //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+=======
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+>>>>>>> 0cadb32d9d144259018948d949d645d24c33196e
 }
 
 /**
@@ -124,6 +156,7 @@ void disabled() {
  * starts.
  */
 void competition_initialize() {
+	chassis.setPose(0,0,0);
     /**
  * Runs after initialize(), and before autonomous when connected to the Field
  * Management System or the VEX Competition Switch. This is intended for
@@ -140,6 +173,8 @@ void competition_initialize() {
 	// weird bug in system; without the following delay, was getting a white screen
 	// on the brain rather than the display as expected
 	pros::delay(10); 
+    master.clear();
+	auton_color_setter();
 
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();
@@ -177,35 +212,46 @@ ASSET(rush6ball_txt);
 ASSET(test_txt);
 
 void autonomous() {
-   printf("%s(): Entered\n", __func__);
+	// Clear the Brain screen
+	float min_speed = 0;
+	float earlyrange = 0;
+	// chassis.setPose(0,0,0);
+	// closeClamp();
+	// pros::delay(200);
+	// chassis.moveToPoint(0, 48, 3000,{},false);
+	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
+	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
+	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
 
 	//HERE
-	// Clear the Brain screen
+	auton_routine default_routine = safe_positive; //DEFAULT ROUTINE
+
+	auton = true;
+   	printf("%s(): Entered\n", __func__);
 	pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
     pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running autonomous()");
-
+	
 	// ensure that an auton routine has been slected
 	if (selected_auton_routine.routine_func == nullptr)
 	{
+		selected_auton_routine = default_routine;
 		pros::screen::set_pen(pros::c::COLOR_RED);
-		while (true)
-		{
-	    	pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected!!");
-			pros::delay(250);
-		}	
+		pros::screen::print(pros::E_TEXT_LARGE, 3, "No Auton routine selected");
+		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: %s", default_routine);
 	}
+
+	setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
 
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();//*/
+	auton = false;
 
 	// Start the independent parallel tasks needed to support autonomous mode
 	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
 	//pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
 	
-	
-		
 	printf("%s(): Exiting\n", __func__);
 
 }
@@ -224,28 +270,19 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	/*int shooting_time = 30000;	
-	int volts = 9500;
-	int funny_volts = 120000;
-   	chassis.setPose(-48,56.8388347648,45);
-   	chassis.moveToPoint(-58,41,1000,false);
-   	chassis.turnTo(-58,0,800,false);
-   	chassis.moveToPoint(-58,20,600,false);
-   	chassis.moveToPoint(-58,48,1000);
-   	chassis.turnTo(60,15,700);
-	//chassis.moveToPoint(-62,44,600);
-	chassis.moveToPoint(-63,48,450,false,60,false);
-	chassis.waitUntilDone();
-	cata_motors.move_voltage(volts);//*/
 
+<<<<<<< HEAD
+=======
+	odom_lift.extend();
+	setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+>>>>>>> 0cadb32d9d144259018948d949d645d24c33196e
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-    pros::Task lift_task(taskFn_lift_control,"lift-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
-	pros::Task hood(taskFn_hood_control,"intake_push_task");
-    
-    while (true) {
-    }
+	pros::Task lift_control(taskFn_lift_control,"lift-task");
+
+    // SKILLS ONLY
+	//auton_60s_skills_1();
 }

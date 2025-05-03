@@ -34,8 +34,6 @@
  */
 #define PROS_USE_LITERALS
 
-#include "api.h"
-
 /**
  * You should add more #includes here
  */
@@ -61,6 +59,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 void autonomous(void);
 void initialize(void);
 void disabled(void);

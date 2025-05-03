@@ -3,7 +3,7 @@
 #include "auton_routines.h"
 #include "robot_config.h"
 #include "lemlib/api.hpp"
-
+#include "hal.h"
 
 // TODO: Figure out why it gives a segmentation fault if this declaration is moved from here to "robot_config.cpp"
 // Short term fix is to have this declaration in "robot_config.cpp" instead of here!! See "robot_config.cpp"
@@ -19,7 +19,6 @@ std::vector <dashboard_motor_display> dashboard_motor_display_items =
     dashboard_motor_display {305, 135, "Lft-1", right_lift_mtr},
     dashboard_motor_display {305, 190, "Lft-2", left_lift_mtr}
 }; //*/
-
 
 void draw_dashboard_motor_display(dashboard_motor_display d) 
 /**
@@ -219,12 +218,11 @@ void taskFn_dashboard_display(void)
 */
 {
     printf("%s(): Started\n", __func__);
-
     while (true) 
     {
         // Render the dashboard screen
         render_dashboard();  
-       
+        master.print(0, 0,"Auton color: %s" , selectedColor);
         // once every 200 milliseconds (1 time every 5 seconds) is enough for this task 
         // which just refreshes the dashboard display
         pros::delay(5000);

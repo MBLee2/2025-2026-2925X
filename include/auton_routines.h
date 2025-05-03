@@ -33,5 +33,8 @@ void auton_15s_far_driver_qual();
 void auton_15s_far_driver_elim();
 void safe_6_ball();
 void auton_60s_skills_1();
+void soloWP();
 void auton_60s_skills_2();
+
+/*****************************************************************************/
 #endif // _AUTON_ROUTINES_H_

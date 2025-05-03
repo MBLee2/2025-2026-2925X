@@ -1,113 +1,106 @@
 #include "controls.h"
+#include "auton_basics.h"
+#include "lemlib/api.hpp"
+#include "lemlib/timer.hpp"
 #include "pros/device.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
-#include "lemlib/api.hpp"
-#include "lemlib/timer.hpp"
+#include "hal.h"
+#include "main.h"
 
-#define TURN_CONST 1.4
-//Drivebase control
-void taskFn_drivebase_control(void){
-    printf("%s(): Entered \n", __func__);
-    bool drive_state = true; // true for normal, false for reversed
-    while (true) 
-    {
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X))
-        {
-            drive_state = !drive_state;  // Toggle direction
-            pros::delay(300);  // Add a small delay to avoid rapid toggling
-        }
+bool intakeMode = true; //Mason Rudra place where should be
+bool tankDrive = false;
+enum intake_state {
+  INTAKE, // Intake objects
+  OUTAKE, // Eject objects
+  STOP  // Stop the intake
+};
+intake_state current_state = STOP;
+bool LBPickup1 = false;
+#define TURN_CONST                                                             \
+  1.4 // Constant multipled by X input to allow for instant turns during driver
 
-        int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-        int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        
-        
-        // If the drive direction is reversed, negate the joystick inputs
-        if (!drive_state) {
-            leftY = -leftY;
-        }
+// Drivebase control
+void taskFn_drivebase_control(void) {
+  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
+  bool drive_state = true;    // true for normal, false for reversed drive direction
+  int leftX, leftY, turnVelleft, rightY;
+  while (true) // Infinite loop to keep checking controller input and drive base
+               // state
+  {
+    // Get  horizontal and vertical joystick input for movement and turning
+    int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    // Multiply the turning input to prioritize turning over forward movement,
+    // enabling agile motion
 
-        int turnVelleft = TURN_CONST*leftX;
+    // Control the left and right motors based on the calculated values
+    if(!tankDrive){
+      int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+      turnVelleft = TURN_CONST * leftX;
+      drive(leftY + turnVelleft, leftY - turnVelleft);
+    } else {
+      int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+      drive(leftY, rightY);
+    }
 
-        left_side_motors.move(leftY + turnVelleft);
-		right_side_motors.move(leftY - turnVelleft);
+    /*if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+      drive_state = !drive_state; // Toggle drive direction when the X button is pressed
+      pros::delay(300); // Add a small delay to avoid rapid toggling of direction
+    // If the drive direction is reversed, negate the joystick input for
+    // forward/backward movement
+    if (!drive_state) {
+      leftY = -leftY;
+    }
+    }*/
 
-        //chassis.arcade(leftY, leftX);
+    if(leftY + turnVelleft == 0) {
+      autoDrive = false;
+    }
 
-        pros::delay(20);
-    } // end of while loop
-
-    printf("%s(): Exiting \n", __func__);
-    
+    pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
+  }                  // end of while loop
+  printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_drivebase_control
 
-//Lift control
-void taskFn_lift_control(void){
-    printf("%s(): Entered \n", __func__);
-    while (true) 
-    {
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-        {
-            lift.move(127);  
-        }   
-        while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-        {
-            lift.move(-127); 
-            while (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-            {
-                lift.move(127);  
-            }     
-        } 
-        lift.move(0);
+// Mogo Control
+void taskFn_mogo_control(void) {
+  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
+  bool mogo_state = false; // Track the state of the mogo clamp (false = open, true = closed)
+  bool sweeper_out = false; // Track the state of the sweeper (false = retracted, true = extended)
+  bool sixth_ring_state = false;
 
-        pros::delay(20);
+  while (true) // Infinite loop to keep checking controller input for mogo control
+  {
+    // When the L1 button is pressed, toggle the mogo clamp state
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+      toggleClamp();
     }
-    printf("%s(): Exiting \n", __func__);
-} // end of taskFn_lift_control
 
-//Mogo Control
-void taskFn_mogo_control(void){
-    printf("%s(): Entered \n", __func__);
-    bool mogo_state = false;
-    bool sweeper_out = false;
-    while (true) 
-    {
-        int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        rightY = rightY/127;
-        if (rightY > 0.85){sweeper_out = true;}
-        if (rightY < -0.85){sweeper_out = false;}
-
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
-        {
-            if (mogo_state == false)
-            {
-                mogo_state = true;
-                mogo_clamp.set_value(true);
-
-            }
-            else if(mogo_state == true)
-            {
-                mogo_state = false;  
-                mogo_clamp.set_value(false);  
-            }   
-        }
-
-        if(sweeper_out == true)
-        {
-            mogo_rush.set_value(true); //extended
-        }
-
-        if(sweeper_out == false)
-        {
-            mogo_rush.set_value(false); //retracted
-        }
-
-       pros::delay(20); 
+    // Get the input from the right joystick and normalize the input to a range
+    // of -1 to 1
+    if(!tankDrive){
+      int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
+      int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
+      // (retracted)
+      if (rightY < -0.85) {
+        retractRightSweeper();
+        retractLeftSweeper();
+      }
+      if (rightX > 0.85) { 
+        extendRightSweeper();
+        retractLeftSweeper();
+      }
+      if (rightX < -0.85) {
+        extendLeftSweeper();
+        retractRightSweeper();
+      }
     }
-    
-    printf("%s(): Exiting \n", __func__);
+
+    pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
+  }
+  printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_mogo_control
 
 //Intake control
@@ -139,96 +132,62 @@ void taskFn_intake_control(void){
                 intake.move(127);
                 current_state = INTAKE;
 
-            }
-            else if(current_state == INTAKE)
-            {
-                intake.move(0);
-                current_state = STOP;
-            }   
-        }
-        
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) 
-        {
-            if (basket_state == true)
-            {
-                basket_state = false;
-                hood1.set_value(false);
-                hood2.set_value(false);
-            }
-            else if(basket_state == false)
-            {
-                basket_state = true;
-                hood1.set_value(true);
-                hood2.set_value(true);
-            }   
-        }
-        if(pos < -100)
-        {
-            hood1.set_value(false);
-            hood2.set_value(false);
-        }
-        else if (basket_state == true) {
-            hood1.set_value(true);
-            hood2.set_value(true);
-        }
-
-        master.print(0, 0, "hue: %f", intake_color.get_hue());
-        int hue = intake_color.get_hue();
-        if(basket_state == true)
-        {
-            if(hue >= 7 && hue <= 17 || hue >= 210 && hue<= 220)
-            {
-                pros::delay(225);
-                hook.move(-100);
-                pros::delay(500);
-                hook.move(127);
-            }
-        }
-
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) 
-        {
-            if (current_state == INTAKE || current_state == STOP)
-            {
-                intake.move(-127);
-                current_state = OUTAKE;
-
-            }
-            else if(current_state == OUTAKE)
-            {
-                intake.move(0);
-                current_state = STOP;
-            }   
-        }
-
-        if(intake_lifted == true)
-        {
-            intake_lift.set_value(true); //extended
-        }
-
-        if(intake_lifted == false)
-        {
-            intake_lift.set_value(false); //retracted
-        }
+      } 
+      else if (current_state == INTAKE) // If intake is running, stop it
+      {
+        //autoIntake = false;
+        current_state = STOP;
+        stopIntake();
+        stopSorting();
+      }
     }
-    printf("%s(): Exiting \n", __func__);
+    // Eject objects with the B button
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      if ((current_state == INTAKE || current_state == STOP)) // If intake is running or stopped, start ejecting
+      {
+        //autoIntake = false;
+        spinIntake(-127);
+        stopSorting();
+        current_state = OUTAKE;
+
+      } 
+      else if (current_state == OUTAKE) // If intake is ejecting, stop it
+      {
+        //autoIntake = false;
+        current_state = STOP;
+        stopIntake();
+      }
+    }
+    
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+      if (autoIntake == false && current_state != OUTAKE)
+      {
+        startSorting();
+      }
+      else if (autoIntake == true) // If intake is ejecting, stop it
+      {
+        stopSorting();
+      }
+    }
+    pros::delay(20);
+  }
+  printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_intake_control
 
-//Intake control
-void taskFn_hood_control(void){
-    /*sudo code   
-    if color sensor sees wrong color 
-    //*/
-    bool hood_state = false;
-    printf("%s(): Entered \n", __func__);
-    while (true) 
-    {
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) 
-        {
-            if (hood_state == false)
-            {
-                hood_state = true;
-                hood1.set_value(true);
-                hood2.set_value(true);
+void taskFn_lift_control(void)
+{
+  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
+  // Define an enum to represent the intake's possible states
+  enum lift_state {
+    WALLSTAKE, // Intake objects
+    PICKUP, // Eject objects
+    DOWN  // Stop the intake
+  };
+  float target = 0;
+  int time = 0;
+  bool dir = true;
+  autoLift = false;
+  int toggle_counter = 0;
 
             }
             else if(hood_state == true)
@@ -245,6 +204,42 @@ void taskFn_hood_control(void){
         
         pros::delay(20);
     }
-    
-    printf("%s(): Exiting \n", __func__);
-} // end of taskFn_auto_intake_push_control
+    while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+      spinLift(-80);
+      autoLift = false;
+      if(getLiftPosition() > 40){
+        setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+      }
+      else if(getLiftPosition() < 40){
+        setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+      }
+    }
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      stopIntake();
+      current_state = STOP;
+      liftUpWallStake();
+      // target = 240, time = pros::millis();
+      // dir = getLiftPosition() < target;
+      // autoLift = true;
+    }
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      autoLift = false;
+      pros::delay(50);
+      pros::Task lift_task(liftPickup);
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+      printf("Lift %f\n",getLiftPosition());
+    }
+    if(!autoLift)
+    {
+
+      stopLift();
+    }
+    // moveLiftToPosCancel(target, dir, time, 127, 1500);
+    resetLiftPositionWithDistance();
+    pros::delay(20);
+    toggle_counter++;
+  }
+}

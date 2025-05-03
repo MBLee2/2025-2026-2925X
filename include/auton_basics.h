@@ -36,6 +36,21 @@ typedef enum e_rotation_direction {
     E_ROTATE_EITHER
 } rotation_direction;
 
+void setBasket(bool set);
+//void basketRings(bool withSave = true);
+int basketRingsAsTask();
+int basketRingsAsTaskNS();
+int saveRingsAsTask();
+int basketRingsAsTask15();
+void saveSecondRing(int timeout = 15000);
+
+
+const double LEFT_DIFFERENCE = 11.1125;
+const double RIGHT_DIFFERENCE = 11.1125;
+double findHeading(int side, double roundedHeading);
+double findDistToWall(int side);
+void moveUntilDist(double targetDist, float speed);
+
 // functions to move between the Cartesian Coordinate System (used in trignometry) 
 // and the Compass Coordinates used in navigation by the GPS sensor system
 double cartesian2compass (double cartesian_angle); // cartesian to compass coordinates, both in dergees

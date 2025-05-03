@@ -3,9 +3,12 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
+#include "pros/adi.hpp"
+#include "pros/distance.hpp"
 #include "pros/gps.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
+#include "pros/rotation.hpp"
 
 #define PI 3.14159265
 // useful conversions
@@ -17,9 +20,11 @@
 #define rad2deg(radians)  (radians * 180/PI)   // radians to degress
 
 // drivebase attributes
-#define DRIVEBASE_WHEEL_DIAMETER     3.25 // inches
-#define DRIVEBASE_GEAR_SIZE_ON_MOTOR 36.0   // 36 tooth gear
-#define DRIVEBASE_GEAR_SIZE_ON_WHEEL 60.0   // 60 tooth gear
+#define DRIVEBASE_WHEEL_DIAMETER     lemlib::Omniwheel::NEW_275 // inches
+#define DRIVEBASE_GEAR_SIZE_ON_MOTOR 24.0   // 36 tooth gear
+#define DRIVEBASE_GEAR_SIZE_ON_WHEEL 24.0   // 60 tooth gear
+#define DRIVEBASE_GEAR_RATIO         1
+#define LIFT_GEAR_RATIO              1/6.
 #define DRIVEBASE_X_AXIS_ACCEPTED_ERROR 20 //deadzone for x axis
 // drivebase dimensions
 #define DRIVEBASE_LEFT_OFFSET_IN   6.25    // inches (distance between left   drivetrain and center of rotation)
@@ -33,6 +38,7 @@
 extern pros::Controller master;
 //chassis
 extern lemlib::Chassis chassis;
+extern lemlib::Chassis chassisWithGoal;
 extern pros::Motor lf; 
 extern pros::Motor lm;
 extern pros::Motor lb;
@@ -43,22 +49,48 @@ extern pros::MotorGroup left_side_motors;              // Left drivetrain of dri
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
 
 //Motors
-extern pros::MotorGroup intake;
-extern pros::Motor flex;
-extern pros::Motor hook;
-extern pros::Motor lift;
+extern pros::Motor intake;
+
+extern pros::Motor ladybrownL;
+extern pros::Motor ladybrownR;
+extern pros::MotorGroup ladybrown;
+
+//extern pros::Motor lift;
 
 //pistons
-extern pros::adi::Pneumatics hood1;
 extern pros::adi::Pneumatics mogo_clamp;
-extern pros::adi::Pneumatics hood2;
+extern pros::adi::Pneumatics left_sweeper;
+extern pros::adi::Pneumatics pto;
+extern pros::adi::Pneumatics climb_balance;
+extern pros::adi::Pneumatics right_sweeper;
 extern pros::adi::Pneumatics intake_lift;
-extern pros::adi::Pneumatics mogo_rush;
-extern pros::adi::Pneumatics climb;
+extern pros::adi::Pneumatics odom_lift;
+
 
 //Sensors
+//extern pros::Optical intake_color;
 extern pros::Optical intake_color;
+extern pros::Distance intake_dist;
+extern pros::Optical intake_color2;
+extern pros::Distance LB_dist;
+
+extern pros::Distance distance_rb;
+extern pros::Distance distance_rf;
+extern pros::Distance distance_lb;
+extern pros::Distance distance_lf;
+extern pros::Distance distance_bl;
+extern pros::Distance distance_br;
+extern pros::Distance distance_proxi;
+extern pros::Distance distance_front;
+extern pros::Distance distance_left;
+extern pros::Distance distance_back;
+extern pros::Distance distance_right;
 extern pros::GPS gps;
 extern pros::IMU imu;
+extern pros::adi::Button LB_limit;
+extern pros::Rotation lift_rotation;
+extern pros::Vision vision_sensor;
+extern pros::adi::AnalogIn lineRight;
+extern pros::adi::AnalogIn lineLeft;
 
 #endif //_ROBOT_CONFIG_H_   

@@ -1,39 +1,50 @@
 #include "auton_basics.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "hal.h"
+#include "pros/colors.h"
+#include "pros/misc.h"
+#include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "controls.h"
 #include "lemlib/api.hpp"
+#include <stdio.h>
+#include <string.h>
 
 AutonColor selectedColor = AutonColor::RED; //Set default color of auton    
 
 // define the auton menu buttons
 using pros::c::COLOR_WHITE;
+using pros::c::COLOR_RED;
+using pros::c::COLOR_BLUE;
 
 std::vector<auton_menu_button> button_list = {
     auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
                       near_driver_qual},
     auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      near_driver_qual2},
+                       pros::c::COLOR_WHITE_SMOKE, "PosWP", pros::E_TEXT_MEDIUM},
+                      positive_WP},
     auton_menu_button{{245, 50, 345, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      near_driver_elim},
+                       pros::c::COLOR_WHITE_SMOKE, "PosStake", pros::E_TEXT_MEDIUM},
+                      safe_positive_stake},
     auton_menu_button{{360, 50, 460, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      near_driver_elim2},
-    auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      far_from_driver_qual},
+                       pros::c::COLOR_WHITE_SMOKE, "Rush+Stake", pros::E_TEXT_MEDIUM},
+                       goal_rush_and_stake},
+     auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "NegSafe", pros::E_TEXT_MEDIUM},
+                      safe_negative},
     auton_menu_button{{130, 115, 230, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      far_from_driver_elim},
+                       pros::c::COLOR_WHITE_SMOKE, "Neg6", pros::E_TEXT_MEDIUM},
+                      negetive_6_ring},
     auton_menu_button{{245, 115, 345, 165, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      far_from_driver_elim2},
+                       pros::c::COLOR_WHITE_SMOKE, "NegStake", pros::E_TEXT_MEDIUM},
+                      negetive_safe_wall_stake},
+    auton_menu_button{{360, 115, 460, 165, pros::c::COLOR_DIM_GRAY,
+                       pros::c::COLOR_WHITE_SMOKE, "Safe6Ring", pros::E_TEXT_MEDIUM},
+                       safe_six_ring},
     auton_menu_button{{15, 180, 230, 230, pros::c::COLOR_BEIGE,
-                       pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
+                       pros::c::COLOR_WHITE_SMOKE, "Skills", pros::E_TEXT_MEDIUM},
                       skills_1},
     auton_menu_button{{245, 180, 460, 230, pros::c::COLOR_BEIGE,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
@@ -47,10 +58,34 @@ void draw_rectangle_patch(rectangle_patch p)
 */
 {
     // draw a rectanglular outline representing the button in WHITE
-    pros::screen::set_pen(pros::c::COLOR_WHITE);
-    pros::screen::draw_rect(p.x1, p.y1, p.x2, p.y2);
+    if(COLOR == true)
+    {
+        pros::screen::set_pen(COLOR_RED);
+        pros::screen::draw_rect(p.x1, p.y1, p.x2, p.y2);
+    }
+    else if (COLOR == false)
+    {
+        pros::screen::set_pen(COLOR_BLUE);
+        pros::screen::draw_rect(p.x1, p.y1, p.x2, p.y2);
+    }
+    
     // draw a filled rectangle representing the button
-    pros::screen::set_pen(p.fill_color);
+    if(p.fill_color == pros::c::COLOR_BEIGE)
+    {
+        if(COLOR == true)
+        {
+            pros::screen::set_pen(COLOR_RED);
+        }
+        else if (COLOR == false) {
+            pros::screen::set_pen(COLOR_BLUE);
+        }
+    }
+
+    else
+    {
+        pros::screen::set_pen(p.fill_color);
+    }
+
     pros::screen::fill_rect(p.x1+1, p.y1+1, p.x2-1, p.y2-1);
     
     // assuming each character is 8 pixel wide, truncate the button name
@@ -76,7 +111,7 @@ void highlight_rectangle_patch(rectangle_patch p)
 */
 {
     // draw a rectangle representing the button
-    pros::screen::set_pen(pros::c::COLOR_CRIMSON);
+    pros::screen::set_pen(pros::c::COLOR_GHOST_WHITE);
     pros::screen::fill_rect(p.x1, p.y1, p.x2, p.y2);
     pros::delay(400);
 
@@ -98,7 +133,9 @@ void draw_auton_menu_screen()
 
     // draw the outer container box
     pros::screen::set_pen(COLOR_WHITE);
-    pros::screen::draw_rect(1, 1, 479, 239); 
+    pros::screen::draw_rect(1, 1, 479, 239);
+
+ 
 
     // Put the title box at the top
     pros::screen::set_pen(COLOR_WHITE);
@@ -114,6 +151,37 @@ void draw_auton_menu_screen()
 
 } // end draw_auton_menu_screen()
 
+void draw_color_selector()
+/**
+ * @brief Render the screen for the auton menu screen
+ * @param None
+ * @return void
+*/
+{
+    // printf("%s(): Entered \n", __func__);
+
+    // clear the screen      
+    pros::screen::set_eraser(pros::c::COLOR_BLACK);
+    pros::screen::erase();
+
+    // draw the outer container box
+    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::draw_rect(1, 1, 479, 239);
+
+
+    // Put the title box at the top
+    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::print(pros::E_TEXT_LARGE, 150, 10, "Auton Menu");
+
+    // draw all the rectangle_patch representing the auton menu buttons
+    for (int i=0; i<color_list.size(); i++) 
+    {
+        draw_rectangle_patch(color_list[i].button);
+    }
+
+    // printf("%s(): Exiting\n", __func__);
+
+} // end draw_auton_menu_screen()
 
 auton_routine select_auton_routine()
 /**
@@ -130,6 +198,7 @@ auton_routine select_auton_routine()
     auton_routine selected_routine;
 
     bool selection_made = false;
+
     while(selection_made == false) 
     {
         // Render the auton menu screen
@@ -160,7 +229,7 @@ auton_routine select_auton_routine()
                     pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
                     pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
                         button_list[i].button.text.data());
-                    master.print(0, 0, "Auton: %s", button_list[i].button.text.data());
+                    master.print(1, 0, "Auton: %s", button_list[i].button.text.data());
                     pros::delay(1000);
                     break; // selection made, end the for() loop
                 }
@@ -177,3 +246,55 @@ auton_routine select_auton_routine()
 
 } // end select_auton_routine()
 
+void auton_color_setter()
+{
+    bool selection_made = false;
+
+    while(selection_made == false) 
+    {  
+        draw_color_selector();
+        // check if the screen was touched (pressed)
+
+        pros::screen_touch_status_s_t touch_status = pros::screen::touch_status();
+        if (touch_status.touch_status == pros::E_TOUCH_PRESSED) 
+        {
+            // printf("%s(): Screen Pressed at (%d, %d) \n", __func__, touch_status.x, touch_status.y);
+            
+            // check if any of the buttons in the menu were pressed
+            for (int i=0; i<color_list.size(); i++) 
+            {
+                if (touch_status.x > color_list[i].button.x1 && touch_status.x < color_list[i].button.x2 &&
+                    touch_status.y > color_list[i].button.y1 && touch_status.y < color_list[i].button.y2) 
+                {
+                    highlight_rectangle_patch(color_list[i].button);
+                    if (strcmp(color_list[i].button.text.data(), "RED") == 0)
+                    {
+                        COLOR = true;
+                    }
+                    else if (strcmp(color_list[i].button.text.data(), "BLUE") == 0)
+                    {
+                        COLOR = false;
+                    }
+                    selection_made = true;
+
+                    printf("%s(): Selected: [%s] \n", __func__, color_list[i].button.text.data());
+
+                    // clear the screen      
+                    pros::screen::set_eraser(pros::c::COLOR_BLACK);
+                    pros::screen::erase();
+                    // Print the selection as a confirmation
+                    pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
+                    pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
+                        color_list[i].button.text.data());
+                    master.print(0, 0, "Color: %s", color_list[i].button.text.data());
+                    pros::delay(1000);
+                    break; // selection made, end the for() loop
+                }
+            } // end for()
+        }
+
+        // A 250 millisecond (4 times a second) should be enough refresh rate to get user inputs
+        pros::delay(250);
+
+    } // end while(true)
+}
