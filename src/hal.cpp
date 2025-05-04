@@ -16,7 +16,7 @@
 #include <type_traits>
 
 
-bool COLOR = false; // true = red, false = blue
+bool COLOR = true; // true = red, false = blue
 int COLOR_SIG = (COLOR) ? 1 : 2;
 
 
@@ -681,8 +681,10 @@ int moveToReset(float speed) {
         spinLift(-speed);
         pros::delay(20);
         time=+20;
+        //printf("Reseting\n");
     }
     resetLiftPositionWithDistance();
+    printf("Reset lift\n");
     stopLift();
     return time;
 }
@@ -717,7 +719,7 @@ void moveLiftToPos(float pos,int speed,int timeout){
     autoLift = true;
     float error, prevError, derivative;
     int counter = 0;
-    while(counter < 150 && timeout > 0 && autoLift){
+    while(counter < 100 && timeout > 0 && autoLift){
         error = pos - getLiftPosition();
         printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
 
@@ -733,7 +735,7 @@ void moveLiftToPos(float pos,int speed,int timeout){
         pros::delay(20);
         timeout -= 20;
 
-        if(fabs(pos - getLiftPosition()) < 0.5){
+        if(fabs(pos - getLiftPosition()) < 1){
             counter += 20;
         } else {
             counter = 0;
@@ -1216,7 +1218,7 @@ void turnToRing(int timeout, float maxSpeed, bool color){
             drive(motorPower, -motorPower);
             prevError = error;
 
-            printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord, error, motorPower);
+            printf("(%d, %d)   \t Error: %d, motorPower: %f\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord, error, motorPower);
             
 
             if(abs(error) < VISION_RANGE) {
@@ -1466,8 +1468,9 @@ void turnToHeadingWithVis(float angle, int timeout,int range, driveToRingParams 
     chassis.turnToHeading(angle, timeout, {.maxSpeed = (int)params.maxSpeed});
     int temp = pros::millis();
 	while((!checkRing(getMostRelevantObject(params.color)) 
-           || pros::millis() - temp < delay) && chassis.isInMotion() 
-           || abs(int(chassis.getPose().y - angle)) > range){
+           || pros::millis() - temp < delay
+           || abs(int(chassis.getPose().y - angle)) > range) 
+            && chassis.isInMotion() ){
             pros::delay(20);
             temp += 20;
 	}

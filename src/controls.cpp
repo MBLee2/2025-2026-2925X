@@ -11,7 +11,7 @@
 #include "main.h"
 
 bool intakeMode = true; //Mason Rudra place where should be
-bool tankDrive = true;
+bool tankDrive = false;
 enum intake_state {
   INTAKE, // Intake objects
   OUTAKE, // Eject objects

@@ -20,15 +20,15 @@
 #define VISION_TURN_KP 0.8
 #define VISION_TURN_KD 2
 #define VISION_RANGE 20
-#define VISION_RANGE_TIMEOUT 250
+#define VISION_RANGE_TIMEOUT 150
 #define VISION_LAT_KP 1.2
 
 #define F_DISTANCE_OFFSET 6.25
 
-#define B_DISTANCE_OFFSET 2.5
+#define B_DISTANCE_OFFSET 2
 #define L_DISTANCE_OFFSET 6
 #define R_DISTANCE_OFSET 6
-#define PROXI_OFFSET 1.5
+#define PROXI_OFFSET 2.75
 
 extern bool COLOR;
 extern int COLOR_SIG;
@@ -64,7 +64,7 @@ void stopDrive();
 void stopDriveHold();
 void setDriveBrake(pros::motor_brake_mode_e mode);
 
-void spinIntake(int speed);
+void spinIntake(int speed = 127);
 void stopIntake();
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);

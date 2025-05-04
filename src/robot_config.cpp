@@ -54,11 +54,11 @@ pros::adi::Pneumatics odom_lift('e', false);
 pros::IMU imu(16); //DONE
 
 pros::Distance LB_dist(21);
-pros::Distance distance_proxi(2);
+pros::Distance distance_proxi(20);
 
 //Color Sort
-pros::Optical intake_color(14); //DONE
-pros::Distance intake_dist(12); //DONE
+pros::Optical intake_color(3); //DONE
+pros::Distance intake_dist(8); //DONE
 
 
 

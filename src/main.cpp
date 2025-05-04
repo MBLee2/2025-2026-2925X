@@ -220,7 +220,7 @@ void autonomous() {
 	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
 
 	//HERE
-	auton_routine default_routine = safe_positive_stake; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_negative; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
