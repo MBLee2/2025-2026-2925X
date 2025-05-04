@@ -1348,16 +1348,12 @@ void driveToRing(int timeout, driveToRingParams params) {
 
         pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
 
-        if(params.driveThrough){
-            if(!params.keepDriving || !checkRing(nearestRing)){
-                if(detectOurColor(getIntakeColor())) { 
+        if(!params.keepDriving || !checkRing(nearestRing)){
+            if(params.driveThrough && detectRingFront()
+                || detectOurColor(getIntakeColor())){
                     printf("Stop by intake");
-                    break; 
-                }
+                    break;
             }
-        } else if(detectRingFront()) { 
-            printf("Stop by intake");
-            break; 
         }
 
         lemlib::Pose currentPose = chassis.getPose();

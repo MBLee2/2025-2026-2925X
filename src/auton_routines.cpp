@@ -949,28 +949,25 @@ void redNegativeHalfWP(){//PATH DONE
   chassisWithGoal.turnToHeading(300, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1}, false);
   pros::delay(50);
   retractLeftSweeper();
-  chassisWithGoal.moveToPose(-46.5,-2.25, -55, 1500,{.maxSpeed = speed1, .minSpeed=30}, false);
+  chassisWithGoal.moveToPose(-46.5,-2.75, -55, 1500,{.maxSpeed = speed1, .minSpeed=30}, false);
   printPosition((char *) "Approach Ring1");
-  chassisWithGoal.moveToPoint(-59,-3,1500,{.maxSpeed = speed1 - 40 ,.minSpeed = 10, .earlyExitRange = 1}, false);
+  chassisWithGoal.moveToPoint(-59,-3.5,1500,{.maxSpeed = 114,.minSpeed = 10, .earlyExitRange = 1}, false);
   printPosition((char *) "Approach Ring2");
   pros::delay(500); 
-  chassisWithGoal.moveToPoint(-62,-7,1500,{.maxSpeed = speed1 - 40 ,.minSpeed = 15, .earlyExitRange = 1}, false);
+  chassisWithGoal.moveToPoint(-62,-7,1500,{.maxSpeed = 114,.minSpeed = 15, .earlyExitRange = 1}, false);
   chassisWithGoal.turnToPoint(-60, -48, 1500, {.maxSpeed = speed, .minSpeed = 10, .earlyExitRange = 2});
   /////////////////THIRD RING/////////////
   chassisWithGoal.moveToPose(-55, -18, 135, 1500, {.maxSpeed = speed1, .minSpeed = 15, .earlyExitRange = 2});
-  chassisWithGoal.swingToHeading(90, lemlib::DriveSide::LEFT, 1500, {.maxSpeed = speed1, .minSpeed = 15, .earlyExitRange = 2}, false);
-  moveToPointWithVis(-24, -24, 1500, {.maxSpeed = speed1, .xLimit = 24, .driveThrough = true, .keepDriving = true});
+  chassisWithGoal.swingToHeading(87, lemlib::DriveSide::LEFT, 1500, {.maxSpeed = speed1, .minSpeed = 15, .earlyExitRange = 2}, false);
+  moveToPointWithVis(-24, -24, 1500, {.maxSpeed = speed1, .xLimit = -24, .driveThrough = false, .keepDriving = true});
   /***************TOUCH LADDER**************/
   chassisWithGoal.turnToPoint(0,0,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=1});
   chassisWithGoal.moveToPoint(-15,-14,2000,{.maxSpeed=speed1,.minSpeed= 45,.earlyExitRange=1}, false);
 
   master.clear_line(0);
-  master.print(0, 0, "Time: %d", (pros::millis()-time));
-
-  pros::delay(14900 - (pros::millis() - time));
-  stopIntake();
-
+  int temp = pros::millis();
   while(true){
+    master.print(0, 0, "Time: %d", (temp-time));
     pros::delay(20);
   }
 
