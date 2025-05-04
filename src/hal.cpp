@@ -1433,7 +1433,7 @@ void driveToRing(int timeout, driveToRingParams params) {
         printf("Stop by timeout");
     }
 
-    stopDriveHold();
+    stopDrive();
     printf("\n");
 }
 

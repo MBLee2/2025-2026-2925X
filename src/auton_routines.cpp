@@ -1066,47 +1066,91 @@ void redNegHalfWPWallStake() {//PATH DONE
   COLOR = true;
   stopSorting();
   lemlib::Pose temp_pos = chassis.getPose();
-  chassis.setPose(-15.5,-58,135);
+  chassis.setPose(-16.2,-57.3,130);
   pros::Task intake_anti_jam(intakeAntiJamTaskFunc);
-  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);
-  /***************A-WALL STAKE**************/
-  chassis.moveToPoint(-11.5, -60, 500,{.maxSpeed=speed1});
+  pros::Task reset_lift_pos(resetLiftWithDistTaskFunc);  
+  chassis.moveToPoint(-12, -60, 1000,{.maxSpeed=speed1,.minSpeed=15,.earlyExitRange=1});
   chassis.waitUntil(5);
-  //moveLiftToPos(800, 127, 750);
-  moveLiftToPos(550, 127, 750);
+  moveLiftToPos(660, 127, 800);
   temp_pos = chassis.getPose();
-  chassis.moveToPoint(temp_pos.x+(-7 * sin(deg2rad(temp_pos.theta))),  temp_pos.y+(-7 * cos(deg2rad(temp_pos.theta))) , 700,{.forwards = false, .maxSpeed=speed1,.minSpeed=25,.earlyExitRange=2},false);
-  /***************GOAL GRAB**************/
-  chassis.moveToPoint(-38, -48, 1000,{.forwards=false,.maxSpeed=speed1,.minSpeed=5,.earlyExitRange=1});
-  chassis.turnToPoint(-24, -24,1000,{.forwards=false,.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
-  pros::Task lift2 ([=] {moveToReset();});    
-  chassis.moveToPoint(-24, -24,2000,{.forwards=false,.maxSpeed =speed1,.minSpeed=25,.earlyExitRange=2});
-  chassis.waitUntil(27);
+  chassis.moveToPoint(-20, -52, 1500,{.forwards = false, .maxSpeed = 127,.minSpeed=5,.earlyExitRange=3});
+  chassis.turnToHeading(93, 1000,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 2});
+  moveToReset(127);
+  pros::Task pressure([=] {
+    while(autoLift){
+      spinLift(-30);
+    }
+  });
+  chassis.moveToPoint(-15, -52, 1500,{.maxSpeed = 127,.minSpeed = 30,.earlyExitRange=1},false);
+  extendLeftSweeper();
+  pros::delay(200);
+  /////////////GOAL GRAB/////////////
+  chassis.turnToPoint(-24,-24,1500,{.forwards=false,.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
+  spinIntake(127);
+  startSorting();
+  chassis.moveToPoint(-22 + (-1 * sin(deg2rad(temp_pos.theta))),-24 + (-1 * cos(deg2rad(temp_pos.theta))),1500,{.forwards=false,.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1}, false);
   closeClamp();
   chassis.cancelAllMotions();
   pros::delay(280);
   spinIntake(127);
   startSorting();
-  /***************MIDLINE RINGS**************/
-  chassisWithGoal.turnToHeading(310, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1});
-  chassisWithGoal.moveToPoint(-38,-7,1000,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
-  chassisWithGoal.turnToHeading(270,700,{.maxSpeed = speed,.minSpeed = 15, .earlyExitRange = 5});
-  chassisWithGoal.moveToPoint(-54,-5,1200,{.maxSpeed = speed1 - 40 ,.minSpeed = 10, .earlyExitRange = 1});
-  /***************THIRD RING**************/
-  chassisWithGoal.moveToPoint(-28,-24,1500,{.forwards=false,.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
-  chassisWithGoal.turnToPoint(-48,-24,1500,{.maxSpeed = speed,.minSpeed = 5, .earlyExitRange = 1});
-  chassisWithGoal.moveToPoint(-50,-24,1500,{.maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
+  ///////////////MIDLINE RINGS////////////
+  chassisWithGoal.turnToHeading(300, 1000,{.maxSpeed=speed,.minSpeed=5,.earlyExitRange=1}, false);
+  pros::delay(50);
+  retractLeftSweeper();
+  chassisWithGoal.moveToPose(-46.5,-3.25, -55, 1500,{.maxSpeed = speed1, .minSpeed=30}, false);
+  printPosition((char *) "Approach Ring1");
+  chassisWithGoal.moveToPoint(-59,-4,1500,{.maxSpeed = 120,.minSpeed = 10, .earlyExitRange = 1}, false);
+  printPosition((char *) "Approach Ring2");
+  pros::delay(500); 
+  chassisWithGoal.moveToPoint(-62,-7,1500,{.maxSpeed = 120,.minSpeed = 15, .earlyExitRange = 1}, false);
+  chassisWithGoal.turnToPoint(-60, -48, 1500, {.maxSpeed = speed, .minSpeed = 10, .earlyExitRange = 2});
+  /////////////////THIRD RING/////////////
+  chassisWithGoal.moveToPose(-55, -18, 135, 1500, {.maxSpeed = speed1, .minSpeed = 15, .earlyExitRange = 2});
   liftPickup();
-  chassisWithGoal.waitUntil(100);
-  pros::delay(200);
+  chassisWithGoal.swingToHeading(87, lemlib::DriveSide::LEFT, 1500, {.maxSpeed = speed1, .minSpeed = 15, .earlyExitRange = 2}, false);
   //Add Distance reset
-  chassisWithGoal.moveToPoint(-41.2, -24, 1500, {.forwards = false, .maxSpeed = speed1});
-  chassisWithGoal.turnToPoint(-71.25, 0, 1500, {.maxSpeed = speed}, false);
-  temp_pos = chassisWithGoal.getPose();
-  //liftUpWallStake();
-  chassisWithGoal.moveToPoint(-71.25 + (-11.75 * sin(deg2rad(temp_pos.theta))), 0 + (-11.75 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 60}, false);
+  chassisWithGoal.moveToPoint(-41.2, -24, 1500, {.maxSpeed = speed1});
+  chassisWithGoal.turnToPoint(-73.25, 1, 1500, {.maxSpeed = speed});
+  stopIntake();
   moveLiftToPos(310, 80, 500);
-  pros::delay(300);
+  chassisWithGoal.waitUntil(1000);
+  temp_pos = chassisWithGoal.getPose();
+  chassisWithGoal.moveToPoint(-73.25 + (-7.5 * sin(deg2rad(temp_pos.theta))), 1 + (-7.5 * cos(deg2rad(temp_pos.theta))), 1500, {.maxSpeed = 60}, false);
+  moveLiftToPos(385, 80, 500);
+  spinIntake();
+  temp_pos = chassisWithGoal.getPose();
+  pros::Task pressure1([=] {
+    while(autoLift){
+      spinLift(90);
+      driveStraight(70);
+    }
+  });
+  drive(127, -127);
+  pros::delay(100);
+  drive(-127, 127);
+  pros::delay(100);
+  stopDrive();
+  autoLift = false;
+  pros::delay(50);
+  driveStraight(-127);
+  spinLift(127);
+  pros::delay(500);
+  stopDrive();
+  chassisWithGoal.turnToHeading(90, 1500, {.maxSpeed = speed, .minSpeed = 15, .earlyExitRange = 2});
+  pros::Task pressure2([=] {
+    moveToReset();
+    while(autoLift){
+      spinLift(-30);
+    }
+  });
+  chassis.waitUntil(1000);
+
+  moveToPointWithVis(-36, -24, 1500, {.maxSpeed = speed1, .xLimit = -24});
+  chassisWithGoal.turnToPoint(0,0,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=1});
+  //chassisWithGoal.moveToPoint(-18,-17,2000,{.maxSpeed=speed1,.minSpeed= 45,.earlyExitRange=1}, false);
+
+  return;
   /***************CORNER**************/
   chassisWithGoal.moveToPoint(-71.25 + (-20 * sin(deg2rad(temp_pos.theta))), 0 + (-20 * cos(deg2rad(temp_pos.theta))), 1500, {.forwards = false, .maxSpeed = speed1, .minSpeed=25,.earlyExitRange=2});
   chassisWithGoal.moveToPoint(-48,-24,1500,{.forwards = false, .maxSpeed = speed1,.minSpeed = 5, .earlyExitRange = 1});
