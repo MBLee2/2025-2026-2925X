@@ -11,7 +11,7 @@
 #include "main.h"
 
 bool intakeMode = true; //Mason Rudra place where should be
-bool tankDrive = false;
+bool tankDrive;
 enum intake_state {
   INTAKE, // Intake objects
   OUTAKE, // Eject objects
@@ -171,7 +171,6 @@ void taskFn_lift_control(void)
     DOWN  // Stop the intake
   };
 
-  autoLift = false;
   int toggle_counter = 0;
   while(true){
 
@@ -197,15 +196,14 @@ void taskFn_lift_control(void)
       retractLeftSweeper();
       moveLiftToPos(200, 127, 1000);
       closePTO();
-      retractClimbBalance();
-      pros::delay(1500);
+      pros::delay(1000);
       openPTO();
-
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && toggle_counter > 15) {
+      toggle_counter = 0;
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && toggle_counter > 10) {
       retractLeftSweeper();
-
       togglePTO();
-      tankDrive = true;
+      retractClimbBalance();
+      tankDrive = !tankDrive;
       toggle_counter = 0;
     }
 
@@ -217,6 +215,7 @@ void taskFn_lift_control(void)
       stopLift();
     }
     // moveLiftToPosCancel(target, dir, time, 127, 1500);
+    //printf("Tank drive state: %d\n", tankDrive);
     resetLiftPositionWithDistance();
     pros::delay(20);
     toggle_counter++; 

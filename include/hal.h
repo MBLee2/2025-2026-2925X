@@ -115,6 +115,7 @@ void liftPneumaticUp();
 void liftPneumaticDown();
 bool getLiftPneumatic();
 
+bool getPTO();
 void closePTO();
 void openPTO();
 void togglePTO();
@@ -200,6 +201,8 @@ void startSorting();
 void stopSorting();
 void clearRingQueue();
 void basicColorSort();
+void waitForExitRed();
+void waitForExitBlue();
 
 pros::vision_object_s_t getOurColorObject();
 pros::vision_object_s_t getMostRelevantObject(bool color = COLOR);
@@ -216,6 +219,7 @@ struct driveToRingParams {
     float yLimit = 80;
     bool driveThrough = false;
     bool keepDriving = false;
+    int expectedRings = 0;
     bool color = COLOR;
     bool useLeftLine = false;
     bool useRightLine = false;

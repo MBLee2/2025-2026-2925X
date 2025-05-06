@@ -263,6 +263,9 @@ void dropIntake()
     intake_lift.retract();
 }
 //PTO
+bool getPTO() {
+    pto.is_extended();
+}
 void closePTO() {
     pto.extend();
 }
@@ -374,6 +377,7 @@ void swap_objects(pros::vision_object_s_t obj_arr[], int a, int b){
 }
 
 pros::vision_object_s_t getMostRelevantObject(bool color) {
+
     pros::vision_object_s_t object_arr[5];
     int availableObjects = vision_sensor.read_by_sig(0, (color) ? 1 : 2, 5, object_arr);
 
@@ -1052,20 +1056,20 @@ void checkQueue() {
 }
 
 void waitForExitRed(){
-    int hue = get2ndIntakeColor();
+    int hue = getIntakeColor();
 
     while(detectRed(hue)){
         pros::delay(20);
-        hue = get2ndIntakeColor();
+        hue = getIntakeColor();
     }
 }
 
 void waitForExitBlue(){
-    int hue = get2ndIntakeColor();
+    int hue = getIntakeColor();
 
     while(detectBlue(hue)){
         pros::delay(20);
-        hue = get2ndIntakeColor();
+        hue = getIntakeColor();
     }
 }
 
@@ -1329,7 +1333,7 @@ float distBetweenPts(float x1, float y1, float x2, float y2){
  *  @param xLimit X coordinate that cannot be crossed
  *  @param yLimit Y coordinate that cannot be crossed
  *  @param driveThrough use color sensor to stop (as opposed to distance)
- *  @param keepDriving continue seeking all available rings (if driveThrough is false, this is ignored)
+ *  @param keepDriving continue seeking all available rings
  *  @param color which color to seek
  *  @param useLeftLine use left line tracker to avoid crossing line (not done)
  *  @param useRightLine use right line tracker to avoid crossing line (not done)
@@ -1340,6 +1344,7 @@ void driveToRing(int timeout, driveToRingParams params) {
     float motorPower = params.maxSpeed, turnPower, ringPower;
     float distTravelled, drive_error = params.maxDist, derivative, prevError;
     float leftSpeed, rightSpeed;
+    int vision_error, prev_vision;
     lemlib::Pose initialPose = chassis.getPose();
     bool startLessX = initialPose.x < params.xLimit, startLessY = initialPose.y < params.yLimit;
 
@@ -1349,10 +1354,15 @@ void driveToRing(int timeout, driveToRingParams params) {
         pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
 
         if(!params.keepDriving || !checkRing(nearestRing)){
-            if(params.driveThrough && detectRingFront()
-                || detectOurColor(getIntakeColor())){
+            if(!params.driveThrough){
+                if(detectRingFront()){
                     printf("Stop by intake");
                     break;
+                }
+            } else if ((params.color && detectRed(getIntakeColor()))
+                        || (!params.color && detectBlue(getIntakeColor()))) {
+                printf("Stop by intake");
+                break;
             }
         }
 
@@ -1378,26 +1388,29 @@ void driveToRing(int timeout, driveToRingParams params) {
 
         if(checkRing(nearestRing)){
             if(timeout % 90 == 0){
-                //printf("(%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
+                printf("Ring: (%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
             }
-            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
+            vision_error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            turnPower = VISION_TURN_KP * vision_error;
+            turnPower = (VISION_TURN_KP * vision_error) + (VISION_TURN_KD * prev_vision);
 
             if(nearestRing.y_middle_coord < 0 && !params.keepDriving){
                 int error = 106 + nearestRing.y_middle_coord;
-                ringPower = VISION_LAT_KP * error;
+                ringPower = (VISION_LAT_KP * error);
                 if(ringPower < motorPower){
                     motorPower = ringPower;
                 }
             }
+
+            prev_vision = vision_error;
         }
         if(timeout % 20 == 0){
-            printf("(%f, %f)\t", currentPose.x, currentPose.y);
+            printf("Robot: (%f, %f)\t", currentPose.x, currentPose.y);
             printf("DistToMax: %f\t", drive_error);
         }
 
-        if(params.useLeftLine && params.useRightLine && detectLeftLine() && detectRightLine()){
+        //LINE TRACKERS (Might be able to use coordinates instead)
+        /*if(params.useLeftLine && params.useRightLine && detectLeftLine() && detectRightLine()){
             driveStraight(-motorPower);
             break;
         } else if(params.useRightLine && detectRightLine()){
@@ -1414,7 +1427,7 @@ void driveToRing(int timeout, driveToRingParams params) {
             } else {
                 turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
             }
-        }
+        }*/
 
         leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
 
@@ -1433,6 +1446,7 @@ void driveToRing(int timeout, driveToRingParams params) {
         printf("Stop by timeout");
     }
 
+    autoDrive = false;
     stopDrive();
     printf("\n");
 }
@@ -1441,9 +1455,10 @@ void driveToRing(int timeout, driveToRingParams params) {
  *  maxDist counts distance beyond distance to the original point
  */
 void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params, int delay){
+    autoDrive = true;
     chassis.moveToPoint(x, y, timeout, {.maxSpeed = params.maxSpeed});
 	int temp = pros::millis();
-	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
+	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion() && autoDrive){
 		pros::delay(20);
 	}
     lemlib::Pose currentPose = chassis.getPose();
@@ -1598,16 +1613,14 @@ void saveRing(int timeout){
         {
             return;
         }
-        int hue = get2ndIntakeColor();
+        int hue = getIntakeColor();
         if(detectOurColor(hue))
         {
-            pros::delay(100);
             stopIntake();
             return;
         }
         if(detectTheirColor(hue))
         {
-            pros::delay(100);
             stopIntake();
             return;
         }

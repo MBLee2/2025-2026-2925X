@@ -41,7 +41,7 @@ pros::MotorGroup ladybrown({6, -12}, pros::v5::MotorGears::green);
 //Pistons NOT DONE
 pros::adi::Pneumatics mogo_clamp('h', false);
 pros::adi::Pneumatics left_sweeper('c', false);
-pros::adi::Pneumatics pto('g', true);
+pros::adi::Pneumatics pto('g', false);
 pros::adi::Pneumatics climb_balance('d', false);
 
 pros::adi::Pneumatics right_sweeper('a', false);
@@ -90,9 +90,9 @@ pros::adi::AnalogIn lineLeft({21, 'b'});
 lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
-    12, // track width
-    lemlib::Omniwheel::NEW_275,// wheel diameter
-    600, // wheel rpm
+    11.5, // track width
+    lemlib::Omniwheel::NEW_325,// wheel diameter
+    450, // wheel rpm
 	8 //chase Power
 );
 // left tracking wheel encoder

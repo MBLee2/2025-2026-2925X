@@ -63,10 +63,18 @@ void initialize() {
 	sort_color_queue();
 	autoIntake = false;
 
-	vision_sensor.set_exposure(25);
-	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
-	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
-	pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -1379, -61, -720, -5533, -4699, -5116, 5.4, 0);
+	// LAB SIGNATURES
+	// vision_sensor.set_exposure(25);
+	// pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
+	//pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
+	// pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -1379, -61, -720, -5533, -4699, -5116, 5.4, 0);
+
+	//WORLDS SIGNATURES
+	vision_sensor.set_exposure(55);
+	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1, 6953, 8307, 7630, -1521, -665, -1093, 7.9, 0);
+	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3661, -2163, -2912, 4781, 6995, 5888, 3.8, 0);
+	pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -2421, -1649, -2035, -6023, -5093, -5558, 3.2, 0);
+
 	vision_sensor.set_signature(1, &RED_SIG);
 	vision_sensor.set_signature(2, &BLUE_SIG);
 	vision_sensor.set_signature(3, &GOAL_SIG);
@@ -209,18 +217,9 @@ ASSET(test_txt);
 
 void autonomous() {
 	// Clear the Brain screen
-	float min_speed = 0;
-	float earlyrange = 0;
-	// chassis.setPose(0,0,0);
-	// closeClamp();
-	// pros::delay(200);
-	// chassis.moveToPoint(0, 48, 3000,{},false);
-	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
-	// chassis.moveToPoint(0, 0, 3000,{.forwards=false},false);
-	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
 
 	//HERE
-	auton_routine default_routine = negetive_safe_wall_stake; //DEFAULT ROUTINE
+	auton_routine default_routine = positive_WP; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
