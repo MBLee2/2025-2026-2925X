@@ -69,10 +69,16 @@ void initialize() {
 	//pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3613, -3049, -3331, 5937, 7001, 6469, 4.2, 0);
 	// pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -1379, -61, -720, -5533, -4699, -5116, 5.4, 0);
 
+	// HOUSE SIGNATURES
+	// vision_sensor.set_exposure(55);
+	// pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1, 6953, 8307, 7630, -1521, -665, -1093, 7.9, 0);
+	// pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3661, -2163, -2912, 4781, 6995, 5888, 3.8, 0);
+	// pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -2421, -1649, -2035, -6023, -5093, -5558, 3.2, 0);
+
 	//WORLDS SIGNATURES
-	vision_sensor.set_exposure(55);
-	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1, 6953, 8307, 7630, -1521, -665, -1093, 7.9, 0);
-	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3661, -2163, -2912, 4781, 6995, 5888, 3.8, 0);
+	vision_sensor.set_exposure(29);
+	pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1, 9547, 10549, 10048, -1033, -427, -730, 6.9, 0);
+	pros::vision_signature_s_t BLUE_SIG = pros::Vision::signature_from_utility(2, -3125, -2125, -2625, 4281, 6113, 5197, 3.5, 0);
 	pros::vision_signature_s_t GOAL_SIG = pros::Vision::signature_from_utility(3, -2421, -1649, -2035, -6023, -5093, -5558, 3.2, 0);
 
 	vision_sensor.set_signature(1, &RED_SIG);
@@ -138,7 +144,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**

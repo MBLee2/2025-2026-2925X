@@ -616,6 +616,7 @@ void redPosSmart() {
 }
 
 void positiveSmart(){
+
   if(COLOR){
     redPosSmart();
   } else {
