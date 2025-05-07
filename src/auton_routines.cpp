@@ -1020,8 +1020,8 @@ void redNegativeHalfWP(){//PATH DONE
   printPositionV2((char *) "sweeper", false, false, time);
   moveToPointWithVis(-24, -24, 1500, {.maxSpeed = speed1, .xLimit = -24, .yLimit = -28, .driveThrough = false, .keepDriving = true});
   /***************TOUCH LADDER**************/
-  chassisWithGoal.turnToPoint(0,0,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=1});
-  chassisWithGoal.moveToPoint(-17,-17,2000,{.maxSpeed=speed1}, false);
+  chassisWithGoal.turnToPoint(0,12,1000,{.maxSpeed=speed,.minSpeed=15,.earlyExitRange=1});
+  chassisWithGoal.moveToPoint(-12,-13,2000,{.maxSpeed=speed1}, false);
 
   master.clear_line(0);
   int temp = pros::millis();
