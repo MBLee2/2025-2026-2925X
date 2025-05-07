@@ -144,7 +144,7 @@ void initialize() {
 	pros::screen::erase();
 
     } // end initialize()
-    //pros::Task screenTask(screen); // create a task to print the position to the screen HERE
+    pros::Task screenTask(screen); // create a task to print the position to the screen HERE
 }
 
 /**
@@ -225,7 +225,7 @@ void autonomous() {
 	// Clear the Brain screen
 
 	//HERE
-	auton_routine default_routine = negetive_6_ring; //DEFAULT ROUTINE
+	auton_routine default_routine = skills_1; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
@@ -271,10 +271,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-
-	odom_lift.extend();
-	setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
     pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
