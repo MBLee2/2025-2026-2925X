@@ -28,7 +28,7 @@ std::vector<auton_menu_button> button_list = {
                        pros::c::COLOR_WHITE_SMOKE, "PosStake", pros::E_TEXT_MEDIUM},
                       safe_positive_stake},
     auton_menu_button{{360, 50, 460, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "DelayPos", pros::E_TEXT_MEDIUM},
+                       pros::c::COLOR_WHITE_SMOKE, "GoalRush", pros::E_TEXT_MEDIUM},
                        goal_rush_and_stake},
      auton_menu_button{{15, 115, 115, 165, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "NegSafe", pros::E_TEXT_MEDIUM},

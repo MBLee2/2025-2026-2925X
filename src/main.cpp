@@ -225,7 +225,7 @@ void autonomous() {
 	// Clear the Brain screen
 
 	//HERE
-	auton_routine default_routine = negetive_safe_wall_stake; //DEFAULT ROUTINE
+	auton_routine default_routine = safe_positive_stake; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);
