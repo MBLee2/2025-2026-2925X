@@ -168,7 +168,7 @@ void intakeAntiJam() {
     if(intake.get_actual_velocity() < 5)
     {
         spinIntake(-127);
-        pros::delay(100);
+        pros::delay(130);
         spinIntake(127);
     }
 }
@@ -699,7 +699,7 @@ void liftPickup() {
         time = moveToReset(100);
         moveLiftToPos(36, 100, 1200 - time);
     } else {
-        moveLiftToPos(40, 100, 1200);
+        moveLiftToPos(38, 100, 1200);
     }
     stopLiftHold();
     LBPickup = true;
@@ -947,7 +947,7 @@ int blueLower = 210;
 int blueUpper = 230;
 
 bool detectRing() {
-    return getIntakeDist() < 30;
+    return getIntakeDist() < 33;
 }
 
 bool detectRing(int hue){
@@ -1387,7 +1387,7 @@ void driveToRing(int timeout, driveToRingParams params) {
         motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
 
         if(checkRing(nearestRing)){
-            if(timeout % 90 == 0){
+            if(timeout % 20 == 0){
                 printf("Ring: (%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
             }
             vision_error = nearestRing.x_middle_coord - VISION_CENTER;
