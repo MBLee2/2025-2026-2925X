@@ -16,26 +16,29 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(11, pros::v5::MotorGears::blue);  // port 15, forward
-pros::Motor lm(-1, pros::v5::MotorGears::blue);  // port 4, forward
-pros::Motor lb(5, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor lf(-2, pros::v5::MotorGears::blue);  // port 15, forward
+pros::Motor lm(21, pros::v5::MotorGears::blue);
+pros::Motor lb(-12, pros::v5::MotorGears::blue);  // port 9, reversed
 
-pros::Motor rf(-7, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(18, pros::v5::MotorGears::blue); // port 1, reversed
-pros::Motor rb(-19, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor rf(10, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(21, pros::v5::MotorGears::blue);
+pros::Motor rb(20, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({11, -1, 5}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-7, 18, -19}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({-2, -12}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({10, 20}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(-21, pros::v5::MotorGears::red);  // port 4, reversed
+pros::Motor intake(9, pros::v5::MotorGears::blue);  // port 4, reversed
+pros::Motor scoring(-4, pros::v5::MotorGears::green);
+pros::Motor storage(-15, pros::v5::MotorGears::blue);
+pros::Motor reload(-19, pros::v5::MotorGears::green);
 
 //lady brown group
-pros::Motor ladybrownL(6, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(-12, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({6, -12}, pros::v5::MotorGears::green);
+pros::Motor ladybrownL(21, pros::v5::MotorGears::green);  // port 4, reversed
+pros::Motor ladybrownR(21, pros::v5::MotorGears::green);  // port 4, reversed
+pros::MotorGroup ladybrown({21, 21}, pros::v5::MotorGears::green);
 
 
 //Pistons NOT DONE

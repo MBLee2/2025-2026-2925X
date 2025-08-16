@@ -65,7 +65,14 @@ void stopDriveHold();
 void setDriveBrake(pros::motor_brake_mode_e mode);
 
 void spinIntake(int speed);
+void spinScoring(int speed);
+void spinStorage(int speed);
+void spinReload(int speed);
 void stopIntake();
+void stopScoring();
+void stopStorage();
+void stopReload();
+void stopAllIntake();
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
 void intakeAntiJam();

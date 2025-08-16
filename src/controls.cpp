@@ -64,175 +64,86 @@ void taskFn_drivebase_control(void) {
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_drivebase_control
 
-// Mogo Control
-void taskFn_mogo_control(void) {
-  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  bool mogo_state = false; // Track the state of the mogo clamp (false = open, true = closed)
-  bool sweeper_out = false; // Track the state of the sweeper (false = retracted, true = extended)
-  bool sixth_ring_state = false;
-
-  while (true) // Infinite loop to keep checking controller input for mogo control
-  {
-    // When the L1 button is pressed, toggle the mogo clamp state
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
-      toggleClamp();
-    }
-
-    // Get the input from the right joystick and normalize the input to a range
-    // of -1 to 1
-    if(!tankDrive){
-      int rightY = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y)) / 127;
-      int rightX = (master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X)) / 127; // Normalize the right joystick input to -1 to 1
-      // (retracted)
-      if (rightY < -0.85) {
-        retractRightSweeper();
-        retractLeftSweeper();
-      }
-      if (rightX > 0.85) { 
-        extendRightSweeper();
-        retractLeftSweeper();
-      }
-      if (rightX < -0.85) {
-        extendLeftSweeper();
-        retractRightSweeper();
-      }
-    }
-
-    pros::delay(20); // loop runs at a steady pace, still avoids CPU overload
-  }
-  printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
-} // end of taskFn_mogo_control
 
 //Intake control
 void taskFn_intake_control(void){
     printf("%s(): Entered \n", __func__);
     enum intake_state {
-    INTAKE,
-    OUTAKE,
-    STOP
-
+      INTAKE,
+      MIDSCORE,
+      OUTAKE,
+      STOP
     };
     bool basket_state = false;
     intake_state current_state = STOP;  // Initialize with a default state, STOP
     bool intake_lifted = false;
-    setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
-    setIntakeColorLED(100);
     while (true) 
     {
-        double pos = getLiftPosition();
-        int rightX = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        rightX = rightX/127;
-        if (rightX > 0.85){intake_lifted = true;}
-        if (rightX < -0.85){intake_lifted = false;}
         
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
+      {
+        if (current_state == OUTAKE || current_state == STOP)
         {
-            if (current_state == OUTAKE || current_state == STOP)
-            {
-                intake.move(127);
-                current_state = INTAKE;
+          spinIntake(127);
+          spinScoring(127);
+          spinStorage(127);
+          spinReload(127);
+          current_state = INTAKE;
+        } 
+        else if (current_state == INTAKE || current_state == MIDSCORE) // If intake is running, stop it
+        {
+          current_state = STOP;
+          stopAllIntake();
+        }
+      }
+      // Eject objects with the B button
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+        if (current_state == INTAKE || current_state == MIDSCORE || current_state == STOP) // If intake is running or stopped, start ejecting
+        {
+          spinIntake(-127);
+          stopScoring();
+          stopStorage();
+          spinReload(127);
+          current_state = OUTAKE;
+        } 
+        else if (current_state == OUTAKE) // If intake is ejecting, stop it
+        {
+          current_state = STOP;
+          stopAllIntake();
+        }
+      }
 
-      } 
-      else if (current_state == INTAKE) // If intake is running, stop it
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
       {
-        //autoIntake = false;
-        current_state = STOP;
-        stopIntake();
-        stopSorting();
+        if (current_state == MIDSCORE || current_state == OUTAKE || current_state == STOP) // If intake is running or stopped, start ejecting
+        {
+          spinIntake(127);
+          spinScoring(127);
+          spinStorage(127);
+          spinReload(127);
+          current_state = INTAKE;
+        } else if(current_state == INTAKE){
+          current_state = STOP;
+          stopAllIntake();
+        }
       }
-    }
-    // Eject objects with the B button
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      if ((current_state == INTAKE || current_state == STOP)) // If intake is running or stopped, start ejecting
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) 
       {
-        //autoIntake = false;
-        spinIntake(-127);
-        stopSorting();
-        current_state = OUTAKE;
-
-      } 
-      else if (current_state == OUTAKE) // If intake is ejecting, stop it
-      {
-        //autoIntake = false;
-        current_state = STOP;
-        stopIntake();
+        if (current_state == INTAKE || current_state == OUTAKE || current_state == STOP) // If intake is running or stopped, start ejecting
+        {
+          spinIntake(127);
+          spinScoring(-127);
+          spinStorage(127);
+          spinReload(127);
+          current_state = MIDSCORE;
+        } else if(current_state == MIDSCORE){
+          current_state = STOP;
+          stopAllIntake();
+        }
       }
-    }
-    
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
-      if (autoIntake == false && current_state != OUTAKE)
-      {
-        startSorting();
-      }
-      else if (autoIntake == true) // If intake is ejecting, stop it
-      {
-        stopSorting();
-      }
+      
     }
     pros::delay(20);
-  }
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_intake_control
-
-void taskFn_lift_control(void)
-{
-  printf("%s(): Entered \n", __func__); // Log the function entry for debugging
-  // Define an enum to represent the intake's possible states
-  enum lift_state {
-    WALLSTAKE, // Intake objects
-    PICKUP, // Eject objects
-    DOWN  // Stop the intake
-  };
-
-  autoLift = false;
-  int toggle_counter = 0;
-  while(true){
-
-    while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      spinLift(80);
-      autoLift = false;
-    }
-    while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-      spinLift(-80);
-      autoLift = false;
-    }
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      stopIntake();
-      current_state = STOP;
-      pros::Task ws_task(liftUpWallStake);
-    }
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-      pros::Task load_task(liftPickup);
-    }
-
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-      retractLeftSweeper();
-      tankDrive = true;
-      moveLiftToPos(160, 127, 2000);
-      closePTO();
-      retractClimbBalance();
-      pros::delay(1500);
-      openPTO();
-
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && toggle_counter > 15) {
-      retractLeftSweeper();
-      tankDrive = true;
-      togglePTO();
-      toggle_counter = 0;
-    }
-
-    /*if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)){
-      printf("Lift %f\n",getLiftPosition());
-    }*/
-    if(!autoLift)
-    {
-      stopLift();
-    }
-    // moveLiftToPosCancel(target, dir, time, 127, 1500);
-    resetLiftPositionWithDistance();
-    pros::delay(20);
-    toggle_counter++; 
-  }
-}
 

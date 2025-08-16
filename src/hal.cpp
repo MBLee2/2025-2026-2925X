@@ -35,76 +35,20 @@ void stopAllMotors() {
 }
 
 // Drive Base Movement
-void spinLFMotor(int speed) {
-    lf.move(speed);
-}
-
-void stopLFMotor() {
-    lf.brake();
-}
-
-void spinLMMotor(int speed) {
-    lm.move(speed);
-}
-
-void stopLMMotor() {
-    lm.brake();
-}
-
-void spinLBMotor(int speed) {
-    lb.move(speed);
-}
-
-void stopLBMotor() {
-    lb.brake();
-}
-
-void spinRFMotor(int speed) {
-    rf.move(speed);
-}
-
-void stopRFMotor() {
-    rf.brake();
-}
-
-void spinRMMotor(int speed) {
-    rm.move(speed);
-}
-
-void stopRMMotor() {
-    rm.brake();
-}
-
-void spinRBMotor(int speed) {
-    rb.move(speed);
-}
-
-void stopRBMotor() {
-    rb.brake();
-}
-
 void spinLeftMotors(int speed) {
-    spinLFMotor(speed);
-    spinLMMotor(speed);
-    spinLBMotor(speed);
+    left_side_motors.move(speed);
 }
 
 void spinRightMotors(int speed) {
-    spinRFMotor(speed);
-    spinRMMotor(speed);
-    spinRBMotor(speed);
+    right_side_motors.move(speed);
 }
 
 void stopLeftMotors() {
-    stopLFMotor();
-    stopLMMotor();
-    stopLBMotor();
+    left_side_motors.brake();
 }
 
 void stopRightMotors() {
-    stopRFMotor();
-    stopRMMotor();
-    stopRBMotor();
+    right_side_motors.brake();
 }
 
 void drive(int leftSpeed, int rightSpeed) {
@@ -127,34 +71,54 @@ void stopDriveHold() {
 }
 
 void setDriveBrake(pros::motor_brake_mode_e mode) {
-    lf.set_brake_mode(mode);
-    lm.set_brake_mode(mode);
-    lb.set_brake_mode(mode);
-    rf.set_brake_mode(mode);
-    rm.set_brake_mode(mode);
-    rb.set_brake_mode(mode);
+    left_side_motors.set_brake_mode_all(mode);
+    right_side_motors.set_brake_mode_all(mode);
 }
 
 
 // Intake Movement
 void spinIntake(int speed) {
     intake.move(speed);
-    if(speed == 0)
-    {
-        isintaking = false;
-    }
-    isintaking = true;
+}
+
+void spinScoring(int speed) {
+    scoring.move(speed);
+}
+
+void spinStorage(int speed) {
+    storage.move(speed);
+}
+
+void spinReload(int speed) {
+    reload.move(speed);
 }
 
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
-    isintaking = false;
     intake.brake();
+}
+
+void stopScoring() {
+    scoring.brake();
+}
+
+void stopStorage() {
+    storage.brake();
+}
+
+void stopReload() {
+    reload.brake();
+}
+
+void stopAllIntake(){
+    stopIntake();
+    stopScoring();
+    stopStorage();
+    stopReload();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
-    isintaking = false;
     intake.brake();
 }
 
@@ -191,12 +155,12 @@ void intakeAntiJamTaskFunc(){
 
 // Lift Movement
 void spinLift(int speed) {
-    ladybrown.move(speed);
+    //ladybrown.move(speed);
     setLiftBrake((getLiftPosition() > 40) ? pros::E_MOTOR_BRAKE_HOLD : pros::E_MOTOR_BRAKE_COAST);
 }
 
 void stopLift(){
-    ladybrown.brake();
+    //ladybrown.brake();
 }
 
 void stopLiftCoast(){
@@ -210,7 +174,7 @@ void stopLiftHold() {
 
 
 void setLiftBrake(pros::motor_brake_mode_e mode) {
-    ladybrown.set_brake_mode_all(mode);
+    //ladybrown.set_brake_mode_all(mode);
 }
 
 
@@ -415,12 +379,8 @@ pros::vision_object_s_t getMostRelevantObject(bool color) {
 
 // Motor Encoder
 void setDriveEncoder(pros::motor_encoder_units_e_t mode){
-    lf.set_encoder_units(mode);
-    lm.set_encoder_units(mode);
-    lb.set_encoder_units(mode);
-    rf.set_encoder_units(mode);
-    rm.set_encoder_units(mode);
-    rb.set_encoder_units(mode);
+    left_side_motors.set_encoder_units_all(mode);
+    right_side_motors.set_encoder_units_all(mode);
 }
 
 double getLFPosition() {
@@ -464,13 +424,13 @@ double getRightMotorPositionInInches() {
 }
 
 void setLiftZero(double pos){
-    ladybrownL.set_zero_position(pos);
-    ladybrownR.set_zero_position(pos);
+    //ladybrownL.set_zero_position(pos);
+    //ladybrownR.set_zero_position(pos);
 }
 
 void resetLiftPosition(){
-    ladybrownL.tare_position();
-    ladybrownR.tare_position();
+    //ladybrownL.tare_position();
+    //ladybrownR.tare_position();
 }
 void resetLiftPositionWithDistance(){
     if(getLBLimitSwitch())
@@ -489,13 +449,14 @@ void resetLiftWithDistTaskFunc(){
 }
 
 void setLiftEncoder(pros::motor_encoder_units_e mode) {
-    ladybrownL.set_encoder_units(mode);
-    ladybrownR.set_encoder_units(mode);
+    //ladybrownL.set_encoder_units(mode);
+    //ladybrownR.set_encoder_units(mode);
 }
 
 
 float getLiftPosition() {
-    float pos = (ladybrownL.get_position() + ladybrownR.get_position()) / 2 ;
+    //float pos = (ladybrownL.get_position() + R.get_position()) / 2 ;
+    float pos = 0;
     return (pos);
 }
 

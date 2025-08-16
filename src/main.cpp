@@ -272,9 +272,7 @@ void opcontrol() {
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
-    pros::Task mogo_task(taskFn_mogo_control,"mogo-task");
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
-	pros::Task lift_control(taskFn_lift_control,"lift-task");
 
     // SKILLS ONLY
 	//auton_60s_skills_1();

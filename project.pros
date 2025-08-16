@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "STATES BOT",
+    "project_name": "Drive",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -299,9 +299,9 @@
     },
     "upload_options": {
       "after": "screen",
-      "description": "STATES/WORLDS",
+      "description": "",
       "icon": "pros",
-      "slot": 1
+      "slot": 3
     },
     "use_early_access": false
   }

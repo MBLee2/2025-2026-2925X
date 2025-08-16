@@ -50,6 +50,9 @@ extern pros::MotorGroup right_side_motors;             // Right drivetrain of dr
 
 //Motors
 extern pros::Motor intake;
+extern pros::Motor scoring;
+extern pros::Motor storage;
+extern pros::Motor reload;
 
 extern pros::Motor ladybrownL;
 extern pros::Motor ladybrownR;
