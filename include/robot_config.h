@@ -40,10 +40,8 @@ extern pros::Controller master;
 extern lemlib::Chassis chassis;
 extern lemlib::Chassis chassisWithGoal;
 extern pros::Motor lf; 
-extern pros::Motor lm;
 extern pros::Motor lb;
 extern pros::Motor rf; 
-extern pros::Motor rm;
 extern pros::Motor rb;
 extern pros::MotorGroup left_side_motors;              // Left drivetrain of drivebase
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
@@ -54,46 +52,16 @@ extern pros::Motor scoring;
 extern pros::Motor storage;
 extern pros::Motor reload;
 
-extern pros::Motor ladybrownL;
-extern pros::Motor ladybrownR;
-extern pros::MotorGroup ladybrown;
 
 //extern pros::Motor lift;
 
 //pistons
-extern pros::adi::Pneumatics mogo_clamp;
-extern pros::adi::Pneumatics left_sweeper;
-extern pros::adi::Pneumatics pto;
-extern pros::adi::Pneumatics climb_balance;
-extern pros::adi::Pneumatics right_sweeper;
-extern pros::adi::Pneumatics intake_lift;
-extern pros::adi::Pneumatics odom_lift;
 
 
 //Sensors
-//extern pros::Optical intake_color;
-extern pros::Optical intake_color;
-extern pros::Distance intake_dist;
-extern pros::Optical intake_color2;
-extern pros::Distance LB_dist;
-
-extern pros::Distance distance_rb;
-extern pros::Distance distance_rf;
-extern pros::Distance distance_lb;
-extern pros::Distance distance_lf;
-extern pros::Distance distance_bl;
-extern pros::Distance distance_br;
-extern pros::Distance distance_proxi;
-extern pros::Distance distance_front;
-extern pros::Distance distance_left;
-extern pros::Distance distance_back;
-extern pros::Distance distance_right;
+//extern pros::Optical intake_color;==
 extern pros::GPS gps;
 extern pros::IMU imu;
-extern pros::adi::Button LB_limit;
-extern pros::Rotation lift_rotation;
-extern pros::Vision vision_sensor;
-extern pros::adi::AnalogIn lineRight;
-extern pros::adi::AnalogIn lineLeft;
+// extern pros::Vision vision_sensor;
 
 #endif //_ROBOT_CONFIG_H_   

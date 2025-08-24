@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Drive",
+    "project_name": "Sept 6 Bot",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -301,7 +301,7 @@
       "after": "screen",
       "description": "",
       "icon": "pros",
-      "slot": 3
+      "slot": 2
     },
     "use_early_access": false
   }

@@ -40,19 +40,6 @@ float distBetweenPts(float x1, float y1, float x2, float y2);
 
 void stopAllMotors();
 
-void spinLFMotor(int speed);
-void stopLFMotor();
-void spinLMMotor(int speed);
-void stopLMMotor();
-void spinLBMotor(int speed);
-void stopLBMotor();
-void spinRFMotor(int speed);
-void stopRFMotor();
-void spinRMMotor(int speed);
-void stopRMMotor();
-void spinRBMotor(int speed);
-void stopRBMotor();
-
 void spinLeftMotors(int speed);
 void stopLeftMotors();
 void spinRightMotors(int speed);
@@ -64,6 +51,21 @@ void stopDrive();
 void stopDriveHold();
 void setDriveBrake(pros::motor_brake_mode_e mode);
 
+enum intake_state {
+    INTAKE,
+    TOPSCORE,
+    MIDSCORE,
+    OUTAKE,
+    STOP
+};
+extern intake_state current_intake;
+
+enum reload_state {
+    FROM_INTAKE,
+    FROM_STORAGE
+};
+extern reload_state current_reload;
+
 void spinIntake(int speed);
 void spinScoring(int speed);
 void spinStorage(int speed);
@@ -72,72 +74,20 @@ void stopIntake();
 void stopScoring();
 void stopStorage();
 void stopReload();
+
+void intakeAll(int speed);
+void scoreTop(int speed);
+void scoreMiddle(int speed);
+void topFromStorage(int speed);
+void middleFromStorage(int speed);
+void outakeAll(int speed);
 void stopAllIntake();
+
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
 void intakeAntiJam();
 void intakeAntiJamTaskFunc();
 
-void spinLift(int speed);
-void stopLift();
-void stopLiftPID();
-void stopLiftCoast();
-void stopLiftHold();
-void setLiftBrake(pros::motor_brake_mode_e mode);
-
-void openClamp();
-void closeClamp();
-void toggleClamp();
-
-void extendLeftSweeper();
-void retractLeftSweeper();
-void toggleLeftSweeper();
-
-void extendRightSweeper();
-void retractRightSweeper();
-void toggleRightSweeper();
-
-void toggleHood();
-void hoodFwd();
-void hoodBwd();
-bool getHood();
-
-void liftIntake();
-void dropIntake();
-
-void extendSweep();
-void retractSweep();
-void extendRushClamp();
-void retractRushClamp();
-
-void extendSixRing();
-void retractSixRing();
-void toggleSixRing();
-
-void redirectRings();
-void closeRedirect();
-void toggleRedirect();
-
-void liftPneumaticUp();
-void liftPneumaticDown();
-bool getLiftPneumatic();
-
-void closePTO();
-void openPTO();
-void togglePTO();
-
-void retractClimbBalance();
-
-float distToWallF();
-float distToWallB();
-float distToWallL();
-float distToWallR();
-float distToObject();
-
-int getIntakeColor();
-int get2ndIntakeColor();
-void setIntakeColorLED(int value);
-void setIntakeColor2LED(int value);
 
 void setDriveEncoder(pros::motor_encoder_units_e_t mode);
 double getLFPosition();
@@ -161,32 +111,16 @@ double wheelRotToInches(double rotations);
 
 void resetIMUHeading();
 float getHeading();
-bool getLBLimitSwitch();
 
 void driveFor(float speed, int ms);
 void driveDistance(float distance, int timeout = 15000, int maxSpeed = 130);
 void turn(float degrees, int timeout = 15000);
 
-void setLiftEncoder(pros::motor_encoder_units_e mode);
-void setLiftZero(double pos);
-void resetLiftPosition();
-void resetLiftPositionWithDistance();
-void resetLiftWithDistTaskFunc();
-float getLiftPosition();
-
-void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
-void moveLiftToPosCancel(float pos, int time, int speed = 127, int timeout = 5000);
-void moveLiftToPosCancel(float pos, bool dir, int time, int speed = 127, int timeout = 5000);
-void liftUpWallStake();
-int moveToReset(float speed = 127);
-void liftPickup();
-void liftDown();
 
 void resetIntakePosition();
 void setIntakeEncoder(pros::motor_encoder_units_e mode);
 float getIntakePosition();
 
-int getRightLine();
 
 void intakeFor(int ms);
 void intakeFor(float degrees);
@@ -198,6 +132,49 @@ void outakeFor(int ms);
 void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
 
+/*********************** END OF USED FUNCTIONS ***********************/
+
+void spinLift(int speed);
+void stopLift();
+void stopLiftCoast();
+void stopLiftHold();
+void setLiftBrake(pros::motor_brake_mode_e mode);
+
+void openClamp();
+void closeClamp();
+void toggleClamp();
+
+void extendLeftSweeper();
+void retractLeftSweeper();
+void toggleLeftSweeper();
+
+void extendRightSweeper();
+void retractRightSweeper();
+void toggleRightSweeper();
+
+void liftIntake();
+void dropIntake();
+
+void closePTO();
+void openPTO();
+void togglePTO();
+
+void retractClimbBalance();
+
+int getFrontDistance();
+int getLeftDistance();
+
+float distToWallF();
+float distToWallB();
+float distToWallL();
+float distToWallR();
+float distToObject();
+
+int getIntakeColor();
+int get2ndIntakeColor();
+void setIntakeColorLED(int value);
+void setIntakeColor2LED(int value);
+
 bool detectRed(int hue);
 bool detectBlue(int hue);
 
@@ -206,7 +183,23 @@ void sort_color_queue();
 void startSorting();
 void stopSorting();
 void clearRingQueue();
-void basicColorSort();
+
+bool getLBLimitSwitch();
+
+int getRightLine();
+
+void setLiftEncoder(pros::motor_encoder_units_e mode);
+void setLiftZero(double pos);
+void resetLiftPosition();
+void resetLiftPositionWithDistance();
+void resetLiftWithDistTaskFunc();
+float getLiftPosition();
+
+void moveLiftToPos(float position,int speed = 127, int timeout = 5000);
+void liftUpWallStake();
+int moveToReset(float speed = 127);
+void liftPickup();
+void liftDown();
 
 pros::vision_object_s_t getOurColorObject();
 pros::vision_object_s_t getMostRelevantObject(bool color = COLOR);

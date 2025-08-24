@@ -104,64 +104,64 @@ const double LEFT_SPACING = 260.35;
 const double RIGHT_SPACING = 279.4;
 const double BACK_SPACING = 304.8;
 
-double findHeading(int side, double roundedHeading)
-/**
- * @brief Calculate the robot's heading using trigonometry and distance sensors
- *  mounted on the sides of the robot measuring against the wall
- * @param side which side is being used: 0 - Right, 1 - Left, 2 - Back
- * @param roundedHeading robot's approxiamated direction in multiples of 90, which wall the front is facing
- */
-{
-    double newHeading;
+// double findHeading(int side, double roundedHeading)
+// /**
+//  * @brief Calculate the robot's heading using trigonometry and distance sensors
+//  *  mounted on the sides of the robot measuring against the wall
+//  * @param side which side is being used: 0 - Right, 1 - Left, 2 - Back
+//  * @param roundedHeading robot's approxiamated direction in multiples of 90, which wall the front is facing
+//  */
+// {
+//     double newHeading;
     
-    if(side == 0){
-        newHeading = lemlib::radToDeg(atan((distance_rb.get() - (distance_rf.get() - RIGHT_DIFFERENCE)) / RIGHT_SPACING));
-    } else if(side == 1){
-        newHeading = lemlib::radToDeg(atan(((distance_lf.get() - LEFT_DIFFERENCE) - distance_lb.get()) / LEFT_SPACING));
-    } else if(side == 2){
-        newHeading = lemlib::radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
-    }
+//     if(side == 0){
+//         newHeading = lemlib::radToDeg(atan((distance_rb.get() - (distance_rf.get() - RIGHT_DIFFERENCE)) / RIGHT_SPACING));
+//     } else if(side == 1){
+//         newHeading = lemlib::radToDeg(atan(((distance_lf.get() - LEFT_DIFFERENCE) - distance_lb.get()) / LEFT_SPACING));
+//     } else if(side == 2){
+//         newHeading = lemlib::radToDeg(atan((distance_bl.get() - distance_br.get()) / BACK_SPACING));
+//     }
 
-    return newHeading + roundedHeading;
-}
+//     return newHeading + roundedHeading;
+// }
 
-double findDistToWall(int side)
-/**
-     * @brief Calculate the distance to a wall using distance sensors
-     * @param side which side of the robot is being used: 0 - Right, 1 - Left, 2 - Back, 3 - Front
-     */
-{
-    if(side == 0){
-        return ((distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
-    } 
-    else if(side == 1){
-        return ((distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
-    }else if(side == 3){
-        return (distance_front.get()/ 25.4 +9.0);
-    }
-    else {
-        return ((distance_br.get() + distance_bl.get()) / 2.0) / 25.4 + 7.25;
-    }
-}
+// double findDistToWall(int side)
+// /**
+//      * @brief Calculate the distance to a wall using distance sensors
+//      * @param side which side of the robot is being used: 0 - Right, 1 - Left, 2 - Back, 3 - Front
+//      */
+// {
+//     if(side == 0){
+//         return ((distance_rb.get() + (distance_rf.get() - RIGHT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+//     } 
+//     else if(side == 1){
+//         return ((distance_lb.get() + (distance_lf.get() - LEFT_DIFFERENCE)) / 2.0) / 25.4 + 6.75;
+//     }else if(side == 3){
+//         return (distance_front.get()/ 25.4 +9.0);
+//     }
+//     else {
+//         return ((distance_br.get() + distance_bl.get()) / 2.0) / 25.4 + 7.25;
+//     }
+// }
 
-//works fine but does not account for drift
-void moveUntilDist(double targetDist, float speed){
-    bool reachedTarget = false;
-    while(!reachedTarget){
-        if(abs(targetDist - findDistToWall(2)) < 0.5){
-            reachedTarget = true;
-        } else if(targetDist > findDistToWall(2)) {
-            left_side_motors.move(speed);
-            right_side_motors.move(speed);
-        } else {
-            left_side_motors.move(-speed);
-            right_side_motors.move(-speed);
-        }
-        pros::delay(10);
-    }
-    left_side_motors.move(0);
-    right_side_motors.move(0);
-}
+// //works fine but does not account for drift
+// void moveUntilDist(double targetDist, float speed){
+//     bool reachedTarget = false;
+//     while(!reachedTarget){
+//         if(abs(targetDist - findDistToWall(2)) < 0.5){
+//             reachedTarget = true;
+//         } else if(targetDist > findDistToWall(2)) {
+//             left_side_motors.move(speed);
+//             right_side_motors.move(speed);
+//         } else {
+//             left_side_motors.move(-speed);
+//             right_side_motors.move(-speed);
+//         }
+//         pros::delay(10);
+//     }
+//     left_side_motors.move(0);
+//     right_side_motors.move(0);
+// }
 
 // // Conversion fuctions
 // double cartesian2compass(double cartesian_angle) 

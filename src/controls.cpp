@@ -12,13 +12,7 @@
 
 bool intakeMode = true; //Mason Rudra place where should be
 bool tankDrive = false;
-enum intake_state {
-  INTAKE, // Intake objects
-  OUTAKE, // Eject objects
-  STOP  // Stop the intake
-};
-intake_state current_state = STOP;
-bool LBPickup1 = false;
+
 #define TURN_CONST                                                             \
   1.4 // Constant multipled by X input to allow for instant turns during driver
 
@@ -68,82 +62,77 @@ void taskFn_drivebase_control(void) {
 //Intake control
 void taskFn_intake_control(void){
     printf("%s(): Entered \n", __func__);
-    enum intake_state {
-      INTAKE,
-      MIDSCORE,
-      OUTAKE,
-      STOP
-    };
+
     bool basket_state = false;
-    intake_state current_state = STOP;  // Initialize with a default state, STOP
     bool intake_lifted = false;
     while (true) 
     {
         
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
       {
-        if (current_state == OUTAKE || current_state == STOP)
+        if (current_intake != INTAKE)
         {
-          spinIntake(127);
-          spinScoring(127);
-          spinStorage(127);
-          spinReload(127);
-          current_state = INTAKE;
+          intakeAll(127);
         } 
-        else if (current_state == INTAKE || current_state == MIDSCORE) // If intake is running, stop it
+        else if (current_intake == INTAKE) // If intake is running, stop it
         {
-          current_state = STOP;
           stopAllIntake();
         }
       }
       // Eject objects with the B button
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-        if (current_state == INTAKE || current_state == MIDSCORE || current_state == STOP) // If intake is running or stopped, start ejecting
+        if (current_intake != OUTAKE) // If intake is running or stopped, start ejecting
         {
-          spinIntake(-127);
-          stopScoring();
-          stopStorage();
-          spinReload(127);
-          current_state = OUTAKE;
+          outakeAll(127);
         } 
-        else if (current_state == OUTAKE) // If intake is ejecting, stop it
+        else if (current_intake == OUTAKE) // If intake is ejecting, stop it
         {
-          current_state = STOP;
           stopAllIntake();
         }
       }
 
+
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
       {
-        if (current_state == MIDSCORE || current_state == OUTAKE || current_state == STOP) // If intake is running or stopped, start ejecting
+        if (current_intake != TOPSCORE) // If intake is running or stopped, start ejecting
         {
-          spinIntake(127);
-          spinScoring(127);
-          spinStorage(127);
-          spinReload(127);
-          current_state = INTAKE;
-        } else if(current_state == INTAKE){
-          current_state = STOP;
+          scoreTop(127);
+        } else if(current_intake == TOPSCORE){
           stopAllIntake();
         }
       }
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) 
       {
-        if (current_state == INTAKE || current_state == OUTAKE || current_state == STOP) // If intake is running or stopped, start ejecting
+        if (current_intake != MIDSCORE) // If intake is running or stopped, start ejecting
         {
-          spinIntake(127);
-          spinScoring(-127);
-          spinStorage(127);
-          spinReload(127);
-          current_state = MIDSCORE;
-        } else if(current_state == MIDSCORE){
-          current_state = STOP;
+          scoreMiddle(127);
+        } else if(current_intake == MIDSCORE){
           stopAllIntake();
         }
       }
+
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1))
+      {
+        if(current_reload == FROM_INTAKE){
+          current_reload = FROM_STORAGE;
+
+          if(current_intake == TOPSCORE){
+            topFromStorage(127);
+          } else if (current_intake == MIDSCORE){
+            middleFromStorage(127);
+          }
+        } else if (current_reload == FROM_STORAGE){
+          stopAllIntake();
+        }
+      }
+
+      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X))
+      {
+        stopAllIntake();
+      }
       
+      pros::delay(20);
     }
-    pros::delay(20);
   printf("%s(): Exiting \n", __func__); // Log the function exit for debugging
 } // end of taskFn_intake_control
 

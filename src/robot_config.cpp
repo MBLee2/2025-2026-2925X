@@ -16,78 +16,48 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-2, pros::v5::MotorGears::blue);  // port 15, forward
-pros::Motor lm(21, pros::v5::MotorGears::blue);
-pros::Motor lb(-12, pros::v5::MotorGears::blue);  // port 9, reversed
+// pros::Motor lf(-2, pros::v5::MotorGears::blue);  // port 15, forward
+// pros::Motor lm(21, pros::v5::MotorGears::blue);
+// pros::Motor lb(-12, pros::v5::MotorGears::blue);  // port 9, reversed
 
-pros::Motor rf(10, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(21, pros::v5::MotorGears::blue);
-pros::Motor rb(20, pros::v5::MotorGears::blue); // port 2, forward
+// pros::Motor rf(10, pros::v5::MotorGears::blue); // port 13, forward
+// pros::Motor rm(21, pros::v5::MotorGears::blue);
+// pros::Motor rb(20, pros::v5::MotorGears::blue); // port 2, forward
+
+// // drivetrain motor groups  
+// pros::MotorGroup left_side_motors({-2, -12}, pros::v5::MotorGears::blue);
+// pros::MotorGroup right_side_motors({10, 20}, pros::v5::MotorGears::blue);
+
+pros::Motor lf(11, pros::v5::MotorGears::blue);  // port 15, forward
+pros::Motor lb(5, pros::v5::MotorGears::blue);  // port 9, reversed
+
+pros::Motor rf(-7, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rb(-19, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({-2, -12}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({10, 20}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({11, -1, 5}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-7, 18, -19}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(9, pros::v5::MotorGears::blue);  // port 4, reversed
-pros::Motor scoring(-4, pros::v5::MotorGears::green);
-pros::Motor storage(-15, pros::v5::MotorGears::blue);
-pros::Motor reload(-19, pros::v5::MotorGears::green);
-
-//lady brown group
-pros::Motor ladybrownL(21, pros::v5::MotorGears::green);  // port 4, reversed
-pros::Motor ladybrownR(21, pros::v5::MotorGears::green);  // port 4, reversed
-pros::MotorGroup ladybrown({21, 21}, pros::v5::MotorGears::green);
-
+pros::Motor intake(-21, pros::v5::MotorGears::red);  // port 4, reversed
+// pros::Motor intake(9, pros::v5::MotorGears::blue);  // port 4, reversed
+ pros::Motor scoring(-4, pros::v5::MotorGears::green);
+ pros::Motor storage(-15, pros::v5::MotorGears::blue);
+ pros::Motor reload(-17, pros::v5::MotorGears::green); //19
 
 //Pistons NOT DONE
-pros::adi::Pneumatics mogo_clamp('h', false);
-pros::adi::Pneumatics left_sweeper('c', false);
-pros::adi::Pneumatics pto('g', true);
-pros::adi::Pneumatics climb_balance('d', false);
-
-pros::adi::Pneumatics right_sweeper('a', false);
-pros::adi::Pneumatics intake_lift('g', false);
-pros::adi::Pneumatics odom_lift('e', false);
-
 
 
 /* SENSORS */ // NOT DONE
 pros::IMU imu(16); //DONE
 
-pros::Distance LB_dist(12);
-pros::Distance distance_proxi(7);
-
 //Color Sort
-pros::Optical intake_color(3); //DONE
-pros::Distance intake_dist(8); //DONE
 
 
-
-pros::Distance distance_back(2);
-pros::Distance distance_left(17);
-pros::Distance distance_right(5);
-
-pros::Optical intake_color2(22); //deprecated
-pros::Distance distance_front(22);
-pros::Distance distance_lf(22);
-pros::Distance distance_lb(22);
-pros::Distance distance_rf(22);
-pros::Distance distance_rb(22);
-pros::Distance distance_bl(22);
-pros::Distance distance_br(22);
-
-
-pros::adi::Button LB_limit('a');
-pros::Rotation lift_rotation(6); 
-
-pros::Vision vision_sensor(19);
+// pros::Vision vision_sensor(19);
 //pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
 //pros::vision_signature_s_t RED_SIG = {2, {1, 0, 0}, 3.000, 8667, 10051, 9358, -1583, -853, -1218, 0, 0};
-
-pros::adi::AnalogIn lineRight({21, 'a'});
-pros::adi::AnalogIn lineLeft({21, 'b'});
 
 
 lemlib::Drivetrain drivetrain(
@@ -205,12 +175,12 @@ lemlib::Chassis chassisWithGoal(drivetrain,
     {
         dashboard_motor_display {  5, 135, "DB-LF", lf},
         dashboard_motor_display {  5, 190, "DB-RF", rf},
-        dashboard_motor_display {110, 135, "DB-LM", lm},
-        dashboard_motor_display {110, 190, "DB-RM", rm},
-        dashboard_motor_display {215, 135, "DB-LB", lb},
-        dashboard_motor_display {215, 190, "DB-RB",  rb},
-        dashboard_motor_display {320, 135, "Intake", intake},
-        dashboard_motor_display {320, 190, "lbrown", ladybrownL}
+        // dashboard_motor_display {110, 135, "DB-LM", lm},
+        // dashboard_motor_display {110, 190, "DB-RM", rm},
+        dashboard_motor_display {110, 135, "DB-LB", lb},
+        dashboard_motor_display {110, 190, "DB-RB",  rb},
+        dashboard_motor_display {215, 135, "Intake", intake}
+        // dashboard_motor_display {320, 190, "lbrown", ladybrownL}
         
         
     };

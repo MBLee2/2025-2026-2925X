@@ -77,6 +77,9 @@ void setDriveBrake(pros::motor_brake_mode_e mode) {
 
 
 // Intake Movement
+intake_state current_intake = STOP;
+reload_state current_reload = FROM_INTAKE;
+
 void spinIntake(int speed) {
     intake.move(speed);
 }
@@ -110,11 +113,74 @@ void stopReload() {
     reload.brake();
 }
 
+void intakeAll(int speed) {
+    spinIntake(speed);
+    spinScoring(speed);
+    spinStorage(speed);
+    spinReload(speed);
+    current_intake = INTAKE;
+    current_reload = FROM_INTAKE;
+}
+
+void scoreTop(int speed) {
+    spinIntake(speed);
+    spinScoring(speed);
+    spinStorage(speed);
+    if(current_reload == FROM_INTAKE){
+        spinReload(speed);
+    } else if(current_reload == FROM_STORAGE){
+        spinReload(-speed);
+    }
+    current_intake = TOPSCORE;
+}
+
+void scoreMiddle(int speed){
+    spinIntake(speed);
+    spinScoring(-speed);
+    spinStorage(speed);
+    if(current_reload == FROM_INTAKE){
+        spinReload(speed);
+    } else if(current_reload == FROM_STORAGE){
+        spinReload(-speed);
+    }
+    current_intake = MIDSCORE;
+}
+
+void topFromStorage(int speed){
+    spinIntake(speed);
+    spinScoring(speed);
+    spinStorage(speed);
+    spinReload(-speed);
+    current_intake = TOPSCORE;
+    current_reload = FROM_STORAGE;
+}
+
+void middleFromStorage(int speed){
+    spinIntake(speed);
+    spinScoring(-speed);
+    spinStorage(speed);
+    spinReload(-speed);
+    current_intake = MIDSCORE;
+    current_reload = FROM_STORAGE;
+}
+
+void outakeAll(int speed){
+    spinIntake(-speed);
+    stopScoring();
+    stopStorage();
+    spinReload(speed);
+    current_intake = OUTAKE;
+    current_reload = FROM_INTAKE;
+}
+
+
 void stopAllIntake(){
     stopIntake();
     stopScoring();
     stopStorage();
     stopReload();
+    current_intake = STOP;
+    current_reload = FROM_INTAKE;
 }
 
 void stopIntakeHold() {
@@ -153,94 +219,6 @@ void intakeAntiJamTaskFunc(){
 }
 
 
-// Lift Movement
-void spinLift(int speed) {
-    //ladybrown.move(speed);
-    setLiftBrake((getLiftPosition() > 40) ? pros::E_MOTOR_BRAKE_HOLD : pros::E_MOTOR_BRAKE_COAST);
-}
-
-void stopLift(){
-    //ladybrown.brake();
-}
-
-void stopLiftCoast(){
-    setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
-    stopLift();
-}
-void stopLiftHold() {
-    setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
-    stopLift();
-}
-
-
-void setLiftBrake(pros::motor_brake_mode_e mode) {
-    //ladybrown.set_brake_mode_all(mode);
-}
-
-
-//Pneumatics
-
-// Clamp
-void openClamp() {
-    mogo_clamp.retract();
-}
-
-void closeClamp() {
-    mogo_clamp.extend();
-}
-
-void toggleClamp() {
-    mogo_clamp.toggle();
-}
-
-// leftsweeper
-void extendLeftSweeper() {
-    left_sweeper.extend();
-}
-
-void retractLeftSweeper() {
-    left_sweeper.retract();
-}
-
-void toggleLeftSweeper() {
-    left_sweeper.toggle();
-}
-
-// right sweeper
-void extendRightSweeper() {
-    right_sweeper.extend();
-}
-
-void retractRightSweeper() {
-    right_sweeper.retract();
-}
-
-void toggleRightSweeper() {
-    right_sweeper.toggle();
-}
-//IntakeLift
-void liftIntake() {
-    intake_lift.extend();
-}
-void dropIntake()
-{
-    intake_lift.retract();
-}
-//PTO
-void closePTO() {
-    pto.extend();
-}
-void openPTO() {
-    pto.retract();
-}
-void togglePTO() {
-    pto.toggle();
-}
-//Climb balance
-void retractClimbBalance() {
-    climb_balance.extend();
-}
-
 //IMU
 void resetIMUHeading() {
     imu.tare_heading();
@@ -250,132 +228,6 @@ float getHeading() {
     return imu.get_heading();
 }
 
-
-
-//Distance
-int getFrontDistance() {
-    return distance_front.get();
-}
-
-int getBackDistance() {
-    return distance_back.get();
-}
-
-int getLeftDistance() {
-    return distance_left.get();
-}
-
-int getRightDistance() {
-    return distance_right.get();
-}
-
-int getProximity() {
-    return distance_proxi.get();
-}
-
-float distToWallF() {
-    return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
-}
-
-float distToWallB() {
-    return (getBackDistance() / 25.4) + B_DISTANCE_OFFSET;
-}
-
-float distToWallL() {
-    return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
-}
-
-float distToWallR() {
-    return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
-}
-
-float distToObject() {
-    return (getProximity() / 25.4) + PROXI_OFFSET;
-}
-
-int getIntakeDist(){
-    return intake_dist.get();
-}
-
-//Color
-int getIntakeColor() {
-    return intake_color.get_hue();
-}
-
-int get2ndIntakeColor() {
-    return intake_color2.get_hue();
-}
-
-void setIntakeColorLED(int value){
-    intake_color.set_led_pwm(value);
-}
-
-void setIntakeColor2LED(int value){
-    intake_color2.set_led_pwm(value);
-}
-
-// Limit Switch
-bool getLBLimitSwitch() {
-    return LB_limit.get_value();
-}
-
-// Vision Sensor
-pros::vision_object_s_t getRed() {
-    return vision_sensor.get_by_sig(0, 1);
-}
-pros::vision_object_s_t getBlue() {
-    return vision_sensor.get_by_sig(0, 2);
-}
-
-pros::vision_object_s_t getOurColorObject() {
-    return vision_sensor.get_by_sig(0, COLOR_SIG);
-}
-
-void swap_objects(pros::vision_object_s_t obj_arr[], int a, int b){
-    pros::vision_object_s_t temp = obj_arr[a];
-    obj_arr[a] = obj_arr[b];
-    obj_arr[b] = temp;
-}
-
-pros::vision_object_s_t getMostRelevantObject(bool color) {
-    pros::vision_object_s_t object_arr[5];
-    int availableObjects = vision_sensor.read_by_sig(0, (color) ? 1 : 2, 5, object_arr);
-
-    int highestY = 0;
-    int highestYIndex = 0;
-
-    for(int i = 0; i < 5; i++){
-        if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr->x_middle_coord - VISION_CENTER) > 135){
-                object_arr[i].signature = VISION_OBJECT_ERR_SIG;
-                availableObjects--;
-            } else if (object_arr[i].y_middle_coord > highestY){
-                highestY = object_arr[i].y_middle_coord;
-                highestYIndex = i;
-            }
-        }
-    }
-
-    if(availableObjects <= 1){
-        return object_arr[highestYIndex];
-    }
-
-    int lowestXOffset = 160;
-    int lowestXOffsetIndex = 0;
-
-    for(int i = 0; i < 5; i++){
-        if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
-            if(abs(object_arr[i].y_middle_coord - highestY) < 10) {
-                if(abs(object_arr[i].x_middle_coord - VISION_CENTER) < lowestXOffset){
-                    lowestXOffset = abs(object_arr[i].x_middle_coord - VISION_CENTER);
-                    lowestXOffsetIndex = i;
-                }
-            }
-        }
-    }
-
-    return object_arr[lowestXOffsetIndex];
-}
 
 // Motor Encoder
 void setDriveEncoder(pros::motor_encoder_units_e_t mode){
@@ -388,7 +240,7 @@ double getLFPosition() {
 }
 
 double getLMPosition() {
-    return lm.get_position() * DRIVEBASE_GEAR_RATIO;
+    // return lm.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
 double getLBPosition() {
@@ -400,7 +252,7 @@ double getRFPosition() {
 }
 
 double getRMPosition() {
-    return rm.get_position() * DRIVEBASE_GEAR_RATIO;
+    // return rm.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
 double getRBPosition() {
@@ -423,62 +275,13 @@ double getRightMotorPositionInInches() {
     return wheelRotToInches(getRightMotorPosition());
 }
 
-void setLiftZero(double pos){
-    //ladybrownL.set_zero_position(pos);
-    //ladybrownR.set_zero_position(pos);
-}
-
-void resetLiftPosition(){
-    //ladybrownL.tare_position();
-    //ladybrownR.tare_position();
-}
-void resetLiftPositionWithDistance(){
-    if(getLBLimitSwitch())
-    { 
-        LBPickup = false;
-        liftReset = true;
-        resetLiftPosition();
-        //printf("Lift reset\n");
-    }
-}
-void resetLiftWithDistTaskFunc(){
-    while (true) {
-        resetLiftPositionWithDistance();
-        pros::delay(20);
-    }
-}
-
-void setLiftEncoder(pros::motor_encoder_units_e mode) {
-    //ladybrownL.set_encoder_units(mode);
-    //ladybrownR.set_encoder_units(mode);
-}
-
-
-float getLiftPosition() {
-    //float pos = (ladybrownL.get_position() + R.get_position()) / 2 ;
-    float pos = 0;
-    return (pos);
-}
-
-void setIntakeEncoder(pros::motor_encoder_units_e mode) {
-    intake.set_encoder_units(mode);
-}
-
-float getIntakePosition() {
-    return (intake.get_position());
-}
-
 // Reset Motor Positions
 void resetLeftMotorPosition() {
-    lf.tare_position();
-    lm.tare_position();
-    lb.tare_position();
+    left_side_motors.tare_position_all();
 }
 
 void resetRightMotorPosition() {
-    rf.tare_position();
-    rm.tare_position();
-    rb.tare_position();
+    right_side_motors.tare_position_all();
 }
 
 void resetDriveMotorPosition() {
@@ -497,26 +300,6 @@ double wheelDegToInches(double degrees) {
 
 double wheelRotToInches(double rotations){
     return (PI * DRIVEBASE_WHEEL_DIAMETER) * rotations;
-}
-
-int getRightLine() {
-    return lineRight.get_value();
-}
-
-int getLeftLine() {
-    return lineLeft.get_value();
-}
-
-bool detectLine(int value) {
-    return value < 2700;
-}
-
-bool detectRightLine() {
-    return detectLine(getRightLine());
-}
-
-bool detectLeftLine() {
-    return detectLine(getLeftLine());
 }
 
 // Controlled Functions
@@ -621,120 +404,6 @@ void turn(float degrees, int timeout) {
     stopDrive();
 }
 
-
-// Lift
-void liftUpWallStake() {
-    setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
-    moveLiftToPos(210,127,1200);
-    stopLiftHold();
-    printf("WALL STAKE");
-}
-
-int moveToReset(float speed) {
-    autoLift = false;
-    pros::delay(30);
-    int time = 0;
-    LBPickup = true;
-    autoLift = true;
-    setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
-    while (!getLBLimitSwitch() && time < 1200 && autoLift) {
-        spinLift(-speed);
-        pros::delay(20);
-        time=+20;
-    }
-    resetLiftPositionWithDistance();
-    stopLift();
-    return time;
-}
-
-void liftPickup() {
-    int time = 0;
-    if(getLiftPosition() < 70 || !liftReset){
-        time = moveToReset(100);
-        moveLiftToPos(60, 100, 1200 - time);
-    } else {
-        moveLiftToPos(60, 100, 1200);
-    }
-    stopLiftHold();
-    LBPickup = true;
-}
-
-void liftDown() {
-    moveLiftToPos(4);
-}
-
-void moveLiftToPos(float pos,int speed,int timeout){
-
-    autoLift = false;
-    pros::delay(30);
-
-    if(pos <= 0){
-        pos = 0;
-    }
-    else if(pos >= 2000){
-        pos = 2000;
-    }
-    autoLift = true;
-    float error, prevError, derivative;
-    int counter = 0;
-    while(counter < 150 && timeout > 0 && autoLift){
-        error = pos - getLiftPosition();
-        printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
-
-        derivative = error - prevError;
-
-        float motorPower = 1.2 * error + derivative;
-     
-        if(motorPower > speed) motorPower = speed;
-        else if(motorPower < -speed) motorPower = -speed;
-        spinLift(motorPower);
-
-        prevError = error;
-        pros::delay(20);
-        timeout -= 20;
-
-        if(fabs(pos - getLiftPosition()) < 0.5){
-            counter += 20;
-        } else {
-            counter = 0;
-        }
-    }
-    stopLift();
-    autoLift = false;
-}
-
-void moveLiftToPosCancel(float pos, int time, int speed, int timeout){
-    if(autoLift){
-        if(getLiftPosition() > pos){
-            spinLift(-speed);
-            pros::delay(20);
-            if(getLiftPosition() < pos || pros::millis() - time > timeout)  {
-                autoLift = false;
-                stopLift();
-            }
-        } else if(getLiftPosition() < pos){
-            spinLift(speed);
-            pros::delay(20);
-            if(getLiftPosition() > pos || pros::millis() - time > timeout) {
-                autoLift = false;
-                stopLift();
-            }
-        }
-    }
-}
-
-void moveLiftToPosCancel(float pos, bool dir, int time, int speed, int timeout){
-    if(autoLift){
-        if((getLiftPosition() < pos) == dir && pros::millis() - time < timeout){
-            spinLift(dir ? speed : -speed);
-        } else {
-            autoLift = false;
-            stopLift();
-        }
-    }
-}
-
-
 // Intake
 void intakeFor(int ms){
     spinIntake(127);
@@ -812,86 +481,459 @@ void outakeFor(float speed, float degrees) {
         stopIntake();
 }
 
+/*********************** END OF USED FUNCTIONS ***********************/
+
+
+// Lift Movement
+void spinLift(int speed) {
+    //ladybrown.move(speed);
+    // setLiftBrake((getLiftPosition() > 40) ? pros::E_MOTOR_BRAKE_HOLD : pros::E_MOTOR_BRAKE_COAST);
+}
+
+void stopLift(){
+    //ladybrown.brake();
+}
+
+void stopLiftCoast(){
+    // setLiftBrake(pros::E_MOTOR_BRAKE_COAST);
+    // stopLift();
+}
+void stopLiftHold() {
+    // setLiftBrake(pros::E_MOTOR_BRAKE_HOLD);
+    // stopLift();
+}
+
+
+void setLiftBrake(pros::motor_brake_mode_e mode) {
+    //ladybrown.set_brake_mode_all(mode);
+}
+
+
+//Pneumatics
+
+// Clamp
+void openClamp() {
+    // mogo_clamp.retract();
+}
+
+void closeClamp() {
+    // mogo_clamp.extend();
+}
+
+void toggleClamp() {
+    // mogo_clamp.toggle();
+}
+
+// leftsweeper
+void extendLeftSweeper() {
+    // left_sweeper.extend();
+}
+
+void retractLeftSweeper() {
+    // left_sweeper.retract();
+}
+
+void toggleLeftSweeper() {
+    // left_sweeper.toggle();
+}
+
+// right sweeper
+void extendRightSweeper() {
+    // right_sweeper.extend();
+}
+
+void retractRightSweeper() {
+    // right_sweeper.retract();
+}
+
+void toggleRightSweeper() {
+    // right_sweeper.toggle();
+}
+//IntakeLift
+void liftIntake() {
+    // intake_lift.extend();
+}
+void dropIntake()
+{
+    // intake_lift.retract();
+}
+//PTO
+void closePTO() {
+    // pto.extend();
+}
+void openPTO() {
+    // pto.retract();
+}
+void togglePTO() {
+    // pto.toggle();
+}
+//Climb balance
+void retractClimbBalance() {
+    // climb_balance.extend();
+}
+
+
+
+//Distance
+int getFrontDistance() {
+    // return distance_front.get();
+}
+
+int getBackDistance() {
+    // return distance_back.get();
+}
+
+int getLeftDistance() {
+    // return distance_left.get();
+}
+
+int getRightDistance() {
+    // return distance_right.get();
+}
+
+int getProximity() {
+    // return distance_proxi.get();
+}
+
+float distToWallF() {
+    // return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
+}
+
+float distToWallB() {
+    // return (getBackDistance() / 25.4) + B_DISTANCE_OFFSET;
+}
+
+float distToWallL() {
+    // return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
+}
+
+float distToWallR() {
+    // return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
+}
+
+float distToObject() {
+    // return (getProximity() / 25.4) + PROXI_OFFSET;
+}
+
+int getIntakeDist(){
+    // return intake_dist.get();
+}
+
+//Color
+int getIntakeColor() {
+    // return intake_color.get_hue();
+}
+
+int get2ndIntakeColor() {
+    // return intake_color2.get_hue();
+}
+
+void setIntakeColorLED(int value){
+    // intake_color.set_led_pwm(value);
+}
+
+void setIntakeColor2LED(int value){
+    // intake_color2.set_led_pwm(value);
+}
+
+// Limit Switch
+bool getLBLimitSwitch() {
+    // return LB_limit.get_value();
+}
+
+// Vision Sensor
+pros::vision_object_s_t getRed() {
+    // return vision_sensor.get_by_sig(0, 1);
+}
+pros::vision_object_s_t getBlue() {
+    // return vision_sensor.get_by_sig(0, 2);
+}
+
+pros::vision_object_s_t getOurColorObject() {
+    // return vision_sensor.get_by_sig(0, COLOR_SIG);
+}
+
+void swap_objects(pros::vision_object_s_t obj_arr[], int a, int b){
+    // pros::vision_object_s_t temp = obj_arr[a];
+    // obj_arr[a] = obj_arr[b];
+    // obj_arr[b] = temp;
+}
+
+pros::vision_object_s_t getMostRelevantObject(bool color) {
+    // pros::vision_object_s_t object_arr[5];
+    // int availableObjects = vision_sensor.read_by_sig(0, (color) ? 1 : 2, 5, object_arr);
+
+    // int highestY = 0;
+    // int highestYIndex = 0;
+
+    // for(int i = 0; i < 5; i++){
+    //     if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
+    //         if(abs(object_arr->x_middle_coord - VISION_CENTER) > 135){
+    //             object_arr[i].signature = VISION_OBJECT_ERR_SIG;
+    //             availableObjects--;
+    //         } else if (object_arr[i].y_middle_coord > highestY){
+    //             highestY = object_arr[i].y_middle_coord;
+    //             highestYIndex = i;
+    //         }
+    //     }
+    // }
+
+    // if(availableObjects <= 1){
+    //     return object_arr[highestYIndex];
+    // }
+
+    // int lowestXOffset = 160;
+    // int lowestXOffsetIndex = 0;
+
+    // for(int i = 0; i < 5; i++){
+    //     if(object_arr[i].signature != VISION_OBJECT_ERR_SIG){
+    //         if(abs(object_arr[i].y_middle_coord - highestY) < 10) {
+    //             if(abs(object_arr[i].x_middle_coord - VISION_CENTER) < lowestXOffset){
+    //                 lowestXOffset = abs(object_arr[i].x_middle_coord - VISION_CENTER);
+    //                 lowestXOffsetIndex = i;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // return object_arr[lowestXOffsetIndex];
+}
+
+
+void setLiftZero(double pos){
+    //ladybrownL.set_zero_position(pos);
+    //ladybrownR.set_zero_position(pos);
+}
+
+void resetLiftPosition(){
+    //ladybrownL.tare_position();
+    //ladybrownR.tare_position();
+}
+void resetLiftPositionWithDistance(){
+    // if(getLBLimitSwitch())
+    // { 
+    //     LBPickup = false;
+    //     liftReset = true;
+    //     resetLiftPosition();
+    //     //printf("Lift reset\n");
+    // }
+}
+void resetLiftWithDistTaskFunc(){
+    // while (true) {
+    //     resetLiftPositionWithDistance();
+    //     pros::delay(20);
+    // }
+}
+
+void setLiftEncoder(pros::motor_encoder_units_e mode) {
+    //ladybrownL.set_encoder_units(mode);
+    //ladybrownR.set_encoder_units(mode);
+}
+
+
+float getLiftPosition() {
+    //float pos = (ladybrownL.get_position() + R.get_position()) / 2 ;
+    // float pos = 0;
+    // return (pos);
+}
+
+void setIntakeEncoder(pros::motor_encoder_units_e mode) {
+    // intake.set_encoder_units(mode);
+}
+
+float getIntakePosition() {
+    // return (intake.get_position());
+}
+
+
+int getRightLine() {
+    // return lineRight.get_value(); 
+}
+
+int getLeftLine() {
+    // return lineLeft.get_value();
+}
+
+bool detectLine(int value) {
+    // return value < 2700;
+}
+
+bool detectRightLine() {
+    // return detectLine(getRightLine());
+}
+
+bool detectLeftLine() {
+    // return detectLine(getLeftLine());
+}
+
+
+
+
+// Lift
+void liftUpWallStake() {
+    // setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+    // moveLiftToPos(210,127,1200);
+    // stopLiftHold();
+    // printf("WALL STAKE");
+}
+
+int moveToReset(float speed) {
+    // autoLift = false;
+    // pros::delay(30);
+    // int time = 0;
+    // LBPickup = true;
+    // autoLift = true;
+    // setLiftEncoder(pros::E_MOTOR_ENCODER_DEGREES);
+    // while (!getLBLimitSwitch() && time < 1200 && autoLift) {
+    //     spinLift(-speed);
+    //     pros::delay(20);
+    //     time=+20;
+    // }
+    // resetLiftPositionWithDistance();
+    // stopLift();
+    // return time;
+}
+
+void liftPickup() {
+    // int time = 0;
+    // if(getLiftPosition() < 70 || !liftReset){
+    //     time = moveToReset(100);
+    //     moveLiftToPos(60, 100, 1200 - time);
+    // } else {
+    //     moveLiftToPos(60, 100, 1200);
+    // }
+    // stopLiftHold();
+    // LBPickup = true;
+}
+
+void liftDown() {
+    // moveLiftToPos(4);
+}
+
+void moveLiftToPos(float pos,int speed,int timeout){
+
+    // autoLift = false;
+    // pros::delay(30);
+
+    // if(pos <= 0){
+    //     pos = 0;
+    // }
+    // else if(pos >= 2000){
+    //     pos = 2000;
+    // }
+    // autoLift = true;
+    // float error, prevError, derivative;
+    // int counter = 0;
+    // while(counter < 150 && timeout > 0 && autoLift){
+    //     error = pos - getLiftPosition();
+    //     printf("Lift: %f\tError: %f\n", getLiftPosition(), error);
+
+    //     derivative = error - prevError;
+
+    //     float motorPower = 1.2 * error + derivative;
+     
+    //     if(motorPower > speed) motorPower = speed;
+    //     else if(motorPower < -speed) motorPower = -speed;
+    //     spinLift(motorPower);
+
+    //     prevError = error;
+    //     pros::delay(20);
+    //     timeout -= 20;
+
+    //     if(fabs(pos - getLiftPosition()) < 0.5){
+    //         counter += 20;
+    //     } else {
+    //         counter = 0;
+    //     }
+    // }
+    // stopLift();
+    // autoLift = false;
+}
+
+
+
+
+
 
 // Color Sorting
 
 bool sort_color(bool sort) {
     //false = red, true = blue 
-    int hue = getIntakeColor();
-    int hue2 = get2ndIntakeColor();
-    int timeout = 0;
-    if (sort == true){
+    // int hue = getIntakeColor();
+    // int hue2 = get2ndIntakeColor();
+    // int timeout = 0;
+    // if (sort == true){
 
-        setIntakeColorLED(100);
-        setIntakeColor2LED(100);
+    //     setIntakeColorLED(100);
+    //     setIntakeColor2LED(100);
 
-        if(COLOR == false) // Sorting out Red
-        {
-            //printf("Sorting out red \n"); // Log the function exit for debugging 
-            if(hue >= 0 && hue <= 25)
-            {
-                printf("Detected Red \n"); // Log the function exit for debugging
-                while(hue2 >= 155 && hue2 <= 185){
-                    pros::delay(20);
-                    hue2 = get2ndIntakeColor();
-                }
+    //     if(COLOR == false) // Sorting out Red
+    //     {
+    //         //printf("Sorting out red \n"); // Log the function exit for debugging 
+    //         if(hue >= 0 && hue <= 25)
+    //         {
+    //             printf("Detected Red \n"); // Log the function exit for debugging
+    //             while(hue2 >= 155 && hue2 <= 185){
+    //                 pros::delay(20);
+    //                 hue2 = get2ndIntakeColor();
+    //             }
 
-                redirectRings();
+    //             redirectRings();
 
-                while((hue2 < 0 || hue2 > 25) && timeout < 500){
-                    pros::delay(20);
-                    hue2 = get2ndIntakeColor();
-                    timeout += 20;
-                }
+    //             while((hue2 < 0 || hue2 > 25) && timeout < 500){
+    //                 pros::delay(20);
+    //                 hue2 = get2ndIntakeColor();
+    //                 timeout += 20;
+    //             }
 
-                timeout = 0;
-                while((hue2 >= 0 && hue2 <= 25) && timeout < 500){
-                    pros::delay(20);
-                    hue2 = get2ndIntakeColor();
-                    timeout += 20;
-                }
+    //             timeout = 0;
+    //             while((hue2 >= 0 && hue2 <= 25) && timeout < 500){
+    //                 pros::delay(20);
+    //                 hue2 = get2ndIntakeColor();
+    //                 timeout += 20;
+    //             }
 
-                pros::delay(50);
-                closeRedirect();
-                return true;
-            }
-        }
-        if(COLOR == true)// Sorting out Blue
-        {
-            if(hue >= 135 && hue <= 185)
-            {
-                printf("Detected Blue \n"); // Log the function exit for debugging
-                while(hue2 >= 0 && hue2 <= 25){
-                    pros::delay(20);
-                    hue2 = get2ndIntakeColor();
-                } 
+    //             pros::delay(50);
+    //             closeRedirect();
+    //             return true;
+    //         }
+    //     }
+    //     if(COLOR == true)// Sorting out Blue
+    //     {
+    //         if(hue >= 135 && hue <= 185)
+    //         {
+    //             printf("Detected Blue \n"); // Log the function exit for debugging
+    //             while(hue2 >= 0 && hue2 <= 25){
+    //                 pros::delay(20);
+    //                 hue2 = get2ndIntakeColor();
+    //             } 
 
-                redirectRings();
+    //             redirectRings();
 
-                while((hue2 < 155 || hue2 > 185) && timeout < 500){
-                    pros::delay(20);
-                    hue2 = get2ndIntakeColor();
-                    timeout += 20;
-                }
+    //             while((hue2 < 155 || hue2 > 185) && timeout < 500){
+    //                 pros::delay(20);
+    //                 hue2 = get2ndIntakeColor();
+    //                 timeout += 20;
+    //             }
 
-                timeout = 0;
-                while((hue2 >= 155 && hue2 <= 185) && timeout < 500){
-                    pros::delay(20);
-                    hue2 = get2ndIntakeColor();
-                    timeout += 20;
-                }
+    //             timeout = 0;
+    //             while((hue2 >= 155 && hue2 <= 185) && timeout < 500){
+    //                 pros::delay(20);
+    //                 hue2 = get2ndIntakeColor();
+    //                 timeout += 20;
+    //             }
 
-                pros::delay(50);
-                closeRedirect();
-                return true;
-            }
-        }
-    }
-    return false;
+    //             pros::delay(50);
+    //             closeRedirect();
+    //             return true;
+    //         }
+    //     }
+    // }
+    // return false;
 }
 
 bool detectRingFront(){
-    return distToObject() < 3.7;
+    // return distToObject() < 3.7;
 }
 
 int redLower = 0;
@@ -901,95 +943,95 @@ int blueLower = 210;
 int blueUpper = 230;
 
 bool detectRing() {
-    return getIntakeDist() < 30;
+    // return getIntakeDist() < 30;
 }
 
 bool detectRing(int hue){
-    return detectRed(hue) || detectBlue(hue);
+    // return detectRed(hue) || detectBlue(hue);
 }
 
 bool detectRed(int hue){
-    if(redUpper < redLower){
-        return hue >= redLower || hue <= redUpper;
-    } else {
-        return hue >= redLower && hue <= redUpper;
-    }
+    // if(redUpper < redLower){
+    //     return hue >= redLower || hue <= redUpper;
+    // } else {
+    //     return hue >= redLower && hue <= redUpper;
+    // }
 }
 
 bool detectBlue(int hue){
-    return hue >= blueLower && hue <= blueUpper;
+    // return hue >= blueLower && hue <= blueUpper;
 }
 
 bool detectOurColor(int hue){
-    if(COLOR){
-        return detectRed(hue);
-    } else {
-        return detectBlue(hue);
-    }
+    // if(COLOR){
+    //     return detectRed(hue);
+    // } else {
+    //     return detectBlue(hue);
+    // }
 }
 
 bool detectTheirColor(int hue){
-    if(COLOR){
-        return detectBlue(hue);
-    } else {
-        return detectRed(hue);
-    }
+    // if(COLOR){
+    //     return detectBlue(hue);
+    // } else {
+    //     return detectRed(hue);
+    // }
 }
 
 void printRingQueue(){
-    if(!ringQueue.empty()){
-        bool first;
-        for(int i = 0; i < ringQueue.size(); i++){
-            first = ringQueue.front();
-            if(first){
-                printf("Red  ");
-            } else {
-                printf("Blue ");
-            }
-            ringQueue.pop();
-            ringQueue.push(first);
-        }
-        printf("\n");
-    }
+    // if(!ringQueue.empty()){
+    //     bool first;
+    //     for(int i = 0; i < ringQueue.size(); i++){
+    //         first = ringQueue.front();
+    //         if(first){
+    //             printf("Red  ");
+    //         } else {
+    //             printf("Blue ");
+    //         }
+    //         ringQueue.pop();
+    //         ringQueue.push(first);
+    //     }
+    //     printf("\n");
+    // }
 }
 
 
 void clearRingQueue() {
-    while(!ringQueue.empty()){
-        ringQueue.pop();
-    }
+    // while(!ringQueue.empty()){
+    //     ringQueue.pop();
+    // }
 }
 
 void addCurrentRing(){
-    while(true){
-        if(autoIntake){
-            int hue = getIntakeColor();
+    // while(true){
+    //     if(autoIntake){
+    //         int hue = getIntakeColor();
 
-            if(detectRed(hue)) //If we detect red
-            {
-                printf("Enter red %i\n", hue);
-                ringQueue.push(true); //Add to queue as upcoming
+    //         if(detectRed(hue)) //If we detect red
+    //         {
+    //             printf("Enter red %i\n", hue);
+    //             ringQueue.push(true); //Add to queue as upcoming
                 
-                while(detectRed(hue)){ //Wait for ring to continue through intake
-                    pros::delay(20);
-                    hue = getIntakeColor();
-                }
-                printRingQueue();
-            }
-            else if(detectBlue(hue)) //If we detect blue
-            {
-                printf("Enter blue %i\n", hue);
-                ringQueue.push(false); //Add to queue as upcoming
+    //             while(detectRed(hue)){ //Wait for ring to continue through intake
+    //                 pros::delay(20);
+    //                 hue = getIntakeColor();
+    //             }
+    //             printRingQueue();
+    //         }
+    //         else if(detectBlue(hue)) //If we detect blue
+    //         {
+    //             printf("Enter blue %i\n", hue);
+    //             ringQueue.push(false); //Add to queue as upcoming
 
-                while(detectBlue(hue)){ //Wait for ring to continue through intake
-                    pros::delay(20);
-                    hue = getIntakeColor();
-                }
-                printRingQueue();
-            }
-        }
-        pros::delay(10);
-    }
+    //             while(detectBlue(hue)){ //Wait for ring to continue through intake
+    //                 pros::delay(20);
+    //                 hue = getIntakeColor();
+    //             }
+    //             printRingQueue();
+    //         }
+    //     }
+    //     pros::delay(10);
+    // }
 }
 
 void checkQueue() {
@@ -1010,116 +1052,116 @@ void checkQueue() {
 }
 
 void waitForExitRed(){
-    int hue = get2ndIntakeColor();
+    // int hue = get2ndIntakeColor();
 
-    while(detectRed(hue)){
-        pros::delay(20);
-        hue = get2ndIntakeColor();
-    }
+    // while(detectRed(hue)){
+    //     pros::delay(20);
+    //     hue = get2ndIntakeColor();
+    // }
 }
 
 void waitForExitBlue(){
-    int hue = get2ndIntakeColor();
+    // int hue = get2ndIntakeColor();
 
-    while(detectBlue(hue)){
-        pros::delay(20);
-        hue = get2ndIntakeColor();
-    }
+    // while(detectBlue(hue)){
+    //     pros::delay(20);
+    //     hue = get2ndIntakeColor();
+    // }
 }
 
 void waitForExitRing() {
-    while(detectRing()){
-        pros::delay(20);
-    }
-    if(ringQueue.front()){
-        printf("Exiting Red \n");
-    } else {
-        printf("Exiting Blue \n");
-    }
+    // while(detectRing()){
+    //     pros::delay(20);
+    // }
+    // if(ringQueue.front()){
+    //     printf("Exiting Red \n");
+    // } else {
+    //     printf("Exiting Blue \n");
+    // }
 }
 
 void countRings() {
-    while(true){
-        if(autoIntake && !ringQueue.empty()){
-            int hue = get2ndIntakeColor();
+    // while(true){
+    //     if(autoIntake && !ringQueue.empty()){
+    //         int hue = get2ndIntakeColor();
 
-            if(detectRed(hue) && ringQueue.front() == true) //If we detect red
-            {
-                if(COLOR == true){ //If we are red 
-                    waitForExitRed(); //wait for it to score to avoid opening early
-                    ringQueue.pop(); //then remove from queue
-                    printf("Exiting red %i\n", hue);
-                    pros::delay(50);
-                } else { //If we are not red
-                    pros::delay(30);
-                    ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
-                    printf("Exiting red %i\n", hue);
-                    waitForExitRed(); //wait for it to exit
-                }
-            }
+    //         if(detectRed(hue) && ringQueue.front() == true) //If we detect red
+    //         {
+    //             if(COLOR == true){ //If we are red 
+    //                 waitForExitRed(); //wait for it to score to avoid opening early
+    //                 ringQueue.pop(); //then remove from queue
+    //                 printf("Exiting red %i\n", hue);
+    //                 pros::delay(50);
+    //             } else { //If we are not red
+    //                 pros::delay(30);
+    //                 ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
+    //                 printf("Exiting red %i\n", hue);
+    //                 waitForExitRed(); //wait for it to exit
+    //             }
+    //         }
 
-            if(detectBlue(hue) && ringQueue.front() == false) //If we detect blue
-            {
-                if(COLOR == false){ //If we are blue
-                    waitForExitBlue(); //wait for it to score to avoid opening early
-                    ringQueue.pop(); //then remove from queue
-                    printf("Exiting blue %i\n", hue);
-                    pros::delay(50);
-                } else {
-                    pros::delay(30);
-                    ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
-                    printf("Exiting blue %i\n", hue);
-                    waitForExitBlue(); //wait for it to exit
-                }
-            }
-        }
-        pros::delay(10);
-    }
+    //         if(detectBlue(hue) && ringQueue.front() == false) //If we detect blue
+    //         {
+    //             if(COLOR == false){ //If we are blue
+    //                 waitForExitBlue(); //wait for it to score to avoid opening early
+    //                 ringQueue.pop(); //then remove from queue
+    //                 printf("Exiting blue %i\n", hue);
+    //                 pros::delay(50);
+    //             } else {
+    //                 pros::delay(30);
+    //                 ringQueue.pop(); //remove from queue as it's exiting to close as early as possible
+    //                 printf("Exiting blue %i\n", hue);
+    //                 waitForExitBlue(); //wait for it to exit
+    //             }
+    //         }
+    //     }
+    //     pros::delay(10);
+    // }
 }
 
 void countRingsDist() {
-    while(true) {
-        if(autoIntake && !ringQueue.empty()){
-            if(detectRing())
-            {
-                printRingQueue();
-                if(COLOR == ringQueue.front()){
-                    waitForExitRing();
-                    ringQueue.pop();
-                } else {
-                    printf("sorting out\n");
-                    waitForExitRing();
-                    //pros::delay(100);
-                    spinIntake(-127);
-                    ringQueue.pop();
-                    pros::delay(70);
-                    spinIntake(127);
-                }
-            }
-        }
-        pros::delay(20);
-    }
+    // while(true) {
+    //     if(autoIntake && !ringQueue.empty()){
+    //         if(detectRing())
+    //         {
+    //             printRingQueue();
+    //             if(COLOR == ringQueue.front()){
+    //                 waitForExitRing();
+    //                 ringQueue.pop();
+    //             } else {
+    //                 printf("sorting out\n");
+    //                 waitForExitRing();
+    //                 //pros::delay(100);
+    //                 spinIntake(-127);
+    //                 ringQueue.pop();
+    //                 pros::delay(70);
+    //                 spinIntake(127);
+    //             }
+    //         }
+    //     }
+    //     pros::delay(20);
+    // }
 }
 
 void sort_color_queue(){
-    printf("Sorting started\n");
-    pros::Task add_ring_task(addCurrentRing);
-    pros::Task count_ring_task(countRingsDist);
+    // printf("Sorting started\n");
+    // pros::Task add_ring_task(addCurrentRing);
+    // pros::Task count_ring_task(countRingsDist);
 }
 
 void startSorting() {
-    if(!autoIntake ){
-        master.print(1,0,"Sorting");
-        autoIntake = true;
-    }
+    // if(!autoIntake ){
+    //     master.print(1,0,"Sorting");
+    //     autoIntake = true;
+    // }
 }
 
 void stopSorting() {
-    if(autoIntake){
-        master.clear_line(1);
-        autoIntake = false;
-        clearRingQueue();
-    }
+    // if(autoIntake){
+    //     master.clear_line(1);
+    //     autoIntake = false;
+    //     clearRingQueue();
+    // }
 }
 
 
@@ -1146,131 +1188,131 @@ void stopSorting() {
 }*/
 
 bool checkRing(pros::vision_object_s_t ring){
-    return (ring.x_middle_coord != 0 || ring.y_middle_coord != 0) && abs(ring.x_middle_coord) < 160 && abs(ring.y_middle_coord) < 110;
+    // return (ring.x_middle_coord != 0 || ring.y_middle_coord != 0) && abs(ring.x_middle_coord) < 160 && abs(ring.y_middle_coord) < 110;
 }
 
 void turnToRing(int timeout, float maxSpeed, bool color){
-    bool reached = false;
-    int counter = 0;
-    int error;
-    float prevError = 0,derivative = 0;
+//     bool reached = false;
+//     int counter = 0;
+//     int error;
+//     float prevError = 0,derivative = 0;
 
-    while(!reached && timeout > 0){
+//     while(!reached && timeout > 0){
 
-        pros::vision_object_s_t nearestRing = getMostRelevantObject(color);
+//         pros::vision_object_s_t nearestRing = getMostRelevantObject(color);
 
-        if(checkRing(nearestRing)){
+//         if(checkRing(nearestRing)){
 
-            error = nearestRing.x_middle_coord - VISION_CENTER;
+//             error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            derivative = error - prevError;
+//             derivative = error - prevError;
 
-            float motorPower = (VISION_TURN_KP * error) + (VISION_TURN_KD * derivative);
+//             float motorPower = (VISION_TURN_KP * error) + (VISION_TURN_KD * derivative);
 
-            if(motorPower > maxSpeed){
-                motorPower = maxSpeed;
-            } else if (motorPower < -maxSpeed){
-                motorPower = -maxSpeed;
-            }
+//             if(motorPower > maxSpeed){
+//                 motorPower = maxSpeed;
+//             } else if (motorPower < -maxSpeed){
+//                 motorPower = -maxSpeed;
+//             }
 
-            drive(motorPower, -motorPower);
-            prevError = error;
+//             drive(motorPower, -motorPower);
+//             prevError = error;
 
-            printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord, error, motorPower);
+//             printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestRing.x_middle_coord, nearestRing.y_middle_coord, error, motorPower);
             
 
-            if(abs(error) < VISION_RANGE) {
-                counter += 20;
-                if(counter >= VISION_RANGE_TIMEOUT) {
-                    reached = true;
-                } 
-            } else {
-                counter = 0;
-            }
-        }
+//             if(abs(error) < VISION_RANGE) {
+//                 counter += 20;
+//                 if(counter >= VISION_RANGE_TIMEOUT) {
+//                     reached = true;
+//                 } 
+//             } else {
+//                 counter = 0;
+//             }
+//         }
 
-        pros::delay(20);
-        timeout -= 20;
-    }
+//         pros::delay(20);
+//         timeout -= 20;
+//     }
 
-    stopDrive();
-}
+//     stopDrive();
+// }
 
-void turnToGoal(int timeout, float maxSpeed){
-    bool reached = false;
-    int counter = 0;
-    int error;
-    float prevError = 0,derivative = 0;
+// void turnToGoal(int timeout, float maxSpeed){
+//     bool reached = false;
+//     int counter = 0;
+//     int error;
+//     float prevError = 0,derivative = 0;
 
-    while(!reached && timeout > 0){
+//     while(!reached && timeout > 0){
 
-        pros::vision_object_s_t nearestGoal = vision_sensor.get_by_sig(0, 3);
+//         pros::vision_object_s_t nearestGoal = vision_sensor.get_by_sig(0, 3);
 
-        if(checkRing(nearestGoal)){
+//         if(checkRing(nearestGoal)){
 
-            error = nearestGoal.x_middle_coord - VISION_CENTER;
+//             error = nearestGoal.x_middle_coord - VISION_CENTER;
 
-            derivative = error - prevError;
+//             derivative = error - prevError;
 
-            float motorPower = (VISION_TURN_KP * error) + (VISION_TURN_KD * derivative);
+//             float motorPower = (VISION_TURN_KP * error) + (VISION_TURN_KD * derivative);
 
-            if(motorPower > maxSpeed){
-                motorPower = maxSpeed;
-            } else if (motorPower < -maxSpeed){
-                motorPower = -maxSpeed;
-            }
+//             if(motorPower > maxSpeed){
+//                 motorPower = maxSpeed;
+//             } else if (motorPower < -maxSpeed){
+//                 motorPower = -maxSpeed;
+//             }
 
-            drive(motorPower, -motorPower);
-            prevError = error;
+//             drive(motorPower, -motorPower);
+//             prevError = error;
 
-            printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestGoal.x_middle_coord, nearestGoal.y_middle_coord, error, motorPower);
+//             printf("(%d, %d)\t Error: %d, motorPower: %f\n", nearestGoal.x_middle_coord, nearestGoal.y_middle_coord, error, motorPower);
             
 
-            if(abs(error) < VISION_RANGE) {
-                counter += 20;
-                if(counter >= VISION_RANGE_TIMEOUT) {
-                    reached = true;
-                } 
-            } else {
-                counter = 0;
-            }
-        }
+//             if(abs(error) < VISION_RANGE) {
+//                 counter += 20;
+//                 if(counter >= VISION_RANGE_TIMEOUT) {
+//                     reached = true;
+//                 } 
+//             } else {
+//                 counter = 0;
+//             }
+//         }
 
-        pros::delay(20);
-        timeout -= 20;
-    }
+//         pros::delay(20);
+//         timeout -= 20;
+//     }
 
-    stopDrive();
+//     stopDrive();
 }
 
 void driveTowardsRing(int timeout, int maxSpeed, bool color){
-    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
-    float motorPower;
+    // int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+    // float motorPower;
 
-    pros::vision_object_s_t ring = getMostRelevantObject(color);
-    if(checkRing(ring) && ring.y_middle_coord < 100){
-        while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0){
-            ring = getMostRelevantObject();
+    // pros::vision_object_s_t ring = getMostRelevantObject(color);
+    // if(checkRing(ring) && ring.y_middle_coord < 100){
+    //     while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0){
+    //         ring = getMostRelevantObject();
 
-            if(checkRing(ring)){
-                int error = 106 + ring.y_middle_coord;
-                motorPower = VISION_LAT_KP * error;
+    //         if(checkRing(ring)){
+    //             int error = 106 + ring.y_middle_coord;
+    //             motorPower = VISION_LAT_KP * error;
 
-                if(motorPower > maxSpeed){
-                    motorPower = maxSpeed;
-                }
-            }
+    //             if(motorPower > maxSpeed){
+    //                 motorPower = maxSpeed;
+    //             }
+    //         }
 
-            driveStraight(motorPower);
-            printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
+    //         driveStraight(motorPower);
+    //         printf("(%d, %d)\n", ring.x_middle_coord, ring.y_middle_coord);
 
-            pros::delay(30);
-            timeout -= 30;
+    //         pros::delay(30);
+    //         timeout -= 30;
 
-        }
+    //     }
 
-        stopDrive();
-    }
+    //     stopDrive();
+    // }
 }
 
 float limitSpeed(float speed, float maxSpeed){
@@ -1294,340 +1336,333 @@ float distBetweenPts(float x1, float y1, float x2, float y2){
  */
 void driveToRing(int timeout, driveToRingParams params) {
 
-    autoDrive = true;
-    float motorPower = params.maxSpeed, turnPower, ringPower;
-    float distTravelled, drive_error = params.maxDist, derivative, prevError;
-    float leftSpeed, rightSpeed;
-    lemlib::Pose initialPose = chassis.getPose();
-    bool startLessX = initialPose.x < params.xLimit, startLessY = initialPose.y < params.yLimit;
+    // autoDrive = true;
+    // float motorPower = params.maxSpeed, turnPower, ringPower;
+    // float distTravelled, drive_error = params.maxDist, derivative, prevError;
+    // float leftSpeed, rightSpeed;
+    // lemlib::Pose initialPose = chassis.getPose();
+    // bool startLessX = initialPose.x < params.xLimit, startLessY = initialPose.y < params.yLimit;
 
-    printf("(%f, %f) - before loop\n", chassis.getPose().x, chassis.getPose().y);
-    while(timeout > 0 && (auton || autoSkill || autoDrive)) {
+    // printf("(%f, %f) - before loop\n", chassis.getPose().x, chassis.getPose().y);
+    // while(timeout > 0 && (auton || autoSkill || autoDrive)) {
 
-        pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
+    //     pros::vision_object_s_t nearestRing = getMostRelevantObject(params.color);
 
-        if(params.driveThrough){
-            if(!params.keepDriving || !checkRing(nearestRing)){
-                if(detectOurColor(getIntakeColor())) { 
-                    printf("Stop by intake");
-                    break; 
-                }
-            }
-        } else if(detectRingFront()) { 
-            printf("Stop by intake");
-            break; 
-        }
+    //     if(params.driveThrough){
+    //         if(!params.keepDriving || !checkRing(nearestRing)){
+    //             if(detectOurColor(getIntakeColor())) { 
+    //                 printf("Stop by intake");
+    //                 break; 
+    //             }
+    //         }
+    //     } else if(detectRingFront()) { 
+    //         printf("Stop by intake");
+    //         break; 
+    //     }
 
-        lemlib::Pose currentPose = chassis.getPose();
-        //float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
-        distTravelled = distBetweenPts(currentPose.x, currentPose.y, initialPose.x, initialPose.y);
-        if(timeout % 20 == 0){
-            printf("Total dist: %f\t", distTravelled);
-        }
+    //     lemlib::Pose currentPose = chassis.getPose();
+    //     //float leftPos = getLeftMotorPositionInInches(), rightPos = getRightMotorPositionInInches();
+    //     distTravelled = distBetweenPts(currentPose.x, currentPose.y, initialPose.x, initialPose.y);
+    //     if(timeout % 20 == 0){
+    //         printf("Total dist: %f\t", distTravelled);
+    //     }
 
-        if(distTravelled > params.maxDist || 
-                startLessX != (currentPose.x < params.xLimit) || 
-                startLessY != (currentPose.y < params.yLimit)) {
-            printf("Stop by maximum\n");
-            break;
-        }
-        drive_error = std::min({params.maxDist - distTravelled, 
-            (float) fabs((1/sin(deg2rad(currentPose.theta))) * (params.xLimit - currentPose.x)), 
-            (float) fabs((1/cos(deg2rad(currentPose.theta))) * (params.yLimit - currentPose.y))});
+    //     if(distTravelled > params.maxDist || 
+    //             startLessX != (currentPose.x < params.xLimit) || 
+    //             startLessY != (currentPose.y < params.yLimit)) {
+    //         printf("Stop by maximum\n");
+    //         break;
+    //     }
+    //     drive_error = std::min({params.maxDist - distTravelled, 
+    //         (float) fabs((1/sin(deg2rad(currentPose.theta))) * (params.xLimit - currentPose.x)), 
+    //         (float) fabs((1/cos(deg2rad(currentPose.theta))) * (params.yLimit - currentPose.y))});
 
-        derivative = drive_error - prevError;
-        motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
+    //     derivative = drive_error - prevError;
+    //     motorPower = (LAT_KP * drive_error) + (LAT_KD * derivative);
 
-        if(checkRing(nearestRing)){
-            if(timeout % 90 == 0){
-                //printf("(%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
-            }
-            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
+    //     if(checkRing(nearestRing)){
+    //         if(timeout % 90 == 0){
+    //             //printf("(%d, %d)\t", nearestRing.x_middle_coord, nearestRing.y_middle_coord);
+    //         }
+    //         int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            turnPower = VISION_TURN_KP * vision_error;
+    //         turnPower = VISION_TURN_KP * vision_error;
 
-            if(nearestRing.y_middle_coord < 0 && !params.keepDriving){
-                int error = 106 + nearestRing.y_middle_coord;
-                ringPower = VISION_LAT_KP * error;
-                if(ringPower < motorPower){
-                    motorPower = ringPower;
-                }
-            }
-        }
-        if(timeout % 20 == 0){
-            printf("(%f, %f)\t", currentPose.x, currentPose.y);
-            printf("DistToMax: %f\t", drive_error);
-        }
+    //         if(nearestRing.y_middle_coord < 0 && !params.keepDriving){
+    //             int error = 106 + nearestRing.y_middle_coord;
+    //             ringPower = VISION_LAT_KP * error;
+    //             if(ringPower < motorPower){
+    //                 motorPower = ringPower;
+    //             }
+    //         }
+    //     }
+    //     if(timeout % 20 == 0){
+    //         printf("(%f, %f)\t", currentPose.x, currentPose.y);
+    //         printf("DistToMax: %f\t", drive_error);
+    //     }
 
-        if(params.useLeftLine && params.useRightLine && detectLeftLine() && detectRightLine()){
-            driveStraight(-motorPower);
-            break;
-        } else if(params.useRightLine && detectRightLine()){
-            printf("Detecting line\t Theta: %f\t", chassis.getPose().theta);
-            if(COLOR){
-                turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
-            } else {
-                turnPower = TURN_KP * fmod(90 - currentPose.theta, 360);
-            }
-        } else if(params.useLeftLine && detectLeftLine()){
-            printf("Detecting line\t Theta: %f\t", chassis.getPose().theta);
-            if(COLOR){
-                turnPower = TURN_KP * fmod(90 - currentPose.theta, 360);
-            } else {
-                turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
-            }
-        }
+    //     if(params.useLeftLine && params.useRightLine && detectLeftLine() && detectRightLine()){
+    //         driveStraight(-motorPower);
+    //         break;
+    //     } else if(params.useRightLine && detectRightLine()){
+    //         printf("Detecting line\t Theta: %f\t", chassis.getPose().theta);
+    //         if(COLOR){
+    //             turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
+    //         } else {
+    //             turnPower = TURN_KP * fmod(90 - currentPose.theta, 360);
+    //         }
+    //     } else if(params.useLeftLine && detectLeftLine()){
+    //         printf("Detecting line\t Theta: %f\t", chassis.getPose().theta);
+    //         if(COLOR){
+    //             turnPower = TURN_KP * fmod(90 - currentPose.theta, 360);
+    //         } else {
+    //             turnPower = TURN_KP * fmod(-90 - currentPose.theta, 360);
+    //         }
+    //     }
 
-        leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
+    //     leftSpeed = limitSpeed(motorPower + turnPower, params.maxSpeed), rightSpeed = limitSpeed(motorPower - turnPower, params.maxSpeed);
 
-        if(timeout % 20 == 0){
-            printf("Left: %f\t Right %f\t", leftSpeed, rightSpeed);
-            printf("\n");
-        }
-        drive(leftSpeed, rightSpeed);
-        prevError = drive_error;
+    //     if(timeout % 20 == 0){
+    //         printf("Left: %f\t Right %f\t", leftSpeed, rightSpeed);
+    //         printf("\n");
+    //     }
+    //     drive(leftSpeed, rightSpeed);
+    //     prevError = drive_error;
 
-        pros::delay(15);
-        timeout -= 15;
+    //     pros::delay(15);
+    //     timeout -= 15;
         
-    }
-    if(timeout <= 0){
-        printf("Stop by timeout");
-    }
+    // }
+    // if(timeout <= 0){
+    //     printf("Stop by timeout");
+    // }
 
-    stopDriveHold();
-    printf("\n");
+    // stopDriveHold();
+    // printf("\n");
 }
 
 /** driveToRingParams are same as driveToRing except for maxDist
  *  maxDist counts distance beyond distance to the original point
  */
 void moveToPointWithVis(float x, float y, int timeout, driveToRingParams params, int delay){
-    chassis.moveToPoint(x, y, timeout, {.maxSpeed = params.maxSpeed});
-	int temp = pros::millis();
-	while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
-		pros::delay(20);
-	}
-    lemlib::Pose currentPose = chassis.getPose();
-    printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
-	if(chassis.isInMotion()){
-		chassis.cancelAllMotions();
-        pros::delay(10);
-        currentPose = chassis.getPose();
-        params.maxDist += sqrt(pow(x - currentPose.x, 2) + pow(y - currentPose.y, 2));
-        printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
-		driveToRing(timeout - (pros::millis() - temp), params);
-	}
+    // chassis.moveToPoint(x, y, timeout, {.maxSpeed = params.maxSpeed});
+	// int temp = pros::millis();
+	// while((!checkRing(getMostRelevantObject(params.color)) || pros::millis() - temp < delay) && chassis.isInMotion()){
+	// 	pros::delay(20);
+	// }
+    // lemlib::Pose currentPose = chassis.getPose();
+    // printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
+	// if(chassis.isInMotion()){
+	// 	chassis.cancelAllMotions();
+    //     pros::delay(10);
+    //     currentPose = chassis.getPose();
+    //     params.maxDist += sqrt(pow(x - currentPose.x, 2) + pow(y - currentPose.y, 2));
+    //     printf("(%f, %f)\tMax: %f\n", currentPose.x, currentPose.y, params.maxDist);
+	// 	driveToRing(timeout - (pros::millis() - temp), params);
+	// }
 
 }
 
 void turnToHeadingWithVis(float angle, int timeout,int range, driveToRingParams params,int delay)
 {
-    chassis.turnToHeading(angle, timeout, {.maxSpeed = (int)params.maxSpeed});
-    int temp = pros::millis();
-	while((!checkRing(getMostRelevantObject(params.color)) 
-           || pros::millis() - temp < delay) && chassis.isInMotion() 
-           || abs(int(chassis.getPose().y - angle)) > range){
-            pros::delay(20);
-            temp += 20;
-	}
-    lemlib::Pose currentPose = chassis.getPose();
-    printf("(%f, \n", currentPose.theta);
-	if(chassis.isInMotion()){
-		chassis.cancelAllMotions();
-        pros::delay(10);
-		turnToRing(timeout - (pros::millis() - temp),params.maxSpeed, params.color);
-	}
+    // chassis.turnToHeading(angle, timeout, {.maxSpeed = (int)params.maxSpeed});
+    // int temp = pros::millis();
+	// while((!checkRing(getMostRelevantObject(params.color)) 
+    //        || pros::millis() - temp < delay) && chassis.isInMotion() 
+    //        || abs(int(chassis.getPose().y - angle)) > range){
+    //         pros::delay(20);
+    //         temp += 20;
+	// }
+    // lemlib::Pose currentPose = chassis.getPose();
+    // printf("(%f, \n", currentPose.theta);
+	// if(chassis.isInMotion()){
+	// 	chassis.cancelAllMotions();
+    //     pros::delay(10);
+	// 	turnToRing(timeout - (pros::millis() - temp),params.maxSpeed, params.color);
+	// }
 
 }
 
 void turnToHeadingWithVisGoal(float angle, int timeout,int range, int speed, int delay)
 {
 
-    chassis.turnToHeading(angle, timeout, {.maxSpeed = speed});
-    int temp = pros::millis();
-	while((!checkRing(vision_sensor.get_by_sig(0, 3)) || pros::millis() - temp < delay) && chassis.isInMotion()){
-        if(abs(int(chassis.getPose().y - angle)) > range)
-        {
-		    pros::delay(20);
-        }
-	}
-    lemlib::Pose currentPose = chassis.getPose();
-    printf("(%f, \n", currentPose.theta);
-	if(chassis.isInMotion()){
-		chassis.cancelAllMotions();
-        pros::delay(10);
-		turnToGoal(timeout - (pros::millis() - temp),speed);
-	}
+    // chassis.turnToHeading(angle, timeout, {.maxSpeed = speed});
+    // int temp = pros::millis();
+	// while((!checkRing(vision_sensor.get_by_sig(0, 3)) || pros::millis() - temp < delay) && chassis.isInMotion()){
+    //     if(abs(int(chassis.getPose().y - angle)) > range)
+    //     {
+	// 	    pros::delay(20);
+    //     }
+	// }
+    // lemlib::Pose currentPose = chassis.getPose();
+    // printf("(%f, \n", currentPose.theta);
+	// if(chassis.isInMotion()){
+	// 	chassis.cancelAllMotions();
+    //     pros::delay(10);
+	// 	turnToGoal(timeout - (pros::millis() - temp),speed);
+	// }
 
 }
 
 
 float calcDistance(){
 
-    pros::vision_object_s_t nearestRing = getMostRelevantObject();
+    // pros::vision_object_s_t nearestRing = getMostRelevantObject();
 
-    return (7 * 158.) / (nearestRing.width * tan(deg2rad(32.3)));
+    // return (7 * 158.) / (nearestRing.width * tan(deg2rad(32.3)));
 }
 
 float calcDistanceGoal(){
 
-    pros::vision_object_s_t nearestGoal = vision_sensor.get_by_sig(0, 3);
-    if(checkRing(nearestGoal)){
-        return (11.6 * 158.) / (nearestGoal.width * tan(deg2rad(32.3)));
-    } else {
-        return -1;
-    }
+    // pros::vision_object_s_t nearestGoal = vision_sensor.get_by_sig(0, 3);
+    // if(checkRing(nearestGoal)){
+    //     return (11.6 * 158.) / (nearestGoal.width * tan(deg2rad(32.3)));
+    // } else {
+    //     return -1;
+    // }
 }
 
 void driveFullVision(int timeout, int maxSpeed) {
-    int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
-    autoDrive = true;
-    float turnPower, motorPower = maxSpeed;
-    float distance, prevDistance = 0, derivative = 0, prev_vision_error = 0,turn_derivative = 0;
-    pros::delay(50);
-    while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill) && autoDrive) {
+    // int hueLower = (COLOR) ? redLower : blueLower, hueUpper = (COLOR) ? redUpper : blueUpper;
+    // autoDrive = true;
+    // float turnPower, motorPower = maxSpeed;
+    // float distance, prevDistance = 0, derivative = 0, prev_vision_error = 0,turn_derivative = 0;
+    // pros::delay(50);
+    // while((getIntakeColor() < hueLower || getIntakeColor() > hueUpper) && timeout > 0 && (auton || autoSkill) && autoDrive) {
 
-        pros::vision_object_s_t nearestRing = getMostRelevantObject();
+    //     pros::vision_object_s_t nearestRing = getMostRelevantObject();
 
-        if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
+    //     if(nearestRing.signature != VISION_OBJECT_ERR_SIG){
 
-            int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
+    //         int vision_error = nearestRing.x_middle_coord - VISION_CENTER;
 
-            turnPower = VISION_TURN_KP * vision_error;
+    //         turnPower = VISION_TURN_KP * vision_error;
 
-            distance = calcDistance();
+    //         distance = calcDistance();
 
-            derivative = distance - prevDistance;
+    //         derivative = distance - prevDistance;
 
-            turn_derivative = vision_error - prev_vision_error;
+    //         turn_derivative = vision_error - prev_vision_error;
 
-            motorPower = LAT_KP * distance + LAT_KD * derivative;
+    //         motorPower = LAT_KP * distance + LAT_KD * derivative;
 
-            //printf("Drive: %f\t Turn: %f\n", motorPower, turnPower);
+    //         //printf("Drive: %f\t Turn: %f\n", motorPower, turnPower);
 
-            prevDistance = distance;
+    //         prevDistance = distance;
     
-            prev_vision_error = vision_error;
+    //         prev_vision_error = vision_error;
 
-            if(motorPower > maxSpeed){
-                motorPower = maxSpeed;
-            }
-        }
+    //         if(motorPower > maxSpeed){
+    //             motorPower = maxSpeed;
+    //         }
+    //     }
 
-        drive(motorPower + turnPower, motorPower - turnPower);
-        //printf("Motor Power: %f\n", motorPower);
+    //     drive(motorPower + turnPower, motorPower - turnPower);
+    //     //printf("Motor Power: %f\n", motorPower);
 
-        pros::delay(15);
-        timeout -= 15;
-    }
-    stopDrive();
+    //     pros::delay(15);
+    //     timeout -= 15;
+    // }
+    // stopDrive();
 }
 
 
-
-
-/*void saveRingsAsTask(int speed)
-{
-    pros::Task intake_task(saveRings);
-}*/
-
 void saveOurRing(int timeout){
-    int time = 0;
-    while (true) {
-        if (time >= timeout)
-        {
-            return;
-        }
-        int hue = get2ndIntakeColor();
-        //printf("Color %d\n",hue);
-        if(detectOurColor(hue))
-        {
-            //pros::delay(100);
-            stopIntake();
-            return;
-        }
-        pros::delay(20);
-        time += 20;
-    }
+    // int time = 0;
+    // while (true) {
+    //     if (time >= timeout)
+    //     {
+    //         return;
+    //     }
+    //     int hue = get2ndIntakeColor();
+    //     //printf("Color %d\n",hue);
+    //     if(detectOurColor(hue))
+    //     {
+    //         //pros::delay(100);
+    //         stopIntake();
+    //         return;
+    //     }
+    //     pros::delay(20);
+    //     time += 20;
+    // }
 }
 
 void saveRing(int timeout){
-    int time = 0;
-    while (true) {
-        if (time >= timeout)
-        {
-            return;
-        }
-        int hue = get2ndIntakeColor();
-        if(detectOurColor(hue))
-        {
-            pros::delay(100);
-            stopIntake();
-            return;
-        }
-        if(detectTheirColor(hue))
-        {
-            pros::delay(100);
-            stopIntake();
-            return;
-        }
-        pros::delay(20);
-        time += 20;
-    }
+    // int time = 0;
+    // while (true) {
+    //     if (time >= timeout)
+    //     {
+    //         return;
+    //     }
+    //     int hue = get2ndIntakeColor();
+    //     if(detectOurColor(hue))
+    //     {
+    //         pros::delay(100);
+    //         stopIntake();
+    //         return;
+    //     }
+    //     if(detectTheirColor(hue))
+    //     {
+    //         pros::delay(100);
+    //         stopIntake();
+    //         return;
+    //     }
+    //     pros::delay(20);
+    //     time += 20;
+    // }
 }
 
 void saveOurRing1(int timeout){
-    int time = 0;
-    while (true) {
-        if (time >= timeout)
-        {
-            return;
-        }
-        int hue = getIntakeColor();
-        //printf("Color %d\n",hue);
-        if(detectOurColor(hue))
-        {
-            pros::delay(100);
-            stopIntake();
-            return;
-        }
-        pros::delay(20);
-        time += 20;
-    }
+    // int time = 0;
+    // while (true) {
+    //     if (time >= timeout)
+    //     {
+    //         return;
+    //     }
+    //     int hue = getIntakeColor();
+    //     //printf("Color %d\n",hue);
+    //     if(detectOurColor(hue))
+    //     {
+    //         pros::delay(100);
+    //         stopIntake();
+    //         return;
+    //     }
+    //     pros::delay(20);
+    //     time += 20;
+    // }
 }
 
 void saveRing1(int timeout){
-    int time = 0;
-    while (true) {
-        if (time >= timeout)
-        {
-            return;
-        }
-        int hue = getIntakeColor();
-        if(detectOurColor(hue))
-        {
-            //pros::delay(100);
-            stopIntake();
-            return;
-        }
-        if(detectTheirColor(hue))
-        {
-            //pros::delay(100);
-            stopIntake();
-            return;
-        }
-        pros::delay(20);
-        time += 20;
-    }
+    // int time = 0;
+    // while (true) {
+    //     if (time >= timeout)
+    //     {
+    //         return;
+    //     }
+    //     int hue = getIntakeColor();
+    //     if(detectOurColor(hue))
+    //     {
+    //         //pros::delay(100);
+    //         stopIntake();
+    //         return;
+    //     }
+    //     if(detectTheirColor(hue))
+    //     {
+    //         //pros::delay(100);
+    //         stopIntake();
+    //         return;
+    //     }
+    //     pros::delay(20);
+    //     time += 20;
+    // }
 }
 
 void saveRingDist(int timeout){
-    int time = 0;
-    while(time < timeout){
-        if(detectRingFront()){
-            stopIntake();
-            return;
-        }
-    }
+    // int time = 0;
+    // while(time < timeout){
+    //     if(detectRingFront()){
+    //         stopIntake();
+    //         return;
+    //     }
+    // }
 }
