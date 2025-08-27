@@ -116,7 +116,7 @@ void stopReload() {
 void intakeAll(int speed) {
     spinIntake(speed);
     spinScoring(speed);
-    spinStorage(speed);
+    spinStorage(0.25 * speed);
     spinReload(speed);
     current_intake = INTAKE;
     current_reload = FROM_INTAKE;
@@ -135,8 +135,8 @@ void scoreTop(int speed) {
 }
 
 void scoreMiddle(int speed){
-    spinIntake(speed);
-    spinScoring(-speed);
+    spinIntake(0.5 * speed);
+    spinScoring(-0.3 * speed);
     spinStorage(speed);
     if(current_reload == FROM_INTAKE){
         spinReload(speed);
@@ -156,8 +156,8 @@ void topFromStorage(int speed){
 }
 
 void middleFromStorage(int speed){
-    spinIntake(speed);
-    spinScoring(-speed);
+    spinIntake(0.5 * speed);
+    spinScoring(-0.3 * speed);
     spinStorage(speed);
     spinReload(-speed);
     current_intake = MIDSCORE;
@@ -165,10 +165,10 @@ void middleFromStorage(int speed){
 }
 
 void outakeAll(int speed){
-    spinIntake(-speed);
-    stopScoring();
-    stopStorage();
-    spinReload(speed);
+    spinIntake(-0.75 * speed);
+    spinScoring(-speed);
+    spinStorage(0.25 * speed);
+    spinReload(-speed);
     current_intake = OUTAKE;
     current_reload = FROM_INTAKE;
 }

@@ -21,6 +21,14 @@ void taskFn_drivebase_control(void) {
   printf("%s(): Entered \n", __func__); // Log the function entry for debugging
   bool drive_state = true;    // true for normal, false for reversed drive direction
   int leftX, leftY, turnVelleft, rightY;
+
+  enum brake_mode{
+    COAST,
+    HOLD
+  };
+
+  brake_mode current_brake = COAST;
+
   while (true) // Infinite loop to keep checking controller input and drive base
                // state
   {
@@ -37,6 +45,16 @@ void taskFn_drivebase_control(void) {
     } else {
       int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
       drive(leftY, rightY);
+    }
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && leftY == 0 && leftX == 0){
+      if(current_brake == COAST){
+        current_brake = HOLD;
+        setDriveBrake(pros::E_MOTOR_BRAKE_HOLD);
+      }
+    } else if(current_brake == HOLD){
+      current_brake = COAST;
+      setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
     }
 
     /*if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
