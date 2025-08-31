@@ -28,6 +28,7 @@ extern auton_routine skills_1, skills_2;
 
 // functions to render the menu and read inputs from it
 
+void blankAuton();
 void auton_60s_skills_1();
 void auton_60s_skills_2();
 void topWP();

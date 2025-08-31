@@ -28,7 +28,7 @@ ASSET(matchloadturn4ball_txt);
 ASSET(touchbar_txt);
 
 // Auton routine start positions
-auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine", nullptr};
+auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine", &blankAuton};
 
 auton_routine top_WP{0, 0, 0, "None - Invalid Routine", &topWP};
 
@@ -73,6 +73,12 @@ void printPositionV2(char *msg, bool withDistanceSensors = false,
   }
 }
 
+void blankAuton() {
+  chassis.setPose(0, 0, 0);
+  chassis.moveToPoint(0, 48, 100000);
+  return;
+}
+
 /******************************** AUTONS ********************************/
 /////////////////////////////////////////////////////////////////////////
 
@@ -98,7 +104,7 @@ void topWP() {
   int tspeed = 80;
   float speed = (float) tspeed;
 
-  chassis.setPose(-20, -48, -90);
+  chassis.setPose(-18, -47.5, -90);
 
   //Descore from loader
   chassis.moveToPoint(-53, -48, 2000, {.maxSpeed = speed});

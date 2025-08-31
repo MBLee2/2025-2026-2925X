@@ -233,15 +233,13 @@ void autonomous() {
 		pros::screen::print(pros::E_TEXT_LARGE, 4, "Default Auton: %s", default_routine);
 	}
 
+	// Start the independent parallel tasks needed to support autonomous mode
+	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
+	pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
 
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();//*/
 	auton = false;
-
-	// Start the independent parallel tasks needed to support autonomous mode
-	//pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
-	//pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
-	
 	printf("%s(): Exiting\n", __func__);
 
 }

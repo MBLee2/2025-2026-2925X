@@ -577,55 +577,68 @@ void retractClimbBalance() {
 //Distance
 int getFrontDistance() {
     // return distance_front.get();
+    return 0;
 }
 
 int getBackDistance() {
     // return distance_back.get();
+    return 0;
 }
 
 int getLeftDistance() {
     // return distance_left.get();
+    return 0;
 }
 
 int getRightDistance() {
     // return distance_right.get();
+    return 0;
 }
 
 int getProximity() {
     // return distance_proxi.get();
+    return 0;
 }
 
 float distToWallF() {
     // return (getFrontDistance() / 25.4) + F_DISTANCE_OFFSET;
+    return 0;
 }
 
 float distToWallB() {
     // return (getBackDistance() / 25.4) + B_DISTANCE_OFFSET;
+    return 0;
 }
 
 float distToWallL() {
     // return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
+    return 0;
 }
 
 float distToWallR() {
     // return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
+    return 0;
 }
 
 float distToObject() {
     // return (getProximity() / 25.4) + PROXI_OFFSET;
+    return 0;
 }
 
 int getIntakeDist(){
     // return intake_dist.get();
+    return 0;
 }
 
 //Color
 int getIntakeColor() {
     // return intake_color.get_hue();
+    return 0;
 }
 
 int get2ndIntakeColor() {
     // return intake_color2.get_hue();
+    return 0;
 }
 
 void setIntakeColorLED(int value){
@@ -639,6 +652,7 @@ void setIntakeColor2LED(int value){
 // Limit Switch
 bool getLBLimitSwitch() {
     // return LB_limit.get_value();
+    return 0;
 }
 
 // Vision Sensor
@@ -735,6 +749,7 @@ float getLiftPosition() {
     //float pos = (ladybrownL.get_position() + R.get_position()) / 2 ;
     // float pos = 0;
     // return (pos);
+    return 0;
 }
 
 void setIntakeEncoder(pros::motor_encoder_units_e mode) {
@@ -743,27 +758,33 @@ void setIntakeEncoder(pros::motor_encoder_units_e mode) {
 
 float getIntakePosition() {
     // return (intake.get_position());
+    return 0;
 }
 
 
 int getRightLine() {
     // return lineRight.get_value(); 
+    return 0;
 }
 
 int getLeftLine() {
     // return lineLeft.get_value();
+    return 0;
 }
 
 bool detectLine(int value) {
     // return value < 2700;
+    return 0;
 }
 
 bool detectRightLine() {
     // return detectLine(getRightLine());
+    return 0;
 }
 
 bool detectLeftLine() {
     // return detectLine(getLeftLine());
+    return 0;
 }
 
 
@@ -792,6 +813,7 @@ int moveToReset(float speed) {
     // resetLiftPositionWithDistance();
     // stopLift();
     // return time;
+    return 0;
 }
 
 void liftPickup() {
@@ -934,6 +956,7 @@ bool sort_color(bool sort) {
 
 bool detectRingFront(){
     // return distToObject() < 3.7;
+    return 0;
 }
 
 int redLower = 0;
@@ -944,10 +967,12 @@ int blueUpper = 230;
 
 bool detectRing() {
     // return getIntakeDist() < 30;
+    return 0;
 }
 
 bool detectRing(int hue){
     // return detectRed(hue) || detectBlue(hue);
+    return 0;
 }
 
 bool detectRed(int hue){
@@ -956,10 +981,12 @@ bool detectRed(int hue){
     // } else {
     //     return hue >= redLower && hue <= redUpper;
     // }
+    return 0;
 }
 
 bool detectBlue(int hue){
     // return hue >= blueLower && hue <= blueUpper;
+    return 0;
 }
 
 bool detectOurColor(int hue){
@@ -968,6 +995,7 @@ bool detectOurColor(int hue){
     // } else {
     //     return detectBlue(hue);
     // }
+    return 0;
 }
 
 bool detectTheirColor(int hue){
@@ -976,6 +1004,7 @@ bool detectTheirColor(int hue){
     // } else {
     //     return detectRed(hue);
     // }
+    return 0;
 }
 
 void printRingQueue(){
@@ -1189,6 +1218,7 @@ void stopSorting() {
 
 bool checkRing(pros::vision_object_s_t ring){
     // return (ring.x_middle_coord != 0 || ring.y_middle_coord != 0) && abs(ring.x_middle_coord) < 160 && abs(ring.y_middle_coord) < 110;
+    return 0;
 }
 
 void turnToRing(int timeout, float maxSpeed, bool color){
@@ -1510,6 +1540,7 @@ float calcDistance(){
     // pros::vision_object_s_t nearestRing = getMostRelevantObject();
 
     // return (7 * 158.) / (nearestRing.width * tan(deg2rad(32.3)));
+    return 0;
 }
 
 float calcDistanceGoal(){
@@ -1520,6 +1551,7 @@ float calcDistanceGoal(){
     // } else {
     //     return -1;
     // }
+    return 0;
 }
 
 void driveFullVision(int timeout, int maxSpeed) {

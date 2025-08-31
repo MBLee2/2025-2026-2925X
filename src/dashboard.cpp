@@ -122,6 +122,7 @@ void render_compass_rose()
  * @return void
 */
 {
+    /*
     // printf("%s(): Entered \n", __func__);
 
     // define the compass rose 
@@ -165,7 +166,7 @@ void render_compass_rose()
     }
     
     // printf("%s(): Exiting\n", __func__);
-
+    */
 } // end render_compass_rose())
 
 void taskFn_display_gps_coordinates(void)
