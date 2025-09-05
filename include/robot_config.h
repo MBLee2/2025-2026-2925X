@@ -48,7 +48,8 @@ extern pros::MotorGroup right_side_motors;             // Right drivetrain of dr
 
 //Motors
 extern pros::Motor intake;
-extern pros::Motor scoring;
+extern pros::Motor scoringR;
+extern pros::Motor scoringL;
 extern pros::Motor storage;
 extern pros::Motor reload;
 
@@ -59,7 +60,7 @@ extern pros::Motor reload;
 
 
 //Sensors
-//extern pros::Optical intake_color;==
+extern pros::Optical intake_color;
 extern pros::GPS gps;
 extern pros::IMU imu;
 // extern pros::Vision vision_sensor;

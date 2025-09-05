@@ -31,7 +31,7 @@ std::queue<bool> ringQueue;
 
 void stopAllMotors() {
     stopDrive();
-    stopIntake();
+    stopAllIntake();
 }
 
 // Drive Base Movement
@@ -85,7 +85,8 @@ void spinIntake(int speed) {
 }
 
 void spinScoring(int speed) {
-    scoring.move(speed);
+    setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
+    scoringR.move(speed);
 }
 
 void spinStorage(int speed) {
@@ -101,8 +102,19 @@ void stopIntake() {
     intake.brake();
 }
 
+void stopIntakeHold() {
+    setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
+    intake.brake();
+}
+
 void stopScoring() {
-    scoring.brake();
+    setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
+    scoringR.brake();
+}
+
+void stopScoringHold() {
+    setScoringBrake(pros::E_MOTOR_BRAKE_HOLD);
+    scoringR.brake();
 }
 
 void stopStorage() {
@@ -114,36 +126,38 @@ void stopReload() {
 }
 
 void intakeAll(int speed) {
-    spinIntake(speed);
-    spinScoring(speed);
-    spinStorage(0.25 * speed);
+    spinIntake(0.75 * speed);
+    stopScoring();
+    spinStorage(-speed);
     spinReload(speed);
+
+    master.clear();
+    master.print(1, 0, "Intake");
+
     current_intake = INTAKE;
     current_reload = FROM_INTAKE;
 }
 
 void scoreTop(int speed) {
+    if(current_reload == FROM_INTAKE){
+        topFromIntake(speed);
+    } else if(current_reload == FROM_STORAGE){
+        topFromStorage(speed);
+    }
+}
+
+void topFromIntake(int speed){
     spinIntake(speed);
     spinScoring(speed);
     spinStorage(speed);
-    if(current_reload == FROM_INTAKE){
-        spinReload(speed);
-    } else if(current_reload == FROM_STORAGE){
-        spinReload(-speed);
-    }
-    current_intake = TOPSCORE;
-}
+    spinReload(speed);
 
-void scoreMiddle(int speed){
-    spinIntake(0.5 * speed);
-    spinScoring(-0.3 * speed);
-    spinStorage(speed);
-    if(current_reload == FROM_INTAKE){
-        spinReload(speed);
-    } else if(current_reload == FROM_STORAGE){
-        spinReload(-speed);
-    }
-    current_intake = MIDSCORE;
+    master.clear();
+    master.print(1, 0, "Top Score");
+    master.print(2, 0, "From Intake");
+
+    current_intake = TOPSCORE;
+    current_reload = FROM_INTAKE;
 }
 
 void topFromStorage(int speed){
@@ -151,7 +165,34 @@ void topFromStorage(int speed){
     spinScoring(speed);
     spinStorage(speed);
     spinReload(-speed);
+
+    master.clear();
+    master.print(1, 0, "Top Score");
+    master.print(2, 0, "From Storage");
+
     current_intake = TOPSCORE;
+    current_reload = FROM_STORAGE;
+}
+
+void scoreMiddle(int speed){
+    if(current_reload == FROM_INTAKE){
+        middleFromIntake(speed);
+    } else if(current_reload == FROM_STORAGE){
+        middleFromStorage(speed);
+    }
+}
+
+void middleFromIntake(int speed){
+    spinIntake(0.5 * speed);
+    spinScoring(-0.3 * speed);
+    spinStorage(speed);
+    spinReload(speed);
+
+    master.clear();
+    master.print(1, 0, "Middle Score");
+    master.print(2, 0, "From Storage");
+
+    current_intake = MIDSCORE;
     current_reload = FROM_STORAGE;
 }
 
@@ -160,6 +201,11 @@ void middleFromStorage(int speed){
     spinScoring(-0.3 * speed);
     spinStorage(speed);
     spinReload(-speed);
+
+    master.clear();
+    master.print(1, 0, "Middle Score");
+    master.print(2, 0, "From Storage");
+
     current_intake = MIDSCORE;
     current_reload = FROM_STORAGE;
 }
@@ -169,6 +215,10 @@ void outakeAll(int speed){
     spinScoring(-speed);
     spinStorage(0.25 * speed);
     spinReload(-speed);
+
+    master.clear();
+    master.print(1, 0, "Outake");
+
     current_intake = OUTAKE;
     current_reload = FROM_INTAKE;
 }
@@ -179,19 +229,21 @@ void stopAllIntake(){
     stopScoring();
     stopStorage();
     stopReload();
+
+    master.clear();
+    master.print(1, 0, "Stopped");
+
     current_intake = STOP;
     current_reload = FROM_INTAKE;
 }
 
-void stopIntakeHold() {
-    setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
-    intake.brake();
-}
-
-
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
     intake.set_brake_mode(mode);
     //intakeR.set_brake_mode(mode);
+}
+
+void setScoringBrake(pros::motor_brake_mode_e mode) {
+    scoringR.set_brake_mode(mode);
 }
 
 void intakeAntiJam() {
@@ -216,6 +268,19 @@ void intakeAntiJamTaskFunc(){
         }
         pros::delay(20);
     }
+}
+
+//Pneumatics
+void extendLoader(){
+    return;
+}
+
+void retractLoader(){
+    return;
+}
+
+void toggleLoader(){
+    return;
 }
 
 
@@ -300,6 +365,89 @@ double wheelDegToInches(double degrees) {
 
 double wheelRotToInches(double rotations){
     return (PI * DRIVEBASE_WHEEL_DIAMETER) * rotations;
+}
+
+//Sensors
+int getIntakeColor() {
+    return intake_color.get_hue();
+}
+
+int getIntakeColorDist() {
+    return intake_color.get_proximity();
+}
+
+bool detectRed(int hue){
+    return hue >= 0 && hue <= 35;
+}
+bool detectBlue(int hue){
+    return hue >= 250 && hue <= 300;
+}
+
+bool detectBlock(int hue){
+    return detectRed(hue) || detectBlue(hue);
+}
+
+bool detectOurColor(int hue){
+    if(COLOR){
+        return detectRed(hue);
+    } else {
+        return detectBlue(hue);
+    }
+}
+
+bool detectTheirColor(int hue){
+    if(COLOR){
+        return detectBlue(hue);
+    } else {
+        return detectRed(hue);
+    }
+}
+
+void count_blocks(int num, int timeout){
+    while(num > 0 && timeout > 0){
+        if(detectBlock(getIntakeColor())){
+            while(detectBlock(getIntakeColor())){
+                pros::delay(20);
+                timeout -= 20;
+            }
+            num--;
+        }
+        pros::delay(20);
+        timeout -= 20;
+    }
+}
+
+int num_blocks = 0;
+void taskFn_count_blocks() {
+	printf("%s(): Started\n", __func__);
+    while(true){
+        if(current_intake == INTAKE){
+            if(detectBlock(getIntakeColor())){
+                while(detectBlock(getIntakeColor())){
+                    pros::delay(20);
+                }
+                num_blocks++;
+                printf("Num blocks: %d\n", num_blocks);
+                if(num_blocks > 4 && current_intake == INTAKE){
+                    intakeAll(127);
+                }
+            }
+        }
+        else if(current_reload == FROM_STORAGE || current_intake == OUTAKE){
+            if(detectBlock(getIntakeColor())){
+                while(detectBlock(getIntakeColor())){
+                    pros::delay(20);
+                }
+                num_blocks--;
+                printf("Num blocks: %d\n", num_blocks);
+            }
+        }
+
+        if(num_blocks < 0){
+            num_blocks = 0;
+        }
+        pros::delay(20);
+    }
 }
 
 // Controlled Functions
@@ -631,10 +779,7 @@ int getIntakeDist(){
 }
 
 //Color
-int getIntakeColor() {
-    // return intake_color.get_hue();
-    return 0;
-}
+
 
 int get2ndIntakeColor() {
     // return intake_color2.get_hue();
@@ -967,43 +1112,6 @@ int blueUpper = 230;
 
 bool detectRing() {
     // return getIntakeDist() < 30;
-    return 0;
-}
-
-bool detectRing(int hue){
-    // return detectRed(hue) || detectBlue(hue);
-    return 0;
-}
-
-bool detectRed(int hue){
-    // if(redUpper < redLower){
-    //     return hue >= redLower || hue <= redUpper;
-    // } else {
-    //     return hue >= redLower && hue <= redUpper;
-    // }
-    return 0;
-}
-
-bool detectBlue(int hue){
-    // return hue >= blueLower && hue <= blueUpper;
-    return 0;
-}
-
-bool detectOurColor(int hue){
-    // if(COLOR){
-    //     return detectRed(hue);
-    // } else {
-    //     return detectBlue(hue);
-    // }
-    return 0;
-}
-
-bool detectTheirColor(int hue){
-    // if(COLOR){
-    //     return detectBlue(hue);
-    // } else {
-    //     return detectRed(hue);
-    // }
     return 0;
 }
 

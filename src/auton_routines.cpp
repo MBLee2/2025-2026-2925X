@@ -36,7 +36,7 @@ auton_routine bottom_WP{0, 0, 0, "None - Invalid Routine", &bottomWP};
 
 auton_routine long_goal_left{0, 0, 0, "None - Invalid Routine", &longGoalLeft};
 
-auton_routine goal_rush_and_stake{0, 0, 0, "None - Invalid Routine", nullptr};
+auton_routine long_goal_right{0, 0, 0, "None - Invalid Routine", &longGoalRight};
 
 auton_routine safe_negative{0, 0, 0, "None - Invalid Routine", nullptr}; //EVERYTHING DONE
 
@@ -52,25 +52,9 @@ auton_routine skills_1{-0000, 0.000, 00, "60S Auton - Skills # 1", &auton_60s_sk
                                          
 auton_routine solo_WP{-0.600, 0.600, 180, "extra_1", nullptr};
 
-void printPositionV2(char *msg, bool withDistanceSensors = false,
-                      bool detailedDist = false, int timer = -1) {
-  lemlib::Pose currentPose = chassis.getPose();
-  printf("%s\tX: %3.2f     \tY: %3.2f     \tTheta: %3.2f     ", msg, currentPose.x,
-         currentPose.y, currentPose.theta);
-  if(timer > 0){
-    printf("\tTime: %d", pros::millis() - timer);
-  }
-  printf("\n");
-  if (withDistanceSensors) {
-    if (detailedDist) {
-      printf("F: %d     \tL: %d\n",
-             getFrontDistance(), getLeftDistance());
-    }
-    printf("Front: %3.2f     \tLeft: %3.2f\n",
-           distToWallF(), distToWallL());
-    printf("Front position: %3.2f     \tLeft position: %3.2f\n",
-            72 - distToWallF() * cos(deg2rad(fmodf(currentPose.theta + 360, 90))), 72 - distToWallL() * cos(deg2rad(fmodf(currentPose.theta + 360, 90))));
-  }
+void printPosition(int time) {
+  lemlib::Pose temp_pose = chassis.getPose();
+  printf("X: %d,\t Y:%d,\t Theta:%d,\t, Time: %d\n", temp_pose.x, temp_pose.y, temp_pose.theta, pros::millis - time);
 }
 
 void blankAuton() {
@@ -101,43 +85,45 @@ void blankAuton() {
 
 void topWP() {
   int time = pros::millis();
-  int tspeed = 80;
+  int tspeed = 127;
   float speed = (float) tspeed;
 
-  chassis.setPose(-18, -47.5, -90);
+  chassis.setPose(-17, -51, -90);
 
   //Descore from loader
-  chassis.moveToPoint(-53, -48, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(-43, -48, 2000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
   intakeAll(127);
-  chassis.moveToPoint(-48, -60, 2000, {.maxSpeed = speed});
-  chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = speed});
+  extendLoader();
+  chassis.moveToPoint(-49, -60, 2000, {.maxSpeed = speed}, false);
+  pros::delay(1000);
+  chassis.moveToPoint(-50, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  retractLoader();
 
   //Score in long goal
-  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(-48, -24, 2000, {.maxSpeed = speed});
-  scoreTop(127);
+  chassis.turnToHeading(0, 2500, {.maxSpeed = 80}, false);
+  chassis.moveToPoint(-46, -36.7, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
+  chassis.moveToPoint(-46, -36.2, 2000, {.maxSpeed = 50}, false);
+  topFromStorage(127);
+  pros::delay(1000);
   chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = speed});
 
-  //Score in center top goal
-  chassis.turnToPoint(0, 0, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(-15, -15, 2000, {.maxSpeed = speed});
-  scoreMiddle(127);
-  chassis.moveToPoint(-24, -24, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.turnToPoint(-23, -27, 2000, {.maxSpeed = tspeed}, false);
+  intakeAll(90);
+  chassis.moveToPoint(-23, -27, 2000, {.maxSpeed = speed - 20}, false);
 
-  //Score in center bottom goal
-  chassis.turnToPoint(24, -24, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(26.5, -24, 2000, {.maxSpeed = speed});
-  chassis.turnToPoint(0, 0, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(8, -8, 2000, {.maxSpeed = speed});
-  outakeAll(127);
-  
+  chassis.turnToPoint(2, -3, 3000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(-15, -20, 2000, {.maxSpeed = speed});
+  chassis.waitUntil(15);
+  middleFromStorage(127);
+
   //*/
   master.clear_line(0);
   int temp = pros::millis();
   while (true) {
-    master.print(0, 0, "Time: %d", (temp-time));
+    master.print(1, 0, "Time: %d", (temp-time));
   }
+  
 }
 
 /*********************** RIGHT SIDE FULL WIN POINT ***********************/
@@ -154,12 +140,14 @@ void bottomWP(){
   int tspeed = 80;
   float speed = (float) tspeed;
 
-  chassis.setPose(20, -48, 90);
+  chassis.setPose(-17, -51, -90);
 
   //Descore from loader
   chassis.moveToPoint(53, -48, 2000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
   intakeAll(127);
+  extendLoader();
+  //count_blocks(3, 2000);
   chassis.moveToPoint(48, -65, 2000, {.maxSpeed = speed});
   chassis.moveToPoint(48, -46, 2000, {.forwards = false, .maxSpeed = speed});
 
@@ -202,29 +190,29 @@ void longGoalLeft(){
   int tspeed = 80;
   float speed = (float) tspeed;
 
-  chassis.setPose(-16, -48, 0);
+  chassis.setPose(-11.5, -48, 30);
 
   //Collect 3 center balls
   chassis.moveToPoint(-24, -24, 2000, {.maxSpeed = speed});
-  intakeAll(127);
-  pros::Task::delay(3000);
+  intakeAll(90);
 
   //Descore from loader
-  chassis.turnToHeading(-150, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(-50, -56, 3000, {.maxSpeed = speed});
-  chassis.turnToHeading(-180, 2000, {.maxSpeed = tspeed}, false);
-  printf("Current Position: x: %3.2f, y: %3.2f\n", chassis.getPose().x, chassis.getPose().y);
-  chassis.moveToPoint(-50, -65, 3000, {.maxSpeed = 127}, false);
-  printf("Current Position: x: %3.2f, y: %3.2f\n", chassis.getPose().x, chassis.getPose().y);
+  chassis.turnToPoint(-46, -48, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(-46, -48, 3000, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
+  extendLoader();
   intakeAll(127);
-  pros::Task::delay(3000);
+  chassis.moveToPoint(-48, -60, 3000, {.maxSpeed = 127}, false);
+  pros::delay(1000);
   chassis.moveToPoint(-50, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
-  pros::Task::delay(300);
+  retractLoader();
+  pros::delay(300);
 
   //Score in long goal
-  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(-48, -20, 2000, {.maxSpeed = speed});
-  scoreTop(127);
+  chassis.turnToHeading(0, 2000, {.maxSpeed = 80}, false);
+  chassis.moveToPoint(-46, -36.7, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
+  chassis.moveToPoint(-46, -36.2, 2000, {.maxSpeed = 50}, false);
+  topFromStorage(127);
   
   //*/
   master.clear_line(0);
@@ -234,17 +222,82 @@ void longGoalLeft(){
   }
 }
 
+/*********************** RIGHT SIDE LONG GOAL ***********************/
+/**
+ * 7 in long goal
+ * 
+ * Descores match loader
+ */
 
+void longGoalRight(){
+  int time = pros::millis();
+  int tspeed = 80;
+  float speed = (float) tspeed;
+
+  chassis.setPose(16, -48, 0);
+
+  //Collect 3 center balls
+  chassis.moveToPoint(24,-24, 2000, {.maxSpeed = speed});
+  intakeAll(127);
+  pros::Task::delay(3000);
+
+  //Descore from loader
+  chassis.turnToHeading(150, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(50, -56, 3000, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
+  printf("Current Position: x: %3.2f, y: %3.2f\n", chassis.getPose().x, chassis.getPose().y);
+  chassis.moveToPoint(50, -65, 3000, {.maxSpeed = 127}, false);
+  printf("Current Position: x: %3.2f, y: %3.2f\n", chassis.getPose().x, chassis.getPose().y);
+  intakeAll(127);
+  pros::Task::delay(3000);
+  chassis.moveToPoint(50, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  pros::Task::delay(300);
+
+  //Score in long goal
+  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(48, -20, 2000, {.maxSpeed = speed});
+  scoreTop(127);
+
+  //*/
+  master.clear_line(0);
+  int temp = pros::millis();
+  while (true) {
+    master.print(0, 0, "Time: %d", (temp-time));
+  }
+}
 
 void auton_60s_skills_1() {
   COLOR = true;
   int time = pros::millis();
-  float speed = 130;
+  float speed = 100;
   int speed1 = (int) speed;
   int temp = 0;
 
-  chassis.setPose(0,-61.3,0);
+  chassis.setPose(-17,-56,-90);
   lemlib::Pose currentPose = chassis.getPose();
+
+  chassis.moveToPoint(-48, -56, 2000, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 1000, {.maxSpeed = speed1}, false);
+  intakeAll(127);
+  pros::delay(300);
+
+  chassis.moveToPoint(-48, -60, 1000, {.maxSpeed = speed - 20});
+  count_blocks(6, 3000);
+  stopAllIntake();
+  return;
+
+  chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.turnToHeading(0, 1000, {.maxSpeed = speed1});
+  chassis.moveToPoint(-48, -33, 2000, {.maxSpeed = speed}, false);
+  topFromStorage(127);
+  count_blocks(3, 1000);
+  topFromIntake(127);
+  pros::delay(1000);
+  chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.turnToPoint(-24,-24, 1000, {.maxSpeed = speed1});
+
+  chassis.moveToPoint(-24, -24, 2000);
+
   
   master.clear_line(0);
   temp = pros::millis();

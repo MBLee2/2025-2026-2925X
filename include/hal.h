@@ -36,6 +36,8 @@ extern int COLOR_SIG;
 extern bool auton, autoSkill;
 extern bool autoDrive, autoLift, autoIntake;
 
+extern int num_blocks;
+
 float distBetweenPts(float x1, float y1, float x2, float y2);
 
 void stopAllMotors();
@@ -76,15 +78,23 @@ void stopStorage();
 void stopReload();
 
 void intakeAll(int speed);
+void intakeDirectStorage(int speed);
 void scoreTop(int speed);
 void scoreMiddle(int speed);
+void topFromIntake(int speed);
 void topFromStorage(int speed);
+void middleFromIntake(int speed);
 void middleFromStorage(int speed);
 void outakeAll(int speed);
 void stopAllIntake();
 
+void extendLoader();
+void retractLoader();
+void toggleLoader();
+
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
+void setScoringBrake(pros::motor_brake_mode_e mode);
 void intakeAntiJam();
 void intakeAntiJamTaskFunc();
 
@@ -132,6 +142,17 @@ void outakeFor(int ms);
 void outakeFor(float speed, int ms);
 void outakeFor(float speed, float degrees);
 
+int getIntakeColor();
+int getIntakeColorDist();
+bool detectRed(int hue);
+bool detectBlue(int hue);
+bool detectBlock(int hue);
+bool detectOurColor(int hue);
+bool detectTheirColor(int hue);
+
+void count_blocks(int num, int timeout);
+void taskFn_count_blocks();
+
 /*********************** END OF USED FUNCTIONS ***********************/
 
 void spinLift(int speed);
@@ -170,13 +191,10 @@ float distToWallL();
 float distToWallR();
 float distToObject();
 
-int getIntakeColor();
 int get2ndIntakeColor();
 void setIntakeColorLED(int value);
 void setIntakeColor2LED(int value);
 
-bool detectRed(int hue);
-bool detectBlue(int hue);
 
 bool sort_color(bool sort);
 void sort_color_queue();

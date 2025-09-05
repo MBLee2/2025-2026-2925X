@@ -29,17 +29,19 @@ pros::MotorGroup right_side_motors({10, 20}, pros::v5::MotorGears::blue);
 
 // intake motor 
 pros::Motor intake(9, pros::v5::MotorGears::blue);  // port 4, reversed
-pros::Motor scoring(-4, pros::v5::MotorGears::green);
+pros::Motor scoringR(-4, pros::v5::MotorGears::green);
+pros::Motor scoringL(22, pros::v5::MotorGears::green);
 pros::Motor storage(-15, pros::v5::MotorGears::blue);
 pros::Motor reload(-19, pros::v5::MotorGears::green);
 
 //Pistons NOT DONE
-
+pros::adi::Pneumatics loader('a', false);
 
 /* SENSORS */ // NOT DONE
 pros::IMU imu(7); //DONE
 
 //Color Sort
+pros::Optical intake_color(13);
 
 
 // pros::Vision vision_sensor(19);
@@ -58,7 +60,7 @@ lemlib::Drivetrain drivetrain(
 // left tracking wheel encoder
 // right tracking wheel encoder
 pros::Rotation vertical_rot(1); // NOT ON BOT
-pros::Rotation horizontal_rot(18); // port 1, not reversed
+pros::Rotation horizontal_rot(-18); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
@@ -88,19 +90,19 @@ lemlib::ControllerSettings lateral_controller(4.5, // proportional gain (kP)
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              80 // maximum acceleration (slew)
+                                              100 // maximum acceleration (slew)
 );
 
 // turning PID
 lemlib::ControllerSettings angular_controller(6, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              53, // derivative gain (kD)
+                                              55, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              70 // maximum acceleration (slew)
 );
 
 

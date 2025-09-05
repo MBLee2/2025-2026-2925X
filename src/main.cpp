@@ -57,6 +57,7 @@ void initialize() {
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
 	autoIntake = false;
+	//pros::Task counting_task(taskFn_count_blocks, "counting-task");
 
 	// vision_sensor.set_exposure(25);
 	// pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(1,  10311, 11305, 10808, -1177, -565, -871, 5.3, 0);
