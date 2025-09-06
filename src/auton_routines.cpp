@@ -59,7 +59,6 @@ void printPosition(int time) {
 
 void blankAuton() {
   chassis.setPose(0, 0, 0);
-  chassis.moveToPoint(0, 48, 100000);
   return;
 }
 
@@ -91,31 +90,54 @@ void topWP() {
   chassis.setPose(-17, -51, -90);
 
   //Descore from loader
-  chassis.moveToPoint(-43, -48, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(-44, -49, 2000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
-  intakeAll(127);
+  intakeAll(90);
   extendLoader();
-  chassis.moveToPoint(-49, -60, 2000, {.maxSpeed = speed}, false);
-  pros::delay(1000);
-  chassis.moveToPoint(-50, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  pros::delay(100);
+  chassis.moveToPoint(-49, -61, 2000, {.maxSpeed = speed, .minSpeed = 127, .earlyExitRange = 0.5}, false);
+  for(int i = 0; i < 2; i++){
+    chassis.moveToPoint(-49, -57, 2000, {.maxSpeed = speed, .minSpeed = 80, .earlyExitRange = 0.5}, false);
+    pros::delay(100);
+    chassis.moveToPoint(-49, -61, 2000, {.maxSpeed = speed, .minSpeed = 127, .earlyExitRange = 0.5}, false);
+    pros::delay(100);
+  }
+  pros::Task color_sort([=]{
+    autoIntake = true;
+    while(autoIntake){
+      if(detectTheirColor(getIntakeColor())){
+        stopStorage();
+        stopReload();
+        spinIntake(-127);
+        autoIntake = false;
+      }
+      pros::delay(20);
+    }
+  }, "color-sort");
+  chassis.moveToPoint(-50, -48, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.waitUntil(6);
   retractLoader();
+  chassis.moveToPoint(-50, -50, 2000, {.maxSpeed = speed}, false);
 
   //Score in long goal
   chassis.turnToHeading(0, 2500, {.maxSpeed = 80}, false);
-  chassis.moveToPoint(-46, -36.7, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
-  chassis.moveToPoint(-46, -36.2, 2000, {.maxSpeed = 50}, false);
+  autoIntake = false;
+  chassis.moveToPoint(-46.5, -35, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
+  chassis.moveToPoint(-46.5, -35, 2000, {.maxSpeed = 60}, false);
   topFromStorage(127);
-  pros::delay(1000);
+  count_blocks(2, 1000);
+  pros::delay(300);
+  stopAllIntake();
   chassis.moveToPoint(-48, -48, 2000, {.forwards = false, .maxSpeed = speed});
 
   chassis.turnToPoint(-23, -27, 2000, {.maxSpeed = tspeed}, false);
   intakeAll(90);
   chassis.moveToPoint(-23, -27, 2000, {.maxSpeed = speed - 20}, false);
 
-  chassis.turnToPoint(2, -3, 3000, {.maxSpeed = tspeed});
-  chassis.moveToPoint(-15, -20, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(2, -5, 3000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(-16, -19, 2000, {.maxSpeed = speed});
   chassis.waitUntil(15);
-  middleFromStorage(127);
+  middleFromStorage(100);
 
   //*/
   master.clear_line(0);
@@ -190,28 +212,36 @@ void longGoalLeft(){
   int tspeed = 80;
   float speed = (float) tspeed;
 
-  chassis.setPose(-11.5, -48, 30);
+  chassis.setPose(-9.25, -49, -25.5);
 
   //Collect 3 center balls
-  chassis.moveToPoint(-24, -24, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(-22, -24, 2000, {.maxSpeed = speed});
   intakeAll(90);
 
   //Descore from loader
-  chassis.turnToPoint(-46, -48, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(-46, -48, 3000, {.maxSpeed = speed});
+  chassis.turnToPoint(-46, -49, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(-46, -49, 3000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
   extendLoader();
-  intakeAll(127);
-  chassis.moveToPoint(-48, -60, 3000, {.maxSpeed = 127}, false);
-  pros::delay(1000);
+  intakeAll(100);
+
+  chassis.moveToPoint(-48, -62.5, 3000, {.maxSpeed = 127, .minSpeed = 127, .earlyExitRange = 0.5}, false);
+  pros::delay(150);
+  for(int i = 0; i < 2; i++){
+    chassis.moveToPoint(-48, -57, 2000, {.maxSpeed = speed, .minSpeed = 80, .earlyExitRange = 0.5}, false);
+    chassis.moveToPoint(-48, -62.5, 1000, {.maxSpeed = speed, .minSpeed = 120, .earlyExitRange = 0.5}, false);
+    pros::delay(150);
+  }
   chassis.moveToPoint(-50, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
   retractLoader();
   pros::delay(300);
+  stopAllIntake();
+  hoodUp();
 
   //Score in long goal
   chassis.turnToHeading(0, 2000, {.maxSpeed = 80}, false);
-  chassis.moveToPoint(-46, -36.7, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
-  chassis.moveToPoint(-46, -36.2, 2000, {.maxSpeed = 50}, false);
+  chassis.moveToPoint(-45, -37, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
+  chassis.moveToPoint(-45, -35.2, 2000, {.maxSpeed = 50}, false);
   topFromStorage(127);
   
   //*/
@@ -234,30 +264,38 @@ void longGoalRight(){
   int tspeed = 80;
   float speed = (float) tspeed;
 
-  chassis.setPose(16, -48, 0);
+  chassis.setPose(9.25, -49, 25.5);
 
   //Collect 3 center balls
-  chassis.moveToPoint(24,-24, 2000, {.maxSpeed = speed});
-  intakeAll(127);
-  pros::Task::delay(3000);
+  chassis.moveToPoint(22, -24, 2000, {.maxSpeed = speed});
+  intakeAll(90);
 
   //Descore from loader
-  chassis.turnToHeading(150, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(50, -56, 3000, {.maxSpeed = speed});
+  chassis.turnToPoint(46, -49, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(46, -49, 3000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
-  printf("Current Position: x: %3.2f, y: %3.2f\n", chassis.getPose().x, chassis.getPose().y);
-  chassis.moveToPoint(50, -65, 3000, {.maxSpeed = 127}, false);
-  printf("Current Position: x: %3.2f, y: %3.2f\n", chassis.getPose().x, chassis.getPose().y);
-  intakeAll(127);
-  pros::Task::delay(3000);
+  extendLoader();
+  intakeAll(100);
+
+  chassis.moveToPoint(48, -62.5, 3000, {.maxSpeed = 127, .minSpeed = 127, .earlyExitRange = 0.5}, false);
+  pros::delay(150);
+  for(int i = 0; i < 2; i++){
+    chassis.moveToPoint(48, -57, 2000, {.maxSpeed = speed, .minSpeed = 80, .earlyExitRange = 0.5}, false);
+    chassis.moveToPoint(48, -62.5, 1000, {.maxSpeed = speed, .minSpeed = 120, .earlyExitRange = 0.5}, false);
+    pros::delay(150);
+  }
   chassis.moveToPoint(50, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
-  pros::Task::delay(300);
+  retractLoader();
+  pros::delay(300);
+  stopAllIntake();
+  hoodUp();
 
   //Score in long goal
-  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(48, -20, 2000, {.maxSpeed = speed});
-  scoreTop(127);
-
+  chassis.turnToHeading(0, 2000, {.maxSpeed = 80}, false);
+  chassis.moveToPoint(45, -37, 2000, {.maxSpeed = speed, .earlyExitRange = 3}, false);
+  chassis.moveToPoint(45, -35.2, 2000, {.maxSpeed = 50}, false);
+  topFromStorage(127);
+  
   //*/
   master.clear_line(0);
   int temp = pros::millis();

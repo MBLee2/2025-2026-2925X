@@ -30,12 +30,13 @@ pros::MotorGroup right_side_motors({10, 20}, pros::v5::MotorGears::blue);
 // intake motor 
 pros::Motor intake(9, pros::v5::MotorGears::blue);  // port 4, reversed
 pros::Motor scoringR(-4, pros::v5::MotorGears::green);
-pros::Motor scoringL(22, pros::v5::MotorGears::green);
-pros::Motor storage(-15, pros::v5::MotorGears::blue);
+pros::Motor scoringL(5, pros::v5::MotorGears::green);
+pros::Motor storage(-15, pros::v5::MotorGears::green);
 pros::Motor reload(-19, pros::v5::MotorGears::green);
 
 //Pistons NOT DONE
 pros::adi::Pneumatics loader('a', false);
+pros::adi::Pneumatics hood('d', false);
 
 /* SENSORS */ // NOT DONE
 pros::IMU imu(7); //DONE
@@ -90,7 +91,7 @@ lemlib::ControllerSettings lateral_controller(4.5, // proportional gain (kP)
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              100 // maximum acceleration (slew)
+                                              0 // maximum acceleration (slew)
 );
 
 // turning PID

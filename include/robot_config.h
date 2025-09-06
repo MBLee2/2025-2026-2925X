@@ -57,7 +57,8 @@ extern pros::Motor reload;
 //extern pros::Motor lift;
 
 //pistons
-
+extern pros::adi::Pneumatics loader;
+extern pros::adi::Pneumatics hood;
 
 //Sensors
 extern pros::Optical intake_color;

@@ -87,6 +87,7 @@ void spinIntake(int speed) {
 void spinScoring(int speed) {
     setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
     scoringR.move(speed);
+    scoringL.move(speed);
 }
 
 void spinStorage(int speed) {
@@ -110,11 +111,13 @@ void stopIntakeHold() {
 void stopScoring() {
     setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
     scoringR.brake();
+    scoringL.brake();
 }
 
 void stopScoringHold() {
     setScoringBrake(pros::E_MOTOR_BRAKE_HOLD);
     scoringR.brake();
+    scoringL.brake();
 }
 
 void stopStorage() {
@@ -126,10 +129,10 @@ void stopReload() {
 }
 
 void intakeAll(int speed) {
-    spinIntake(0.75 * speed);
+    spinIntake(0.85 * speed);
     stopScoring();
     spinStorage(-speed);
-    spinReload(speed);
+    spinReload(0.7 * speed);
 
     master.clear();
     master.print(1, 0, "Intake");
@@ -147,6 +150,7 @@ void scoreTop(int speed) {
 }
 
 void topFromIntake(int speed){
+    hoodUp();
     spinIntake(speed);
     spinScoring(speed);
     spinStorage(speed);
@@ -161,6 +165,7 @@ void topFromIntake(int speed){
 }
 
 void topFromStorage(int speed){
+    hoodUp();
     spinIntake(speed);
     spinScoring(speed);
     spinStorage(speed);
@@ -247,40 +252,83 @@ void setScoringBrake(pros::motor_brake_mode_e mode) {
 }
 
 void intakeAntiJam() {
-    if(intake.get_actual_velocity() < 5)
+    if(fabs(intake.get_actual_velocity()) < 5)
     {
-        spinIntake(-127);
+        intake_state temp_intake = current_intake;
+        stopAllIntake();
         pros::delay(100);
-        spinIntake(127);
+        if(temp_intake == INTAKE){
+            intakeAll(127);
+        } else if(temp_intake == OUTAKE){
+            outakeAll(127);
+        } else if (temp_intake == TOPSCORE) {
+            reload_state temp_reload = current_reload;
+            if(temp_reload == FROM_INTAKE){
+                topFromIntake(127);
+            } else if(temp_reload == FROM_STORAGE){
+                topFromStorage(127);
+            }
+        } else if (temp_intake == MIDSCORE) {
+            reload_state temp_reload = current_reload;
+            if(temp_reload == FROM_INTAKE){
+                middleFromIntake(127);
+            } else if(temp_reload == FROM_STORAGE){
+                middleFromStorage(127);
+            }
+        }
     }
 }
+
+bool antiJam = false;
 void intakeAntiJamTaskFunc(){
     int counter = 0;
     while (true) {
-        if(intake.get_actual_velocity() < 5 && isintaking && !LBPickup)
+        if(intake.get_actual_velocity() < 5 && antiJam)
         {
             counter++;
-        }
-        if(counter >= 15)
-        {
-            intakeAntiJam();
+            if(counter >= 15)
+            {
+                intakeAntiJam();
+                counter = 0;
+            }
+        } else if (counter > 0) {
             counter = 0;
         }
         pros::delay(20);
     }
 }
 
+void startAntiJam() {
+    antiJam = true;
+}
+
+void stopAntiJam() {
+    antiJam = false;
+}
+
 //Pneumatics
 void extendLoader(){
-    return;
+    loader.extend();
 }
 
 void retractLoader(){
-    return;
+    loader.retract();
 }
 
 void toggleLoader(){
-    return;
+    loader.toggle();
+}
+
+void hoodUp(){
+    hood.extend();
+}
+
+void hoodDown(){
+    hood.retract();
+}
+
+void toggleHood(){
+    hood.toggle();
 }
 
 
@@ -380,7 +428,7 @@ bool detectRed(int hue){
     return hue >= 0 && hue <= 35;
 }
 bool detectBlue(int hue){
-    return hue >= 250 && hue <= 300;
+    return hue >= 180 && hue <= 200;
 }
 
 bool detectBlock(int hue){

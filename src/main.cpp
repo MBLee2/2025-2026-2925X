@@ -56,6 +56,8 @@ void initialize() {
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
+	pros::Task antijam_task(intakeAntiJamTaskFunc, "antijam-task");
+
 	autoIntake = false;
 	//pros::Task counting_task(taskFn_count_blocks, "counting-task");
 
@@ -237,6 +239,7 @@ void autonomous() {
 	// Start the independent parallel tasks needed to support autonomous mode
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
 	pros::Task drivebase_task(taskFn_display_gps_coordinates, "gps-display-task");
+	startAntiJam();
 
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();//*/
@@ -263,6 +266,7 @@ void opcontrol() {
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
+	stopAntiJam();
 
     // SKILLS ONLY
 	//auton_60s_skills_1();

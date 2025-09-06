@@ -92,11 +92,19 @@ void extendLoader();
 void retractLoader();
 void toggleLoader();
 
+void hoodUp();
+void hoodDown();
+void toggleHood();
+
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
 void setScoringBrake(pros::motor_brake_mode_e mode);
+
+extern bool antiJam;
 void intakeAntiJam();
 void intakeAntiJamTaskFunc();
+void startAntiJam();
+void stopAntiJam();
 
 
 void setDriveEncoder(pros::motor_encoder_units_e_t mode);

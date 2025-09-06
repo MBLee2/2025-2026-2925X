@@ -142,11 +142,22 @@ void taskFn_intake_control(void){
         } else if (current_reload == FROM_STORAGE){
           stopAllIntake();
         }
+      } else if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2))
+      {
+        toggleHood();
       }
 
       if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X))
       {
         stopAllIntake();
+      }
+
+      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+        if(antiJam){
+          stopAntiJam();
+        } else{
+          startAntiJam();
+        }
       }
       
       pros::delay(20);
