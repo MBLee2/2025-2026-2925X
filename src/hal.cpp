@@ -85,9 +85,11 @@ void spinIntake(int speed) {
 }
 
 void spinScoring(int speed) {
-    setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
-    scoringR.move(speed);
-    scoringL.move(speed);
+    if(hoodExtended()){
+        setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
+        scoringR.move(speed);
+        scoringL.move(speed);
+    }
 }
 
 void spinStorage(int speed) {
@@ -129,6 +131,10 @@ void stopReload() {
 }
 
 void intakeAll(int speed) {
+    printf("INTAKE\n");
+    current_intake = INTAKE;
+    current_reload = FROM_INTAKE;
+
     spinIntake(0.85 * speed);
     stopScoring();
     spinStorage(-speed);
@@ -136,9 +142,6 @@ void intakeAll(int speed) {
 
     master.clear();
     master.print(1, 0, "Intake");
-
-    current_intake = INTAKE;
-    current_reload = FROM_INTAKE;
 }
 
 void scoreTop(int speed) {
@@ -150,33 +153,39 @@ void scoreTop(int speed) {
 }
 
 void topFromIntake(int speed){
-    hoodUp();
+    printf("TOPSCORE\n");
+    current_intake = TOPSCORE;
+    current_reload = FROM_INTAKE;
+    
     spinIntake(speed);
-    spinScoring(speed);
     spinStorage(speed);
     spinReload(speed);
+
+    hoodUp();
+    spinScoring(speed);
 
     master.clear();
     master.print(1, 0, "Top Score");
     master.print(2, 0, "From Intake");
 
-    current_intake = TOPSCORE;
-    current_reload = FROM_INTAKE;
 }
 
 void topFromStorage(int speed){
-    hoodUp();
+    printf("TOPSCORE\n");
+    current_intake = TOPSCORE;
+    current_reload = FROM_STORAGE;
+    
     spinIntake(speed);
-    spinScoring(speed);
     spinStorage(speed);
     spinReload(-speed);
+
+    hoodUp();
+    spinScoring(speed);
 
     master.clear();
     master.print(1, 0, "Top Score");
     master.print(2, 0, "From Storage");
 
-    current_intake = TOPSCORE;
-    current_reload = FROM_STORAGE;
 }
 
 void scoreMiddle(int speed){
@@ -188,34 +197,45 @@ void scoreMiddle(int speed){
 }
 
 void middleFromIntake(int speed){
+    printf("MIDSCORE\n");
+    current_intake = MIDSCORE;
+    current_reload = FROM_INTAKE;
+
     spinIntake(0.5 * speed);
-    spinScoring(-0.3 * speed);
     spinStorage(speed);
     spinReload(speed);
 
+    hoodUp();
+    spinScoring(-0.3 * speed);
+
     master.clear();
     master.print(1, 0, "Middle Score");
     master.print(2, 0, "From Storage");
 
-    current_intake = MIDSCORE;
-    current_reload = FROM_STORAGE;
 }
 
 void middleFromStorage(int speed){
+    printf("MIDSCORE\n");
+    current_intake = MIDSCORE;
+    current_reload = FROM_STORAGE;
+
     spinIntake(0.5 * speed);
-    spinScoring(-0.3 * speed);
     spinStorage(speed);
     spinReload(-speed);
+
+    hoodUp();
+    spinScoring(-0.3 * speed);
 
     master.clear();
     master.print(1, 0, "Middle Score");
     master.print(2, 0, "From Storage");
-
-    current_intake = MIDSCORE;
-    current_reload = FROM_STORAGE;
 }
 
 void outakeAll(int speed){
+    printf("OUTAKE\n");
+    current_intake = OUTAKE;
+    current_reload = FROM_INTAKE;
+
     spinIntake(-0.75 * speed);
     spinScoring(-speed);
     spinStorage(0.25 * speed);
@@ -223,13 +243,11 @@ void outakeAll(int speed){
 
     master.clear();
     master.print(1, 0, "Outake");
-
-    current_intake = OUTAKE;
-    current_reload = FROM_INTAKE;
 }
 
 
 void stopAllIntake(){
+    printf("STOP\n");
     stopIntake();
     stopScoring();
     stopStorage();
@@ -319,16 +337,43 @@ void toggleLoader(){
     loader.toggle();
 }
 
+bool loaderExtended(){
+    return loader.is_extended();
+}
+
 void hoodUp(){
     hood.extend();
+    if(current_intake == OUTAKE){
+        printf("OUTAKE\n");
+        pros::delay(250);
+        spinScoring(-127);
+    } else if(current_intake == MIDSCORE){
+        printf("MIDSCORE\n");
+        pros::delay(250);
+        spinScoring(-0.3 * 127);
+    } else if(current_intake == TOPSCORE){
+        printf("TOPSCORE\n");
+        pros::delay(250);
+        spinScoring(127);
+    }
 }
 
 void hoodDown(){
+    stopScoring();
+    pros::delay(200);
     hood.retract();
 }
 
 void toggleHood(){
-    hood.toggle();
+    if(hoodExtended()){
+        hoodDown();
+    } else {
+        hoodUp();
+    }
+}
+
+bool hoodExtended(){
+    return hood.is_extended();
 }
 
 

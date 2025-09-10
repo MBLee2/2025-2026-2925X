@@ -159,6 +159,15 @@ void taskFn_intake_control(void){
           startAntiJam();
         }
       }
+
+      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+        toggleLoader();
+        if(loaderExtended()){
+          hoodDown();
+        } else {
+          hoodUp();
+        }
+      }
       
       pros::delay(20);
     }

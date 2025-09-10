@@ -91,10 +91,12 @@ void stopAllIntake();
 void extendLoader();
 void retractLoader();
 void toggleLoader();
+bool loaderExtended();
 
 void hoodUp();
 void hoodDown();
 void toggleHood();
+bool hoodExtended();
 
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
