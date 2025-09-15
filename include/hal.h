@@ -163,6 +163,11 @@ bool detectTheirColor(int hue);
 void count_blocks(int num, int timeout);
 void taskFn_count_blocks();
 
+void logging(int range);
+extern char* step_message;
+void messageStep(char* message);
+void end_log();
+
 /*********************** END OF USED FUNCTIONS ***********************/
 
 void spinLift(int speed);

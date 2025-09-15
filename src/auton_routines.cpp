@@ -58,8 +58,15 @@ void printPosition(int time) {
 }
 
 void blankAuton() {
+  logging(3);
   chassis.setPose(0, 0, 0);
-  return;
+  messageStep((char*) "Test");
+  chassis.moveToPoint(0, 24, 2000, {.maxSpeed = 80});
+  chassis.waitUntil(12);
+  messageStep((char *) "Half-way");
+  chassis.waitUntilDone();
+  messageStep((char*) "Test done");
+  end_log();
 }
 
 /******************************** AUTONS ********************************/
@@ -310,12 +317,15 @@ void bottomCenter(){
   int time = pros::millis();
   int tspeed = 80;
   float speed = (float) tspeed;
+  logging(3);
 
   chassis.setPose(11.5, -50.5, 25.5);
 
   //Collect 3 center balls
   chassis.moveToPoint(22, -24, 2000, {.maxSpeed = speed});
   intakeAll(90);
+  chassis.waitUntilDone();
+  messageStep((char*) "Collect balls");
 
   chassis.turnToHeading(0, 1000, {.maxSpeed = tspeed});
   chassis.moveToPoint(24, -29, 2000, {.forwards = false, .maxSpeed = speed});
