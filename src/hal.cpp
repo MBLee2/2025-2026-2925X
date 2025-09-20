@@ -9,6 +9,7 @@
 #include "robot_config.h"
 #include "controls.h"
 #include "main.h"
+#include <climits>
 #include <cmath>
 #include <cstdio>
 #include <limits>
@@ -247,7 +248,6 @@ void outakeAll(int speed){
 
 
 void stopAllIntake(){
-    printf("STOP\n");
     stopIntake();
     stopScoring();
     stopStorage();
@@ -720,6 +720,63 @@ void outakeFor(float speed, float degrees) {
     
     if(auton || autoSkill || autoIntake)
         stopIntake();
+}
+
+int start_time;
+void log_data(char* message){
+    lemlib::Pose temp_pose = chassis.getPose();
+    printf("%s\tTime: %d\tX: %f\tY: %f\tTheta: %f\n", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+}
+
+char* step_message;
+void logStep(){
+    if(strcmp(step_message, "") != 0){
+        log_data(step_message);
+        step_message = "";
+    }
+}
+
+void messageStep(char* message){
+    step_message = message;
+}
+
+void logMove(){
+    if(!chassis.isInMotion()){
+        pros::delay(10);
+        if(chassis.isInMotion()){
+            log_data((char*) "Movement started");
+        }
+    } else if(chassis.isInMotion()){
+        pros::delay(10);
+        if(!chassis.isInMotion()){
+            log_data((char*) "Movement ended");
+        }
+    }
+}
+
+const int tick_length = 20;
+void logTick(){
+    if(floor(((pros::millis() - start_time) % tick_length) / 10) == 0){
+        log_data((char *) "N/A\t");
+    }
+}
+
+bool logging_data = false;
+void (*function_pointers[])() = {&logStep, &logMove, &logTick};
+void logging(int range){
+    pros::Task log_task([=]{
+        logging_data = true;
+        start_time = pros::millis();
+        while(logging_data){
+            for(int i = 0; i < range; i++){
+                function_pointers[i]();
+            }
+        }
+    });
+}
+
+void end_log(){
+    logging_data = false;
 }
 
 /*********************** END OF USED FUNCTIONS ***********************/
