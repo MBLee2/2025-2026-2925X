@@ -34,18 +34,26 @@ void taskFn_drivebase_control(void) {
   {
     // Get  horizontal and vertical joystick input for movement and turning
     int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+
+
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+      drive_state = !drive_state; // Toggle drive direction when the X button is pressed
+      pros::delay(200); // Add a small delay to avoid rapid toggling of direction
+    }
+
+    // If the drive direction is reversed, negate the joystick input for
+    // forward/backward movement
+    if (!drive_state) {
+      leftY = -leftY;
+    }
+
     // Multiply the turning input to prioritize turning over forward movement,
     // enabling agile motion
-
+    int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    turnVelleft = TURN_CONST * leftX;
+    
     // Control the left and right motors based on the calculated values
-    if(!tankDrive){
-      int leftX = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
-      turnVelleft = TURN_CONST * leftX;
-      drive(leftY + turnVelleft, leftY - turnVelleft);
-    } else {
-      int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-      drive(leftY, rightY);
-    }
+    drive(leftY + turnVelleft, leftY - turnVelleft);
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && leftY == 0 && leftX == 0){
       if(current_brake == COAST){
@@ -56,16 +64,6 @@ void taskFn_drivebase_control(void) {
       current_brake = COAST;
       setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
     }
-
-    /*if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-      drive_state = !drive_state; // Toggle drive direction when the X button is pressed
-      pros::delay(300); // Add a small delay to avoid rapid toggling of direction
-    // If the drive direction is reversed, negate the joystick input for
-    // forward/backward movement
-    if (!drive_state) {
-      leftY = -leftY;
-    }
-    }*/
 
     if(leftY + turnVelleft == 0) {
       autoDrive = false;
@@ -88,13 +86,12 @@ void taskFn_intake_control(void){
         
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
       {
-        if (current_intake != INTAKE)
-        {
-          intakeAll(127);
-        } 
-        else if (current_intake == INTAKE) // If intake is running, stop it
+        if (current_intake == INTAKE || current_intake == TOPSCORE || current_intake == MIDSCORE) // If intake is running, stop it
         {
           stopAllIntake();
+        }
+        else {
+          intakeAll(127);
         }
       }
       // Eject objects with the B button
@@ -115,8 +112,6 @@ void taskFn_intake_control(void){
         if (current_intake != TOPSCORE) // If intake is running or stopped, start ejecting
         {
           scoreTop(127);
-        } else if(current_intake == TOPSCORE){
-          stopAllIntake();
         }
       }
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) 
@@ -124,32 +119,7 @@ void taskFn_intake_control(void){
         if (current_intake != MIDSCORE) // If intake is running or stopped, start ejecting
         {
           scoreMiddle(127);
-        } else if(current_intake == MIDSCORE){
-          stopAllIntake();
         }
-      }
-
-      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1))
-      {
-        if(current_reload == FROM_INTAKE){
-          current_reload = FROM_STORAGE;
-
-          if(current_intake == TOPSCORE){
-            topFromStorage(127);
-          } else if (current_intake == MIDSCORE){
-            middleFromStorage(127);
-          }
-        } else if (current_reload == FROM_STORAGE){
-          stopAllIntake();
-        }
-      } else if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2))
-      {
-        toggleHood();
-      }
-
-      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X))
-      {
-        stopAllIntake();
       }
 
       if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
@@ -157,15 +127,6 @@ void taskFn_intake_control(void){
           stopAntiJam();
         } else{
           startAntiJam();
-        }
-      }
-
-      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
-        toggleLoader();
-        if(loaderExtended()){
-          hoodDown();
-        } else {
-          hoodUp();
         }
       }
       

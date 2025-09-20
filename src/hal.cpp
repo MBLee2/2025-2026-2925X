@@ -83,52 +83,55 @@ reload_state current_reload = FROM_INTAKE;
 
 void spinIntake(int speed) {
     intake.move(speed);
+    intake2.move(speed);
 }
 
 void spinScoring(int speed) {
-    if(hoodExtended()){
+    /*if(hoodExtended()){
         setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
         scoringR.move(speed);
         scoringL.move(speed);
-    }
+    }*/
 }
 
 void spinStorage(int speed) {
-    storage.move(speed);
+    //storage.move(speed);
 }
 
 void spinReload(int speed) {
-    reload.move(speed);
+    //reload.move(speed);
 }
 
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
     intake.brake();
+    intake2.brake();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
     intake.brake();
+    intake2.brake();
 }
 
 void stopScoring() {
-    setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
+    /*setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
     scoringR.brake();
-    scoringL.brake();
+    scoringL.brake();*/
 }
 
 void stopScoringHold() {
-    setScoringBrake(pros::E_MOTOR_BRAKE_HOLD);
+    /*setScoringBrake(pros::E_MOTOR_BRAKE_HOLD);
     scoringR.brake();
-    scoringL.brake();
+    scoringL.brake();*/
 }
 
 void stopStorage() {
-    storage.brake();
+    //storage.brake();
 }
 
 void stopReload() {
-    reload.brake();
+    //reload.brake();
 }
 
 void intakeAll(int speed) {
@@ -136,25 +139,26 @@ void intakeAll(int speed) {
     current_intake = INTAKE;
     current_reload = FROM_INTAKE;
 
-    spinIntake(0.85 * speed);
-    stopScoring();
-    spinStorage(-speed);
-    spinReload(0.7 * speed);
+    spinIntake(speed);
 
     master.clear();
     master.print(1, 0, "Intake");
 }
 
 void scoreTop(int speed) {
-    if(current_reload == FROM_INTAKE){
+    goalUp();
+    intakeAll(speed);
+    current_intake = TOPSCORE;
+
+    /*if(current_reload == FROM_INTAKE){
         topFromIntake(speed);
     } else if(current_reload == FROM_STORAGE){
         topFromStorage(speed);
-    }
+    }*/
 }
 
 void topFromIntake(int speed){
-    printf("TOPSCORE\n");
+    /*printf("TOPSCORE\n");
     current_intake = TOPSCORE;
     current_reload = FROM_INTAKE;
     
@@ -167,12 +171,12 @@ void topFromIntake(int speed){
 
     master.clear();
     master.print(1, 0, "Top Score");
-    master.print(2, 0, "From Intake");
+    master.print(2, 0, "From Intake");*/
 
 }
 
 void topFromStorage(int speed){
-    printf("TOPSCORE\n");
+    /*printf("TOPSCORE\n");
     current_intake = TOPSCORE;
     current_reload = FROM_STORAGE;
     
@@ -185,20 +189,24 @@ void topFromStorage(int speed){
 
     master.clear();
     master.print(1, 0, "Top Score");
-    master.print(2, 0, "From Storage");
+    master.print(2, 0, "From Storage");*/
 
 }
 
 void scoreMiddle(int speed){
-    if(current_reload == FROM_INTAKE){
+    goalDown();
+    intakeAll(speed);
+    current_intake = MIDSCORE;
+
+    /*if(current_reload == FROM_INTAKE){
         middleFromIntake(speed);
     } else if(current_reload == FROM_STORAGE){
         middleFromStorage(speed);
-    }
+    }*/
 }
 
 void middleFromIntake(int speed){
-    printf("MIDSCORE\n");
+    /*printf("MIDSCORE\n");
     current_intake = MIDSCORE;
     current_reload = FROM_INTAKE;
 
@@ -211,12 +219,12 @@ void middleFromIntake(int speed){
 
     master.clear();
     master.print(1, 0, "Middle Score");
-    master.print(2, 0, "From Storage");
+    master.print(2, 0, "From Storage");*/
 
 }
 
 void middleFromStorage(int speed){
-    printf("MIDSCORE\n");
+    /*printf("MIDSCORE\n");
     current_intake = MIDSCORE;
     current_reload = FROM_STORAGE;
 
@@ -229,7 +237,7 @@ void middleFromStorage(int speed){
 
     master.clear();
     master.print(1, 0, "Middle Score");
-    master.print(2, 0, "From Storage");
+    master.print(2, 0, "From Storage");*/
 }
 
 void outakeAll(int speed){
@@ -237,10 +245,7 @@ void outakeAll(int speed){
     current_intake = OUTAKE;
     current_reload = FROM_INTAKE;
 
-    spinIntake(-0.75 * speed);
-    spinScoring(-speed);
-    spinStorage(0.25 * speed);
-    spinReload(-speed);
+    spinIntake(-speed);
 
     master.clear();
     master.print(1, 0, "Outake");
@@ -249,9 +254,6 @@ void outakeAll(int speed){
 
 void stopAllIntake(){
     stopIntake();
-    stopScoring();
-    stopStorage();
-    stopReload();
 
     master.clear();
     master.print(1, 0, "Stopped");
@@ -262,11 +264,12 @@ void stopAllIntake(){
 
 void setIntakeBrake(pros::motor_brake_mode_e mode) {
     intake.set_brake_mode(mode);
+    intake2.set_brake_mode(mode);
     //intakeR.set_brake_mode(mode);
 }
 
 void setScoringBrake(pros::motor_brake_mode_e mode) {
-    scoringR.set_brake_mode(mode);
+    //scoringR.set_brake_mode(mode);
 }
 
 void intakeAntiJam() {
@@ -279,7 +282,7 @@ void intakeAntiJam() {
             intakeAll(127);
         } else if(temp_intake == OUTAKE){
             outakeAll(127);
-        } else if (temp_intake == TOPSCORE) {
+        } /*else if (temp_intake == TOPSCORE) {
             reload_state temp_reload = current_reload;
             if(temp_reload == FROM_INTAKE){
                 topFromIntake(127);
@@ -293,7 +296,7 @@ void intakeAntiJam() {
             } else if(temp_reload == FROM_STORAGE){
                 middleFromStorage(127);
             }
-        }
+        }*/
     }
 }
 
@@ -342,7 +345,7 @@ bool loaderExtended(){
 }
 
 void hoodUp(){
-    hood.extend();
+    /*hood.extend();
     if(current_intake == OUTAKE){
         printf("OUTAKE\n");
         pros::delay(250);
@@ -355,13 +358,13 @@ void hoodUp(){
         printf("TOPSCORE\n");
         pros::delay(250);
         spinScoring(127);
-    }
+    }*/
 }
 
 void hoodDown(){
-    stopScoring();
-    pros::delay(200);
-    hood.retract();
+    // stopScoring();
+    // pros::delay(200);
+    // hood.retract();
 }
 
 void toggleHood(){
@@ -373,9 +376,28 @@ void toggleHood(){
 }
 
 bool hoodExtended(){
-    return hood.is_extended();
+    //return hood.is_extended();
 }
 
+void goalDown(){
+    goal_switch.retract();
+}
+
+void goalUp(){
+    goal_switch.extend();
+}
+
+bool goalExtended(){
+    return goal_switch.is_extended();
+}
+
+void toggleGoal(){
+    if(goalExtended()){
+        goalUp();
+    } else {
+        goalDown();
+    }
+}
 
 //IMU
 void resetIMUHeading() {
@@ -398,7 +420,7 @@ double getLFPosition() {
 }
 
 double getLMPosition() {
-    // return lm.get_position() * DRIVEBASE_GEAR_RATIO;
+    return lm.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
 double getLBPosition() {
@@ -410,7 +432,7 @@ double getRFPosition() {
 }
 
 double getRMPosition() {
-    // return rm.get_position() * DRIVEBASE_GEAR_RATIO;
+    return rm.get_position() * DRIVEBASE_GEAR_RATIO;
 }
 
 double getRBPosition() {

@@ -16,27 +16,32 @@
 pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
-pros::Motor lf(-2, pros::v5::MotorGears::blue);  // port 15, forward
-pros::Motor lb(-12, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor lf(10, pros::v5::MotorGears::blue);  // port 15, forward
+pros::Motor lm(-6, pros::v5::MotorGears::blue);
+pros::Motor lb(-20, pros::v5::MotorGears::blue);  // port 9, reversed
 
-pros::Motor rf(10, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rb(20, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor rf(-1, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(15, pros::v5::MotorGears::blue);
+pros::Motor rb(5, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({-2, -12}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({10, 20}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({10, -6, -20}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-1, 15, 5}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(9, pros::v5::MotorGears::blue);  // port 4, reversed
-pros::Motor scoringR(-4, pros::v5::MotorGears::green);
-pros::Motor scoringL(5, pros::v5::MotorGears::green);
-pros::Motor storage(-15, pros::v5::MotorGears::green);
-pros::Motor reload(-19, pros::v5::MotorGears::green);
+pros::Motor intake(16, pros::v5::MotorGears::blue);  // port 4, reversed
+pros::Motor intake2(8, pros::v5::MotorGears::blue);
+//pros::Motor scoringR(-4, pros::v5::MotorGears::green);
+//pros::Motor scoringL(5, pros::v5::MotorGears::green);
+//pros::Motor storage(-15, pros::v5::MotorGears::green);
+//pros::Motor reload(-19, pros::v5::MotorGears::green);
 
 //Pistons NOT DONE
 pros::adi::Pneumatics loader('a', false);
-pros::adi::Pneumatics hood('d', false);
+pros::adi::Pneumatics goal_switch('o', true);
+pros::adi::Pneumatics aligner('p', false);
+//pros::adi::Pneumatics hood('d', false);
 
 /* SENSORS */ // NOT DONE
 pros::IMU imu(7); //DONE

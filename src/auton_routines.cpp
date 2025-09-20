@@ -54,11 +54,11 @@ auton_routine solo_WP{-0.600, 0.600, 180, "extra_1", nullptr};
 
 void printPosition(int time) {
   lemlib::Pose temp_pose = chassis.getPose();
-  printf("X: %d,\t Y:%d,\t Theta:%d,\t, Time: %d\n", temp_pose.x, temp_pose.y, temp_pose.theta, pros::millis - time);
+  printf("X: %d,\t Y:%d,\t Theta:%d,\t, Time: %d\n", temp_pose.x, temp_pose.y, temp_pose.theta, pros::millis() - time);
 }
 
 void blankAuton() {
-  logging(3);
+  /*logging(3);
   chassis.setPose(0, 0, 0);
   messageStep((char*) "Test");
   chassis.moveToPoint(0, 24, 2000, {.maxSpeed = 80});
@@ -66,7 +66,7 @@ void blankAuton() {
   messageStep((char *) "Half-way");
   chassis.waitUntilDone();
   messageStep((char*) "Test done");
-  end_log();
+  end_log();*/
 }
 
 /******************************** AUTONS ********************************/

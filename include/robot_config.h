@@ -40,25 +40,30 @@ extern pros::Controller master;
 extern lemlib::Chassis chassis;
 extern lemlib::Chassis chassisWithGoal;
 extern pros::Motor lf; 
+extern pros::Motor lm;
 extern pros::Motor lb;
 extern pros::Motor rf; 
+extern pros::Motor rm;
 extern pros::Motor rb;
 extern pros::MotorGroup left_side_motors;              // Left drivetrain of drivebase
 extern pros::MotorGroup right_side_motors;             // Right drivetrain of drivebase
 
 //Motors
 extern pros::Motor intake;
-extern pros::Motor scoringR;
+extern pros::Motor intake2;
+/*extern pros::Motor scoringR;
 extern pros::Motor scoringL;
 extern pros::Motor storage;
-extern pros::Motor reload;
+extern pros::Motor reload;*/
 
 
 //extern pros::Motor lift;
 
 //pistons
 extern pros::adi::Pneumatics loader;
-extern pros::adi::Pneumatics hood;
+extern pros::adi::Pneumatics goal_switch;
+extern pros::adi::Pneumatics aligner;
+// extern pros::adi::Pneumatics hood;
 
 //Sensors
 extern pros::Optical intake_color;

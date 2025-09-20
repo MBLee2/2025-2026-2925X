@@ -98,6 +98,11 @@ void hoodDown();
 void toggleHood();
 bool hoodExtended();
 
+void goalDown();
+void goalUp();
+bool goalExtended();
+void toggleGoal();
+
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
 void setScoringBrake(pros::motor_brake_mode_e mode);
