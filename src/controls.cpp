@@ -106,20 +106,19 @@ void taskFn_intake_control(void){
         }
       }
 
-
-      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
+      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
       {
-        if (current_intake != TOPSCORE) // If intake is running or stopped, start ejecting
-        {
-          scoreTop(127);
-        }
+        toggleLoader();
       }
-      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) 
+
+      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1))
       {
-        if (current_intake != MIDSCORE) // If intake is running or stopped, start ejecting
-        {
-          scoreMiddle(127);
-        }
+        toggleAligner();
+      }
+
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) 
+      {
+        toggleGoal();
       }
 
       if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){

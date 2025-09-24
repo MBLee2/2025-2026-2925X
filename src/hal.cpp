@@ -148,7 +148,6 @@ void intakeAll(int speed) {
 void scoreTop(int speed) {
     goalUp();
     intakeAll(speed);
-    current_intake = TOPSCORE;
 
     /*if(current_reload == FROM_INTAKE){
         topFromIntake(speed);
@@ -196,7 +195,6 @@ void topFromStorage(int speed){
 void scoreMiddle(int speed){
     goalDown();
     intakeAll(speed);
-    current_intake = MIDSCORE;
 
     /*if(current_reload == FROM_INTAKE){
         middleFromIntake(speed);
@@ -337,7 +335,12 @@ void retractLoader(){
 }
 
 void toggleLoader(){
-    loader.toggle();
+    if(loaderExtended()){
+        retractLoader();
+        
+    } else {
+        extendLoader();
+    }
 }
 
 bool loaderExtended(){
@@ -381,10 +384,12 @@ bool hoodExtended(){
 
 void goalDown(){
     goal_switch.retract();
+    current_intake = MIDSCORE;
 }
 
 void goalUp(){
     goal_switch.extend();
+    current_intake = TOPSCORE;
 }
 
 bool goalExtended(){
@@ -397,6 +402,26 @@ void toggleGoal(){
     } else {
         goalDown();
     }
+}
+
+void extendAligner(){
+    aligner.extend();
+}
+
+void retractAligner(){
+    aligner.retract();
+}
+
+void toggleAligner(){
+    if(alignerExtended()){
+        retractAligner();
+    } else {
+        extendAligner();
+    }
+}
+
+bool alignerExtended(){
+    return aligner.is_extended();
 }
 
 //IMU

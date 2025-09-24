@@ -40,7 +40,7 @@ pros::Motor intake2(8, pros::v5::MotorGears::blue);
 //Pistons NOT DONE
 pros::adi::Pneumatics loader('a', false);
 pros::adi::Pneumatics goal_switch('o', true);
-pros::adi::Pneumatics aligner('p', false);
+pros::adi::Pneumatics aligner('h', false);
 //pros::adi::Pneumatics hood('d', false);
 
 /* SENSORS */ // NOT DONE
