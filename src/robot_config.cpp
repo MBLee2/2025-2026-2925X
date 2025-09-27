@@ -38,9 +38,9 @@ pros::Motor intake2(8, pros::v5::MotorGears::blue);
 //pros::Motor reload(-19, pros::v5::MotorGears::green);
 
 //Pistons NOT DONE
-pros::adi::Pneumatics loader('a', false);
-pros::adi::Pneumatics goal_switch('o', true);
-pros::adi::Pneumatics aligner('h', false);
+pros::adi::Pneumatics loader('a', true);
+pros::adi::Pneumatics goal_switch('g', false);
+pros::adi::Pneumatics aligner('h', true);
 //pros::adi::Pneumatics hood('d', false);
 
 /* SENSORS */ // NOT DONE

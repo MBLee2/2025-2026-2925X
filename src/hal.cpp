@@ -398,9 +398,9 @@ bool goalExtended(){
 
 void toggleGoal(){
     if(goalExtended()){
-        goalUp();
-    } else {
         goalDown();
+    } else {
+        goalUp();
     }
 }
 
