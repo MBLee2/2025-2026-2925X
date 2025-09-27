@@ -22,11 +22,11 @@ pros::Motor lb(-20, pros::v5::MotorGears::blue);  // port 9, reversed
 
 pros::Motor rf(-1, pros::v5::MotorGears::blue); // port 13, forward
 pros::Motor rm(15, pros::v5::MotorGears::blue);
-pros::Motor rb(5, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor rb(4, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
 pros::MotorGroup left_side_motors({10, -6, -20}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-1, 15, 5}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-1, 15, 4}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
@@ -44,7 +44,7 @@ pros::adi::Pneumatics aligner('h', true);
 //pros::adi::Pneumatics hood('d', false);
 
 /* SENSORS */ // NOT DONE
-pros::IMU imu(7); //DONE
+pros::IMU imu(2); //DONE
 
 //Color Sort
 pros::Optical intake_color(13);
@@ -58,15 +58,15 @@ pros::Optical intake_color(13);
 lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
-    12.75, // track width
+    11.75, // track width
     lemlib::Omniwheel::NEW_275,// wheel diameter
-    400, // wheel rpm
-	8 //chase Power
+    450, // wheel rpm
+	2 //chase Power
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
 pros::Rotation vertical_rot(1); // NOT ON BOT
-pros::Rotation horizontal_rot(-18); // port 1, not reversed
+pros::Rotation horizontal_rot(-7); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
@@ -76,11 +76,11 @@ lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::N
 /*
 NOT SET UP YET
 */
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, -4); // 2.00" wheel diameter, 1.00" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, -5); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    &vertical_tracking_wheel, //&vertical_tracking_wheel, //SKILLSa  
+    nullptr, //SKILLSa  
     nullptr, // vertical tracking wheel 2
     &horizontal_tracking_wheel, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
@@ -88,29 +88,28 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(4.5, // proportional gain (kP)
-                                              0.3, // integral gain (kI)
-                                              45, // derivative gain (kD)
+lemlib::ControllerSettings lateral_controller(8.7, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              19.5, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              20 // maximum acceleration (slew)
 );
 
 // turning PID
-lemlib::ControllerSettings angular_controller(6, // proportional gain (kP)
+lemlib::ControllerSettings angular_controller(5, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              55, // derivative gain (kD)
+                                              35, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
                                               500, // large error range timeout, in milliseconds
-                                              70 // maximum acceleration (slew)
+                                              90 // maximum acceleration (slew)
 );
-
 
 // input curve for throttle input during driver control
 lemlib::ExpoDriveCurve throttle_curve(0, //joystick deadband out of 127

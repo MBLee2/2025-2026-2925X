@@ -218,7 +218,7 @@ void autonomous() {
 	// printf("X: %f, Y: %f, Theta: %f \n", chassis.getPose().x, chassis.getPose().y,chassis.getPose().theta);
 
 	//HERE
-	auton_routine default_routine = null_routine; //DEFAULT ROUTINE
+	auton_routine default_routine = bottom_center; //DEFAULT ROUTINE
 
 	auton = true;
    	printf("%s(): Entered\n", __func__);

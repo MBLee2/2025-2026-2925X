@@ -273,14 +273,17 @@ void setScoringBrake(pros::motor_brake_mode_e mode) {
 void intakeAntiJam() {
     if(fabs(intake.get_actual_velocity()) < 5)
     {
-        intake_state temp_intake = current_intake;
-        stopAllIntake();
-        pros::delay(100);
-        if(temp_intake == INTAKE){
+        if(current_intake == INTAKE){
+            spinIntake(-127);
+            pros::delay(200);
             intakeAll(127);
-        } else if(temp_intake == OUTAKE){
+        } else if(current_intake == OUTAKE){
             outakeAll(127);
-        } /*else if (temp_intake == TOPSCORE) {
+            pros::delay(200);
+            intakeAll(-127);
+        } 
+        
+        /*else if (temp_intake == TOPSCORE) {
             reload_state temp_reload = current_reload;
             if(temp_reload == FROM_INTAKE){
                 topFromIntake(127);
@@ -772,7 +775,8 @@ void outakeFor(float speed, float degrees) {
 int start_time;
 void log_data(char* message){
     lemlib::Pose temp_pose = chassis.getPose();
-    printf("%s\tTime: %d\tX: %f\tY: %f\tTheta: %f\n", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+    printf("%s, %d, %f, %f, %f", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+    printf(";\n");
 }
 
 char* step_message;
@@ -787,17 +791,14 @@ void messageStep(char* message){
     step_message = message;
 }
 
+bool prev_motion = false;
 void logMove(){
-    if(!chassis.isInMotion()){
-        pros::delay(10);
-        if(chassis.isInMotion()){
-            log_data((char*) "Movement started");
-        }
-    } else if(chassis.isInMotion()){
-        pros::delay(10);
-        if(!chassis.isInMotion()){
-            log_data((char*) "Movement ended");
-        }
+    if(chassis.isInMotion() && !prev_motion){
+        log_data((char*) "Move started");
+        prev_motion = true;
+    } else if(!chassis.isInMotion() && prev_motion){
+        log_data((char*) "Move ended");
+        prev_motion = false;
     }
 }
 
@@ -811,6 +812,8 @@ void logTick(){
 bool logging_data = false;
 void (*function_pointers[])() = {&logStep, &logMove, &logTick};
 void logging(int range){
+    printf("Message, Time, X, Y, Theta");
+    printf(";\n");
     pros::Task log_task([=]{
         logging_data = true;
         start_time = pros::millis();

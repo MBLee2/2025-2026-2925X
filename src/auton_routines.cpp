@@ -38,9 +38,9 @@ auton_routine long_goal_left{0, 0, 0, "None - Invalid Routine", &longGoalLeft};
 
 auton_routine long_goal_right{0, 0, 0, "None - Invalid Routine", &longGoalRight};
 
-auton_routine bottom_center{0, 0, 0, "None - Invalid Routine", &bottomCenter}; //EVERYTHING DONE
+auton_routine top_center{0, 0, 0, "None - Invalid Routine", &topCenter}; //EVERYTHING DONE
 
-auton_routine negetive_6_ring{0, 0, 0, "None - Invalid Routine", nullptr};
+auton_routine bottom_center{0, 0, 0, "None - Invalid Routine", &bottomCenter};
 
 auton_routine negetive_safe_wall_stake{0, 0, 0, "None - Invalid Routine", 
                                          nullptr};
@@ -58,15 +58,7 @@ void printPosition(int time) {
 }
 
 void blankAuton() {
-  /*logging(3);
   chassis.setPose(0, 0, 0);
-  messageStep((char*) "Test");
-  chassis.moveToPoint(0, 24, 2000, {.maxSpeed = 80});
-  chassis.waitUntil(12);
-  messageStep((char *) "Half-way");
-  chassis.waitUntilDone();
-  messageStep((char*) "Test done");
-  end_log();*/
 }
 
 /******************************** AUTONS ********************************/
@@ -313,26 +305,25 @@ void longGoalRight(){
   }
 }
 
-void bottomCenter(){
+void topCenter(){
   int time = pros::millis();
   int tspeed = 80;
   float speed = (float) tspeed;
+
   logging(3);
 
-  chassis.setPose(11.5, -50.5, 25.5);
-
   //Collect 3 center balls
-  chassis.moveToPoint(22, -24, 2000, {.maxSpeed = speed});
+  
+  chassis.setPose(-17, -51, 0);
+  
+  chassis.moveToPoint(-24, -29, 2500, {.forwards = false, .maxSpeed = speed});
   intakeAll(90);
   chassis.waitUntilDone();
   messageStep((char*) "Collect balls");
-
-  chassis.turnToHeading(0, 1000, {.maxSpeed = tspeed});
-  chassis.moveToPoint(24, -29, 2000, {.forwards = false, .maxSpeed = speed});
-  chassis.turnToPoint(0, 0, 1000, {.maxSpeed = tspeed});
-  chassis.moveToPoint(15, -16.5, 2000, {.maxSpeed = speed}, false);
+  chassis.turnToPoint(0, 0, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(-15, -16.5, 2000, {.maxSpeed = speed}, false);
   while(true){
-    outakeAll(70);
+    scoreMiddle(127);
     if(detectBlock(getIntakeColor())){
       pros::delay(50);
       stopStorage();
@@ -340,6 +331,41 @@ void bottomCenter(){
     }
     pros::delay(300);
   }
+  //*/
+  master.clear_line(0);
+  int temp = pros::millis();
+  while (true) {
+    master.print(0, 0, "Time: %d", (temp-time));
+  }
+}
+
+
+void bottomCenter(){
+  int time = pros::millis();
+  int tspeed = 80;
+  float speed = (float) tspeed;
+  logging(3);
+
+  chassis.setPose(17, -52.3, 90);
+
+  chassis.moveToPoint(52.3, -52.3, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(24, -24, 1000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(30, -30, 2000, {.maxSpeed = speed - 20}, false);
+  pros::delay(300);
+  intakeAll(127);
+  chassis.moveToPoint(28, -28, 1000, {.maxSpeed = 40}, false);
+  pros::delay(150);
+  stopAllIntake();
+  chassis.moveToPoint(30, -30, 2000, {.maxSpeed = 50}, false);
+  chassis.turnToPoint(17, -24, 1000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(17, -24, 1000, {.maxSpeed = speed});
+  intakeAll(127);
+  pros::delay(200);
+  stopAllIntake();
+  chassis.turnToPoint(13, -17, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(13, -17, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(0, 0, 2000, {.maxSpeed = tspeed}, false);
+  outakeAll(127);
   //*/
   master.clear_line(0);
   int temp = pros::millis();

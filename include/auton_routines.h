@@ -23,7 +23,7 @@ extern auton_routine null_routine;
 
 extern auton_routine top_WP, bottom_WP;
 extern auton_routine long_goal_left, long_goal_right;
-extern auton_routine bottom_center;
+extern auton_routine top_center, bottom_center;
 
 extern auton_routine skills_1, skills_2;
 
@@ -36,6 +36,7 @@ void topWP();
 void bottomWP();
 void longGoalLeft();
 void longGoalRight();
+void topCenter();
 void bottomCenter();
 
 /*****************************************************************************/
