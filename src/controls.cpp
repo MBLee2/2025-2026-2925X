@@ -86,12 +86,12 @@ void taskFn_intake_control(void){
         
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) 
       {
-        if (current_intake == INTAKE || current_intake == TOPSCORE || current_intake == MIDSCORE) // If intake is running, stop it
+        if (current_intake != INTAKE) // If intake is running, stop it
         {
-          stopAllIntake();
+          intakeAll(127);
         }
         else {
-          intakeAll(127);
+          stopAllIntake();
         }
       }
       // Eject objects with the B button

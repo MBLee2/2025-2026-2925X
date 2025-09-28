@@ -387,12 +387,10 @@ bool hoodExtended(){
 
 void goalDown(){
     goal_switch.retract();
-    current_intake = MIDSCORE;
 }
 
 void goalUp(){
     goal_switch.extend();
-    current_intake = TOPSCORE;
 }
 
 bool goalExtended(){
