@@ -38,9 +38,9 @@ pros::Motor intake2(8, pros::v5::MotorGears::blue);
 //pros::Motor reload(-19, pros::v5::MotorGears::green);
 
 //Pistons NOT DONE
-pros::adi::Pneumatics loader('a', true);
+pros::adi::Pneumatics loader('a', false);
 pros::adi::Pneumatics goal_switch('g', false);
-pros::adi::Pneumatics aligner('h', true);
+pros::adi::Pneumatics stopper('h', false);
 //pros::adi::Pneumatics hood('d', false);
 
 /* SENSORS */ // NOT DONE
@@ -137,12 +137,12 @@ lemlib::Chassis chassis(drivetrain,
     {
         dashboard_motor_display {  5, 135, "DB-LF", lf},
         dashboard_motor_display {  5, 190, "DB-RF", rf},
-        // dashboard_motor_display {110, 135, "DB-LM", lm},
-        // dashboard_motor_display {110, 190, "DB-RM", rm},
-        dashboard_motor_display {110, 135, "DB-LB", lb},
-        dashboard_motor_display {110, 190, "DB-RB",  rb},
-        dashboard_motor_display {215, 135, "Intake", intake}
-        // dashboard_motor_display {320, 190, "lbrown", ladybrownL}
+        dashboard_motor_display {110, 135, "DB-LM", lm},
+        dashboard_motor_display {110, 190, "DB-RM", rm},
+        dashboard_motor_display {215, 135, "DB-LB", lb},
+        dashboard_motor_display {215, 190, "DB-RB",  rb},
+        dashboard_motor_display {320, 135, "Intake", intake},
+        dashboard_motor_display {320, 190, "Intake2", intake2}
         
         
     };

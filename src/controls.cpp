@@ -113,7 +113,7 @@ void taskFn_intake_control(void){
 
       if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1))
       {
-        toggleAligner();
+        toggleStopper();
       }
 
       if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) 

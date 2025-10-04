@@ -103,10 +103,10 @@ void goalUp();
 bool goalExtended();
 void toggleGoal();
 
-void extendAligner();
-void retractAligner();
-void toggleAligner();
-bool alignerExtended();
+void stopperUp();
+void stopperDown();
+void toggleStopper();
+bool checkStopperUp();
 
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);

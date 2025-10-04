@@ -135,7 +135,6 @@ void stopReload() {
 }
 
 void intakeAll(int speed) {
-    printf("INTAKE\n");
     current_intake = INTAKE;
     current_reload = FROM_INTAKE;
 
@@ -405,24 +404,24 @@ void toggleGoal(){
     }
 }
 
-void extendAligner(){
-    aligner.extend();
+void stopperUp(){
+    stopper.extend();
 }
 
-void retractAligner(){
-    aligner.retract();
+void stopperDown(){
+    stopper.retract();
 }
 
-void toggleAligner(){
-    if(alignerExtended()){
-        retractAligner();
+void toggleStopper(){
+    if(checkStopperUp()){
+        stopperDown();
     } else {
-        extendAligner();
+        stopperUp();
     }
 }
 
-bool alignerExtended(){
-    return aligner.is_extended();
+bool checkStopperUp(){
+    return stopper.is_extended();
 }
 
 //IMU
@@ -777,11 +776,11 @@ void log_data(char* message){
     printf(";\n");
 }
 
-char* step_message;
+char* step_message = (char *) "";
 void logStep(){
     if(strcmp(step_message, "") != 0){
         log_data(step_message);
-        step_message = "";
+        step_message = (char *) "";
     }
 }
 
@@ -792,15 +791,15 @@ void messageStep(char* message){
 bool prev_motion = false;
 void logMove(){
     if(chassis.isInMotion() && !prev_motion){
-        log_data((char*) "Move started");
+        log_data((char *) "Move started");
         prev_motion = true;
     } else if(!chassis.isInMotion() && prev_motion){
-        log_data((char*) "Move ended");
+        log_data((char *) "Move ended");
         prev_motion = false;
     }
 }
 
-const int tick_length = 20;
+const int tick_length = 500;
 void logTick(){
     if(floor(((pros::millis() - start_time) % tick_length) / 10) == 0){
         log_data((char *) "N/A\t");
@@ -819,6 +818,7 @@ void logging(int range){
             for(int i = 0; i < range; i++){
                 function_pointers[i]();
             }
+            pros::delay(10);
         }
     });
 }
