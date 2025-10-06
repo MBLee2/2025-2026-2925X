@@ -23,9 +23,10 @@ int COLOR_SIG = (COLOR) ? 1 : 2;
 
 bool auton = false, autoSkill = false;
 bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false, LBPickup = false;
+bool sorting = false, scoring = false;
 bool liftReset = false; //Do not modify
 
-std::queue<bool> ringQueue;
+std::queue<bool> blockQueue;
 
 
 //Basic Motor Movement
@@ -273,30 +274,14 @@ void intakeAntiJam() {
     if(fabs(intake.get_actual_velocity()) < 5)
     {
         if(current_intake == INTAKE){
-            spinIntake(-127);
-            pros::delay(200);
+            outakeAll(127);
+            pros::delay(400);
             intakeAll(127);
         } else if(current_intake == OUTAKE){
-            outakeAll(127);
+            intakeAll(127);
             pros::delay(200);
-            intakeAll(-127);
+            outakeAll(127);
         } 
-        
-        /*else if (temp_intake == TOPSCORE) {
-            reload_state temp_reload = current_reload;
-            if(temp_reload == FROM_INTAKE){
-                topFromIntake(127);
-            } else if(temp_reload == FROM_STORAGE){
-                topFromStorage(127);
-            }
-        } else if (temp_intake == MIDSCORE) {
-            reload_state temp_reload = current_reload;
-            if(temp_reload == FROM_INTAKE){
-                middleFromIntake(127);
-            } else if(temp_reload == FROM_STORAGE){
-                middleFromStorage(127);
-            }
-        }*/
     }
 }
 
@@ -512,15 +497,23 @@ int getIntakeColor() {
     return intake_color.get_hue();
 }
 
-int getIntakeColorDist() {
-    return intake_color.get_proximity();
+void setIntakeColorLED(int value){
+    intake_color.set_led_pwm(value);
+}
+
+int getIntakeDist() {
+    return intake_dist.get();
+}
+
+bool detectExiting() {
+    return getIntakeDist() < 30;
 }
 
 bool detectRed(int hue){
-    return hue >= 0 && hue <= 35;
+    return hue < 10 || hue > 350;
 }
 bool detectBlue(int hue){
-    return hue >= 180 && hue <= 200;
+    return hue >= 210 && hue <= 230;
 }
 
 bool detectBlock(int hue){
@@ -543,17 +536,214 @@ bool detectTheirColor(int hue){
     }
 }
 
-void count_blocks(int num, int timeout){
-    while(num > 0 && timeout > 0){
-        if(detectBlock(getIntakeColor())){
-            while(detectBlock(getIntakeColor())){
-                pros::delay(20);
-                timeout -= 20;
-            }
-            num--;
+void addToQueue(bool color){
+    blockQueue.push(color);
+}
+
+void addRed(){
+    addToQueue(true);
+}
+
+void addBlue(){
+    addToQueue(false);
+}
+
+bool queueEmpty(){
+    return blockQueue.empty();
+}
+
+bool queueFront(){
+    return blockQueue.front();
+}
+
+bool queueBack(){
+    return blockQueue.back();
+}
+
+void removeQueue(){
+    blockQueue.pop();
+}
+
+void removeQueueBack(){
+    if(!queueEmpty()){
+        bool first;
+        for(int i = 0; i < blockQueue.size() - 1; i++){
+            first = queueFront();
+            removeQueue();
+            blockQueue.push(first);
         }
+
+        removeQueue();
+    }
+}
+
+void manageQueue() {
+    pros::Task queue_task([=]{
+        while(true){
+            onEnterIntake();
+            onExitIntake();
+            if(sorting && !queueEmpty()){
+                sort();
+            }
+            pros::delay(10);
+        }
+    });
+}
+
+void clearQueue() {
+    while(!queueEmpty()){
+        removeQueue();
+    }
+}
+
+void onEnterIntake(){
+    int hue = getIntakeColor();
+
+    if(detectRed(hue) && current_intake == INTAKE) //If we detect red
+    {
+        messageStep((char *) "Enter red");
+        //printf("Enter red %i\n", hue);
+        addRed(); //Add to queue as upcoming
+                
+        while(detectRed(hue)){ //Wait for ring to continue through intake
+            pros::delay(20);
+            hue = getIntakeColor();
+        }
+        printQueue();
+    }
+    else if(detectBlue(hue) && current_intake == INTAKE) //If we detect blue
+    {
+        messageStep((char *) "Enter red");
+        //printf("Enter blue %i\n", hue);
+        addBlue(); //Add to queue as upcoming
+
+        while(detectBlue(hue)){ //Wait for ring to continue through intake
+            pros::delay(20);
+            hue = getIntakeColor();
+        }
+        printQueue();
+    } else if(current_intake == OUTAKE && detectBlock(hue))
+    {
+        messageStep((char *) "Exit block");
+        //printf("Exit %s\n", (queueBack()) ? "Red" : "Blue");
+        removeQueueBack();
+
+        while(detectBlock(hue)){
+            pros::delay(20);
+            hue = getIntakeColor();
+        }
+        printQueue();
+    }
+}
+
+void onExitIntake(){
+
+    if(detectExiting() && !queueEmpty()){
+        messageStep((char *) "Exit block");
+        //printf("Exit %s\n", (queueFront()) ? "Red" : "Blue");
+        removeQueue();
+
+        while(detectExiting()){
+            pros::delay(20);
+        }
+        printQueue();
+    }
+}
+
+
+void printQueue(){
+    if(!queueEmpty()){
+        bool first;
+        for(int i = 0; i < blockQueue.size(); i++){
+            first = queueFront();
+            if(first){
+                printf("Red  ");
+            } else {
+                printf("Blue ");
+            }
+            removeQueue();
+            blockQueue.push(first);
+        }
+        printf("\n");
+    }
+}
+
+void count_blocks_in(int num, int timeout){
+    int start = blockQueue.size();
+    while(blockQueue.size() < start + num && timeout > 0){
         pros::delay(20);
         timeout -= 20;
+    }
+}
+
+void count_blocks_out(int num, int timeout){
+    int start = blockQueue.size();
+    while(blockQueue.size() > start - num && !queueEmpty() && timeout > 0){
+        pros::delay(20);
+        timeout -= 20;
+    }
+}
+
+
+void startSorting() {
+    if(!sorting){
+        //printf("Sorting Started\n");
+        sorting = true;
+    }
+}
+
+void stopSorting() {
+    if(sorting){
+        //printf("Sorting Stopped\n");
+        sorting = false;
+    }
+}
+
+void setScoringTrue() {
+    if(!scoring){
+        messageStep("Start Scoring");
+        scoring = true;
+    }
+}
+
+void setScoringFalse() {
+    if(scoring){
+        messageStep("End Scoring");
+        scoring = false;
+    }
+}
+
+void sort(){
+    if(current_intake == INTAKE){
+        if(scoring){
+            if(queueFront() != COLOR && !checkStopperUp()){
+                //printf("Sorting blocks\n");
+                stopperUp();
+            } else if (queueFront() == COLOR && checkStopperUp()) {
+                //printf("Scoring blocks\n");
+                stopperDown();
+            }
+        } else {
+            if(queueFront() == COLOR && !checkStopperUp()){
+                //printf("Sorting blocks\n");
+                stopperUp();
+            } else if (queueFront() == COLOR && checkStopperUp()) {
+                //printf("Intaking blocks\n");
+                stopperDown();
+            }
+        }
+    } else if(current_intake == OUTAKE){
+        if(scoring){
+            if(queueBack() != COLOR){
+                //printf("Sorting blocks\n");
+                stopAllIntake();
+            }
+        } else {
+            if(queueFront() == COLOR){
+                //printf("Sorting blocks\n");
+                stopAllIntake();
+            }
+        }
     }
 }
 
@@ -769,6 +959,8 @@ void outakeFor(float speed, float degrees) {
         stopIntake();
 }
 
+//Logging
+
 int start_time;
 void log_data(char* message){
     lemlib::Pose temp_pose = chassis.getPose();
@@ -776,7 +968,7 @@ void log_data(char* message){
     printf(";\n");
 }
 
-char* step_message = (char *) "";
+char* step_message;
 void logStep(){
     if(strcmp(step_message, "") != 0){
         log_data(step_message);
@@ -809,6 +1001,7 @@ void logTick(){
 bool logging_data = false;
 void (*function_pointers[])() = {&logStep, &logMove, &logTick};
 void logging(int range){
+    step_message = (char *) "";
     printf("Message, Time, X, Y, Theta");
     printf(";\n");
     pros::Task log_task([=]{
@@ -971,11 +1164,6 @@ float distToObject() {
     return 0;
 }
 
-int getIntakeDist(){
-    // return intake_dist.get();
-    return 0;
-}
-
 //Color
 
 
@@ -984,9 +1172,6 @@ int get2ndIntakeColor() {
     return 0;
 }
 
-void setIntakeColorLED(int value){
-    // intake_color.set_led_pwm(value);
-}
 
 void setIntakeColor2LED(int value){
     // intake_color2.set_led_pwm(value);
@@ -1313,61 +1498,8 @@ bool detectRing() {
     return 0;
 }
 
-void printRingQueue(){
-    // if(!ringQueue.empty()){
-    //     bool first;
-    //     for(int i = 0; i < ringQueue.size(); i++){
-    //         first = ringQueue.front();
-    //         if(first){
-    //             printf("Red  ");
-    //         } else {
-    //             printf("Blue ");
-    //         }
-    //         ringQueue.pop();
-    //         ringQueue.push(first);
-    //     }
-    //     printf("\n");
-    // }
-}
 
 
-void clearRingQueue() {
-    // while(!ringQueue.empty()){
-    //     ringQueue.pop();
-    // }
-}
-
-void addCurrentRing(){
-    // while(true){
-    //     if(autoIntake){
-    //         int hue = getIntakeColor();
-
-    //         if(detectRed(hue)) //If we detect red
-    //         {
-    //             printf("Enter red %i\n", hue);
-    //             ringQueue.push(true); //Add to queue as upcoming
-                
-    //             while(detectRed(hue)){ //Wait for ring to continue through intake
-    //                 pros::delay(20);
-    //                 hue = getIntakeColor();
-    //             }
-    //             printRingQueue();
-    //         }
-    //         else if(detectBlue(hue)) //If we detect blue
-    //         {
-    //             printf("Enter blue %i\n", hue);
-    //             ringQueue.push(false); //Add to queue as upcoming
-
-    //             while(detectBlue(hue)){ //Wait for ring to continue through intake
-    //                 pros::delay(20);
-    //                 hue = getIntakeColor();
-    //             }
-    //             printRingQueue();
-    //         }
-    //     }
-    //     pros::delay(10);
-    // }
-}
 
 void checkQueue() {
     // while(true){
@@ -1482,21 +1614,6 @@ void sort_color_queue(){
     // printf("Sorting started\n");
     // pros::Task add_ring_task(addCurrentRing);
     // pros::Task count_ring_task(countRingsDist);
-}
-
-void startSorting() {
-    // if(!autoIntake ){
-    //     master.print(1,0,"Sorting");
-    //     autoIntake = true;
-    // }
-}
-
-void stopSorting() {
-    // if(autoIntake){
-    //     master.clear_line(1);
-    //     autoIntake = false;
-    //     clearRingQueue();
-    // }
 }
 
 

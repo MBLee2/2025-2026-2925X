@@ -170,7 +170,24 @@ bool detectBlock(int hue);
 bool detectOurColor(int hue);
 bool detectTheirColor(int hue);
 
-void count_blocks(int num, int timeout);
+void manageQueue();
+void addToQueue(bool color);
+void addRed();
+void addBlue();
+void onEnterIntake();
+void onExitIntake();
+
+void sort();
+void startSorting();
+void stopSorting();
+void setScoringTrue();
+void setScoringFalse();
+
+void printQueue();
+void clearQueue();
+
+void count_blocks_in(int num, int timeout);
+void count_blocks_out(int num, int timeout);
 void taskFn_count_blocks();
 
 void logging(int range);
@@ -223,9 +240,6 @@ void setIntakeColor2LED(int value);
 
 bool sort_color(bool sort);
 void sort_color_queue();
-void startSorting();
-void stopSorting();
-void clearRingQueue();
 
 bool getLBLimitSwitch();
 

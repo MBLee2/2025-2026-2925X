@@ -47,7 +47,8 @@ pros::adi::Pneumatics stopper('h', false);
 pros::IMU imu(2); //DONE
 
 //Color Sort
-pros::Optical intake_color(13);
+pros::Optical intake_color(12);
+pros::Distance intake_dist(5);
 
 
 // pros::Vision vision_sensor(19);
@@ -142,7 +143,7 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
         dashboard_motor_display {320, 135, "Intake", intake},
-        dashboard_motor_display {320, 190, "Intake2", intake2}
+        dashboard_motor_display {320, 190, "Intake2", intake}
         
         
     };

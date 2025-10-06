@@ -56,6 +56,9 @@ void initialize() {
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
+	setIntakeColorLED(50);
+	manageQueue();
+
 	pros::Task antijam_task(intakeAntiJamTaskFunc, "antijam-task");
 
 	autoIntake = false;
@@ -268,6 +271,7 @@ void opcontrol() {
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
 	stopAntiJam();
+	stopSorting();
 
     // SKILLS ONLY
 	//auton_60s_skills_1();
