@@ -679,6 +679,11 @@ void count_blocks_in(int num, int timeout){
 void count_blocks_out(int num, int timeout){
     int start = blockQueue.size();
     while(blockQueue.size() > start - num && !queueEmpty() && timeout > 0){
+        if(current_intake == INTAKE && queueFront() != COLOR){
+            break;
+        } else if(current_intake == OUTAKE && queueBack() != COLOR){
+            break;
+        }
         pros::delay(20);
         timeout -= 20;
     }
@@ -702,6 +707,9 @@ void stopSorting() {
 void setScoringTrue() {
     if(!scoring){
         messageStep("Start Scoring");
+        if(queueFront() == COLOR && checkStopperUp()){
+            stopperDown();
+        }
         scoring = true;
     }
 }
@@ -709,6 +717,9 @@ void setScoringTrue() {
 void setScoringFalse() {
     if(scoring){
         messageStep("End Scoring");
+        if(queueFront() == COLOR && !checkStopperUp()){
+            stopperUp();
+        }
         scoring = false;
     }
 }
@@ -716,18 +727,15 @@ void setScoringFalse() {
 void sort(){
     if(current_intake == INTAKE){
         if(scoring){
-            if(queueFront() != COLOR && !checkStopperUp()){
+            if(queueFront() != COLOR){
                 //printf("Sorting blocks\n");
-                stopperUp();
-            } else if (queueFront() == COLOR && checkStopperUp()) {
-                //printf("Scoring blocks\n");
-                stopperDown();
+                stopIntake();
             }
         } else {
             if(queueFront() == COLOR && !checkStopperUp()){
                 //printf("Sorting blocks\n");
                 stopperUp();
-            } else if (queueFront() == COLOR && checkStopperUp()) {
+            } else if (queueFront() != COLOR && checkStopperUp()) {
                 //printf("Intaking blocks\n");
                 stopperDown();
             }

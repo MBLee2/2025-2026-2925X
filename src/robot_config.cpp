@@ -66,7 +66,7 @@ lemlib::Drivetrain drivetrain(
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
-pros::Rotation vertical_rot(1); // NOT ON BOT
+pros::Rotation vertical_rot(-18); // NOT ON BOT
 pros::Rotation horizontal_rot(-7); // port 1, not reversed
 // back tracking wheel encoder  
  
@@ -81,7 +81,7 @@ lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwhee
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    nullptr, //SKILLSa  
+    &vertical_tracking_wheel, //SKILLSa  
     nullptr, // vertical tracking wheel 2
     &horizontal_tracking_wheel, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
