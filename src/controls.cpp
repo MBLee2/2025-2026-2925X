@@ -121,6 +121,11 @@ void taskFn_intake_control(void){
         toggleGoal();
       }
 
+      if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) 
+      {
+        toggleDescore();
+      }
+
       if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
         if(antiJam){
           stopAntiJam();

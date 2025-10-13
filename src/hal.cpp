@@ -382,31 +382,47 @@ bool goalExtended(){
 }
 
 void toggleGoal(){
-    if(goalExtended()){
-        goalDown();
-    } else {
-        goalUp();
-    }
+    goal_switch.toggle();
 }
 
 void stopperUp(){
-    stopper.extend();
+    stopper.retract();
 }
 
 void stopperDown(){
-    stopper.retract();
+    stopper.extend();
 }
 
 void toggleStopper(){
     if(checkStopperUp()){
-        stopperDown();
-    } else {
         stopperUp();
+    } else {
+        stopperDown();
     }
 }
 
 bool checkStopperUp(){
     return stopper.is_extended();
+}
+
+void descoreDown(){
+    descore.retract();
+}
+
+void descoreUp(){
+    descore.extend();
+}
+
+bool descoreExtended(){
+    return descore.is_extended();
+}
+
+void toggleDescore(){
+    if(descoreExtended()){
+        descoreDown();
+    } else {
+        descoreUp();
+    }
 }
 
 //IMU
@@ -678,12 +694,14 @@ void count_blocks_in(int num, int timeout){
 
 void count_blocks_out(int num, int timeout){
     int start = blockQueue.size();
-    while(blockQueue.size() > start - num && !queueEmpty() && timeout > 0){
-        if(current_intake == INTAKE && queueFront() != COLOR){
-            break;
-        } else if(current_intake == OUTAKE && queueBack() != COLOR){
-            break;
-        }
+    while(blockQueue.size() > start - num && timeout > 0){
+        /*if(sorting){
+            if(current_intake == INTAKE && queueFront() != COLOR){
+                break;
+            } else if(current_intake == OUTAKE && queueBack() != COLOR){
+                break;
+            }
+        }*/
         pros::delay(20);
         timeout -= 20;
     }
@@ -707,9 +725,7 @@ void stopSorting() {
 void setScoringTrue() {
     if(!scoring){
         messageStep("Start Scoring");
-        if(queueFront() == COLOR && checkStopperUp()){
-            stopperDown();
-        }
+        stopperDown();
         scoring = true;
     }
 }

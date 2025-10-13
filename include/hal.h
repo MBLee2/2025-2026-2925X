@@ -108,6 +108,11 @@ void stopperDown();
 void toggleStopper();
 bool checkStopperUp();
 
+void descoreDown();
+void descoreUp();
+bool descoreExtended();
+void toggleDescore();
+
 void stopIntakeHold();
 void setIntakeBrake(pros::motor_brake_mode_e mode);
 void setScoringBrake(pros::motor_brake_mode_e mode);

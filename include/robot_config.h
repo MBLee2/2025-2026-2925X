@@ -63,6 +63,7 @@ extern pros::Motor reload;*/
 extern pros::adi::Pneumatics loader;
 extern pros::adi::Pneumatics goal_switch;
 extern pros::adi::Pneumatics stopper;
+extern pros::adi::Pneumatics descore;
 // extern pros::adi::Pneumatics hood;
 
 //Sensors
