@@ -233,16 +233,16 @@ void longGoalLeft(){
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(-16.5, -52.425, 90);
+  chassis.setPose(-16.5, -52.425, -90);
   logging(3);
 
-  chassis.moveToPoint(-45, -48, 2000, {.maxSpeed = speed});
-  chassis.turnToPoint(-45, -60, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(-50, -48, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(-50, -60, 2000, {.maxSpeed = tspeed}, false);
   extendLoader();
   setScoringFalse();
   pros::delay(300);
   intakeAll(100);
-  chassis.moveToPoint(-45, -60, 2000, {.maxSpeed = speed - 20});
+  chassis.moveToPoint(-45, -60, 2000, {.maxSpeed = speed - 15});
   messageStep((char *) "Start match load");
   count_blocks_in(3, 1000);
   messageStep((char *) "End match load");
@@ -425,7 +425,7 @@ void auton_60s_skills_1() {
   chassis.setPose(16.6, -52, 90);
   logging(3);
 
-  chassis.moveToPoint(50, -48, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(54, -48, 2000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 3000, {.maxSpeed = tspeed}, false);
   extendLoader();
   setScoringFalse();
