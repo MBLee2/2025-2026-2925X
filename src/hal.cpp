@@ -282,6 +282,7 @@ void intakeAntiJam() {
             pros::delay(200);
             outakeAll(127);
         } 
+        pros::delay(100);
     }
 }
 
@@ -289,7 +290,7 @@ bool antiJam = false;
 void intakeAntiJamTaskFunc(){
     int counter = 0;
     while (true) {
-        if(intake.get_actual_velocity() < 5 && antiJam)
+        if(abs(intake.get_actual_velocity()) < 5 && antiJam)
         {
             counter++;
             if(counter >= 15)
@@ -370,11 +371,11 @@ bool hoodExtended(){
 }
 
 void goalDown(){
-    goal_switch.retract();
+    goal_switch.extend();
 }
 
 void goalUp(){
-    goal_switch.extend();
+    goal_switch.retract();
 }
 
 bool goalExtended(){
@@ -526,7 +527,7 @@ bool detectExiting() {
 }
 
 bool detectRed(int hue){
-    return hue < 10 || hue > 350;
+    return hue < 10 || hue > 340;
 }
 bool detectBlue(int hue){
     return hue >= 210 && hue <= 230;
@@ -622,7 +623,7 @@ void onEnterIntake(){
         addRed(); //Add to queue as upcoming
                 
         while(detectRed(hue)){ //Wait for ring to continue through intake
-            pros::delay(20);
+            pros::delay(10);
             hue = getIntakeColor();
         }
         printQueue();
@@ -634,7 +635,7 @@ void onEnterIntake(){
         addBlue(); //Add to queue as upcoming
 
         while(detectBlue(hue)){ //Wait for ring to continue through intake
-            pros::delay(20);
+            pros::delay(10);
             hue = getIntakeColor();
         }
         printQueue();
@@ -645,7 +646,7 @@ void onEnterIntake(){
         removeQueueBack();
 
         while(detectBlock(hue)){
-            pros::delay(20);
+            pros::delay(10);
             hue = getIntakeColor();
         }
         printQueue();
@@ -660,7 +661,7 @@ void onExitIntake(){
         removeQueue();
 
         while(detectExiting()){
-            pros::delay(20);
+            pros::delay(10);
         }
         printQueue();
     }
@@ -733,9 +734,7 @@ void setScoringTrue() {
 void setScoringFalse() {
     if(scoring){
         messageStep("End Scoring");
-        if(queueFront() == COLOR && !checkStopperUp()){
-            stopperUp();
-        }
+        stopperUp();
         scoring = false;
     }
 }
