@@ -530,7 +530,7 @@ bool detectRed(int hue){
     return hue < 10 || hue > 340;
 }
 bool detectBlue(int hue){
-    return hue >= 210 && hue <= 230;
+    return hue >= 220 && hue <= 235;
 }
 
 bool detectBlock(int hue){
