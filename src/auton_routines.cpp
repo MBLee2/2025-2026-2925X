@@ -164,41 +164,33 @@ void bottomWP(){
   chassis.setPose(16.5, -52.425, 90);
   logging(3);
 
-  chassis.moveToPoint(50.5, -48, 3000, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
+  chassis.moveToPoint(50.5, -48, 1500, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 1500, {.maxSpeed = tspeed}, false);
   extendLoader();
   setScoringFalse();
   pros::delay(300);
   intakeAll(127);
-  chassis.moveToPoint(47.5, -62.2, 2000, {.maxSpeed = speed, .minSpeed = 35, .earlyExitRange = 0.5});
+  chassis.moveToPoint(48, -62, 1500, {.maxSpeed = speed, .minSpeed = 35, .earlyExitRange = 0.5});
   messageStep((char *) "Start match load");
-  count_blocks_in(3, 1600);
+  count_blocks_in(3, 1200);
   messageStep((char *) "End match load");
-  chassis.moveToPoint(47.5, -62.3, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
+  chassis.moveToPoint(48, -62, 1000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 1});
 
+  chassis.moveToPoint(48.5, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
   retractLoader();
-  pros::delay(200);
-
-  chassis.moveToPoint(49, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
   setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(4, 1000);
-  pros::delay(100);
+  count_blocks_out(4, 1300);
   setScoringFalse();
+  pros::delay(300);
 
-  retractLoader();
+  chassis.moveToPoint(48, -52, 1500, {.maxSpeed = speed});
 
-  chassis.moveToPoint(48, -52, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(22, -22, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(22, -22, 2000, {.forwards = true, .maxSpeed = speed - 80});
 
-  chassis.turnToHeading(-90, 2000, {.maxSpeed = tspeed}, false);
+  chassis.turnToPoint(0, 1, 1000, {.forwards = true, .maxSpeed = tspeed});
 
-  // chassis.turnToPoint(26, -18.5, 2000, {.forwards = true, .maxSpeed = tspeed});
-  chassis.moveToPoint(22, -16.5, 2000, {.forwards = true, .maxSpeed = speed - 80});
-
-  chassis.turnToPoint(6, 0, 1000, {.forwards = true, .maxSpeed = tspeed});
-
-  chassis.moveToPoint(14, -14, 2000, {.forwards = true, .maxSpeed = speed - 10}, false);
+  chassis.moveToPoint(13, -13, 2000, {.forwards = true, .maxSpeed = speed - 10}, false);
   pros::delay(100);
   outakeAll(70);
   // count_blocks_out(3, 2000);
