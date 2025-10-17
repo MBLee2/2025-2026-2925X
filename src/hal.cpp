@@ -239,7 +239,7 @@ void middleFromStorage(int speed){
 }
 
 void outakeAll(int speed){
-    printf("OUTAKE\n");
+    //printf("OUTAKE\n");
     current_intake = OUTAKE;
     current_reload = FROM_INTAKE;
 
@@ -527,7 +527,7 @@ bool detectExiting() {
 }
 
 bool detectRed(int hue){
-    return hue < 10 || hue > 340;
+    return hue <= 10 || hue >= 340;
 }
 bool detectBlue(int hue){
     return hue >= 220 && hue <= 235;
@@ -630,7 +630,7 @@ void onEnterIntake(){
     }
     else if(detectBlue(hue) && current_intake == INTAKE) //If we detect blue
     {
-        messageStep((char *) "Enter red");
+        messageStep((char *) "Enter blue");
         //printf("Enter blue %i\n", hue);
         addBlue(); //Add to queue as upcoming
 
@@ -695,16 +695,23 @@ void count_blocks_in(int num, int timeout){
 
 void count_blocks_out(int num, int timeout){
     int start = blockQueue.size();
-    while(blockQueue.size() > start - num && timeout > 0){
-        /*if(sorting){
-            if(current_intake == INTAKE && queueFront() != COLOR){
-                break;
-            } else if(current_intake == OUTAKE && queueBack() != COLOR){
-                break;
-            }
-        }*/
-        pros::delay(20);
-        timeout -= 20;
+    messageStep((char *) "Start count");
+    pros::delay(30);
+    for(int i = 0; i < num; i++){
+        while(!detectExiting() && timeout > 0){
+            pros::delay(20);
+            timeout -= 20;
+        }
+        while(detectExiting() && timeout > 0){
+            pros::delay(20);
+            timeout -= 20;
+        }
+    }
+
+    if(timeout > 0){
+        messageStep((char *) "End count");
+    } else {
+        messageStep((char *) "End count by timeout");
     }
 }
 
@@ -988,6 +995,7 @@ int start_time;
 void log_data(char* message){
     lemlib::Pose temp_pose = chassis.getPose();
     printf("%s, %d, %f, %f, %f", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+    printf(",%f, %f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
     printf(";\n");
 }
 

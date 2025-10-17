@@ -246,6 +246,7 @@ void autonomous() {
 
 	// Call the function associated with the selected auton routine		
 	selected_auton_routine.routine_func();//*/
+	end_log();
 	auton = false;
 	printf("%s(): Exiting\n", __func__);
 
@@ -265,6 +266,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	logging(3);
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");

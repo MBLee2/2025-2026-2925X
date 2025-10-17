@@ -48,7 +48,7 @@ auton_routine negetive_safe_wall_stake{0, 0, 0, "None - Invalid Routine",
 auton_routine safe_six_ring{0, 0, 0, "None - Invalid Routine", 
                                          nullptr};
 
-auton_routine skills_1{-0000, 0.000, 00, "60S Auton - Skills # 1", &auton_60s_skills_1};
+auton_routine skills_1{-0000, 0.000, 00, "60S Auton - Skills # 1", &auton_60s_skills_2};
                                          
 auton_routine solo_WP{-0.600, 0.600, 180, "extra_1", nullptr};
 
@@ -306,11 +306,13 @@ void longGoalRight(){
   intakeAll(127);
   count_blocks_out(4, 2000);
 
-  chassis.moveToPoint(45, -40, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(45, -48, 2000, {.maxSpeed = speed});
   setScoringFalse();
 
-  chassis.turnToPoint(37, -30, 2000, {.forwards = false, .maxSpeed = tspeed});
-  chassis.moveToPoint(37, -30, 2000, {.forwards = false, .maxSpeed = speed});
+  /*chassis.turnToPoint(37, -30, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(37, -30, 2000, {.forwards = false, .maxSpeed = speed});*/
+
+  chassis.moveToPoint(36, -24, 2000, {.forwards = false, .maxSpeed = speed});
 
   chassis.turnToPoint(42, 0, 2000, {.forwards = false, .maxSpeed = tspeed});
   chassis.moveToPoint(40, -18, 2000, {.forwards = false, .maxSpeed = 40}, false);
@@ -549,15 +551,151 @@ void auton_60s_skills_1() {
 void auton_60s_skills_2() {
   COLOR = true;
   int time = pros::millis();
-  float speed = 130;
-  int speed1 = (int) speed;
-  int temp = 0;
+  int tspeed = 100;
+  float speed = (float) tspeed;
+  setScoringFalse();
 
-  chassis.setPose(0,-61.3,0);
-  lemlib::Pose currentPose = chassis.getPose();
+  chassis.setPose(16.5, -52.425, 90);
+  logging(3);
+
+  chassis.moveToPoint(50.5, -46, 3000, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
+  extendLoader();
+  setScoringFalse();
+  pros::delay(300);
+  intakeAll(100);
+  lemlib::Pose temp_pose = chassis.getPose();
+  chassis.moveToPoint(temp_pose.x, -59, 2000, {.maxSpeed = 70, .minSpeed = 70, .earlyExitRange = 0.5}, false);
+  messageStep((char *) "Start match load");
+  pros::Task wiggle([=]{
+    for(int i = 0; i < 6; i++){
+      driveStraight(-35);
+      pros::delay(30);
+      driveStraight(35);
+      pros::delay(30);
+    }
+  });
+  count_blocks_in(4, 2000);
+  messageStep((char *) "End match load");
+  intakeAll(70);
+
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+
+  chassis.moveToPoint(48, -28, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  setScoringTrue();
+  //retractLoader();
+  pros::delay(500);
+  intakeAll(127);
+  count_blocks_out(5, 3000);
+  pros::delay(300);
+  chassis.moveToPoint(48, -47, 2000, {.maxSpeed = speed});
+  descoreUp();
+  setScoringFalse();
+
+  chassis.turnToPoint(33.5, -30, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(33.5, -30, 2000, {.forwards = false, .maxSpeed = speed});
+
+  chassis.turnToPoint(40.4, 0, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(39, -16, 2000, {.forwards = false, .maxSpeed = 30}, false);
+  descoreDown();
+  pros::delay(400);
+
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(38.7, -11.5, 2000, {.forwards = false, .maxSpeed = 100, .minSpeed = 50, .earlyExitRange = 0.5}, false);
+  //chassis.moveToPoint(38.7, -10, 2000, {.forwards = false, .maxSpeed = 50}, false);
+  descoreUp();
+  chassis.moveToPoint(35, 24, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.turnToPoint(48, 48, 2000, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = tspeed});
+
+  chassis.moveToPoint(50, 48, 2000, {.maxSpeed = speed});
+  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed});
+
+  chassis.moveToPoint(49, 61, 2000, {.maxSpeed = 35, .minSpeed = 35, .earlyExitRange = 0.5});
+  messageStep((char *) "Start match load");
+  driveStraight(35);
+  count_blocks_in(5, 3000);
+  messageStep((char *) "End match load");
+  intakeAll(70);
+  
+  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed});
+  
+  chassis.moveToPoint(48.5, 28, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  setScoringTrue();
+  pros::delay(200);
+  intakeAll(127);
+  count_blocks_out(5, 3000);
+  stopperUp();
+  pros::delay(300);
+  chassis.moveToPoint(50, 40, 2000, {.maxSpeed = speed});
+  return;
+
+  chassis.turnToPoint(-50, 40, 2000, {.maxSpeed = tspeed});
+
+  chassis.moveToPoint(-50.5, 40, 3000, {.maxSpeed = speed});
+  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed}, false);
+  extendLoader();
+  setScoringFalse();
+  pros::delay(300);
+  intakeAll(100);
+  temp_pose = chassis.getPose();
+  chassis.moveToPoint(temp_pose.x, 61, 2000, {.maxSpeed = 35, .minSpeed = 35, .earlyExitRange = 0.5}, false);
+  messageStep((char *) "Start match load");
+  driveStraight(35);
+  count_blocks_in(4, 2000);
+  messageStep((char *) "End match load");
+  intakeAll(70);
+
+  chassis.turnToHeading(0, 2000, {.maxSpeed = tspeed});
+
+  chassis.moveToPoint(-48, 28, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  setScoringTrue();
+  //retractLoader();
+  pros::delay(500);
+  intakeAll(127);
+  count_blocks_out(5, 3000);
+  pros::delay(300);
+  chassis.moveToPoint(-48, 47, 2000, {.maxSpeed = speed});
+  descoreUp();
+  setScoringFalse();
+
+  chassis.turnToPoint(-33.5, 30, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(-33.5, 30, 2000, {.forwards = false, .maxSpeed = speed});
+
+  chassis.turnToPoint(-40.4, 0, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(-39, 16, 2000, {.forwards = false, .maxSpeed = 30}, false);
+  descoreDown();
+  pros::delay(400);
+
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(-38.7, 11.5, 2000, {.forwards = false, .maxSpeed = 100, .minSpeed = 50, .earlyExitRange = 0.5}, false);
+  //chassis.moveToPoint(38.7, -10, 2000, {.forwards = false, .maxSpeed = 50}, false);
+  descoreUp();
+  chassis.moveToPoint(-35, -24, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.turnToPoint(-48, -48, 2000, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .maxSpeed = tspeed});
+
+  chassis.moveToPoint(-50, -48, 2000, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+
+  chassis.moveToPoint(-49, -61, 2000, {.maxSpeed = 35, .minSpeed = 35, .earlyExitRange = 0.5});
+  messageStep((char *) "Start match load");
+  driveStraight(35);
+  count_blocks_in(5, 3000);
+  messageStep((char *) "End match load");
+  intakeAll(70);
+  
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  
+  chassis.moveToPoint(-48.5, -28, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  setScoringTrue();
+  pros::delay(200);
+  intakeAll(127);
+  count_blocks_out(5, 3000);
+  stopperUp();
+  pros::delay(300);
+  chassis.moveToPoint(-50, -40, 2000, {.maxSpeed = speed});
   
   master.clear_line(0);
-  temp = pros::millis();
+  int temp = pros::millis();
   while (true) {
     master.print(0, 0, "Time: %d", (temp-time));
   }
