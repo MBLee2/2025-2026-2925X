@@ -97,19 +97,19 @@ lemlib::ControllerSettings lateral_controller(3, // proportional gain (kP)
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
+                                              300, // large error range timeout, in milliseconds
                                               100 // maximum acceleration (slew)
 );
 
 // turning PID
 lemlib::ControllerSettings angular_controller(4, // proportional gain (kP)
                                               0, // integral gain (kI)
-                                              20, // derivative gain (kD)
+                                              21, // derivative gain (kD)
                                               3, // anti windup
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
+                                              6, // large error range, in inches
+                                              300, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
 

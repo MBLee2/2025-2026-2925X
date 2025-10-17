@@ -155,47 +155,54 @@ void topWP() {
 
 void bottomWP(){
   int time = pros::millis();
-  int tspeed = 115;
+  int tspeed = 120;
   float speed = (float) tspeed;
   //startSorting();
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(-16.5, -52.425, -90);
+  chassis.setPose(16.5, -52.425, 90);
   logging(3);
 
-  chassis.moveToPoint(-50.5, -48, 3000, {.maxSpeed = speed});
+  chassis.moveToPoint(50.5, -48, 3000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
   extendLoader();
   setScoringFalse();
   pros::delay(300);
   intakeAll(127);
-  chassis.moveToPoint(-47, -60, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
+  chassis.moveToPoint(47.5, -62.2, 2000, {.maxSpeed = speed, .minSpeed = 35, .earlyExitRange = 0.5});
   messageStep((char *) "Start match load");
-  count_blocks_in(3, 600);
+  count_blocks_in(3, 1600);
   messageStep((char *) "End match load");
+  chassis.moveToPoint(47.5, -62.3, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
 
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  retractLoader();
+  pros::delay(200);
 
-  chassis.moveToPoint(-48, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  chassis.moveToPoint(49, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
   setScoringTrue();
   pros::delay(300);
   intakeAll(127);
-  count_blocks_out(3, 2000);
-  pros::delay(300);
+  count_blocks_out(4, 1000);
+  pros::delay(100);
+  setScoringFalse();
 
   retractLoader();
-  setScoringFalse();
-  chassis.moveToPoint(-48, -47, 2000, {.maxSpeed = speed});
 
-  chassis.turnToPoint(-24, -24, 2000, {.forwards = true, .maxSpeed = tspeed});
-  chassis.moveToPoint(-22, -22, 2000, {.forwards = true, .maxSpeed = speed - 75});
+  chassis.moveToPoint(48, -52, 2000, {.maxSpeed = speed});
 
-  chassis.turnToPoint(5, 0, 1000, {.forwards = true, .maxSpeed = tspeed});
+  chassis.turnToHeading(-90, 2000, {.maxSpeed = tspeed}, false);
 
-  chassis.moveToPoint(11, -12, 2000, {.maxSpeed = speed - 20}, false);
+  // chassis.turnToPoint(26, -18.5, 2000, {.forwards = true, .maxSpeed = tspeed});
+  chassis.moveToPoint(22, -16.5, 2000, {.forwards = true, .maxSpeed = speed - 80});
+
+  chassis.turnToPoint(6, 0, 1000, {.forwards = true, .maxSpeed = tspeed});
+
+  chassis.moveToPoint(14, -14, 2000, {.forwards = true, .maxSpeed = speed - 10}, false);
   pros::delay(100);
-  outakeAll(100);
+  outakeAll(70);
+  // count_blocks_out(3, 2000);
+  pros::delay(500);
   end_log();
   
   //*/
@@ -292,29 +299,29 @@ void longGoalRight(){
   extendLoader();
   setScoringFalse();
   pros::delay(300);
-  intakeAll(100);
-  chassis.moveToPoint(47.5, -62, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
+  intakeAll(127);
+  chassis.moveToPoint(47.5, -62, 2000, {.maxSpeed = speed, .minSpeed = 35, .earlyExitRange = 0.5});
   messageStep((char *) "Start match load");
-  count_blocks_in(3, 1700);
+  count_blocks_in(3, 1600);
   messageStep((char *) "End match load");
 
   retractLoader();
   pros::delay(200);
 
-  chassis.moveToPoint(48, -30, 2000, {.forwards = false, .maxSpeed = speed - 20}, false);
+  chassis.moveToPoint(48.4, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
   setScoringTrue();
   pros::delay(300);
   intakeAll(127);
-  count_blocks_out(4, 800);
+  count_blocks_out(4, 500);
   pros::delay(100);
   setScoringFalse();
 
-  chassis.moveToPoint(48, -50, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(48, -52, 2000, {.maxSpeed = speed});
   descoreUp();
 
   chassis.moveToPoint(37.8, -30, 2000, {.forwards = false, .maxSpeed = speed});
-  chassis.turnToPoint(37.8, -26, 2000, {.forwards = false, .maxSpeed = 120}, false);
-  chassis.moveToPoint(37.8, -26, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 5, .earlyExitRange = 5}, false);
+  chassis.turnToPoint(37.8, -26, 2000, {.forwards = false, .maxSpeed = 120, .minSpeed = 2, .earlyExitRange = 3}, false);
+  chassis.moveToPoint(37.8, -26.5, 2000, {.forwards = false, .maxSpeed = 120}, false);
   descoreDown();
   chassis.moveToPoint(39, -8, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 5, .earlyExitRange = 5}, false);
 
