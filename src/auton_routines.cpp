@@ -106,7 +106,7 @@ void topWP() {
 
   chassis.turnToPoint(5, -0.5, 1000, {.forwards = false, .maxSpeed = tspeed});
 
-  chassis.moveToPoint(-11.7, -10.2, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  chassis.moveToPoint(-11, -11, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
   goalDown();
   setScoringTrue();
   pros::delay(100);
@@ -125,11 +125,9 @@ void topWP() {
   count_blocks_in(3, 1000);
   messageStep((char *) "End match load");
   
-
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
   retractLoader();
 
-  chassis.moveToPoint(-50, -29, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
+  chassis.moveToPoint(-49, -29.3, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
   setScoringTrue();
   pros::delay(300);
   intakeAll(127);
