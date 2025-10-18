@@ -50,6 +50,7 @@ pros::IMU imu(2); //DONE
 //Color Sort
 pros::Optical intake_color(12);
 pros::Distance intake_dist(5);
+pros::Distance intake_dist_low(18);
 
 
 // pros::Vision vision_sensor(19);

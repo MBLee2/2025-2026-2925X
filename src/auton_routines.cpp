@@ -59,6 +59,10 @@ void printPosition(int time) {
 
 void blankAuton() {
   chassis.setPose(24, -48, 90);
+  intakeAll(127);
+  stopperUp();
+  count_blocks_in(3, 5000);
+  stopAllIntake();
 
   // chassis.turnToHeading(90, 2000);
   //  chassis.moveToPoint(0, 48, 2000);

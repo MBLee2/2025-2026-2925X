@@ -266,7 +266,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	logging(3);
+	//logging(3);
 	setDriveBrake(pros::E_MOTOR_BRAKE_COAST);
 
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
