@@ -764,7 +764,7 @@ void sort(){
         if(scoring){
             if(queueFront() != COLOR){
                 //printf("Sorting blocks\n");
-                stopIntake();
+                stopperUp();
             }
         } else {
             if(queueFront() == COLOR && !checkStopperUp()){
