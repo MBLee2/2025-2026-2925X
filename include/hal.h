@@ -182,6 +182,8 @@ void addBlue();
 void onEnterIntake();
 void onExitIntake();
 
+bool queueFront();
+
 void sort();
 void startSorting();
 void stopSorting();
