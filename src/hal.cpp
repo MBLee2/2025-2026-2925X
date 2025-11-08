@@ -823,6 +823,55 @@ void taskFn_count_blocks() {
     }
 }
 
+
+enum Direction {
+    FRONT = 0,
+    RIGHT = 90,
+    BACK = 180,
+    LEFT = 270
+};
+
+class distance {
+    private:
+        pros::Distance& sensor;
+        Direction dir;
+        float offset;
+
+    public:
+        distance(pros::Distance& dist, Direction d, float o) : sensor(dist) 
+        {
+            dir = d;
+            offset = 0;
+        }
+        int getReading(){
+            return sensor.get();
+        }
+        float getRawDist(){
+            return getReading() + offset;
+        }
+        float distToWall(){
+            return getRawDist() / 2.54;
+        }
+        float getAbsPosition(Direction wall){
+            float theta = deg2rad(chassis.getPose().theta);
+            return ((wall == FRONT || wall == RIGHT) ? 72 : -72) - (distToWall() * (((int) (wall - dir) % 180 == 0) ? cos(theta) : sin(theta)));
+        }
+};
+
+int getRightDistance() {
+    return dist_r.get();
+}
+
+float distToWallR() {
+    // return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
+    return 0;
+}
+
+float getAbsPosition(float theta) {
+
+}
+
+
 // Controlled Functions
 
 void driveFor(float speed, int ms){
@@ -1173,10 +1222,6 @@ int getLeftDistance() {
     return 0;
 }
 
-int getRightDistance() {
-    // return distance_right.get();
-    return 0;
-}
 
 int getProximity() {
     // return distance_proxi.get();
@@ -1195,11 +1240,6 @@ float distToWallB() {
 
 float distToWallL() {
     // return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
-    return 0;
-}
-
-float distToWallR() {
-    // return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
     return 0;
 }
 

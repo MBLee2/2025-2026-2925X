@@ -70,6 +70,7 @@ extern pros::adi::Pneumatics descore;
 extern pros::Optical intake_color;
 extern pros::Distance intake_dist;
 extern pros::Distance intake_dist_low;
+extern pros::Distance dist_r;
 extern pros::GPS gps;
 extern pros::IMU imu;
 // extern pros::Vision vision_sensor;
