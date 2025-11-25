@@ -843,6 +843,9 @@ class distance {
             dir = d;
             offset = 0;
         }
+        Direction getDir(){
+            return dir;
+        }
         int getReading(){
             return sensor.get();
         }
@@ -850,7 +853,7 @@ class distance {
             return getReading() + offset;
         }
         float distToWall(){
-            return getRawDist() / 2.54;
+            return getRawDist() / 25.4;
         }
         float getAbsPosition(Direction wall){
             float theta = deg2rad(chassis.getPose().theta);
@@ -858,16 +861,35 @@ class distance {
         }
 };
 
-int getRightDistance() {
-    return dist_r.get();
-}
+distance r_dist(dist_r, RIGHT, 20);
 
-float distToWallR() {
-    // return (getRightDistance() / 25.4) + R_DISTANCE_OFSET;
-    return 0;
-}
+distance dist_sensors[] = {r_dist};
+void fullDistanceReset(bool x, bool y){
+    lemlib::Pose temp_pose = chassis.getPose();
 
-float getAbsPosition(float theta) {
+    Direction x_wall = (temp_pose.x > 0) ? RIGHT : LEFT;
+    Direction y_wall = (temp_pose.y > 0) ? FRONT : BACK;
+
+    float x_pos, y_pos;
+    int round_theta = 90 * round(temp_pose.theta / 90);
+    for(distance sensor : dist_sensors){
+        if(x && (round_theta + sensor.getDir()) == x_wall){
+            x_pos = sensor.getAbsPosition(x_wall);
+        } else if(y && (round_theta + sensor.getDir()) == y_wall){
+            y_pos = sensor.getAbsPosition(y_wall);
+        }
+    }
+
+    
+    if(fabs(x_pos - temp_pose.x) > 5 || !x){
+        x_pos = temp_pose.x;
+    }
+    if(fabs(y_pos - temp_pose.y) > 5 || !y){
+        y_pos = temp_pose.y;
+    }
+
+
+    chassis.setPose(x_pos, y_pos, temp_pose.theta);
 
 }
 
