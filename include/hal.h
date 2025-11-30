@@ -4,6 +4,8 @@
 #include "api.h"
 #include "auton_basics.h"
 #include "pros/motors.h"
+#include "lemlib/chassis/chassis.hpp"
+#include "lemlib/pose.hpp"
 
 #define LAT_KP  8
 #define LAT_KI  0
@@ -197,9 +199,12 @@ void count_blocks_in(int num, int timeout);
 void count_blocks_out(int num, int timeout);
 void taskFn_count_blocks();
 
-void logging(int range);
-extern char* step_message;
+void logging(int range, int data_range = 1);
 void messageStep(char* message);
+void messageStep(char* message, lemlib::Pose pose);
+void moveToPoint(float x, float y, float timeout, lemlib::MoveToPointParams params, bool async);
+void turnToHeading(float theta, float timeout, lemlib::TurnToHeadingParams params, bool async);
+void turnToPoint(float x, float y, float timeout, lemlib::TurnToPointParams params, bool async);
 void end_log();
 
 /*********************** END OF USED FUNCTIONS ***********************/

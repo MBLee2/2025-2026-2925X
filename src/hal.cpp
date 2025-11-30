@@ -2,6 +2,8 @@
 #include "auton_basics.h"
 #include "auton_routines.h"
 #include "fmt/format.h"
+#include "lemlib/chassis/chassis.hpp"
+#include "lemlib/pose.hpp"
 #include "pros/device.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
@@ -1076,17 +1078,43 @@ void outakeFor(float speed, float degrees) {
 //Logging
 
 int start_time;
-void log_data(char* message){
+void log_data(char* message, int data_range){
     lemlib::Pose temp_pose = chassis.getPose();
     printf("%s, %d, %f, %f, %f", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
-    printf(",%f, %f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
+    if(data_range > 1){
+        printf(", (N/A, N/A, N/A), (N/A, N/A, N/A)");
+    }
+    if(data_range > 2){
+        printf(", %f, %f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
+    }
+    if(data_range > 3){
+        printf(", %f", intake.get_actual_velocity());
+    }
+    printf(";\n");
+}
+
+void log_data(char* message, int data_range, lemlib::Pose expected_pose){
+    lemlib::Pose temp_pose = chassis.getPose();
+    printf("%s, %d, (%f, %f, %f)", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+    if(data_range > 1){
+        printf(", (%f, %f, %f)", expected_pose.x, expected_pose.y, expected_pose.theta);
+        lemlib::Pose diff = temp_pose - expected_pose;
+        printf(", (%f, %f, %f)", diff.x, diff.y, diff.theta);
+    }
+    if(data_range > 2){
+        printf(", %f, %f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
+    }
+    if(data_range > 3){
+        printf(", %f", intake.get_actual_velocity());
+    }
     printf(";\n");
 }
 
 char* step_message;
-void logStep(){
+lemlib::Pose step_pose = lemlib::Pose(0, 0, 0);
+void logStep(int data_range){
     if(strcmp(step_message, "") != 0){
-        log_data(step_message);
+        log_data(step_message, data_range);
         step_message = (char *) "";
     }
 }
@@ -1095,39 +1123,85 @@ void messageStep(char* message){
     step_message = message;
 }
 
-bool prev_motion = false;
-void logMove(){
-    if(chassis.isInMotion() && !prev_motion){
-        log_data((char *) "Move started");
-        prev_motion = true;
-    } else if(!chassis.isInMotion() && prev_motion){
-        log_data((char *) "Move ended");
-        prev_motion = false;
+void messageStep(char *message, lemlib::Pose pose){
+    step_message = message;
+    step_pose = pose;
+}
+
+enum motion {
+    MOVING,
+    TURNING,
+    STOPPED
+};
+motion prev_motion = STOPPED;
+motion curr_motion = STOPPED;
+lemlib::Pose final_pose = lemlib::Pose(0, 0, 0);
+void logMove(int data_range){
+    if(!chassis.isInMotion() && curr_motion != STOPPED){
+        curr_motion = STOPPED;
+    }
+    if(prev_motion != curr_motion){
+        if(curr_motion == MOVING){
+            log_data((char *) "Move started", data_range);
+        } else if (curr_motion == TURNING){
+            log_data((char *) "Turn started", data_range);
+        } else {
+            log_data((char *) "Move complete", data_range, final_pose);
+        }
+        prev_motion = curr_motion;
     }
 }
 
+void moveToPoint(float x, float y, float timeout, lemlib::MoveToPointParams params, bool async){
+    chassis.moveToPoint(x, y, timeout, params, async);
+    final_pose = lemlib::Pose(x, y, chassis.getPose().theta);
+    curr_motion = MOVING;
+}
+void turnToHeading(float theta, float timeout, lemlib::TurnToHeadingParams params, bool async){
+    chassis.turnToHeading(theta, timeout, params, async);
+    final_pose = lemlib::Pose(chassis.getPose().x, chassis.getPose().y, theta);
+    curr_motion = TURNING;
+}
+void turnToPoint(float x, float y, float timeout, lemlib::TurnToPointParams params, bool async){
+    chassis.turnToPoint(x, y, timeout, params, async);
+    lemlib::Pose temp_pose = chassis.getPose();
+    final_pose = lemlib::Pose(temp_pose.x, temp_pose.y, temp_pose.angle(lemlib::Pose(x, y)));
+    curr_motion = TURNING;
+}
+
 const int tick_length = 500;
-void logTick(){
+void logTick(int data_range){
     if(floor(((pros::millis() - start_time) % tick_length) / 10) == 0){
-        log_data((char *) "N/A\t");
+        log_data((char *) "Tick " + ((pros::millis() - start_time) / tick_length), data_range);
     }
 }
 
 bool logging_data = false;
-void (*function_pointers[])() = {&logStep, &logMove, &logTick};
-void logging(int range){
+void (*function_pointers[])(int) = {&logStep, &logMove, &logTick};
+void logging(int range, int data_range){
     step_message = (char *) "";
-    printf("Message, Time, X, Y, Theta");
+    printf("Message, Time, Position");
+    if(data_range > 1) { 
+        printf(", Expected Position, Error");
+    }
+    if(data_range > 2){
+        printf(", Left Speed, Right Speed");
+    }
+    if(data_range > 3){
+        printf(", Intake Speed");
+    }
     printf(";\n");
+
     pros::Task log_task([=]{
         logging_data = true;
         start_time = pros::millis();
         while(logging_data){
             for(int i = 0; i < range; i++){
-                function_pointers[i]();
+                function_pointers[i](data_range);
             }
             pros::delay(10);
         }
+        
     });
 }
 

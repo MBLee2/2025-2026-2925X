@@ -56,6 +56,12 @@ std::vector<auton_menu_button> color_list = {
     auton_menu_button{{245, 50, 460, 210, COLOR_BLUE,
         pros::c::COLOR_WHITE_SMOKE, "BLUE", pros::E_TEXT_MEDIUM}}};
 
+std::vector<auton_menu_button> side_list = {
+    auton_menu_button{{15, 50, 230, 210, COLOR_RED,
+        pros::c::COLOR_WHITE_SMOKE, "LEFT", pros::E_TEXT_MEDIUM}},
+    auton_menu_button{{245, 50, 460, 210, COLOR_BLUE,
+        pros::c::COLOR_WHITE_SMOKE, "RIGHT", pros::E_TEXT_MEDIUM}}};
+
 void draw_rectangle_patch(rectangle_patch p) 
 /**
  * @brief Render a rectangule_patch on the screen
