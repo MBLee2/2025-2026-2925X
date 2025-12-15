@@ -17,21 +17,21 @@ pros::Controller master (pros::E_CONTROLLER_MASTER);
 
 //Need to add all motors
 pros::Motor lf(10, pros::v5::MotorGears::blue);  // port 15, forward
-pros::Motor lm(-6, pros::v5::MotorGears::blue);
-pros::Motor lb(-20, pros::v5::MotorGears::blue);  // port 9, reversed
+pros::Motor lm(-9, pros::v5::MotorGears::blue);
+pros::Motor lb(-8, pros::v5::MotorGears::blue);  // port 9, reversed
 
-pros::Motor rf(-1, pros::v5::MotorGears::blue); // port 13, forward
-pros::Motor rm(15, pros::v5::MotorGears::blue);
-pros::Motor rb(4, pros::v5::MotorGears::blue); // port 2, forward
+pros::Motor rf(-20, pros::v5::MotorGears::blue); // port 13, forward
+pros::Motor rm(19, pros::v5::MotorGears::blue);
+pros::Motor rb(18, pros::v5::MotorGears::blue); // port 2, forward
 
 // drivetrain motor groups  
-pros::MotorGroup left_side_motors({10, -6, -20}, pros::v5::MotorGears::blue);
-pros::MotorGroup right_side_motors({-1, 15, 4}, pros::v5::MotorGears::blue);
+pros::MotorGroup left_side_motors({10, -9, -8}, pros::v5::MotorGears::blue);
+pros::MotorGroup right_side_motors({-20, 19, 18}, pros::v5::MotorGears::blue);
 
 
 // intake motor 
-pros::Motor intake(16, pros::v5::MotorGears::blue);  // port 4, reversed
-pros::Motor intake2(-8, pros::v5::MotorGears::blue);
+pros::Motor intake(5, pros::v5::MotorGears::blue);  // port 4, reversed
+pros::Motor intake2(-12, pros::v5::MotorGears::blue);
 //pros::Motor scoringR(-4, pros::v5::MotorGears::green);
 //pros::Motor scoringL(5, pros::v5::MotorGears::green);
 //pros::Motor storage(-15, pros::v5::MotorGears::green);
@@ -70,22 +70,22 @@ lemlib::Drivetrain drivetrain(
 );
 // left tracking wheel encoder
 // right tracking wheel encoder
-pros::Rotation vertical_rot(-19); // NOT ON BOT
-pros::Rotation horizontal_rot(-7); // port 1, not reversed
+//pros::Rotation vertical_rot(-19); // NOT ON BOT
+pros::Rotation horizontal_rot(-6); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 0.25); // 2.00" wheel diameter, 1.25" offset from tracking center 
+//lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,lemlib::Omniwheel::NEW_275, 0.25); // 2.00" wheel diameter, 1.25" offset from tracking center 
 // horizontal tracking wheel
 
 /*
 NOT SET UP YET
 */
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_275, -5); // 2.00" wheel diameter, 1.00" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_2, -5.25); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
-    &vertical_tracking_wheel, //SKILLSa  
+    nullptr, //SKILLSa  
     nullptr, // vertical tracking wheel 2
     &horizontal_tracking_wheel, //&horizontal_tracking_wheel,//SKILLS
     nullptr, // we don't have a second tracking wheel, so we set it to nullptr
