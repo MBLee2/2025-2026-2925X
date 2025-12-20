@@ -58,11 +58,7 @@ void printPosition(int time) {
 }
 
 void blankAuton() {
-  chassis.setPose(24, -48, 0);
-  intakeAll(127);
-  stopperUp();
-  count_blocks_in(3, 5000);
-  stopAllIntake();
+  chassis.setPose(0, 0, 0);
 
   // chassis.turnToHeading(90, 2000);
   //  chassis.moveToPoint(0, 48, 2000);
@@ -90,50 +86,32 @@ void blankAuton() {
 
 void topWP() {
   int time = pros::millis();
-  int tspeed = 120;
+  int tspeed = 100;
   float speed = (float) tspeed;
   //startSorting();
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(-16.5, -52.425, -90);
-  logging(3);
-
-  chassis.moveToPoint(-24, -52.425, 1500, {.maxSpeed = speed, .minSpeed = 50, .earlyExitRange = 0.5});
-  chassis.turnToPoint(-24, -24, 1500, {.forwards = true, .maxSpeed = tspeed});
+  chassis.setPose(-9.5, -50, -30);
   intakeAll(127);
-  chassis.moveToPoint(-24, -24, 1500, {.forwards = true, .maxSpeed = speed - 70});
-
-  chassis.turnToPoint(5, -0.5, 1000, {.forwards = false, .maxSpeed = tspeed});
-
-  chassis.moveToPoint(-11, -11, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  goalDown();
-  setScoringTrue();
-  pros::delay(100);
-  intakeAll(105);
-  count_blocks_out(3, 1200);
-  setScoringFalse();
-
-  chassis.moveToPoint(-52, -48, 1500, {.maxSpeed = speed});
+  chassis.moveToPoint(-9, -40, 2000, {.maxSpeed = speed - 60});
+  chassis.moveToPoint(-23, -24, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(0, -3, 2000, {.forwards = false, .maxSpeed = tspeed});
+  stopAllIntake();
+  chassis.moveToPoint(-12.5, -14.5, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  stopperDown();
+  intakeAll(115);
+  pros::delay(2300);
+  chassis.moveToPoint(-45, -48, 2000, {.maxSpeed = speed});
+  stopperUp();
   goalUp();
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
   extendLoader();
-  pros::delay(300);
-  intakeAll(127);
-  chassis.moveToPoint(-49.5, -60, 1400, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
-  messageStep((char *) "Start match load");
-  count_blocks_in(3, 1000);
-  messageStep((char *) "End match load");
-  
-  retractLoader();
-
-  chassis.moveToPoint(-49, -29, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(3, 1000);
-  pros::delay(300);
-
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(-45.5, -63, 2000, {.maxSpeed = speed - 30}, false);
+  pros::delay(1000);
+  chassis.moveToPoint(-45.5, -32, 2000, {.forwards = false, .maxSpeed = speed - 40}, false);
+  stopperDown();
+  pros::delay(15000);
 
   //*/
   master.clear_line(0);
@@ -143,49 +121,9 @@ void topWP() {
   }
   return;
 
-  chassis.moveToPoint(-50.5, -48, 1500, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 1500, {.maxSpeed = tspeed}, false);
-  extendLoader();
-  setScoringFalse();
-  pros::delay(300);
-  intakeAll(127);
-  chassis.moveToPoint(-47, -61, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
-  messageStep((char *) "Start match load");
-  count_blocks_in(3, 1100);
-  messageStep((char *) "End match load");
   
 
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
-  retractLoader();
 
-  chassis.moveToPoint(-46.5, -29.5, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(3, 1000);
-  pros::delay(300);
-
-  chassis.moveToPoint(-48, -47, 1000, {.maxSpeed = speed});
-
-  chassis.turnToPoint(-24, -24, 1500, {.forwards = true, .maxSpeed = tspeed});
-  chassis.moveToPoint(-22, -21, 1500, {.forwards = true, .maxSpeed = speed - 75});
-  setScoringFalse();
-
-  chassis.turnToPoint(5, -0.5, 1000, {.forwards = false, .maxSpeed = tspeed});
-
-  chassis.moveToPoint(-10, -12, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  goalDown();
-  setScoringTrue();
-  pros::delay(100);
-  intakeAll(115);
-  end_log();
-  
-  //*/
-  master.clear_line(0);
-  //int temp = pros::millis();
-  while (true) {
-    master.print(0, 0, "Time: %d", (temp-time));
-  }
   
 }
 
@@ -199,54 +137,32 @@ void topWP() {
  */
 
 void bottomWP(){
+  //DONT USE PLEASE
   int time = pros::millis();
-  int tspeed = 127;
+  int tspeed = 100;
   float speed = (float) tspeed;
-  startSorting();
+  //startSorting();
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(16.5, -52.425, 90);
-  logging(3);
-
-  chassis.moveToPoint(24, -52.425, 1500, {.maxSpeed = speed, .minSpeed = 50, .earlyExitRange = 0.5});
-  chassis.turnToPoint(24, -24, 1500, {.forwards = true, .maxSpeed = tspeed, .minSpeed = 15, .earlyExitRange = 2});
+  chassis.setPose(8, -49, 30);
   intakeAll(127);
-  chassis.moveToPoint(24, -24, 1500, {.forwards = true, .maxSpeed = speed - 20, .minSpeed = 15, .earlyExitRange = 0.5});
-
-  chassis.turnToPoint(5, -0.5, 900, {.forwards = true, .maxSpeed = tspeed, .minSpeed = 15, .earlyExitRange = 2});
-
-  chassis.moveToPoint(15, -15.5, 2000, {.forwards = true, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(100);
-  outakeAll(90);
-  count_blocks_out(3, 1500);
-  stopAntiJam();
-  setScoringFalse();
-  chassis.moveToPoint(20, -20, 600, {.forwards = true, .maxSpeed = speed, .minSpeed = 20, .earlyExitRange = 2}, false);
-
-  chassis.moveToPoint(50.5, -48, 1500, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 1500, {.maxSpeed = tspeed});
+  chassis.moveToPoint(9, -40, 2000, {.maxSpeed = speed - 60});
+  chassis.moveToPoint(23, -24, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(0, -3, 2000, {.forwards = true, .maxSpeed = tspeed});
+  stopAllIntake();
+  chassis.moveToPoint(14, -14, 2000, {.forwards = true, .maxSpeed = speed}, false);
   extendLoader();
-  chassis.waitUntilDone();
-  intakeAll(127);
-  chassis.moveToPoint(46, -61.5, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
-  messageStep((char *) "Start match load");
-  count_blocks_in(2, 2000);
-  messageStep((char *) "End match load");
-  chassis.moveToPoint(46, -61.5, 500, {.maxSpeed = speed, .minSpeed = 50, .earlyExitRange = 0.5});
-  
-
+  outakeAll(50);
+  pros::delay(2300);
+  chassis.moveToPoint(45, -48, 2000, {.maxSpeed = speed});
+  goalUp();
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
-  retractLoader();
-
-  chassis.moveToPoint(47, -29.5, 2200, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(3, 1000);
-  pros::delay(300);
-
+  chassis.moveToPoint(45.5, -63, 2000, {.maxSpeed = speed - 30}, false);
+  pros::delay(1000);
+  chassis.moveToPoint(45.5, -32, 2000, {.forwards = false, .maxSpeed = speed - 40}, false);
+  stopperDown();
+  pros::delay(15000);
 
   //*/
   master.clear_line(0);
@@ -256,53 +172,7 @@ void bottomWP(){
   }
   return;
 
-  chassis.moveToPoint(50.5, -48, 1500, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 1500, {.maxSpeed = tspeed}, false);
-  extendLoader();
-  setScoringFalse();
-  pros::delay(300);
-  intakeAll(127);
-  chassis.moveToPoint(47, -62, 1500, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
-  messageStep((char *) "Start match load");
-  count_blocks_in(3, 1600);
-  messageStep((char *) "End match load");
-  chassis.moveToPoint(48, -63, 1000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 1});
-
-  chassis.moveToPoint(47.5, -30, 1500, {.forwards = false, .maxSpeed = speed - 10}, false);
-  retractLoader();
-  setScoringTrue();
-  count_blocks_out(4, 1000);
-  setScoringFalse();
-  pros::delay(300);
-
-  chassis.moveToPoint(48, -52, 1500, {.maxSpeed = speed});
-
-  chassis.turnToPoint(22, -22, 1500, {.maxSpeed = tspeed});
-  chassis.moveToPoint(20.7, -21.3, 1500, {.forwards = true, .maxSpeed = speed - 85});
-
-  chassis.turnToPoint(4, 0, 1000, {.forwards = true, .maxSpeed = tspeed});
-
-  chassis.moveToPoint(12, -14.5, 1500, {.maxSpeed = speed - 10}, false);
-  chassis.turnToPoint(0, 0, 1000, {.maxSpeed = tspeed});
-  pros::delay(100);
-  outakeAll(70);
-  stopAntiJam();
-  for(int i = 0; i < 3; i++){
-    driveStraight(-40);
-    pros::delay(100);
-    driveStraight(40);
-    pros::delay(100);
   }
-  stopDrive();
-  end_log();
-  
-  //*/
-  master.clear_line(0);
-  // int temp = pros::millis();
-  while (true) {
-    master.print(0, 0, "Time: %d", (temp-time));
-  }
-}
 
 /*********************** LEFT SIDE LONG GOAL ***********************/
 /**
@@ -313,52 +183,28 @@ void bottomWP(){
 
 void longGoalLeft(){
   int time = pros::millis();
-  int tspeed = 80;
+  int tspeed = 100;
   float speed = (float) tspeed;
   //startSorting();
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(-16.5, -52.425, -90);
-  logging(3);
-
-  chassis.moveToPoint(-24, -52.425, 1500, {.maxSpeed = speed, .minSpeed = 50, .earlyExitRange = 0.5});
-  chassis.turnToPoint(-24, -24, 1500, {.forwards = true, .maxSpeed = tspeed});
+  chassis.setPose(-9.5, -50, -30);
   intakeAll(127);
-  chassis.moveToPoint(-24, -24, 1500, {.forwards = true, .maxSpeed = speed - 70});
-
-  chassis.moveToPoint(-50.5, -48, 2000, {.maxSpeed = speed});
-
-  chassis.turnToPoint(-48, -30, 2000, {.forwards = false, .maxSpeed = 120}, false);
-
-  chassis.moveToPoint(-48, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(4, 500);
-  pros::delay(100);
-  setScoringFalse();
-
+  chassis.moveToPoint(-9, -40, 2000, {.maxSpeed = speed - 60});
+  chassis.moveToPoint(-23, -24, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(0, -3, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(-45, -48, 2000, {.maxSpeed = speed});
+  stopperUp();
+  goalUp();
   extendLoader();
-  setScoringFalse();
-  pros::delay(300);
   intakeAll(127);
-  chassis.moveToPoint(-47.5, -62, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
-  messageStep((char *) "Start match load");
-  count_blocks_in(3, 1600);
-  messageStep((char *) "End match load");
-  chassis.moveToPoint(-48, -63, 1000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 1});
-
-  retractLoader();
-  pros::delay(200);
-
-  chassis.moveToPoint(-48, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(3, 2000);
-  pros::delay(100);
-  setScoringFalse(); 
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(-46, -63, 2000, {.maxSpeed = speed - 30}, false);
+  pros::delay(1000);
+  chassis.moveToPoint(-46, -32, 2000, {.forwards = false, .maxSpeed = speed - 40}, false);
+  stopperDown();
+  pros::delay(15000);
 
   return;
 
@@ -416,52 +262,28 @@ void longGoalLeft(){
 
 void longGoalRight(){
   int time = pros::millis();
-  int tspeed = 120;
+  int tspeed = 100;
   float speed = (float) tspeed;
   //startSorting();
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(17, -51.8, 0);
-  logging(3);
-
-  chassis.turnToPoint(24, -24, 1500, {.forwards = true, .maxSpeed = tspeed});
+  chassis.setPose(8, -49, 30);
   intakeAll(127);
-  chassis.moveToPoint(24.2, -24, 1500, {.forwards = true, .maxSpeed = speed - 70});
-
-  chassis.moveToPoint(51, -48, 2000, {.maxSpeed = speed});
-
-  chassis.turnToPoint(48.5, -30, 2000, {.forwards = false, .maxSpeed = 120}, false);
-
-  chassis.moveToPoint(48.5, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
+  chassis.moveToPoint(9, -40, 2000, {.maxSpeed = speed - 60});
+  chassis.moveToPoint(23, -24, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(0, -3, 2000, {.forwards = false, .maxSpeed = tspeed});
+  pros::delay(1000);
+  chassis.moveToPoint(45, -48, 2000, {.maxSpeed = speed});
+  goalUp();
   intakeAll(127);
-  count_blocks_out(4, 500);
-  pros::delay(100);
-  setScoringFalse();
-
-  chassis.moveToPoint(49, -48, 2000, {.maxSpeed = speed});
   extendLoader();
-  setScoringFalse();
-  pros::delay(300);
-  intakeAll(127);
-  chassis.moveToPoint(48, -62, 2000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 0.5});
-  messageStep((char *) "Start match load");
-  count_blocks_in(3, 1500);
-  messageStep((char *) "End match load");
-  chassis.moveToPoint(48.5, -63, 1000, {.maxSpeed = speed, .minSpeed = 40, .earlyExitRange = 1});
-
-  retractLoader();
-  pros::delay(200);
-
-  chassis.moveToPoint(48.5, -30, 2000, {.forwards = false, .maxSpeed = speed - 10}, false);
-  setScoringTrue();
-  pros::delay(300);
-  intakeAll(127);
-  count_blocks_out(3, 2000);
-  pros::delay(100);
-  setScoringFalse(); 
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(47, -62.5 , 2000, {.maxSpeed = speed - 30}, false);
+  pros::delay(1000);
+  chassis.moveToPoint(47.5, -31, 2000, {.forwards = false, .maxSpeed = speed - 40}, false);
+  stopperDown();
+  pros::delay(15000);
 
 
   end_log();

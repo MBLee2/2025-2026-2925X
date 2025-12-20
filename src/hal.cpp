@@ -373,11 +373,11 @@ bool hoodExtended(){
 }
 
 void goalDown(){
-    goal_switch.extend();
+    goal_switch.retract();
 }
 
 void goalUp(){
-    goal_switch.retract();
+    goal_switch.extend();
 }
 
 bool goalExtended(){

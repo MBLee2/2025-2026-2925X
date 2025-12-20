@@ -23,7 +23,7 @@ std::vector<auton_menu_button> button_list = {
                        pros::c::COLOR_WHITE_SMOKE, "TOPWP", pros::E_TEXT_MEDIUM},
                       top_WP},
     auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "BOTTOMWP", pros::E_TEXT_MEDIUM},
+                       pros::c::COLOR_WHITE_SMOKE, "BOTTOMWP (HELL NO! KADEN DONT USE THIS)", pros::E_TEXT_MEDIUM},
                       bottom_WP},
     auton_menu_button{{245, 50, 345, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "LEFTLONG", pros::E_TEXT_MEDIUM},
