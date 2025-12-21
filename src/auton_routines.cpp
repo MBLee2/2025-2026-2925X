@@ -98,19 +98,22 @@ void topWP() {
   chassis.moveToPoint(-23, -24, 2000, {.maxSpeed = speed - 60});
   chassis.turnToPoint(0, -3, 2000, {.forwards = false, .maxSpeed = tspeed});
   stopAllIntake();
-  chassis.moveToPoint(-12.5, -14.5, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  chassis.moveToPoint(-12.75, -14.25, 2000, {.forwards = false, .maxSpeed = speed}, false);
   stopperDown();
+  pros::delay(100);
   intakeAll(115);
   pros::delay(2300);
-  chassis.moveToPoint(-45, -48, 2000, {.maxSpeed = speed});
+  chassis.moveToPoint(-44.5, -48, 2000, {.maxSpeed = speed});
   stopperUp();
   goalUp();
   extendLoader();
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
-  chassis.moveToPoint(-45.5, -63, 2000, {.maxSpeed = speed - 30}, false);
+  chassis.moveToPoint(-44.5, -63, 2000, {.maxSpeed = speed - 30}, false);
   pros::delay(1000);
-  chassis.moveToPoint(-45.5, -32, 2000, {.forwards = false, .maxSpeed = speed - 40}, false);
+  stopAllIntake();
+  chassis.moveToPoint(-46.5, -32, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
   stopperDown();
+  intakeAll(127);
   pros::delay(15000);
 
   //*/
@@ -120,10 +123,6 @@ void topWP() {
     master.print(0, 0, "Time: %d", (temp-time));
   }
   return;
-
-  
-
-
   
 }
 
@@ -272,16 +271,16 @@ void longGoalRight(){
   intakeAll(127);
   chassis.moveToPoint(9, -40, 2000, {.maxSpeed = speed - 60});
   chassis.moveToPoint(23, -24, 2000, {.maxSpeed = speed - 60});
-  chassis.turnToPoint(0, -3, 2000, {.forwards = false, .maxSpeed = tspeed});
-  pros::delay(1000);
-  chassis.moveToPoint(45, -48, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(46, -48, 2000, {.maxSpeed = tspeed});
+  stopAllIntake();
+  chassis.moveToPoint(46, -48, 2000, {.maxSpeed = speed});
   goalUp();
-  intakeAll(127);
   extendLoader();
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
-  chassis.moveToPoint(47, -62.5 , 2000, {.maxSpeed = speed - 30}, false);
+  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
+  intakeAll(127);
+  chassis.moveToPoint(46, -62.5 , 2000, {.maxSpeed = speed - 30}, false);
   pros::delay(1000);
-  chassis.moveToPoint(47.5, -31, 2000, {.forwards = false, .maxSpeed = speed - 40}, false);
+  chassis.moveToPoint(49, -31, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
   stopperDown();
   pros::delay(15000);
 
