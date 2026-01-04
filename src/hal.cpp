@@ -86,15 +86,10 @@ reload_state current_reload = FROM_INTAKE;
 
 void spinIntake(int speed) {
     intake.move(speed);
-    intake2.move(speed);
 }
 
 void spinScoring(int speed) {
-    /*if(hoodExtended()){
-        setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
-        scoringR.move(speed);
-        scoringL.move(speed);
-    }*/
+    intake2.move(speed);
 }
 
 void spinStorage(int speed) {
@@ -108,19 +103,18 @@ void spinReload(int speed) {
 void stopIntake() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
     intake.brake();
-    intake2.brake();
+    current_intake = STOP;
+    stopperUp();
 }
 
 void stopIntakeHold() {
     setIntakeBrake(pros::E_MOTOR_BRAKE_HOLD);
     intake.brake();
-    intake2.brake();
+    stopperUp();
 }
 
 void stopScoring() {
-    /*setScoringBrake(pros::E_MOTOR_BRAKE_COAST);
-    scoringR.brake();
-    scoringL.brake();*/
+    intake2.brake();
 }
 
 void stopScoringHold() {
@@ -142,6 +136,7 @@ void intakeAll(int speed) {
     current_reload = FROM_INTAKE;
 
     spinIntake(speed);
+    stopperUp();
 
     master.clear();
     master.print(1, 0, "Intake");
@@ -246,6 +241,7 @@ void outakeAll(int speed){
     current_reload = FROM_INTAKE;
 
     spinIntake(-speed);
+    spinScoring(-speed);
 
     master.clear();
     master.print(1, 0, "Outake");
@@ -388,16 +384,25 @@ void toggleGoal(){
     goal_switch.toggle();
 }
 
+bool stopped = true;
 void stopperUp(){
-    stopper.retract();
+    if(current_intake == INTAKE){
+        spinScoring(-40);
+    } else if(current_intake == STOP){
+        stopScoring();
+    }
+    stopped = true;
 }
 
 void stopperDown(){
-    stopper.extend();
+    spinIntake(127);
+    current_intake = INTAKE;
+    spinScoring(127);
+    stopped = false;
 }
 
 void toggleStopper(){
-    if(checkStopperUp()){
+    if(!stopped){
         stopperUp();
     } else {
         stopperDown();
@@ -405,7 +410,7 @@ void toggleStopper(){
 }
 
 bool checkStopperUp(){
-    return stopper.is_extended();
+    return stopped;
 }
 
 void descoreDown(){
@@ -529,7 +534,7 @@ int getLowIntakeDist(){
 }
 
 bool detectExiting() {
-    return getIntakeDist() < 25;
+    return getIntakeDist() < 45;
 }
 
 bool detectOutaking() {
@@ -541,10 +546,10 @@ bool detectIntaking(){
 }
 
 bool detectRed(int hue){
-    return hue >= 350 || hue <= 30;
+    return hue >= 345 || hue <= 10;
 }
 bool detectBlue(int hue){
-    return hue >= 197 && hue <= 230;
+    return hue >= 210 && hue <= 225;
 }
 
 bool detectBlock(int hue){
@@ -629,38 +634,49 @@ void clearQueue() {
 void onEnterIntake(){
     int hue = getIntakeColor();
     if(current_intake == INTAKE){
-        if(detectRed(hue) && detectIntaking()) //If we detect red
+        if(detectRed(hue)) //If we detect red
         {
             messageStep((char *) "Enter red");
             printf("Enter red %i\n", hue);
             addRed(); //Add to queue as upcoming
-                    
-            while(detectRed(hue)){ //Wait for ring to continue through intake
+            
+            int counter = 0;
+            while(detectRed(hue) && counter < 340){ //Wait for ring to continue through intake
                 pros::delay(10);
+                counter += 10;
                 hue = getIntakeColor();
             }
             printQueue();
+            printf("counter: %d\n", counter);
+            pros::delay(30);
         }
-        else if(detectBlue(hue) && detectIntaking()) //If we detect blue
+        else if(detectBlue(hue)) //If we detect blue
         {
             messageStep((char *) "Enter blue");
             printf("Enter blue %i\n", hue);
             addBlue(); //Add to queue as upcoming
 
-            while(detectBlue(hue)){ //Wait for ring to continue through intake
+            int counter = 0;
+            while(detectBlue(hue) && counter < 300){ //Wait for ring to continue through intake
                 pros::delay(10);
+                counter += 10;
                 hue = getIntakeColor();
             }
             printQueue();
+            printf("counter: %d\n", counter);
+            pros::delay(30);
         } 
     }
+    pros::delay(20);
 }
 
 void onExitIntake(){
 
-    if(current_intake == INTAKE && detectExiting() && !queueEmpty()){
+    if(current_intake == INTAKE && !stopped && detectExiting() && !queueEmpty()){
+        int counter = 0;
         while(detectExiting() && current_intake == INTAKE){
             pros::delay(10);
+            counter += 10;
         }
         if(current_intake == INTAKE){
             messageStep((char *) "Exit block");
@@ -668,11 +684,22 @@ void onExitIntake(){
             removeQueue();
             printQueue();
         }
-    } else if(current_intake == OUTAKE && detectOutaking() && !queueEmpty())
+    } else if(current_intake == OUTAKE && detectBlock(getIntakeColor()) && !queueEmpty())
     {
-        while(detectOutaking() && current_intake == OUTAKE){
-            pros::delay(10);
+        bool color = queueBack();
+        int counter = 0;
+        if(color){
+            while(detectRed(getIntakeColor()) && current_intake == OUTAKE){
+                pros::delay(10);
+                counter += 10;
+            }
+        } else {
+            while(detectBlue(getIntakeColor()) && current_intake == OUTAKE){
+                pros::delay(10);
+                counter += 10;
+            }
         }
+        
         if(current_intake == OUTAKE){
             messageStep((char *) "Exit block");
             printf("Exit %s\n", (queueBack()) ? "Red" : "Blue");
@@ -680,6 +707,7 @@ void onExitIntake(){
             printQueue();
         }
     }
+    pros::delay(20);
 }
 
 
@@ -863,7 +891,9 @@ class distance {
         }
 };
 
-distance r_dist(dist_r, RIGHT, 20);
+distance r_dist(dist_r, RIGHT, 130.175);
+distance l_dist(dist_l, LEFT, 130.175);
+distance b_dist(dist_b, BACK, 95.25);
 
 distance dist_sensors[] = {r_dist};
 void fullDistanceReset(bool x, bool y){

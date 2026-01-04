@@ -56,7 +56,7 @@ void initialize() {
     setIntakeEncoder(pros::E_MOTOR_ENCODER_DEGREES);
 	setIntakeBrake(pros::E_MOTOR_BRAKE_COAST);
 
-	setIntakeColorLED(50);
+	setIntakeColorLED(75);
 	manageQueue();
 
 	pros::Task antijam_task(intakeAntiJamTaskFunc, "antijam-task");

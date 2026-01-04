@@ -52,8 +52,9 @@ pros::Optical intake_color(13);
 pros::Distance intake_dist(2);
 pros::Distance intake_dist_low(22);
 
-pros::Distance dist_r(22);
-
+pros::Distance dist_r(15);
+pros::Distance dist_b(14);
+pros::Distance dist_l(4);
 
 // pros::Vision vision_sensor(19);
 //pros::vision_signature_s_t BLUE_SIG = {1, {1, 0, 0}, 3.000, -3335, -2565, -2950, 4167, 5765, 4966, 0, 0};
