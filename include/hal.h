@@ -40,6 +40,8 @@ extern bool autoDrive, autoLift, autoIntake;
 
 extern int num_blocks;
 
+extern bool slowMiddle;
+
 float distBetweenPts(float x1, float y1, float x2, float y2);
 
 void stopAllMotors();
@@ -72,6 +74,7 @@ extern reload_state current_reload;
 
 void spinIntake(int speed);
 void spinScoring(int speed);
+void toggleSlowMiddle();
 void spinStorage(int speed);
 void spinReload(int speed);
 void stopIntake();

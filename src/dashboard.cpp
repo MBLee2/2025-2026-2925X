@@ -219,7 +219,12 @@ void taskFn_dashboard_display(void)
 */
 {
     printf("%s(): Started\n", __func__);
-    master.print(0, 0,"Auton color: %s" , selectedColor);
+    master.clear();
+    master.print(0, 0, "Intake State: %s", 
+        (current_intake == INTAKE) ? "INTAKE" : 
+        (current_intake == OUTAKE)  ? "OUTAKE"  : "STOPPED");
+    master.print(1, 0, "Middle State: %s", 
+        (slowMiddle) ? "SLOW" : "FAST");
     while (true) 
     {
         // Render the dashboard screen

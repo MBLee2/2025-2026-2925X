@@ -7,6 +7,7 @@
 #include "controls.h"
 #include "pros/device.hpp"
 #include "pros/motors.h"
+#include "pros/rtos.h"
 #include "pros/rtos.hpp"
 #include "robot_config.h"
 #include "hal.h"
@@ -171,6 +172,17 @@ void competition_initialize() {
 	// on the brain rather than the display as expected
 	pros::delay(10); 
     master.clear();
+	pros::Task op_control_mod_task([=]{
+		while(true){
+			if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+				toggleSlowMiddle();
+				master.print(3, 0, "Middle State: %s", 
+					(slowMiddle) ? "SLOW" : "FAST");
+			}
+			pros::delay(10);
+		}
+	});
+
 	auton_color_setter();
 	auton_side_setter();
 
@@ -183,6 +195,7 @@ void competition_initialize() {
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
 	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running competition_initialize()");//*/
 
+	op_control_mod_task.remove();
 
 	}
 

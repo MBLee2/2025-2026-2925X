@@ -28,6 +28,8 @@ bool autoDrive = false, autoLift = false, autoIntake = false, isintaking = false
 bool sorting = false, scoring = false;
 bool liftReset = false; //Do not modify
 
+bool slowMiddle = false;
+
 std::queue<bool> blockQueue;
 
 
@@ -92,6 +94,21 @@ void spinScoring(int speed) {
     intake2.move(speed);
 }
 
+void spinScoringSlow(){
+    spinScoring(60);
+}
+
+void toggleSlowMiddle() {
+    slowMiddle = !slowMiddle;
+    if(current_intake == INTAKE && !goalExtended()) {
+        if(slowMiddle) {
+            spinScoringSlow();
+        } else {
+            spinScoring(127);
+        }
+    }
+}
+
 void spinStorage(int speed) {
     //storage.move(speed);
 }
@@ -145,6 +162,7 @@ void intakeAll(int speed) {
 void scoreTop(int speed) {
     goalUp();
     intakeAll(speed);
+    stopperDown();
 
     /*if(current_reload == FROM_INTAKE){
         topFromIntake(speed);
@@ -192,6 +210,7 @@ void topFromStorage(int speed){
 void scoreMiddle(int speed){
     goalDown();
     intakeAll(speed);
+    stopperDown();
 
     /*if(current_reload == FROM_INTAKE){
         middleFromIntake(speed);
@@ -370,10 +389,16 @@ bool hoodExtended(){
 
 void goalDown(){
     goal_switch.retract();
+    if(slowMiddle){
+        spinScoringSlow();
+    }
 }
 
 void goalUp(){
     goal_switch.extend();
+    if(slowMiddle){
+        spinScoring(127);
+    }
 }
 
 bool goalExtended(){
@@ -381,7 +406,11 @@ bool goalExtended(){
 }
 
 void toggleGoal(){
-    goal_switch.toggle();
+    if(goalExtended()){
+        goalDown();
+    } else {
+        goalUp();
+    }
 }
 
 bool stopped = true;
@@ -397,7 +426,11 @@ void stopperUp(){
 void stopperDown(){
     spinIntake(127);
     current_intake = INTAKE;
-    spinScoring(127);
+    if(!slowMiddle || goalExtended()){
+        spinScoring(127);
+    } else {
+        spinScoringSlow();
+    }
     stopped = false;
 }
 

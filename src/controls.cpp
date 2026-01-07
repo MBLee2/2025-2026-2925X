@@ -126,6 +126,11 @@ void taskFn_intake_control(void){
         toggleDescore();
       }
 
+      if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) 
+      {
+        toggleSlowMiddle();
+      }
+
       if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
         if(antiJam){
           stopAntiJam();
