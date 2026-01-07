@@ -44,7 +44,9 @@ typedef struct s_auton_menu_button
 void draw_rectangle_patch(rectangle_patch p);
 void highlight_rectangle_patch(rectangle_patch p);
 void draw_auton_menu_screen();
+void draw_side_selector();
 auton_routine select_auton_routine(); 
 void auton_color_setter();
+void auton_side_setter();
 
 #endif // _AUTON_MENU_H_

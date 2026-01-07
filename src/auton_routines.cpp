@@ -30,9 +30,9 @@ ASSET(touchbar_txt);
 // Auton routine start positions
 auton_routine null_routine  {    0,     0,   0,   "None - Invalid Routine", &blankAuton};
 
-auton_routine top_WP{0, 0, 0, "None - Invalid Routine", &topWP};
+auton_routine win_point{0, 0, 0, "None - Invalid Routine", &winPoint};
 
-auton_routine bottom_WP{0, 0, 0, "None - Invalid Routine", &bottomWP};
+auton_routine long_goal{0, 0, 0, "None - Invalid Routine", &longGoal};
 
 auton_routine long_goal_left{0, 0, 0, "None - Invalid Routine", &longGoalLeft};
 
@@ -51,6 +51,8 @@ auton_routine safe_six_ring{0, 0, 0, "None - Invalid Routine",
 auton_routine skills_1{-0000, 0.000, 00, "60S Auton - Skills # 1", &auton_60s_skills_2};
                                          
 auton_routine solo_WP{-0.600, 0.600, 180, "extra_1", nullptr};
+
+bool SIDE = true; // true = left, false = right
 
 void printPosition(int time) {
   lemlib::Pose temp_pose = chassis.getPose();
@@ -171,6 +173,14 @@ void bottomWP(){
   }
   return;
 
+  }
+
+  void winPoint() {
+    if (SIDE) {
+      topWP();
+    } else {
+      bottomWP();
+    }
   }
 
 /*********************** LEFT SIDE LONG GOAL ***********************/
@@ -330,6 +340,14 @@ void longGoalRight(){
   end_log();
 
 
+}
+
+void longGoal(){
+  if (SIDE) {
+    longGoalLeft();
+  } else {
+    longGoalRight();
+  }
 }
 
 /*********************** LEFT SIDE CENTER GOAL ***********************/

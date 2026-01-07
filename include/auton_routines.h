@@ -19,9 +19,11 @@ typedef struct s_auton_routine
 
 
 //change all of these
+extern bool SIDE;
+
 extern auton_routine null_routine; 
 
-extern auton_routine top_WP, bottom_WP;
+extern auton_routine win_point, long_goal;
 extern auton_routine long_goal_left, long_goal_right;
 extern auton_routine top_center, bottom_center;
 
@@ -32,8 +34,10 @@ extern auton_routine skills_1, skills_2;
 void blankAuton();
 void auton_60s_skills_1();
 void auton_60s_skills_2();
+void winPoint();
 void topWP();
 void bottomWP();
+void longGoal();
 void longGoalLeft();
 void longGoalRight();
 void topCenter();

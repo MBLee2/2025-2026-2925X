@@ -172,6 +172,7 @@ void competition_initialize() {
 	pros::delay(10); 
     master.clear();
 	auton_color_setter();
+	auton_side_setter();
 
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();

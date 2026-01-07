@@ -20,11 +20,11 @@ using pros::c::COLOR_BLUE;
 
 std::vector<auton_menu_button> button_list = {
     auton_menu_button{{15, 50, 115, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "TOPWP", pros::E_TEXT_MEDIUM},
-                      top_WP},
+                       pros::c::COLOR_WHITE_SMOKE, "WP", pros::E_TEXT_MEDIUM},
+                      win_point},
     auton_menu_button{{130, 50, 230, 100, pros::c::COLOR_DIM_GRAY,
-                       pros::c::COLOR_WHITE_SMOKE, "BOTTOMWP (HELL NO! KADEN DONT USE THIS)", pros::E_TEXT_MEDIUM},
-                      bottom_WP},
+                       pros::c::COLOR_WHITE_SMOKE, "LONG", pros::E_TEXT_MEDIUM},
+                      long_goal},
     auton_menu_button{{245, 50, 345, 100, pros::c::COLOR_DIM_GRAY,
                        pros::c::COLOR_WHITE_SMOKE, "LEFTLONG", pros::E_TEXT_MEDIUM},
                       long_goal_left},
@@ -57,9 +57,9 @@ std::vector<auton_menu_button> color_list = {
         pros::c::COLOR_WHITE_SMOKE, "BLUE", pros::E_TEXT_MEDIUM}}};
 
 std::vector<auton_menu_button> side_list = {
-    auton_menu_button{{15, 50, 230, 210, COLOR_RED,
+    auton_menu_button{{15, 50, 230, 210, pros::c::COLOR_DIM_GRAY,
         pros::c::COLOR_WHITE_SMOKE, "LEFT", pros::E_TEXT_MEDIUM}},
-    auton_menu_button{{245, 50, 460, 210, COLOR_BLUE,
+    auton_menu_button{{245, 50, 460, 210, pros::c::COLOR_DIM_GRAY,
         pros::c::COLOR_WHITE_SMOKE, "RIGHT", pros::E_TEXT_MEDIUM}}};
 
 void draw_rectangle_patch(rectangle_patch p) 
@@ -195,6 +195,38 @@ void draw_color_selector()
 
 } // end draw_auton_menu_screen()
 
+void draw_side_selector()
+/**
+ * @brief Render the screen for the auton menu screen
+ * @param None
+ * @return void
+*/
+{
+    // printf("%s(): Entered \n", __func__);
+
+    // clear the screen      
+    pros::screen::set_eraser(pros::c::COLOR_BLACK);
+    pros::screen::erase();
+
+    // draw the outer container box
+    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::draw_rect(1, 1, 479, 239);
+
+
+    // Put the title box at the top
+    pros::screen::set_pen(COLOR_WHITE);
+    pros::screen::print(pros::E_TEXT_LARGE, 150, 10, "Auton Menu");
+
+    // draw all the rectangle_patch representing the auton menu buttons
+    for (int i=0; i<side_list.size(); i++) 
+    {
+        draw_rectangle_patch(side_list[i].button);
+    }
+
+    // printf("%s(): Exiting\n", __func__);
+
+} // end draw_auton_menu_screen()
+
 auton_routine select_auton_routine()
 /**
 * @brief Draw out the menu for selecting the right Auton on the VEX V5 Brain screen and then use 
@@ -241,7 +273,7 @@ auton_routine select_auton_routine()
                     pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
                     pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
                         button_list[i].button.text.data());
-                    master.print(1, 0, "Auton: %s", button_list[i].button.text.data());
+                    master.print(2, 0, "Auton: %s", button_list[i].button.text.data());
                     pros::delay(1000);
                     break; // selection made, end the for() loop
                 }
@@ -299,6 +331,59 @@ void auton_color_setter()
                     pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
                         color_list[i].button.text.data());
                     master.print(0, 0, "Color: %s", color_list[i].button.text.data());
+                    pros::delay(1000);
+                    break; // selection made, end the for() loop
+                }
+            } // end for()
+        }
+
+        // A 250 millisecond (4 times a second) should be enough refresh rate to get user inputs
+        pros::delay(250);
+
+    } // end while(true)
+}
+
+void auton_side_setter()
+{
+    bool selection_made = false;
+
+    while(selection_made == false) 
+    {  
+        draw_side_selector();
+        // check if the screen was touched (pressed)
+
+        pros::screen_touch_status_s_t touch_status = pros::screen::touch_status();
+        if (touch_status.touch_status == pros::E_TOUCH_PRESSED) 
+        {
+            // printf("%s(): Screen Pressed at (%d, %d) \n", __func__, touch_status.x, touch_status.y);
+            
+            // check if any of the buttons in the menu were pressed
+            for (int i=0; i<side_list.size(); i++) 
+            {
+                if (touch_status.x > side_list[i].button.x1 && touch_status.x < side_list[i].button.x2 &&
+                    touch_status.y > side_list[i].button.y1 && touch_status.y < side_list[i].button.y2) 
+                {
+                    highlight_rectangle_patch(side_list[i].button);
+                    if (strcmp(side_list[i].button.text.data(), "LEFT") == 0)
+                    {
+                        COLOR = true;
+                    }
+                    else if (strcmp(side_list[i].button.text.data(), "RIGHT") == 0)
+                    {
+                        COLOR = false;
+                    }
+                    selection_made = true;
+
+                    printf("%s(): Selected: [%s] \n", __func__, color_list[i].button.text.data());
+
+                    // clear the screen      
+                    pros::screen::set_eraser(pros::c::COLOR_BLACK);
+                    pros::screen::erase();
+                    // Print the selection as a confirmation
+                    pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
+                    pros::screen::print(pros::E_TEXT_LARGE_CENTER, 3, "Selected: %s", 
+                        side_list[i].button.text.data());
+                    master.print(1, 0, "Side: %s", side_list[i].button.text.data());
                     pros::delay(1000);
                     break; // selection made, end the for() loop
                 }

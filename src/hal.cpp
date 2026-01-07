@@ -684,28 +684,42 @@ void onExitIntake(){
             removeQueue();
             printQueue();
         }
-    } else if(current_intake == OUTAKE && detectBlock(getIntakeColor()) && !queueEmpty())
+    } else if(current_intake == OUTAKE && !queueEmpty())
     {
-        bool color = queueBack();
-        int counter = 0;
-        if(color){
-            while(detectRed(getIntakeColor()) && current_intake == OUTAKE){
+        int hue = getIntakeColor();
+        if(detectRed(hue)) //If we detect red
+        {
+            
+            int counter = 0;
+            while(detectRed(hue) && counter < 340){ //Wait for ring to continue through intake
                 pros::delay(10);
                 counter += 10;
+                hue = getIntakeColor();
             }
-        } else {
-            while(detectBlue(getIntakeColor()) && current_intake == OUTAKE){
-                pros::delay(10);
-                counter += 10;
-            }
-        }
-        
-        if(current_intake == OUTAKE){
-            messageStep((char *) "Exit block");
-            printf("Exit %s\n", (queueBack()) ? "Red" : "Blue");
-            removeQueueBack();
+            messageStep((char *) "Exit red");
+            printf("Exit red %i\n", hue);
+            removeQueueBack(); //Add to queue as upcoming
+
             printQueue();
+            printf("counter: %d\n", counter);
+            pros::delay(30);
         }
+        else if(detectBlue(hue)) //If we detect blue
+        {
+            int counter = 0;
+            while(detectBlue(hue) && counter < 300){ //Wait for ring to continue through intake
+                pros::delay(10);
+                counter += 10;
+                hue = getIntakeColor();
+            }
+            messageStep((char *) "Exit blue");
+            printf("Exit blue %i\n", hue);
+            removeQueueBack(); //Add to queue as upcoming
+
+            printQueue();
+            printf("counter: %d\n", counter);
+            pros::delay(30);
+        } 
     }
     pros::delay(20);
 }
