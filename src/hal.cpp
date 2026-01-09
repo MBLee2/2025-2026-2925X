@@ -100,11 +100,13 @@ void spinScoringSlow(){
 
 void toggleSlowMiddle() {
     slowMiddle = !slowMiddle;
-    if(current_intake == INTAKE && !goalExtended()) {
+    if(!checkStopperUp() && !goalExtended()) {
         if(slowMiddle) {
             spinScoringSlow();
+            master.print(1, 0, "Speed: SLOW");
         } else {
             spinScoring(127);
+            master.print(1, 0, "Speed: FAST");
         }
     }
 }
@@ -155,8 +157,9 @@ void intakeAll(int speed) {
     spinIntake(speed);
     stopperUp();
 
-    master.clear();
-    master.print(1, 0, "Intake");
+    master.clear_line(0);
+    pros::delay(10);
+    master.print(0, 0, "INTAKE");
 }
 
 void scoreTop(int speed) {
@@ -262,16 +265,18 @@ void outakeAll(int speed){
     spinIntake(-speed);
     spinScoring(-speed);
 
-    master.clear();
-    master.print(1, 0, "Outake");
+    master.clear_line(0);
+    pros::delay(10);
+    master.print(0, 0, "OUTAKE");
 }
 
 
 void stopAllIntake(){
     stopIntake();
 
-    master.clear();
-    master.print(1, 0, "Stopped");
+    master.clear_line(0);
+    pros::delay(10);
+    master.print(0, 0, "STOPPED");
 
     current_intake = STOP;
     current_reload = FROM_INTAKE;

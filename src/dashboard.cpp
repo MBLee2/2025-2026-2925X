@@ -1,6 +1,7 @@
 #include "dashboard.h"
 #include "auton_menu.h"
 #include "auton_routines.h"
+#include "controls.h"
 #include "robot_config.h"
 #include "lemlib/api.hpp"
 #include "hal.h"
@@ -219,16 +220,11 @@ void taskFn_dashboard_display(void)
 */
 {
     printf("%s(): Started\n", __func__);
-    master.clear();
-    master.print(0, 0, "Intake State: %s", 
-        (current_intake == INTAKE) ? "INTAKE" : 
-        (current_intake == OUTAKE)  ? "OUTAKE"  : "STOPPED");
-    master.print(1, 0, "Middle State: %s", 
-        (slowMiddle) ? "SLOW" : "FAST");
     while (true) 
     {
         // Render the dashboard screen
         render_dashboard();  
+
         // once every 200 milliseconds (1 time every 5 seconds) is enough for this task 
         // which just refreshes the dashboard display
         pros::delay(5000);

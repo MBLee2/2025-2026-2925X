@@ -366,16 +366,15 @@ void auton_side_setter()
                     highlight_rectangle_patch(side_list[i].button);
                     if (strcmp(side_list[i].button.text.data(), "LEFT") == 0)
                     {
-                        COLOR = true;
+                        SIDE = true;
                     }
                     else if (strcmp(side_list[i].button.text.data(), "RIGHT") == 0)
                     {
-                        COLOR = false;
+                        SIDE = false;
                     }
                     selection_made = true;
 
-                    printf("%s(): Selected: [%s] \n", __func__, color_list[i].button.text.data());
-
+                    printf("%s(): Selected: [%s] \n", __func__, side_list[i].button.text.data());
                     // clear the screen      
                     pros::screen::set_eraser(pros::c::COLOR_BLACK);
                     pros::screen::erase();

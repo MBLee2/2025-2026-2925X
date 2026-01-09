@@ -172,16 +172,6 @@ void competition_initialize() {
 	// on the brain rather than the display as expected
 	pros::delay(10); 
     master.clear();
-	pros::Task op_control_mod_task([=]{
-		while(true){
-			if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
-				toggleSlowMiddle();
-				master.print(3, 0, "Middle State: %s", 
-					(slowMiddle) ? "SLOW" : "FAST");
-			}
-			pros::delay(10);
-		}
-	});
 
 	auton_color_setter();
 	auton_side_setter();
@@ -189,13 +179,17 @@ void competition_initialize() {
 	// select the auton from the menu
 	selected_auton_routine = select_auton_routine();
 
+	if(selected_auton_routine.routine_func == &auton_60s_skills_1){
+		slowMiddle = true;
+	}
+
 	// Clear the Brain screen and show status
     pros::screen::set_eraser(pros::c::COLOR_BLACK);
 	pros::screen::erase();
 	pros::screen::set_pen(pros::c::COLOR_ANTIQUE_WHITE);
 	pros::screen::print(pros::E_TEXT_MEDIUM, 1, "Running competition_initialize()");//*/
 
-	op_control_mod_task.remove();
+
 
 	}
 
@@ -286,6 +280,8 @@ void opcontrol() {
 	pros::Task dashboard_task(taskFn_dashboard_display, "dashboard-task");
     pros::Task drivebase_task(taskFn_drivebase_control,"drivebase-task");	
 	pros::Task intake_task(taskFn_intake_control,"intake-task");
+
+	printf("%s(): Entered\n", __func__);
 	stopAntiJam();
 	stopSorting();
 
