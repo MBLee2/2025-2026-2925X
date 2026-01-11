@@ -672,14 +672,15 @@ void clearQueue() {
 void onEnterIntake(){
     int hue = getIntakeColor();
     if(current_intake == INTAKE){
-        if(detectRed(hue)) //If we detect red
+        if(detectRed(hue) && getLowIntakeDist() < 85) //If we detect red
         {
             messageStep((char *) "Enter red");
             printf("Enter red %i\n", hue);
             addRed(); //Add to queue as upcoming
             
             int counter = 0;
-            while(detectRed(hue) && counter < 340){ //Wait for ring to continue through intake
+            int prev = getLowIntakeDist();
+            while(detectRed(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
                 pros::delay(10);
                 counter += 10;
                 hue = getIntakeColor();
@@ -688,19 +689,21 @@ void onEnterIntake(){
             printf("counter: %d\n", counter);
             pros::delay(30);
         }
-        else if(detectBlue(hue)) //If we detect blue
+        else if(detectBlue(hue) && getLowIntakeDist() < 85) //If we detect blue
         {
             messageStep((char *) "Enter blue");
-            printf("Enter blue %i\n", hue);
+            printf("Enter blue %i, %i\n", hue, getLowIntakeDist());
             addBlue(); //Add to queue as upcoming
 
             int counter = 0;
-            while(detectBlue(hue) && counter < 300){ //Wait for ring to continue through intake
+            int prev = getLowIntakeDist();
+            while(detectBlue(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
                 pros::delay(10);
                 counter += 10;
                 hue = getIntakeColor();
             }
             printQueue();
+            printf("Blue entered: %i, %i\n", hue, getLowIntakeDist());
             printf("counter: %d\n", counter);
             pros::delay(30);
         } 
@@ -725,11 +728,11 @@ void onExitIntake(){
     } else if(current_intake == OUTAKE && !queueEmpty())
     {
         int hue = getIntakeColor();
-        if(detectRed(hue)) //If we detect red
+        if(detectRed(hue) && getLowIntakeDist() < 85) //If we detect red
         {
             
             int counter = 0;
-            while(detectRed(hue) && counter < 340){ //Wait for ring to continue through intake
+            while(detectRed(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
                 pros::delay(10);
                 counter += 10;
                 hue = getIntakeColor();
@@ -742,10 +745,10 @@ void onExitIntake(){
             printf("counter: %d\n", counter);
             pros::delay(30);
         }
-        else if(detectBlue(hue)) //If we detect blue
+        else if(detectBlue(hue) && getLowIntakeDist() < 85) //If we detect blue
         {
             int counter = 0;
-            while(detectBlue(hue) && counter < 300){ //Wait for ring to continue through intake
+            while(detectBlue(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
                 pros::delay(10);
                 counter += 10;
                 hue = getIntakeColor();
