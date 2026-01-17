@@ -95,7 +95,7 @@ void spinScoring(int speed) {
 }
 
 void spinScoringSlow(){
-    spinScoring(60);
+    spinScoring(80);
 }
 
 void toggleSlowMiddle() {
@@ -124,6 +124,7 @@ void stopIntake() {
     intake.brake();
     current_intake = STOP;
     stopperUp();
+    stopScoring();
 }
 
 void stopIntakeHold() {
@@ -297,8 +298,17 @@ void intakeAntiJam() {
     {
         if(current_intake == INTAKE){
             outakeAll(127);
-            pros::delay(400);
-            intakeAll(127);
+            pros::delay(250);
+            if(checkStopperUp()){
+                intakeAll(60);
+                pros::delay(200);
+                intakeAll(127);
+            } else {
+                stopperDown();
+                spinIntake(60);
+                pros::delay(200);
+                spinIntake(127);
+            }
         } else if(current_intake == OUTAKE){
             intakeAll(127);
             pros::delay(200);
@@ -394,14 +404,14 @@ bool hoodExtended(){
 
 void goalDown(){
     goal_switch.retract();
-    if(slowMiddle){
+    if(slowMiddle && current_intake == INTAKE){
         spinScoringSlow();
     }
 }
 
 void goalUp(){
     goal_switch.extend();
-    if(slowMiddle){
+    if(slowMiddle && current_intake == INTAKE){
         spinScoring(127);
     }
 }
@@ -421,7 +431,7 @@ void toggleGoal(){
 bool stopped = true;
 void stopperUp(){
     if(current_intake == INTAKE){
-        spinScoring(-40);
+        spinScoring(-15);
     } else if(current_intake == STOP){
         stopScoring();
     }
@@ -785,9 +795,18 @@ void printQueue(){
 
 void count_blocks_in(int num, int timeout){
     int start = blockQueue.size();
-    while(blockQueue.size() < start + num && timeout > 0){
-        pros::delay(20);
-        timeout -= 20;
+    messageStep((char *) "Start count");
+    pros::delay(30);
+    for(int i = 0; i < num; i++){
+        int hue = getIntakeColor();
+        while((!detectBlock(hue) || getLowIntakeDist() > 85) && timeout > 0){
+            pros::delay(20);
+            timeout -= 20;
+        }
+        while(detectBlock(hue) && getLowIntakeDist() < 140 && timeout > 0){
+            pros::delay(20);
+            timeout -= 20;
+        }
     }
 }
 

@@ -65,8 +65,8 @@ lemlib::Drivetrain drivetrain(
     &left_side_motors, // left drivetrain motors
     &right_side_motors, // right drivetrain motors
     10.25, // track width
-    3.125,// wheel diameter
-    450, // wheel rpm
+    2.625,// wheel diameter
+    600, // wheel rpm
 	2 //chase Power
 );
 // left tracking wheel encoder
@@ -82,7 +82,7 @@ pros::Rotation horizontal_rot(6); // port 1, not reversed
 /*
 NOT SET UP YET
 */
-lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_2, -4.375); // 2.00" wheel diameter, 1.00" offset from tracking center
+lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_rot,lemlib::Omniwheel::NEW_2, -4.46875); // 2.00" wheel diameter, 1.00" offset from tracking center
 
 // odometry struct
 lemlib::OdomSensors sensors(
@@ -94,7 +94,7 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(7, // proportional gain (kP) 6.8
+lemlib::ControllerSettings lateral_controller(6, // proportional gain (kP) 6.8
                                               0.0008, // integral gain (kI)
                                               35,// derivative gain (kD) 30
                                               0, // anti windupx
@@ -113,7 +113,7 @@ lemlib::ControllerSettings angular_controller(5, // proportional gain (kP) 4
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
+                                              250, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
 
