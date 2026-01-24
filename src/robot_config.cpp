@@ -94,9 +94,9 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(0,//6, // proportional gain (kP) 6.8
-                                              0,//0.0008, // integral gain (kI)
-                                              0,//35,// derivative gain (kD) 30
+lemlib::ControllerSettings lateral_controller(6,//6, // proportional gain (kP) 6.8
+                                              0.0008,//0.0008, // integral gain (kI)
+                                              35,//35,// derivative gain (kD) 30
                                               0, // anti windupx
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
@@ -110,10 +110,10 @@ lemlib::ControllerSettings angular_controller(2.7, // proportional gain (kP) 4
                                               0.0035, // integral gain (kI)s 0.00235
                                               20.03, // derivative gain (kD) 34.021
                                               0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
+                                              1, // small error range, in inches
+                                              100, // small error range timeout, in milliseconds
+                                              3, // large error range, in inches
+                                              400, // large error range timeout, in milliseconds
                                               60 // maximum acceleration (slew)
 );
 
