@@ -42,7 +42,11 @@ void initialize() {
  * to keep execution time for this mode under a few seconds.
  */
 {
-
+	imu.reset();
+	while(imu.is_calibrating()) {
+		pros::delay(10);
+	}
+	
 	pros::delay(10);
     pros::lcd::initialize(); // ONLY FOR TUNING PID	
     chassis.calibrate(); // ONLY FOR TUNING PID
