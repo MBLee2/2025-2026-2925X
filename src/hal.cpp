@@ -935,6 +935,7 @@ enum Direction {
     LEFT = 270
 };
 
+
 class distance {
     private:
         pros::Distance& sensor;
@@ -967,7 +968,7 @@ class distance {
 
 distance r_dist(dist_r, RIGHT, 130.175);
 distance l_dist(dist_l, LEFT, 130.175);
-distance b_dist(dist_b, BACK, 95.25);
+distance b_dist(dist_b, BACK, 76.2);
 
 distance dist_sensors[] = {r_dist};
 void fullDistanceReset(bool x, bool y){

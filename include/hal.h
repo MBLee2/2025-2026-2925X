@@ -202,6 +202,7 @@ void count_blocks_in(int num, int timeout);
 void count_blocks_out(int num, int timeout);
 void taskFn_count_blocks();
 
+
 void logging(int range, int data_range = 1);
 void messageStep(char* message);
 void messageStep(char* message, lemlib::Pose pose);

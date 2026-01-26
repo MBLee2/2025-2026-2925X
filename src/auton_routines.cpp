@@ -61,7 +61,7 @@ void printPosition(int time) {
 
 void blankAuton() {
   chassis.setPose(0, 0, 0);
-  chassis.turnToHeading(90, 15000);
+  //chassis.turnToHeading(180, 15000);
   //chassis.turnToHeading(0, 4000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 100});
 }
 
@@ -473,41 +473,39 @@ void auton_60s_skills_1() {
   float speed = 100;
   int tspeed = (int) speed;
   int temp = 0;
-  chassis.setPose(0.5+7.25, -48, 90);
+  chassis.setPose(0.5+7.5, -48, 91);
 
-  chassis.moveToPoint(48, -48, 2000, {.maxSpeed = speed});
-  goalUp();
+  chassis.moveToPoint(47, -48, 2000, {.maxSpeed = speed});
   chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
   extendLoader();
   intakeAll(127);
   pros::delay(200);
-  chassis.moveToPoint(48, -64, 3000, {.maxSpeed = speed - 30});
-  return;
-  chassis.moveToPoint(chassis.getPose().x, -64, 3000, {.maxSpeed = speed - 30});
+  chassis.moveToPoint(chassis.getPose().x, -60, 4000, {.maxSpeed = speed - 30});
   antiJam = false;
-  spinScoring(25);
-  count_blocks_in(6, 4000); 
-  // intakeAll(80);
-  // count_blocks_in(3, 2000);
+  count_blocks_in(6, 4000);
   pros::delay(500);
+  stopAllIntake();
   chassis.moveToPoint(chassis.getPose().x, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
   retractLoader();
+
+  chassis.turnToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed});
+  chassis.turnToPoint(24, 24, 1500, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(23, 23, 2000, {.forwards = false, .maxSpeed = speed});
+
+  chassis.turnToPoint(0, 0, 2000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.moveToPoint(13, 13, 2000, {.forwards = false, .maxSpeed = speed});
+  antiJam = true;
+  intakeAll(90);
+  stopperDown();
+  count_blocks_out(4, 2500);
   stopAllIntake();
-
-  intakeAll(30);
-
-  chassis.turnToPoint(24, -25, 2000, {.forwards = false, .maxSpeed = tspeed});
-  chassis.moveToPoint(24, -25, 2000, {.forwards = false, .maxSpeed = speed});
-  chassis.turnToPoint(24, 24, 2000, {.forwards = false, .maxSpeed = tspeed});
-  chassis.moveToPoint(24, 23, 4000, {.forwards = false, .maxSpeed = speed});
+  return;
   /*chassis.turnToPoint(14.25, 23.5, 2000, {.forwards = false, .maxSpeed = tspeed});
 
   chassis.moveToPoint(14.25, 23.5, 2000, {.forwards = false, .maxSpeed = speed}, false);
   intakeAll(80);
   stopperDown();
-  antiJam = true;
-  intakeAll(90);
-  count_blocks_out(4, 2500);
   stopperUp();
   stopAllIntake();*/
 
