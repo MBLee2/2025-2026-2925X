@@ -927,48 +927,9 @@ void taskFn_count_blocks() {
     }
 }
 
-
-enum Direction {
-    FRONT = 0,
-    RIGHT = 90,
-    BACK = 180,
-    LEFT = 270
-};
-
-
-class distance {
-    private:
-        pros::Distance& sensor;
-        Direction dir;
-        float offset;
-
-    public:
-        distance(pros::Distance& dist, Direction d, float o) : sensor(dist) 
-        {
-            dir = d;
-            offset = 0;
-        }
-        Direction getDir(){
-            return dir;
-        }
-        int getReading(){
-            return sensor.get();
-        }
-        float getRawDist(){
-            return getReading() + offset;
-        }
-        float distToWall(){
-            return getRawDist() / 25.4;
-        }
-        float getAbsPosition(Direction wall){
-            float theta = deg2rad(chassis.getPose().theta);
-            return ((wall == FRONT || wall == RIGHT) ? 72 : -72) - (distToWall() * (((int) (wall - dir) % 180 == 0) ? cos(theta) : sin(theta)));
-        }
-};
-
-distance r_dist(dist_r, RIGHT, 130.175);
-distance l_dist(dist_l, LEFT, 130.175);
-distance b_dist(dist_b, BACK, 76.2);
+distance r_dist(dist_r, RIGHT, 5 - 0.343996063);
+distance l_dist(dist_l, LEFT, 5 - 0.253937007874);
+distance b_dist(dist_b, BACK, 3);
 
 distance dist_sensors[] = {r_dist};
 void fullDistanceReset(bool x, bool y){
@@ -1409,18 +1370,19 @@ void retractClimbBalance() {
 
 //Distance
 int getFrontDistance() {
-    // return distance_front.get();
     return 0;
 }
 
 int getBackDistance() {
-    // return distance_back.get();
-    return 0;
+    return b_dist.getReading();
 }
 
 int getLeftDistance() {
-    // return distance_left.get();
-    return 0;
+    return l_dist.getReading();
+}
+
+int getRightDistance() {
+    return r_dist.getReading();
 }
 
 
@@ -1435,18 +1397,32 @@ float distToWallF() {
 }
 
 float distToWallB() {
-    // return (getBackDistance() / 25.4) + B_DISTANCE_OFFSET;
-    return 0;
+    return b_dist.distToWall();
 }
 
 float distToWallL() {
-    // return (getLeftDistance() / 25.4) + L_DISTANCE_OFFSET;
-    return 0;
+    return l_dist.distToWall();
+}
+
+float distToWallR() {
+    return r_dist.distToWall();
 }
 
 float distToObject() {
     // return (getProximity() / 25.4) + PROXI_OFFSET;
     return 0;
+}
+
+float BAbsPosition(Direction Wall) {
+    return b_dist.getAbsPosition(Wall);
+}
+
+float LAbsPosition(Direction Wall) {
+    return l_dist.getAbsPosition(Wall);
+}
+
+float RAbsPosition(Direction Wall) {
+    return r_dist.getAbsPosition(Wall);
 }
 
 //Color

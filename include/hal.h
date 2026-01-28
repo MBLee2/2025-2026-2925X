@@ -2,6 +2,7 @@
 #define _HAL_H_
 
 #include "api.h"
+#include "robot_config.h"
 #include "auton_basics.h"
 #include "pros/motors.h"
 #include "lemlib/chassis/chassis.hpp"
@@ -203,6 +204,58 @@ void count_blocks_out(int num, int timeout);
 void taskFn_count_blocks();
 
 
+enum Direction {
+    FRONT = 0,
+    RIGHT = 90,
+    BACK = 180,
+    LEFT = 270
+};
+
+
+class distance {
+    private:
+        pros::Distance& sensor;
+        Direction dir;
+        float offset;
+
+    public:
+        distance(pros::Distance& dist, Direction d, float o) : sensor(dist) 
+        {
+            dir = d;
+            offset = o;
+        }
+        Direction getDir(){
+            return dir;
+        }
+        int getReading(){
+            return sensor.get();
+        }
+        float getRawDist(){
+            return getReading() + (offset/25.4);
+        }
+        float distToWall(){
+            return (getReading() / 25.4) + offset;
+        }
+        float getAbsPosition(Direction wall){
+            float theta = deg2rad(chassis.getPose().theta);
+            return ((wall == FRONT || wall == RIGHT) ? 72 : -72) - (distToWall() * (((wall - dir) % 180 == 0) ? cos(theta) : sin(theta)));
+        }
+};
+
+void fullDistanceReset(bool x, bool y);
+
+int getLeftDistance();
+int getBackDistance();
+int getRightDistance();
+
+float distToWallB();
+float distToWallL();
+float distToWallR();
+
+float BAbsPosition(Direction Wall);
+float LAbsPosition(Direction Wall);
+float RAbsPosition(Direction Wall);
+
 void logging(int range, int data_range = 1);
 void messageStep(char* message);
 void messageStep(char* message, lemlib::Pose pose);
@@ -241,12 +294,8 @@ void togglePTO();
 void retractClimbBalance();
 
 int getFrontDistance();
-int getLeftDistance();
 
 float distToWallF();
-float distToWallB();
-float distToWallL();
-float distToWallR();
 float distToObject();
 
 int get2ndIntakeColor();
