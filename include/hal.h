@@ -214,7 +214,7 @@ enum Direction {
 
 class distance {
     private:
-        pros::Distance& sensor;
+        pros::v5::Distance& sensor;
         Direction dir;
         float offset;
 
@@ -231,7 +231,7 @@ class distance {
             return sensor.get();
         }
         float getRawDist(){
-            return getReading() + (offset/25.4);
+            return getReading() + (offset * 25.4);
         }
         float distToWall(){
             return (getReading() / 25.4) + offset;

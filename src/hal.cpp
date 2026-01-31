@@ -590,18 +590,31 @@ bool detectOutaking() {
 }
 
 bool detectIntaking(){
-    return getLowIntakeDist() < 80;
+    return getLowIntakeDist() < 85;
 }
 
 bool detectRed(int hue){
-    return hue >= 345 || hue <= 10;
+    return hue >= 345 || hue <= 20;
 }
+
+bool detectRed(){
+    return detectRed(getIntakeColor()) && detectIntaking();
+}
+
 bool detectBlue(int hue){
-    return hue >= 210 && hue <= 225;
+    return hue >= 210 && hue <= 230;
+}
+
+bool detectBlue(){
+    return detectBlue(getIntakeColor()) && detectIntaking();
 }
 
 bool detectBlock(int hue){
     return detectRed(hue) || detectBlue(hue);
+}
+
+bool detectBlock() {
+    return detectBlock(getIntakeColor()) && detectIntaking();
 }
 
 bool detectOurColor(int hue){
@@ -645,7 +658,9 @@ bool queueBack(){
 }
 
 void removeQueue(){
-    blockQueue.pop();
+    if(!queueEmpty()){
+        blockQueue.pop();
+    }
 }
 
 void removeQueueBack(){
@@ -669,56 +684,42 @@ void manageQueue() {
             if(sorting && !queueEmpty()){
                 sort();
             }
+        pros::delay(10);
         }
     });
 }
 
 void clearQueue() {
-    while(!queueEmpty()){
-        removeQueue();
+    if(!queueEmpty()){
+        while(!queueEmpty()){
+            removeQueue();
+        }
     }
 }
 
 void onEnterIntake(){
     int hue = getIntakeColor();
     if(current_intake == INTAKE){
-        if(detectRed(hue) && getLowIntakeDist() < 85) //If we detect red
-        {
-            messageStep((char *) "Enter red");
-            printf("Enter red %i\n", hue);
-            addRed(); //Add to queue as upcoming
-            
-            int counter = 0;
-            int prev = getLowIntakeDist();
-            while(detectRed(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
-                pros::delay(10);
-                counter += 10;
-                hue = getIntakeColor();
+        if(detectIntaking()){
+            bool color = detectRed(hue);
+            if(color){
+                messageStep((char *) "Enter red");
+                printf("Enter red %i\n", hue);
+                addRed(); //Add to queue as upcoming
+            } else {
+                messageStep((char *) "Enter blue");
+                printf("Enter blue %i, %i\n", hue, getLowIntakeDist());
+                addBlue(); //Add to queue as upcoming
             }
-            printQueue();
-            printf("counter: %d\n", counter);
-            pros::delay(30);
-        }
-        else if(detectBlue(hue) && getLowIntakeDist() < 85) //If we detect blue
-        {
-            messageStep((char *) "Enter blue");
-            printf("Enter blue %i, %i\n", hue, getLowIntakeDist());
-            addBlue(); //Add to queue as upcoming
 
-            int counter = 0;
-            int prev = getLowIntakeDist();
-            while(detectBlue(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
-                pros::delay(10);
-                counter += 10;
-                hue = getIntakeColor();
+            while(detectIntaking()){ //Wait for ring to continue through intake
+                pros::delay(20);
             }
+
             printQueue();
-            printf("Blue entered: %i, %i\n", hue, getLowIntakeDist());
-            printf("counter: %d\n", counter);
-            pros::delay(30);
-        } 
+        }
+        
     }
-    pros::delay(20);
 }
 
 void onExitIntake(){
@@ -738,41 +739,26 @@ void onExitIntake(){
     } else if(current_intake == OUTAKE && !queueEmpty())
     {
         int hue = getIntakeColor();
-        if(detectRed(hue) && getLowIntakeDist() < 85) //If we detect red
-        {
-            
-            int counter = 0;
-            while(detectRed(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
-                pros::delay(10);
-                counter += 10;
-                hue = getIntakeColor();
+        if(detectIntaking()){
+            bool color = detectRed(hue);
+
+            while(detectIntaking() ){ //Wait for ring to continue through intake
+                pros::delay(20);
             }
-            messageStep((char *) "Exit red");
-            printf("Exit red %i\n", hue);
-            removeQueueBack(); //Add to queue as upcoming
+
+            if(color){
+                messageStep((char *) "Exit red");
+                printf("Exit red %i\n", hue);
+                removeQueueBack(); //Add to queue as upcoming
+            } else {
+                messageStep((char *) "Exit blue");
+                printf("Exit blue %i\n", hue);
+                removeQueueBack(); //Add to queue as upcoming
+            }
 
             printQueue();
-            printf("counter: %d\n", counter);
-            pros::delay(30);
         }
-        else if(detectBlue(hue) && getLowIntakeDist() < 85) //If we detect blue
-        {
-            int counter = 0;
-            while(detectBlue(hue) && getLowIntakeDist() < 140){ //Wait for ring to continue through intake
-                pros::delay(10);
-                counter += 10;
-                hue = getIntakeColor();
-            }
-            messageStep((char *) "Exit blue");
-            printf("Exit blue %i\n", hue);
-            removeQueueBack(); //Add to queue as upcoming
-
-            printQueue();
-            printf("counter: %d\n", counter);
-            pros::delay(30);
-        } 
     }
-    pros::delay(20);
 }
 
 
@@ -794,42 +780,56 @@ void printQueue(){
 }
 
 void count_blocks_in(int num, int timeout){
-    int start = blockQueue.size();
     messageStep((char *) "Start count");
-    pros::delay(30);
+
     for(int i = 0; i < num; i++){
-        int hue = getIntakeColor();
-        while((!detectBlock(hue) || getLowIntakeDist() > 85) && timeout > 0){
+        while(!detectIntaking() && timeout > 0){
             pros::delay(20);
             timeout -= 20;
+            if(timeout <= 0){
+                break;
+            }
         }
-        while(detectBlock(hue) && getLowIntakeDist() < 140 && timeout > 0){
+        while(detectIntaking() && timeout > 0){
             pros::delay(20);
             timeout -= 20;
+            if(timeout <= 0){
+                break;
+            }
         }
+    }
+    if(timeout > 0){
+        printf("exit by count\n");
+    } else {
+        printf("exit by timeout\n");
     }
 }
 
 void count_blocks_out(int num, int timeout){
-    int start = blockQueue.size();
     messageStep((char *) "Start count");
-    pros::delay(30);
+
     for(int i = 0; i < num; i++){
         while(!detectExiting() && timeout > 0){
             pros::delay(20);
             timeout -= 20;
+            if(timeout <= 0){
+                break;
+            }
         }
         while(detectExiting() && timeout > 0){
             pros::delay(20);
             timeout -= 20;
+            if(timeout <= 0){
+                break;
+            }
         }
     }
-
     if(timeout > 0){
-        messageStep((char *) "End count");
+        printf("exit by count\n");
     } else {
-        messageStep((char *) "End count by timeout");
+        printf("exit by timeout\n");
     }
+    
 }
 
 

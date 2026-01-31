@@ -76,7 +76,7 @@ pros::Rotation horizontal_rot(16); // port 1, not reversed
 // back tracking wheel encoder  
  
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,2, -0.625); // 2.00" wheel diameter, 1.25" offset from tracking center 
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_rot,2, -1); // 2.00" wheel diameter, 1.25" offset from tracking center 
 // horizontal tracking wheel
 
 /*
@@ -101,19 +101,19 @@ lemlib::ControllerSettings lateral_controller(6,//6, // proportional gain (kP) 6
                                               1, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
                                               3, // large error range, in inches
-                                              500, // large error range timeout, in milliseconds
+                                              300, // large error range timeout, in milliseconds
                                               90 // maximum acceleration (slew)
 ); 
 
 // turning PID
 lemlib::ControllerSettings angular_controller(3, // proportional gain (kP) 4
-                                              0.00181, // integral gain (kI)s 0.00235
+                                              0.001812, // integral gain (kI)s 0.00235
                                               27.02, // derivative gain (kD) 34.021
                                               5.5, // anti windup
-                                              1.5, // small error range, in inches
+                                              2, // small error range, in inches
                                               100, // small error range timeout, in milliseconds
-                                              5, // large error range, in inches
-                                              300, // large error range timeout, in milliseconds
+                                              4, // large error range, in inches
+                                              200, // large error range timeout, in milliseconds
                                               0 // maximum acceleration (slew)
 );
 
