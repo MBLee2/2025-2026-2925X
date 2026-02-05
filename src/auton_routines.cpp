@@ -411,7 +411,7 @@ void auton_60s_skills_1() {
   extendLoader();
   intakeAll(127);
   pros::delay(100);
-  chassis.moveToPoint(46.5, -60, 4000, {.maxSpeed = speed - 5});
+  chassis.moveToPoint(46.5, -60, 4000, {.maxSpeed = speed - 17});
   antiJam = false;
   count_blocks_in(6, 4000);
   chassis.cancelAllMotions();
@@ -426,7 +426,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(23, 23, 4000, {.forwards = false, .maxSpeed = speed});
 
   chassis.turnToPoint(0, 0, 700, {.forwards = false, .maxSpeed = tspeed}, false);
-  chassis.moveToPoint(13, 11.25, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  chassis.moveToPoint(13, 11, 2000, {.forwards = false, .maxSpeed = speed}, false);
   chassis.turnToPoint(0, 0, 300, {.forwards = false, .maxSpeed = tspeed}, false);
   goalDown();
   pros::delay(200);
@@ -437,13 +437,13 @@ void auton_60s_skills_1() {
   stopperUp();
   stopAllIntake();
 
-  chassis.turnToPoint(49, 48, 1000, {.maxSpeed = tspeed});
+  chassis.turnToPoint(49.5, 48, 1000, {.maxSpeed = tspeed});
   goalUp();
-  chassis.moveToPoint(49, 48, 2000, {.maxSpeed = speed}, false);
+  chassis.moveToPoint(49.5, 48, 2000, {.maxSpeed = speed}, false);
   //chassis.setPose(70.125 + distToWallR() * cos(deg2rad(current_pose.theta)), 70.125 + distToWallL() * cos(deg2rad(current_pose.theta)), current_pose.theta);
   pros::delay(30);
   chassis.turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(49, 25, 2000, {.forwards = false, .maxSpeed = speed - 20}, false);
+  chassis.moveToPoint(49.5, 25, 2000, {.forwards = false, .maxSpeed = speed - 32}, false);
   extendLoader();
   antiJam = true;
   intakeAll(127);
@@ -454,7 +454,7 @@ void auton_60s_skills_1() {
   stopperUp();
   clearQueue();
   
-  chassis.moveToPoint(chassis.getPose().x, 57.75, 4000, {.maxSpeed = speed - 20});
+  chassis.moveToPoint(chassis.getPose().x, 57.75, 4000, {.maxSpeed = speed - 32});
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
@@ -474,7 +474,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(chassis.getPose().x, 45, 2000, {.maxSpeed = speed});
   chassis.turnToHeading(-90, 800, {.maxSpeed = tspeed});
   stopAllIntake();
-  chassis.moveToPoint(-44.5, 45, 4000, {.maxSpeed = speed + 12});
+  chassis.moveToPoint(-44.5, 45, 4000, {.maxSpeed = speed});
 
   chassis.turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
   pros::delay(20);
@@ -485,7 +485,7 @@ void auton_60s_skills_1() {
   intakeAll(127);
   pros::delay(100);
 
-  chassis.moveToPoint(-46.5, 61, 4000, {.maxSpeed = speed - 25});
+  chassis.moveToPoint(-46.5, 60.7, 4000, {.maxSpeed = speed - 37});
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
@@ -536,7 +536,7 @@ void auton_60s_skills_1() {
   clearQueue();
 
   extendLoader();
-  chassis.moveToPoint(chassis.getPose().x, -58, 2000, {.maxSpeed = speed - 52});
+  chassis.moveToPoint(chassis.getPose().x, -58, 2000, {.maxSpeed = speed - 64});
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
