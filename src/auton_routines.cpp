@@ -61,9 +61,11 @@ void printPosition(int time) {
 
 void blankAuton() {
   chassis.setPose(0, 0, 0);
-  intakeAll(127);
-  count_blocks_in(1, 100000);
-  stopAllIntake();
+  logging(3, 2);
+  moveToPoint(0, 8, 2000, {}, false);
+  pros::delay(20);
+  end_log();
+
   //chassis.turnToHeading(180, 15000);
   //chassis.turnToHeading(0, 4000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 100});
 }
@@ -391,18 +393,21 @@ void bottomCenter(){
 
 void auton_60s_skills_1() {
   COLOR = true;
-  slowMiddle = true;
   int time = pros::millis();
   float speed = 127;
   int tspeed = (int) speed;
   int temp = 0;
+
+  logging(2, 2);
+
   chassis.setPose(0.5+7.5, -48, 91);
   lemlib::Pose current_pose = chassis.getPose();
   chassis.setPose(current_pose.x, -70.5 + distToWallR() * sin(deg2rad(current_pose.theta)), current_pose.theta);
   pros::delay(30);
+  messageStep((char *) "Start");
 
-  chassis.moveToPoint(46.5, -48, 2000, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 1000, {.maxSpeed = tspeed}, false);
+  moveToPoint(46.5, -48, 2000, {.maxSpeed = speed});
+  turnToHeading(180, 1000, {.maxSpeed = tspeed}, false);
   pros::delay(30);
   current_pose = chassis.getPose();
   chassis.setPose(70.125 + distToWallL() * cos(deg2rad(current_pose.theta)), current_pose.y, current_pose.theta);
@@ -411,56 +416,64 @@ void auton_60s_skills_1() {
   extendLoader();
   intakeAll(127);
   pros::delay(100);
-  chassis.moveToPoint(46.5, -60, 4000, {.maxSpeed = speed - 17});
+  moveToPoint(46.5, -60.5, 4000, {.maxSpeed = speed - 17});
   antiJam = false;
   count_blocks_in(6, 4000);
   chassis.cancelAllMotions();
+  messageStep((char *) "Match Load 1");
   
-  chassis.moveToPoint(chassis.getPose().x -2, -50, 2000, {.forwards = false, .maxSpeed = speed -15}, false);
+  moveToPoint(chassis.getPose().x -2, -50, 2000, {.forwards = false, .maxSpeed = speed -15}, false);
   intakeAll(127);
   retractLoader();
 
   // chassis.turnToPoint(24, -24, 800, {.forwards = false, .maxSpeed = tspeed});
   // chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed});
-  chassis.turnToPoint(24, -40, 800, {.forwards = false, .maxSpeed = tspeed});
-  chassis.moveToPoint(23, 23, 4000, {.forwards = false, .maxSpeed = speed});
+  turnToPoint(24, -40, 800, {.forwards = false, .maxSpeed = tspeed});
+  moveToPoint(23, 23, 4000, {.forwards = false, .maxSpeed = speed});
 
-  chassis.turnToPoint(0, 0, 700, {.forwards = false, .maxSpeed = tspeed}, false);
-  chassis.moveToPoint(13, 11, 2000, {.forwards = false, .maxSpeed = speed}, false);
-  chassis.turnToPoint(0, 0, 300, {.forwards = false, .maxSpeed = tspeed}, false);
+  turnToPoint(0, 0, 700, {.forwards = false, .maxSpeed = tspeed}, false);
+  moveToPoint(13, 11, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  turnToPoint(0, 0, 300, {.forwards = false, .maxSpeed = tspeed}, false);
   goalDown();
   pros::delay(200);
+  messageStep((char *) "Middle Goal 1");
+
   antiJam = false;
   intakeAll(127);
   stopperDown();
-  count_blocks_out(4, 1500);
+  count_blocks_out(4, 1700);
   stopperUp();
   stopAllIntake();
+  slowMiddle = true;
 
-  chassis.turnToPoint(49.5, 48, 1000, {.maxSpeed = tspeed});
+  turnToPoint(49.5, 48, 1000, {.maxSpeed = tspeed});
   goalUp();
-  chassis.moveToPoint(49.5, 48, 2000, {.maxSpeed = speed}, false);
+  moveToPoint(49.5, 48, 2000, {.maxSpeed = speed}, false);
   //chassis.setPose(70.125 + distToWallR() * cos(deg2rad(current_pose.theta)), 70.125 + distToWallL() * cos(deg2rad(current_pose.theta)), current_pose.theta);
   pros::delay(30);
-  chassis.turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
-  chassis.moveToPoint(49.5, 25, 2000, {.forwards = false, .maxSpeed = speed - 32}, false);
+  turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
+  moveToPoint(49.5, 25, 2000, {.forwards = false, .maxSpeed = speed - 32}, false);
   extendLoader();
   antiJam = true;
   intakeAll(127);
   pros::delay(80);
+  messageStep((char *) "Right Long Goal 1");
+
+
   stopperDown();
-  
   count_blocks_out(3, 2000);
   stopperUp();
   clearQueue();
   
-  chassis.moveToPoint(chassis.getPose().x, 57.75, 4000, {.maxSpeed = speed - 32});
+  moveToPoint(chassis.getPose().x, 57.5, 4000, {.maxSpeed = speed - 35});
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
+  messageStep((char *) "Match Load 2");
 
-  chassis.moveToPoint(chassis.getPose().x, 25, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  moveToPoint(chassis.getPose().x, 25, 2000, {.forwards = false, .maxSpeed = speed}, false);
   intakeAll(127);
+  messageStep((char *) "Right Long Goal 2");
   stopperDown();
   current_pose = chassis.getPose();
   count_blocks_out(6, 3000);
@@ -471,12 +484,13 @@ void auton_60s_skills_1() {
 
 
   
-  chassis.moveToPoint(chassis.getPose().x, 45, 2000, {.maxSpeed = speed});
-  chassis.turnToHeading(-90, 800, {.maxSpeed = tspeed});
-  stopAllIntake();
-  chassis.moveToPoint(-44.5, 45, 4000, {.maxSpeed = speed});
+  moveToPoint(chassis.getPose().x, 45, 2000, {.maxSpeed = speed});
 
-  chassis.turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
+  turnToHeading(-90, 800, {.maxSpeed = tspeed});
+  stopAllIntake();
+  moveToPoint(-44.5, 45, 4000, {.maxSpeed = speed});
+
+  turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
   pros::delay(20);
   current_pose = chassis.getPose();
   chassis.setPose(-70.5 + distToWallL() * cos(deg2rad(current_pose.theta)), current_pose.y, current_pose.theta);
@@ -485,12 +499,13 @@ void auton_60s_skills_1() {
   intakeAll(127);
   pros::delay(100);
 
-  chassis.moveToPoint(-46.5, 61.5, 4000, {.maxSpeed = speed - 37});
+  moveToPoint(-46.5, 61.5, 4000, {.maxSpeed = speed - 37});
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
+  messageStep((char *) "Match Load 3");
 
-  chassis.moveToPoint(-46.5, 50, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  moveToPoint(-46.5, 50, 2000, {.forwards = false, .maxSpeed = speed}, false);
   retractLoader();
 
   // chassis.turnToPoint(-24, 24, 1000, {.forwards = false, .maxSpeed = tspeed});
@@ -509,6 +524,7 @@ void auton_60s_skills_1() {
   chassis.turnToPoint(0, 0, 1000, {.forwards = false, .maxSpeed = tspeed});
   goalDown();
   pros::delay(50);
+  messageStep((char *) "Middle Goal 2");
 
   intakeAll(127);
   stopperDown();
@@ -530,6 +546,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(-48.5, -24, 2000, {.forwards = false, .maxSpeed = speed}, false);
   intakeAll(127);
   stopperDown();
+  messageStep((char *) "Left Long Goal 1");
 
   count_blocks_out(3, 1200);
   stopperUp();
@@ -540,10 +557,12 @@ void auton_60s_skills_1() {
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
+  messageStep((char *) "Match Load 4");
 
   chassis.moveToPoint(chassis.getPose().x, -24, 2000, {.forwards = false, .maxSpeed = speed}, false);
   intakeAll(127);
   stopperDown();
+  messageStep((char *) "Left Long Goal 2");
   count_blocks_out(6, 4000);
   clearQueue();
   retractLoader();
@@ -553,6 +572,7 @@ void auton_60s_skills_1() {
   chassis.moveToPoint(-24, -63, 2000, {.maxSpeed = speed, .minSpeed = 30, .earlyExitRange = 2});
   chassis.moveToPoint(2, -64, 4000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1});
   chassis.moveToPoint(0, -64, 2000, {.forwards = false});
+  messageStep((char *) "Park");
 
 
   master.clear_line(0);

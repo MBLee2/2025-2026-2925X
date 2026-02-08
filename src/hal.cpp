@@ -95,7 +95,7 @@ void spinScoring(int speed) {
 }
 
 void spinScoringSlow(){
-    spinScoring(80);
+    spinScoring(60);
 }
 
 void toggleSlowMiddle() {
@@ -703,12 +703,12 @@ void onEnterIntake(){
         if(detectIntaking()){
             bool color = detectRed(hue);
             if(color){
-                messageStep((char *) "Enter red");
-                printf("Enter red %i\n", hue);
+                //messageStep((char *) "Enter red");
+                //printf("Enter red %i\n", hue);
                 addRed(); //Add to queue as upcoming
             } else {
-                messageStep((char *) "Enter blue");
-                printf("Enter blue %i, %i\n", hue, getLowIntakeDist());
+                //messageStep((char *) "Enter blue");
+                //printf("Enter blue %i, %i\n", hue, getLowIntakeDist());
                 addBlue(); //Add to queue as upcoming
             }
 
@@ -716,7 +716,7 @@ void onEnterIntake(){
                 pros::delay(20);
             }
 
-            printQueue();
+            //printQueue();
         }
         
     }
@@ -731,10 +731,10 @@ void onExitIntake(){
             counter += 10;
         }
         if(current_intake == INTAKE){
-            messageStep((char *) "Exit block");
-            printf("Exit %s\n", (queueFront()) ? "Red" : "Blue");
+            //messageStep((char *) "Exit block");
+            //printf("Exit %s\n", (queueFront()) ? "Red" : "Blue");
             removeQueue();
-            printQueue();
+            //printQueue();
         }
     } else if(current_intake == OUTAKE && !queueEmpty())
     {
@@ -747,16 +747,16 @@ void onExitIntake(){
             }
 
             if(color){
-                messageStep((char *) "Exit red");
-                printf("Exit red %i\n", hue);
+                //messageStep((char *) "Exit red");
+                //printf("Exit red %i\n", hue);
                 removeQueueBack(); //Add to queue as upcoming
             } else {
-                messageStep((char *) "Exit blue");
-                printf("Exit blue %i\n", hue);
+                //messageStep((char *) "Exit blue");
+                //printf("Exit blue %i\n", hue);
                 removeQueueBack(); //Add to queue as upcoming
             }
 
-            printQueue();
+            //printQueue();
         }
     }
 }
@@ -799,9 +799,9 @@ void count_blocks_in(int num, int timeout){
         }
     }
     if(timeout > 0){
-        printf("exit by count\n");
+        messageStep((char *) "Exit by Count");
     } else {
-        printf("exit by timeout\n");
+        messageStep((char *) "Exit by Timeout");
     }
 }
 
@@ -825,9 +825,9 @@ void count_blocks_out(int num, int timeout){
         }
     }
     if(timeout > 0){
-        printf("exit by count\n");
+        messageStep((char *) "Exit by Count");
     } else {
-        printf("exit by timeout\n");
+        messageStep((char *) "Exit by Timeout");
     }
     
 }
@@ -1144,43 +1144,51 @@ void outakeFor(float speed, float degrees) {
 //Logging
 
 int start_time;
+int data_range;
 void log_data(char* message, int data_range){
     lemlib::Pose temp_pose = chassis.getPose();
-    printf("%s, %d, %f, %f, %f", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+    printf("%s; %d; (%.2f, %.2f, %.2f)", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
     if(data_range > 1){
-        printf(", (N/A, N/A, N/A), (N/A, N/A, N/A)");
+        printf("; (N/A, N/A, N/A); (N/A, N/A, N/A)");
     }
     if(data_range > 2){
-        printf(", %f, %f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
+        printf("; %.2f; %.2f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
     }
     if(data_range > 3){
-        printf(", %f", intake.get_actual_velocity());
+        printf("; %.2f", intake.get_actual_velocity());
     }
     printf(";\n");
+    pros::delay(10);
 }
 
 void log_data(char* message, int data_range, lemlib::Pose expected_pose){
     lemlib::Pose temp_pose = chassis.getPose();
-    printf("%s, %d, (%f, %f, %f)", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
+    printf("%s; %d; (%.2f, %.2f, %.2f)", message, pros::millis() - start_time, temp_pose.x, temp_pose.y, temp_pose.theta);
     if(data_range > 1){
-        printf(", (%f, %f, %f)", expected_pose.x, expected_pose.y, expected_pose.theta);
+        printf("; (%.2f, %.2f, %.2f)", expected_pose.x, expected_pose.y, expected_pose.theta);
         lemlib::Pose diff = temp_pose - expected_pose;
-        printf(", (%f, %f, %f)", diff.x, diff.y, diff.theta);
+        printf("; (%.2f, %.2f, %.2f)", diff.x, diff.y, diff.theta);
     }
     if(data_range > 2){
-        printf(", %f, %f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
+        printf("; %.2f; %.2f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
     }
     if(data_range > 3){
-        printf(", %f", intake.get_actual_velocity());
+        printf("; %.2f", intake.get_actual_velocity());
     }
     printf(";\n");
+    pros::delay(10);
 }
 
 char* step_message;
 lemlib::Pose step_pose = lemlib::Pose(0, 0, 0);
-void logStep(int data_range){
+void logStep(){
     if(strcmp(step_message, "") != 0){
-        log_data(step_message, data_range);
+        if(step_pose.distance(lemlib::Pose(0, 0, 0)) == 0){
+            log_data(step_message, data_range);
+        } else {
+            log_data(step_message, data_range, step_pose);
+            step_pose = lemlib::Pose(0, 0, 0);
+        }
         step_message = (char *) "";
     }
 }
@@ -1202,10 +1210,7 @@ enum motion {
 motion prev_motion = STOPPED;
 motion curr_motion = STOPPED;
 lemlib::Pose final_pose = lemlib::Pose(0, 0, 0);
-void logMove(int data_range){
-    if(!chassis.isInMotion() && curr_motion != STOPPED){
-        curr_motion = STOPPED;
-    }
+void logMove(){
     if(prev_motion != curr_motion){
         if(curr_motion == MOVING){
             log_data((char *) "Move started", data_range);
@@ -1213,61 +1218,80 @@ void logMove(int data_range){
             log_data((char *) "Turn started", data_range);
         } else {
             log_data((char *) "Move complete", data_range, final_pose);
+            final_pose = lemlib::Pose(0, 0, 0);
         }
         prev_motion = curr_motion;
     }
 }
 
 void moveToPoint(float x, float y, float timeout, lemlib::MoveToPointParams params, bool async){
-    chassis.moveToPoint(x, y, timeout, params, async);
     final_pose = lemlib::Pose(x, y, chassis.getPose().theta);
     curr_motion = MOVING;
+    chassis.moveToPoint(x, y, timeout, params, async);
+    if(async){
+        pros::delay(20);
+    }
 }
 void turnToHeading(float theta, float timeout, lemlib::TurnToHeadingParams params, bool async){
-    chassis.turnToHeading(theta, timeout, params, async);
     final_pose = lemlib::Pose(chassis.getPose().x, chassis.getPose().y, theta);
     curr_motion = TURNING;
+    chassis.turnToHeading(theta, timeout, params, async);
+    if(async){
+        pros::delay(20);
+    }
 }
 void turnToPoint(float x, float y, float timeout, lemlib::TurnToPointParams params, bool async){
-    chassis.turnToPoint(x, y, timeout, params, async);
     lemlib::Pose temp_pose = chassis.getPose();
     final_pose = lemlib::Pose(temp_pose.x, temp_pose.y, temp_pose.angle(lemlib::Pose(x, y)));
     curr_motion = TURNING;
+    chassis.turnToPoint(x, y, timeout, params, async);
+    if(async){
+        pros::delay(20);
+    }
 }
 
-const int tick_length = 500;
-void logTick(int data_range){
+const int tick_length = 1000;
+void logTick(){
     if(floor(((pros::millis() - start_time) % tick_length) / 10) == 0){
         log_data((char *) "Tick " + ((pros::millis() - start_time) / tick_length), data_range);
     }
 }
 
 bool logging_data = false;
-void (*function_pointers[])(int) = {&logStep, &logMove, &logTick};
-void logging(int range, int data_range){
+void (*function_pointers[])() = {&logStep, &logMove, &logTick};
+void logging(int range, int data){
     step_message = (char *) "";
-    printf("Message, Time, Position");
+    data_range = data;
+    printf("Message; Time; Position");
     if(data_range > 1) { 
-        printf(", Expected Position, Error");
+        printf("; Expected Position, Error");
     }
     if(data_range > 2){
-        printf(", Left Speed, Right Speed");
+        printf("; Left Speed, Right Speed");
     }
     if(data_range > 3){
-        printf(", Intake Speed");
+        printf("; Intake Speed");
     }
-    printf(";\n");
+    printf("\n");
 
     pros::Task log_task([=]{
         logging_data = true;
         start_time = pros::millis();
         while(logging_data){
             for(int i = 0; i < range; i++){
-                function_pointers[i](data_range);
+                function_pointers[i]();
             }
-            pros::delay(10);
+            pros::delay(5);
         }
         
+    });
+    pros::Task move_check([=] {
+        while(logging_data){
+            if(chassis.isInMotion()){
+                chassis.waitUntilDone();
+                curr_motion = STOPPED;
+            }
+        }
     });
 }
 

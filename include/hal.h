@@ -259,9 +259,9 @@ float RAbsPosition(Direction Wall);
 void logging(int range, int data_range = 1);
 void messageStep(char* message);
 void messageStep(char* message, lemlib::Pose pose);
-void moveToPoint(float x, float y, float timeout, lemlib::MoveToPointParams params, bool async);
-void turnToHeading(float theta, float timeout, lemlib::TurnToHeadingParams params, bool async);
-void turnToPoint(float x, float y, float timeout, lemlib::TurnToPointParams params, bool async);
+void moveToPoint(float x, float y, float timeout, lemlib::MoveToPointParams params = {}, bool async = true);
+void turnToHeading(float theta, float timeout, lemlib::TurnToHeadingParams params = {}, bool async = true);
+void turnToPoint(float x, float y, float timeout, lemlib::TurnToPointParams params = {}, bool async = true);
 void end_log();
 
 /*********************** END OF USED FUNCTIONS ***********************/
