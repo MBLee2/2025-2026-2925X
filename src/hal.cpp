@@ -1167,7 +1167,7 @@ void log_data(char* message, int data_range, lemlib::Pose expected_pose){
     if(data_range > 1){
         printf("; (%.2f, %.2f, %.2f)", expected_pose.x, expected_pose.y, expected_pose.theta);
         lemlib::Pose diff = temp_pose - expected_pose;
-        printf("; (%.2f, %.2f, %.2f)", diff.x, diff.y, diff.theta);
+        printf("; (%.2f, %.2f, %.2f)", diff.x, diff.y, temp_pose.theta - expected_pose.theta);
     }
     if(data_range > 2){
         printf("; %.2f; %.2f", left_side_motors.get_actual_velocity(), right_side_motors.get_actual_velocity());
@@ -1210,44 +1210,47 @@ enum motion {
 motion prev_motion = STOPPED;
 motion curr_motion = STOPPED;
 lemlib::Pose final_pose = lemlib::Pose(0, 0, 0);
+
+std::queue<motion> motion_queue;
+std::queue<lemlib::Pose> pose_queue;
 void logMove(){
     if(prev_motion != curr_motion){
         if(curr_motion == MOVING){
             log_data((char *) "Move started", data_range);
+            final_pose = lemlib::Pose(pose_queue.front().x, pose_queue.front().y, chassis.getPose().theta);
+            pose_queue.pop();
         } else if (curr_motion == TURNING){
             log_data((char *) "Turn started", data_range);
+            final_pose = lemlib::Pose(chassis.getPose().x, chassis.getPose().y, pose_queue.front().theta);
+            pose_queue.pop();
         } else {
             log_data((char *) "Move complete", data_range, final_pose);
-            final_pose = lemlib::Pose(0, 0, 0);
         }
         prev_motion = curr_motion;
     }
 }
 
 void moveToPoint(float x, float y, float timeout, lemlib::MoveToPointParams params, bool async){
-    final_pose = lemlib::Pose(x, y, chassis.getPose().theta);
-    curr_motion = MOVING;
+    // final_pose = lemlib::Pose(x, y, chassis.getPose().theta);
+    // curr_motion = MOVING;
+    motion_queue.push(MOVING);
+    pose_queue.push(lemlib::Pose(x, y, chassis.getPose().theta));
     chassis.moveToPoint(x, y, timeout, params, async);
-    if(async){
-        pros::delay(20);
-    }
 }
 void turnToHeading(float theta, float timeout, lemlib::TurnToHeadingParams params, bool async){
-    final_pose = lemlib::Pose(chassis.getPose().x, chassis.getPose().y, theta);
-    curr_motion = TURNING;
+    // final_pose = lemlib::Pose(chassis.getPose().x, chassis.getPose().y, theta);
+    // curr_motion = TURNING;
+    motion_queue.push(TURNING);
+    pose_queue.push(lemlib::Pose(chassis.getPose().x, chassis.getPose().y, theta));
     chassis.turnToHeading(theta, timeout, params, async);
-    if(async){
-        pros::delay(20);
-    }
 }
 void turnToPoint(float x, float y, float timeout, lemlib::TurnToPointParams params, bool async){
     lemlib::Pose temp_pose = chassis.getPose();
-    final_pose = lemlib::Pose(temp_pose.x, temp_pose.y, temp_pose.angle(lemlib::Pose(x, y)));
-    curr_motion = TURNING;
+    // final_pose = lemlib::Pose(temp_pose.x, temp_pose.y, temp_pose.angle(lemlib::Pose(x, y)));
+    // curr_motion = TURNING;
+    motion_queue.push(TURNING);
+    pose_queue.push(lemlib::Pose(temp_pose.x, temp_pose.y, temp_pose.angle(lemlib::Pose(x, y))));
     chassis.turnToPoint(x, y, timeout, params, async);
-    if(async){
-        pros::delay(20);
-    }
 }
 
 const int tick_length = 1000;
@@ -1285,11 +1288,14 @@ void logging(int range, int data){
         }
         
     });
-    pros::Task move_check([=] {
+    pros::Task check_motion([=]{
         while(logging_data){
             if(chassis.isInMotion()){
+                curr_motion = motion_queue.front();
+                motion_queue.pop();
                 chassis.waitUntilDone();
                 curr_motion = STOPPED;
+                pros::delay(15);
             }
         }
     });
