@@ -151,36 +151,24 @@ void topWP() {
  */
 
 void bottomWP(){
-  //DONT USE PLEASE
   int time = pros::millis();
-  int tspeed = 100;
+  int tspeed = 127;
   float speed = (float) tspeed;
   //startSorting();
   setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(8.5, -48.25, 90);
-  chassis.moveToPoint(48, -48, 2000, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed}, false);
-  extendLoader();
+  chassis.setPose(15.5, -70.5 + distToWallB(), 0);
+  goalUp();
   intakeAll(127);
-  pros::delay(200);
-  chassis.moveToPoint(chassis.getPose().x, -63, 2000, {.maxSpeed = speed - 30});
-  chassis.moveToPoint(48, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
-  retractLoader();
+  chassis.moveToPoint(15.5, -37, 1500, {.maxSpeed = speed});
+  chassis.turnToPoint(24, -22, 1000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(24, -22, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(0, 0, 1000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(13, -13, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(0, 0, 500, {.maxSpeed = tspeed});
 
-  chassis.moveToPoint(-48, -32, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
-  stopperDown();
-  setScoringTrue();
-  pros::delay(3000);
-  chassis.moveToPoint(48, -48, 2000, {.forwards = false, .maxSpeed = speed}, false);
-  chassis.turnToPoint(24, -24, 2000, {.forwards = true, .maxSpeed = tspeed}, false);
-  intakeAll(127);
-  chassis.moveToPoint(24, -24, 2000, {.forwards = true, .maxSpeed = speed}, false);
-  pros::delay(100);
-  chassis.moveToPoint(16, -16, 2000, {.forwards = true, .maxSpeed = speed}, false);
-  outakeAll(60);
-  pros::delay(15000);
+  outakeAll(127);
 
 
   // chassis.setPose(8, -49, 30);
@@ -272,7 +260,7 @@ void longGoalLeft(){
 
 void longGoalRight(){
   int time = pros::millis();
-  int tspeed = 100;
+  int tspeed = 127;
   float speed = (float) tspeed;
   //startSorting();
   setScoringFalse();
@@ -281,21 +269,27 @@ void longGoalRight(){
   chassis.setPose(15.5, -70.5 + distToWallB(), 0);
   goalUp();
   intakeAll(127);
-  chassis.moveToPoint(15.5, -35, 2000, {.maxSpeed = speed});
-  chassis.turnToPoint(24, -24, 2000, {.maxSpeed = tspeed});
-  chassis.moveToPoint(23, -24, 2000, {.maxSpeed = speed - 60});
-  chassis.turnToPoint(47.5, -48, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(15.5, -38, 1500, {.maxSpeed = speed});
+  chassis.turnToPoint(24, -22, 1000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(24, -18, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(46, -48, 1000, {.maxSpeed = tspeed});
   stopAllIntake();
-  chassis.moveToPoint(47.5, -48, 2000, {.maxSpeed = speed});
-  chassis.turnToHeading(180, 2000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(46, -48, 2000, {.maxSpeed = speed});
+  chassis.turnToHeading(180, 1400, {.maxSpeed = tspeed});
   extendLoader();
   intakeAll(127);
-  chassis.moveToPoint(47.5, -59.5, 2000, {.maxSpeed = speed - 30}, false);
+  chassis.moveToPoint(46, -59.5, 1000, {.maxSpeed = speed - 30}, false);
   count_blocks_in(2, 700);
   stopAllIntake();
-  chassis.moveToPoint(47.5, -28.5, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
+  chassis.moveToPoint(46, -28.5, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
   intakeAll(127);
   stopperDown();
+  count_blocks_out(6, 1500);
+  retractLoader();
+  chassis.moveToPoint(46, -48, 2000, {.maxSpeed = speed}, false);
+  chassis.turnToPoint(24, -48, 1000, {.forwards = false, .maxSpeed = tspeed});
+  descoreDown();
+  chassis.moveToPoint(35.5, 20, 1700, {.forwards = false, .maxSpeed = speed - 70}, false);
 
 
   end_log();
@@ -359,29 +353,23 @@ void topCenter(){
  */
 void bottomCenter(){
   int time = pros::millis();
-  int tspeed = 80;
+  int tspeed = 127;
   float speed = (float) tspeed;
-
   //startSorting();
-  //setScoringFalse();
+  setScoringFalse();
   addToQueue(COLOR);
 
-  chassis.setPose(16.5, -52.425, 90);
-  logging(3);
-
-  chassis.moveToPoint(24, -52.3, 2000, {.maxSpeed = speed});
-  chassis.turnToPoint(24, -24, 2000, {.maxSpeed = tspeed});
-  stopperUp();
-  pros::delay(500);
+  chassis.setPose(15.5, -70.5 + distToWallB(), 0);
+  goalUp();
   intakeAll(127);
+  chassis.moveToPoint(15.5, -38, 1500, {.maxSpeed = speed});
+  chassis.turnToPoint(24, -22, 1000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(24, -18, 2000, {.maxSpeed = speed - 60});
+  chassis.turnToPoint(0, 0, 1000, {.maxSpeed = tspeed});
+  chassis.moveToPoint(16, -16, 2000, {.maxSpeed = speed});
+  chassis.turnToPoint(0, 0, 500, {.maxSpeed = tspeed});
 
-  chassis.moveToPoint(24, -32, 2000, {.maxSpeed = speed});
-  chassis.moveToPoint(24, -25.5, 2000, {.maxSpeed = 30}, false);
-  pros::delay(300);
-  chassis.turnToPoint(1, 0, 1000, {.maxSpeed = tspeed});
-
-  chassis.moveToPoint(15, -18.5, 2000, {.maxSpeed = speed - 20}, false);
-  outakeAll(100);
+  outakeAll(127);
 
   //*/
   master.clear_line(0);
