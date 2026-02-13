@@ -402,9 +402,9 @@ void auton_60s_skills_1() {
 
   goalUp();
   extendLoader();
-  intakeAll(127);
+  intakeAll(110);
   pros::delay(100);
-  moveToPoint(46.5, -60.75, 2500, {.maxSpeed = speed - 17});
+  moveToPoint(46.5, -60.5, 2300, {.maxSpeed = speed - 17});
   antiJam = false;
   count_blocks_in(6, 3000);
   chassis.cancelAllMotions();
@@ -417,21 +417,23 @@ void auton_60s_skills_1() {
   // chassis.turnToPoint(24, -24, 800, {.forwards = false, .maxSpeed = tspeed});
   // chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed});
   turnToPoint(24, -40, 800, {.forwards = false, .maxSpeed = tspeed});
-  moveToPoint(23, 23, 4000, {.forwards = false, .maxSpeed = speed});
+  moveToPoint(23, 22.5, 4000, {.forwards = false, .maxSpeed = speed}, false);
 
   turnToPoint(0, 0, 700, {.forwards = false, .maxSpeed = tspeed}, false);
-  moveToPoint(13.5, 11.5, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  moveToPoint(13.75, 11.25, 2000, {.forwards = false, .maxSpeed = speed}, false);
   turnToPoint(0, 0, 300, {.forwards = false, .maxSpeed = tspeed}, false);
   goalDown();
   pros::delay(200);
-  messageStep((char *) "Middle Goal 1", lemlib::Pose(13.5, 11.5, 45));
+  messageStep((char *) "Middle Goal 1", lemlib::Pose(13.75, 11.25, 45));
+  return;
 
   antiJam = false;
   slowMiddle = false;
   intakeAll(127);
   stopperDown();
   count_blocks_out(3, 2000);
-  pros::delay(150);
+  spinScoring(80);
+  count_blocks_out(1, 400);
   stopperUp();
   stopAllIntake();
   slowMiddle = true;
@@ -467,7 +469,7 @@ void auton_60s_skills_1() {
   current_pose = chassis.getPose();
   count_blocks_out(5, 3000);
   spinScoring(80);
-  pros::delay(150);
+  count_blocks_out(1, 400);
   clearQueue();
   retractLoader();
   //chassis.setPose(70.5 - distToWallR() * cos(deg2rad(current_pose.theta)), current_pose.y, current_pose.theta);
@@ -490,7 +492,7 @@ void auton_60s_skills_1() {
   intakeAll(127);
   pros::delay(100);
 
-  moveToPoint(-46.5, 61, 2500, {.maxSpeed = speed - 37});
+  moveToPoint(-46.5, 60, 2500, {.maxSpeed = speed - 37});
   antiJam = false;
   count_blocks_in(6, 3000); 
   chassis.cancelAllMotions();
@@ -503,15 +505,15 @@ void auton_60s_skills_1() {
   // chassis.moveToPoint(-24, 24, 2000, {.forwards = false, .maxSpeed = speed});
 
   chassis.turnToPoint(-24, 40, 800, {.forwards = false, .maxSpeed = tspeed});
-  chassis.moveToPoint(-24, -21, 4000, {.forwards = false, .maxSpeed = speed}, false);
+  chassis.moveToPoint(-24, -23, 4000, {.forwards = false, .maxSpeed = speed}, false);
 
   current_pose = chassis.getPose();
   chassis.setPose(current_pose.x, -70.5 + distToWallB() * cos(deg2rad(current_pose.theta)), current_pose.theta);
   pros::delay(20);
 
-  chassis.turnToPoint(-14.75, -9.5, 1000, {.forwards = false, .maxSpeed = tspeed});
+  chassis.turnToPoint(-16.75, -12.5, 1000, {.forwards = false, .maxSpeed = tspeed});
 
-  chassis.moveToPoint(-15.5, -11.25, 1500, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(-17.5, -13.25, 1500, {.forwards = false, .maxSpeed = speed});
   chassis.turnToPoint(0, 0, 1000, {.forwards = false, .maxSpeed = tspeed});
   goalDown();
   pros::delay(50);
@@ -546,9 +548,7 @@ void auton_60s_skills_1() {
   extendLoader();
   chassis.moveToPoint(chassis.getPose().x, -59, 2500, {.maxSpeed = speed - 64});
   antiJam = false;
-  count_blocks_in(5, 3000);
-  spinScoring(80);
-  pros::delay(150);
+  count_blocks_in(6, 3000);
   chassis.cancelAllMotions();
   messageStep((char *) "Match Load 4");
 
@@ -556,15 +556,17 @@ void auton_60s_skills_1() {
   intakeAll(127);
   stopperDown();
   messageStep((char *) "Left Long Goal 2");
-  count_blocks_out(6, 4000);
+  count_blocks_out(5, 4000);
+  spinScoring(80);
+  count_blocks_out(1, 500);
   clearQueue();
   retractLoader();
   outakeAll(127);
 
   moveToPoint(-48.5, -48, 2000, {.maxSpeed = speed});
   moveToPoint(-24, -63, 2000, {.maxSpeed = speed, .minSpeed = 30, .earlyExitRange = 2});
-  moveToPoint(1, -64, 4000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1});
-  moveToPoint(-0.5, -64, 2000, {.forwards = false});
+  moveToPoint(-1, -64, 4000, {.maxSpeed = 127, .minSpeed = 80, .earlyExitRange = 1});
+  moveToPoint(-2.5, -64, 2000, {.forwards = false});
   messageStep((char *) "Park");
 
 

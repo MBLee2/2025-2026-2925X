@@ -148,7 +148,7 @@ lemlib::Chassis chassis(drivetrain,
         dashboard_motor_display {215, 135, "DB-LB", lb},
         dashboard_motor_display {215, 190, "DB-RB",  rb},
         dashboard_motor_display {320, 135, "Intake", intake},
-        dashboard_motor_display {320, 190, "Intake2", intake}
+        dashboard_motor_display {320, 190, "Intake2", intake2}
         
         
     };
