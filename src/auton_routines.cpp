@@ -420,12 +420,11 @@ void auton_60s_skills_1() {
   moveToPoint(23, 22.5, 4000, {.forwards = false, .maxSpeed = speed}, false);
 
   turnToPoint(0, 0, 700, {.forwards = false, .maxSpeed = tspeed}, false);
-  moveToPoint(13.75, 11.25, 2000, {.forwards = false, .maxSpeed = speed}, false);
+  moveToPoint(13.6, 11.1, 2000, {.forwards = false, .maxSpeed = speed}, false);
   turnToPoint(0, 0, 300, {.forwards = false, .maxSpeed = tspeed}, false);
   goalDown();
   pros::delay(200);
-  messageStep((char *) "Middle Goal 1", lemlib::Pose(13.75, 11.25, 45));
-  return;
+  messageStep((char *) "Middle Goal 1", lemlib::Pose(13.6, 11.1, 45));
 
   antiJam = false;
   slowMiddle = false;
@@ -456,7 +455,7 @@ void auton_60s_skills_1() {
   stopperUp();
   clearQueue();
   
-  moveToPoint(chassis.getPose().x, 58, 4000, {.maxSpeed = speed - 35});
+  moveToPoint(chassis.getPose().x, 57.8, 4000, {.maxSpeed = speed - 35});
   antiJam = false;
   count_blocks_in(6, 4000); 
   chassis.cancelAllMotions();
@@ -513,7 +512,7 @@ void auton_60s_skills_1() {
 
   chassis.turnToPoint(-16.75, -12.5, 1000, {.forwards = false, .maxSpeed = tspeed});
 
-  chassis.moveToPoint(-17.5, -13.25, 1500, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(-17, -12.75, 1500, {.forwards = false, .maxSpeed = speed});
   chassis.turnToPoint(0, 0, 1000, {.forwards = false, .maxSpeed = tspeed});
   goalDown();
   pros::delay(50);
