@@ -61,10 +61,11 @@ void printPosition(int time) {
 
 void blankAuton() {
   chassis.setPose(0, 0, 0);
-  logging(3, 2);
-  moveToPoint(0, 8, 2000, {}, false);
-  pros::delay(20);
-  end_log();
+  chassis.moveToPoint(0, 3, 2000);
+  // logging(3, 2);
+  // moveToPoint(0, 8, 2000, {}, false);
+  // pros::delay(20);
+  // end_log();
 
   //chassis.turnToHeading(180, 15000);
   //chassis.turnToHeading(0, 4000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 100});
@@ -413,6 +414,7 @@ void auton_60s_skills_1() {
   moveToPoint(chassis.getPose().x -2, -50, 2000, {.forwards = false, .maxSpeed = speed -15}, false);
   intakeAll(127);
   retractLoader();
+  descoreUp();
 
   // chassis.turnToPoint(24, -24, 800, {.forwards = false, .maxSpeed = tspeed});
   // chassis.moveToPoint(24, -24, 2000, {.forwards = false, .maxSpeed = speed});
