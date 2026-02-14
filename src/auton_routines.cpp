@@ -446,7 +446,7 @@ void auton_60s_skills_1() {
   moveToPoint(49.5, 25, 2000, {.forwards = false, .maxSpeed = speed - 32}, false);
   extendLoader();
   antiJam = true;
-  intakeAll(127);
+  intakeAll(120);
   messageStep((char *) "Right Long Goal 1");
 
 
@@ -491,7 +491,7 @@ void auton_60s_skills_1() {
   intakeAll(127);
   pros::delay(100);
 
-  moveToPoint(-46.5, 60.35, 3000, {.maxSpeed = speed - 37});
+  moveToPoint(-46.5, 60.55, 3000, {.maxSpeed = speed - 37});
   antiJam = false;
   count_blocks_in(6, 3000); 
   chassis.cancelAllMotions();
