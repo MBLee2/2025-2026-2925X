@@ -95,7 +95,7 @@ void spinScoring(int speed) {
 }
 
 void spinScoringSlow(){
-    spinScoring(60);
+    spinScoring(70);
 }
 
 void toggleSlowMiddle() {
