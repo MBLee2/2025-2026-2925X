@@ -94,27 +94,27 @@ lemlib::OdomSensors sensors(
 );  
  
 // forward/backward PID
-lemlib::ControllerSettings lateral_controller(6,//6, // proportional gain (kP) 6.8
-                                              0.0008,//0.0008, // integral gain (kI)
+lemlib::ControllerSettings lateral_controller(5.7,//6, // proportional gain (kP) 6.8
+                                              0.0052,//0.0008, // integral gain (kI)
                                               35,//35,// derivative gain (kD) 30
-                                              0, // anti windupx
-                                              1, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              3, // large error range, in inches
-                                              300, // large error range timeout, in milliseconds
-                                              90 // maximum acceleration (slew)
+                                              3, // anti windupx
+                                              0.3, // small error range, in inches
+                                              50, // small error range timeout, in milliseconds
+                                              1.2, // large error range, in inches
+                                              120, // large error range timeout, in milliseconds
+                                              70 // maximum acceleration (slew)
 ); 
 
 // turning PID
 lemlib::ControllerSettings angular_controller(3, // proportional gain (kP) 4
-                                              0.001812, // integral gain (kI)s 0.00235
-                                              27.02, // derivative gain (kD) 34.021
+                                              0.01, // integral gain (kI)s 0.00235
+                                              23, // derivative gain (kD) 34.021
                                               5.5, // anti windup
-                                              2, // small error range, in inches
-                                              100, // small error range timeout, in milliseconds
-                                              4, // large error range, in inches
-                                              200, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+                                              0.5, // small error range, in inches
+                                              80, // small error range timeout, in milliseconds
+                                              1.5, // large error range, in inches
+                                              150, // large error range timeout, in milliseconds
+                                              40 // maximum acceleration (slew)
 );
 
 // input curve for throttle input during driver control

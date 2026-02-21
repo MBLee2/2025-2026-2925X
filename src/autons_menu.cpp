@@ -48,7 +48,7 @@ std::vector<auton_menu_button> button_list = {
                       skills_1},
     auton_menu_button{{245, 180, 460, 230, pros::c::COLOR_BEIGE,
                        pros::c::COLOR_WHITE_SMOKE, "NULL", pros::E_TEXT_MEDIUM},
-                      null_routine}};
+                      skills_2}};
 
 std::vector<auton_menu_button> color_list = {
     auton_menu_button{{15, 50, 230, 210, COLOR_RED,
