@@ -66,8 +66,6 @@ void test() {
 }
 
 void blankAuton() {
-  auton_60s_skills_1();
-  return;
   chassis.setPose(0, 0, 0);
   chassis.moveToPoint(0, 5, 2000);
   // logging(3, 2);
@@ -288,17 +286,18 @@ void longGoalRight(){
   extendLoader();
   intakeAll(127);
   chassis.moveToPoint(46, -59.5, 1000, {.maxSpeed = speed - 30}, false);
-  count_blocks_in(2, 700);
+  count_blocks_in(2, 500);
   stopAllIntake();
-  chassis.moveToPoint(46, -27, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
+  chassis.moveToPoint(46, -26, 1500, {.forwards = false, .maxSpeed = speed - 40}, false);
   intakeAll(127);
   stopperDown();
   count_blocks_out(6, 1500);
   retractLoader();
+  intakeAll(0);
   chassis.moveToPoint(46, -48, 2000, {.maxSpeed = speed}, false);
   chassis.turnToPoint(24, -48, 1000, {.forwards = false, .maxSpeed = tspeed});
   descoreDown();
-  chassis.moveToPoint(36, -10, 1700, {.forwards = false, .maxSpeed = speed - 70}, false);
+  chassis.moveToPoint(36, -8, 1700, {.forwards = false, .maxSpeed = speed - 30}, false);
 
 
   end_log();
@@ -415,7 +414,7 @@ void auton_60s_skills_1() {
   pros::delay(100);
   moveToPoint(47, -59.1, 2500, {.maxSpeed = speed - 30});
   antiJam = false;
-  count_blocks_in(6, 3000);
+  count_blocks_in(6, 3300);
   chassis.cancelAllMotions();
   messageStep((char *) "Match Load 1", lemlib::Pose(48, -60, 180));
   
@@ -429,7 +428,7 @@ void auton_60s_skills_1() {
   moveToPoint(22, 22, 2000, {.forwards = false, .maxSpeed = speed}, false);
 
   turnToPoint(-0.25, 0.25, 700, {.forwards = false, .maxSpeed = tspeed}, false);
-  moveToPoint(13.35, 12.45, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.2}, false);
+  moveToPoint(13.35, 12.35, 2000, {.forwards = false, .maxSpeed = speed, .minSpeed = 12, .earlyExitRange = 0.2}, false);
   turnToPoint(0, -0.5, 300, {.forwards = false, .maxSpeed = tspeed}, false);
   goalDown();
   pros::delay(70);
@@ -454,29 +453,31 @@ void auton_60s_skills_1() {
   //chassis.setPose(70.125 + distToWallR() * cos(deg2rad(current_pose.theta)), 70.125 + distToWallL() * cos(deg2rad(current_pose.theta)), current_pose.theta);
   pros::delay(30);
   turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
-  moveToPoint(48.5, 25, 1000, {.forwards = false, .maxSpeed = speed - 32}, false);
+  moveToPoint(48.5, 25.5, 1000, {.forwards = false, .maxSpeed = speed - 32}, false);
   extendLoader();
   intakeAll(115);
   messageStep((char *) "Right Long Goal 1");
 
 
   stopperDown();
-  spinScoring(90);
+  spinScoring(80);
   count_blocks_out(3, 2000);
   stopperUp();
   clearQueue();
   
-  moveToPoint(chassis.getPose().x - 0.5, 58.4, 2700, {.maxSpeed = speed - 55});
+  moveToPoint(chassis.getPose().x - 0.5, 58.2, 1900, {.maxSpeed = speed - 55});
   antiJam = false;
-  count_blocks_in(6, 4200); 
+  count_blocks_in(6, 4000); 
+  moveToPoint(chassis.getPose().x - 0.5, 62, 700, {.maxSpeed = speed});
+  pros::delay(500);
   chassis.cancelAllMotions();
   messageStep((char *) "Match Load 2");
 
-  moveToPoint(chassis.getPose().x, 25, 1000, {.forwards = false, .maxSpeed = speed}, false);
+  moveToPoint(chassis.getPose().x, 25.5, 1000, {.forwards = false, .maxSpeed = speed}, false);
   intakeAll(115);
   messageStep((char *) "Right Long Goal 2");
   stopperDown();
-  spinScoring(100);
+  spinScoring(90);
   current_pose = chassis.getPose();
   count_blocks_out(6, 2600);
   clearQueue();
@@ -490,6 +491,7 @@ void auton_60s_skills_1() {
 
   turnToHeading(-90, 800, {.maxSpeed = tspeed});
   stopAllIntake();
+  intakeAll(-127);
   moveToPoint(-46.5, 45, 4000, {.maxSpeed = speed});
 
   turnToHeading(0, 1000, {.maxSpeed = tspeed}, false);
@@ -501,9 +503,11 @@ void auton_60s_skills_1() {
   intakeAll(127);
   pros::delay(100);
 
-  moveToPoint(-46.5, 60.35, 2500, {.maxSpeed = speed - 37});
+  moveToPoint(-46.5, 60.3, 2500, {.maxSpeed = speed - 37});
   antiJam = false;
   count_blocks_in(6, 3000); 
+  moveToPoint(chassis.getPose().x - 0.5, 61, 700, {.maxSpeed = speed});
+  pros::delay(500);
   chassis.cancelAllMotions();
   messageStep((char *) "Match Load 3");
 
@@ -521,7 +525,7 @@ void auton_60s_skills_1() {
 
   chassis.turnToPoint(-15.95, -12.25, 1000, {.forwards = false, .maxSpeed = tspeed});
 
-  chassis.moveToPoint(-15.95, -12.25, 1500, {.forwards = false, .maxSpeed = speed});
+  chassis.moveToPoint(-15.8, -11.8, 1500, {.forwards = false, .maxSpeed = speed});
   chassis.turnToPoint(0.5, 0, 1000, {.forwards = false, .maxSpeed = tspeed});
   pros::delay(200);
   goalDown();
@@ -550,12 +554,12 @@ void auton_60s_skills_1() {
   spinScoring(100);
   messageStep((char *) "Left Long Goal 1");
 
-  count_blocks_out(3, 1200);
+  count_blocks_out(3, 1500);
   stopperUp();
   clearQueue();
 
   extendLoader();
-  chassis.moveToPoint(-48.5, -58.35, 1700, {.maxSpeed = speed - 75});
+  chassis.moveToPoint(-48.5, -58.33, 1700, {.maxSpeed = speed - 75});
   antiJam = false;
   count_blocks_in(6, 3300);
   chassis.cancelAllMotions();
@@ -572,9 +576,9 @@ void auton_60s_skills_1() {
   outakeAll(127);
 
   moveToPoint(-48.5, -46, 2000, {.maxSpeed = speed, .minSpeed = 45, .earlyExitRange = 1.5});
-  moveToPoint(-24, -64, 2000, {.maxSpeed = speed, .minSpeed = 80, .earlyExitRange = 2});
-  moveToPoint(0, -66, 4000, {.maxSpeed = 127, .minSpeed = 110, .earlyExitRange = 1});
-  moveToPoint(-2.5, -66, 2000, {.forwards = false});
+  moveToPoint(-24, -66, 2000, {.maxSpeed = speed, .minSpeed = 90, .earlyExitRange = 2});
+  moveToPoint(0, -64, 4000, {.maxSpeed = 127, .minSpeed = 110, .earlyExitRange = 1});
+  moveToPoint(-2.5, -65, 2000, {.forwards = false});
   messageStep((char *) "Park");
 
 
